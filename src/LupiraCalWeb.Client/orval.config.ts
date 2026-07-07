@@ -1,7 +1,7 @@
 import { defineConfig } from 'orval';
 
 // Generates the typed API client + react-query hooks from LupiraCalApi's build-time OpenAPI doc
-// (backend-openapi.json, refreshed by `npm run gen:api` from ../LupiraCalApi/docs/openapi/).
+// (backend-openapi.json, refreshed by `npm run gen:api` from ../LupiraCalApi/openapi/).
 // The `LupiraCalApi` tag holds the .well-known DAV redirects — not part of the REST surface.
 export default defineConfig({
   lupiraCalApi: {
