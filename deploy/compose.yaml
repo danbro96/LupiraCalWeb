@@ -6,6 +6,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       Auth__Oidc__Authority: ${AUTH_AUTHORITY:-https://auth.lupira.com/application/o/lupira-cal/}
       Auth__Oidc__ClientId: ${AUTH_CLIENT_ID:-lupira-cal}
+      Auth__Oidc__ClientSecret: ${AUTH_CLIENT_SECRET:-}
       ReverseProxy__Clusters__cal-api__Destinations__primary__Address: ${CAL_API_BASE_URL:-https://cal-api.lupira.com}
       DataProtection__KeyPath: /keys
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
