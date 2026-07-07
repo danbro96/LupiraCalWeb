@@ -1,0 +1,111 @@
+using Duende.AccessTokenManagement.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+
+namespace LupiraCalWeb.Auth;
+
+/// <summary>
+/// SSO gate for the member surface. Production runs Authentik OIDC (Authorization Code + PKCE) with a
+/// server-side cookie session and Duende token management; non-production auto-authenticates a local
+/// user via <see cref="DevAuthHandler"/>. Authorization is per-route: the member proxy route uses the
+/// default (authenticated) policy; the account-less share surface and the SPA shell are anonymous, so
+/// there is no global fallback policy.
+/// </summary>
+internal static class AuthExtensions
+{
+    /// <summary>Authentik groups that mark a caller as admin (reported by /auth/user).</summary>
+    public static readonly string[] AdminGroups = ["cal-admins", "platform-admins"];
+
+    private static readonly string[] DefaultScopes =
+        ["openid", "profile", "email", "groups", "offline_access"];
+
+    public static void AddCalAuth(this WebApplicationBuilder builder)
+    {
+        var services = builder.Services;
+        services.AddHttpContextAccessor();
+
+        if (builder.Environment.IsProduction())
+            AddOidc(builder);
+        else
+            services.AddAuthentication(DevAuthHandler.SchemeName)
+                .AddScheme<AuthenticationSchemeOptions, DevAuthHandler>(DevAuthHandler.SchemeName, null);
+
+        // DefaultPolicy = RequireAuthenticatedUser — referenced by the member YARP route ("Default").
+        services.AddAuthorization();
+    }
+
+    private static void AddOidc(WebApplicationBuilder builder)
+    {
+        var oidc = builder.Configuration.GetSection("Auth:Oidc");
+        var scopes = oidc.GetSection("Scopes").Get<string[]>() is { Length: > 0 } configured
+            ? configured
+            : DefaultScopes;
+
+        builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+            .AddCookie(o =>
+            {
+                o.Cookie.Name = "__Host-lupira-cal";
+                o.Cookie.HttpOnly = true;
+                o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                o.Cookie.SameSite = SameSiteMode.Lax;
+                o.SlidingExpiration = true;
+                o.ExpireTimeSpan = TimeSpan.FromHours(8);
+                // XHR calls want a 401 to react to, not an HTML redirect to Authentik.
+                o.Events.OnRedirectToLogin = ctx => ApiAware(ctx, StatusCodes.Status401Unauthorized);
+                o.Events.OnRedirectToAccessDenied = ctx => ApiAware(ctx, StatusCodes.Status403Forbidden);
+            })
+            .AddOpenIdConnect(o =>
+            {
+                o.Authority = oidc["Authority"];
+                o.ClientId = oidc["ClientId"];
+                // The shared `lupira-cal` client is public (PKCE, no secret); the BFF's protection is
+                // holding tokens server-side, not client auth. A secret is set only if one is configured
+                // (a dedicated confidential client) — otherwise this stays a public PKCE client.
+                var clientSecret = oidc["ClientSecret"];
+                if (!string.IsNullOrWhiteSpace(clientSecret)) o.ClientSecret = clientSecret;
+                o.ResponseType = "code";
+                o.UsePkce = true;
+                o.SaveTokens = true;
+                o.GetClaimsFromUserInfoEndpoint = true;
+                o.MapInboundClaims = false;
+                o.RequireHttpsMetadata = true;
+                o.TokenValidationParameters.NameClaimType = "email";
+                o.TokenValidationParameters.RoleClaimType = "groups";
+                o.Scope.Clear();
+                foreach (var s in scopes) o.Scope.Add(s);
+                // OIDC is the challenge scheme, so unauthenticated /api/* lands here. XHRs want a 401 to
+                // react to (authedFetch then routes to /auth/login), not a 302 to Authentik. Full-page
+                // flows like /auth/login are not under /api and still redirect.
+                o.Events.OnRedirectToIdentityProvider = context =>
+                {
+                    if (context.Request.Path.StartsWithSegments("/api"))
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.HandleResponse();
+                    }
+                    return Task.CompletedTask;
+                };
+            });
+
+        // Keeps the forwarded LupiraCalApi access token fresh via the refresh token (offline_access).
+        builder.Services.AddOpenIdConnectAccessTokenManagement();
+    }
+
+    private static Task ApiAware<T>(RedirectContext<T> ctx, int statusCode)
+        where T : AuthenticationSchemeOptions
+    {
+        if (ctx.Request.Path.StartsWithSegments("/api"))
+        {
+            ctx.Response.StatusCode = statusCode;
+            return Task.CompletedTask;
+        }
+
+        ctx.Response.Redirect(ctx.RedirectUri);
+        return Task.CompletedTask;
+    }
+}

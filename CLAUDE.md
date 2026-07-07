@@ -1,0 +1,10 @@
+# LupiraCalWeb — agent notes
+
+- **Purpose**: web UI over LupiraCalApi's REST surface (never `/dav`). Visualizes the temporal backbone: calendar Class/Kind, ItemKind details, Prompt/Action payloads, completeness, availability segments, curation, tags, metadata, relations.
+- **Shape**: .NET 10 BFF (`src/LupiraCalWeb`) + Vite/React 19 SPA (`src/LupiraCalWeb.Client`) in one image. BFF owns Authentik OIDC (`lupira-cal` client, PKCE, no secret), cookie `__Host-lupira-cal`, Duende token refresh, YARP `/api/{**}` → cal-api root (strip `/api`, bearer attached). No anonymous surface. Dev: auto-auth + `X-Dev-User` forwarded (CalApi Development accepts it).
+- **API client is generated**: orval → `src/data/api/` (gitignored from lint, `clean: true` — never hand-edit; hand-written code lives in `src/data/*.ts`). Refresh with `npm run gen:api` after CalApi endpoint changes (CalApi emits `docs/openapi/LupiraCalApi.json` at build). .NET emits numeric schemas as `number | string` — coerce with `Number()` at use sites.
+- **Layering**: `domain → data → state → ui` (+ leaf `config`), enforced by eslint-plugin-boundaries v6. domain/ is pure + vitest-tested (grid math, occurrence column layout, RRULE/fire text).
+- **Grids are hand-rolled** (no calendar lib): `GET /items?from&to` returns recurrence-expanded occurrences; one query per visible calendar (occurrence DTO has no calendarId). Proposed items ghost from `GET /calendars/{id}/proposed`; availability band joins occurrence → item detail for status.
+- **Known API gaps** (UI works around): no owner-list endpoint (share panel is action-only); all-day dates/kind/timezone not updatable over REST; recurrence can't be cleared (null = keep); kind details read-only except Availability.
+- Dev ports: API 5255, BFF 5181, Vite 5174. Prod: cal.lupira.com:40881, image `danbro96/lupira-cal-web`.
+- Latest stable deps, bump hard. vitest. Comment only non-obvious why; docs = present state.
