@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, Outlet, useSearchParams } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { logout } from '../data/session';
 import { useSession } from '../state/useSession';
 import { useEnsureBootstrap } from '../state/useContainers';
@@ -15,6 +15,9 @@ export function AppShell() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [creating, setCreating] = useState(false);
   const itemId = searchParams.get('item');
+  // Contacts and Locations own their own layout, so the calendar sidebar is hidden there.
+  const path = useLocation().pathname;
+  const showSidebar = !path.startsWith('/contacts') && !path.startsWith('/locations');
 
   const closeDrawer = () => {
     setSearchParams((prev) => {
@@ -35,6 +38,7 @@ export function AppShell() {
             </NavLink>
             <NavLink to="/inbox">Inbox</NavLink>
             <NavLink to="/contacts">Contacts</NavLink>
+            <NavLink to="/locations">Locations</NavLink>
             <NavLink to="/calendars">Manage</NavLink>
           </nav>
           <button className="btn primary" onClick={() => setCreating(true)}>
@@ -48,7 +52,7 @@ export function AppShell() {
           </div>
         </header>
         <div className="shell-body">
-          <Sidebar />
+          {showSidebar && <Sidebar />}
           <main className="content">
             <Outlet />
           </main>

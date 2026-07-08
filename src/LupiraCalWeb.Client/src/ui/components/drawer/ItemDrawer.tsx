@@ -235,7 +235,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
 
       {errText(update.error) && <p className="error-text">{errText(update.error)}</p>}
       <div className="drawer-footer">
-        <span className="meta" title={`iCal UID ${item.icalUid} · etag ${item.etag}`}>
+        <span className="meta" title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
           {item.kind ?? 'Generic'} item
         </span>
         <button className="btn destructive" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>

@@ -1,19 +1,20 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   useAddContactGroupMember,
   useDeleteContact,
   useGetContact,
   useListContactGroups,
   useRemoveContactGroupMember,
-} from '../../data/api/lupiraCalApi';
-import { fmtDate, parseYmd } from '../../domain/time';
-import { useInvalidateContacts } from '../../state/useInvalidate';
-import { usePlaces } from '../../state/usePlaces';
-import { CompletenessBadge } from '../components/drawer/CompletenessBadge';
+} from '../../../data/api/lupiraCalApi';
+import { fmtDate, parseYmd } from '../../../domain/time';
+import { useInvalidateContacts } from '../../../state/useInvalidate';
+import { usePlaces } from '../../../state/usePlaces';
+import { CompletenessBadge } from '../drawer/CompletenessBadge';
 
-/** Full contact card: reach fields, addresses (place-resolved), profiles, groups, completeness. */
-export function ContactDetailScreen() {
+/** Right pane for a contact: reach fields, place-resolved addresses, profiles, group membership,
+ *  completeness, delete. Fields are read-only over REST — edits sync via CardDAV. */
+export function ContactDetailPane() {
   const { contactId } = useParams();
   const navigate = useNavigate();
   const { data: contact, isLoading } = useGetContact(contactId ?? '', { query: { enabled: !!contactId } });
@@ -25,14 +26,15 @@ export function ContactDetailScreen() {
   const places = usePlaces((contact?.addresses ?? []).map((a) => a.placeId ?? null));
   const [groupId, setGroupId] = useState('');
 
-  if (isLoading) return <p className="meta page">Loading…</p>;
-  if (!contact) return <p className="meta page">Contact not found.</p>;
+  if (isLoading) return <div className="contacts-detail-pane"><p className="meta">Loading…</p></div>;
+  if (!contact) return <div className="contacts-detail-pane"><p className="empty">Contact not found.</p></div>;
 
   const memberOf = (groups ?? []).filter((g) => g.members.includes(contact.id));
   const joinable = (groups ?? []).filter((g) => !g.members.includes(contact.id));
+  const groupSearch = `?book=${contact.addressBookId}`;
 
   return (
-    <div className="page">
+    <div className="contacts-detail-pane">
       <div className="page-head">
         <h2>
           {contact.displayName}
@@ -105,8 +107,14 @@ export function ContactDetailScreen() {
         {memberOf.map((g) => (
           <div key={g.id} className="membership-row">
             <span className="badge">{g.kind === 'Organization' ? '🏢' : '👥'}</span>
-            <span className="membership-name">{g.name}</span>
-            <button className="icon-btn" title="Remove from group" onClick={() => removeMember.mutate({ groupId: g.id, contactId: contact.id })}>
+            <Link className="membership-name" to={{ pathname: `/contacts/groups/${g.id}`, search: groupSearch }}>
+              {g.name}
+            </Link>
+            <button
+              className="icon-btn"
+              title="Remove from group"
+              onClick={() => removeMember.mutate({ groupId: g.id, contactId: contact.id })}
+            >
               ×
             </button>
           </div>
@@ -133,7 +141,7 @@ export function ContactDetailScreen() {
         </div>
       </section>
 
-      <p className="meta">vCard UID {contact.vcardUid} · edits sync via CardDAV</p>
+      <p className="meta">vCard UID {contact.externalId} · edits sync via CardDAV</p>
       <button className="btn destructive" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
         Delete contact
       </button>

@@ -883,9 +883,100 @@ select {
   font-size: 15px;
 }
 
+/* ---- Contacts three-pane (tree | list | detail). ---- */
+.contacts-3pane {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.contacts-tree {
+  width: 240px;
+  flex: none;
+  border-right: 1px solid var(--divider);
+  overflow-y: auto;
+  padding-bottom: var(--sp-lg);
+}
+.contacts-list-pane {
+  width: 340px;
+  flex: none;
+  border-right: 1px solid var(--divider);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--sp-lg);
+}
+.contacts-detail-pane {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--sp-lg) var(--sp-xl);
+}
+
+/* Tree rows: a button per address book, expandable to its groups. */
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  padding: 6px var(--sp-lg);
+  cursor: pointer;
+}
+.tree-node:hover {
+  background: var(--surface);
+}
+.tree-node.active {
+  background: var(--surface);
+  font-weight: 600;
+}
+.tree-node.tree-group {
+  padding-left: calc(var(--sp-lg) + 20px);
+}
+.tree-caret {
+  width: 14px;
+  flex: none;
+  color: var(--text-subtle);
+  font-size: 10px;
+}
+.tree-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tree-count {
+  flex: none;
+  font-size: 12px;
+  color: var(--text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+.tree-add {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px calc(var(--sp-lg) + 20px) var(--sp-sm);
+}
+
+/* List pane: sticky search/new header above the contact rows. */
+.list-pane-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: var(--sp-md) 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 1;
+}
+
 /* ---- Contacts. ---- */
 .contact-list {
-  margin: var(--sp-md) 0;
+  margin: 0 0 var(--sp-md);
 }
 .contact-row {
   display: flex;
@@ -895,13 +986,19 @@ select {
   border-bottom: 1px solid var(--divider);
   text-decoration: none;
   color: var(--text);
+  overflow: hidden;
 }
-.contact-row:hover {
+.contact-row:hover,
+.contact-row.active {
   background: var(--surface);
 }
 .contact-name {
   flex: 1;
+  min-width: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---- Containers table. ---- */
@@ -975,4 +1072,74 @@ select {
 }
 .centered h2 {
   margin: 0;
+}
+
+/* ---- Locations page (master–detail catalog + relations). ---- */
+.locations-page {
+  max-width: 1100px;
+}
+.locations-split {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: var(--sp-xl);
+  align-items: start;
+  margin-top: var(--sp-md);
+}
+@media (max-width: 820px) {
+  .locations-split {
+    grid-template-columns: 1fr;
+  }
+}
+.location-list {
+  display: flex;
+  flex-direction: column;
+}
+.location-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: 8px var(--sp-sm);
+  border: none;
+  background: none;
+  border-bottom: 1px solid var(--divider);
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  border-radius: var(--r-sm);
+}
+.location-row:hover,
+.location-row.active {
+  background: var(--surface);
+}
+.location-row .location-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.location-detail {
+  min-width: 0;
+}
+.loc-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-xs);
+  font-size: 13px;
+}
+.loc-breadcrumb .linklike {
+  font-size: 13px;
+}
+.loc-breadcrumb .sep {
+  color: var(--text-subtle);
+}
+.loc-role {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 1px 8px;
 }
