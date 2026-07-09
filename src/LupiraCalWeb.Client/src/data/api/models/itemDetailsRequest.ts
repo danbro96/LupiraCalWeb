@@ -5,8 +5,10 @@
  * Calendar, contacts, and CalDAV backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
-import type { AvailabilityStatus } from './availabilityStatus';
+import type { BookingDetail } from './bookingDetail';
+import type { TravelLegRequest } from './travelLegRequest';
 
-export interface AvailabilityDetail {
-  status: AvailabilityStatus;
+export interface ItemDetailsRequest {
+  booking?: null | BookingDetail;
+  travel?: null | TravelLegRequest;
 }

@@ -9,8 +9,8 @@ import type { CalendarMembershipDto } from './calendarMembershipDto';
 import type { CompletenessScore } from './completenessScore';
 import type { ItemAction } from './itemAction';
 import type { ItemAttendee } from './itemAttendee';
-import type { ItemKind } from './itemKind';
-import type { ItemKindDetails } from './itemKindDetails';
+import type { ItemCategory } from './itemCategory';
+import type { ItemDetails } from './itemDetails';
 import type { ItemPrompt } from './itemPrompt';
 import type { ItemStatus } from './itemStatus';
 import type { JsonNode } from './jsonNode';
@@ -34,10 +34,12 @@ export interface CalendarItemDto {
   endDate?: string | null;
   /** @nullable */
   recurrenceRule?: string | null;
-  kind?: null | ItemKind;
-  kindDetails?: null | ItemKindDetails;
+  category?: null | ItemCategory;
+  details?: null | ItemDetails;
   /** @nullable */
   placeId?: string | null;
+  /** @nullable */
+  locationLabel?: string | null;
   /** @nullable */
   parentItemId?: string | null;
   /** @nullable */

@@ -8,6 +8,9 @@
 import type { ContactAddressType } from './contactAddressType';
 
 export interface ContactPostalAddress {
-  placeId?: string;
+  /** @nullable */
+  placeId?: string | null;
+  /** @nullable */
+  formattedAddress?: string | null;
   type?: ContactAddressType;
 }

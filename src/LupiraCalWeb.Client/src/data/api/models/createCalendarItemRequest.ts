@@ -6,7 +6,7 @@
  * OpenAPI spec version: v1
  */
 import type { AvailabilityStatus } from './availabilityStatus';
-import type { ItemKindDetailsRequest } from './itemKindDetailsRequest';
+import type { ItemDetailsRequest } from './itemDetailsRequest';
 
 export interface CreateCalendarItemRequest {
   /** @nullable */
@@ -33,9 +33,9 @@ export interface CreateCalendarItemRequest {
   /** @nullable */
   recurrenceRule?: string | null;
   /** @nullable */
-  kind?: string | null;
+  category?: string | null;
   /** @nullable */
   tags?: string[] | null;
   availability?: null | AvailabilityStatus;
-  kindDetails?: null | ItemKindDetailsRequest;
+  details?: null | ItemDetailsRequest;
 }

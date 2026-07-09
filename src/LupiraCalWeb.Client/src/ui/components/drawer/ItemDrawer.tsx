@@ -9,8 +9,7 @@ import {
 import { describeRrule, RRULE_PRESETS } from '../../../domain/rrule';
 import { fmtDate, parseYmd } from '../../../domain/time';
 import { useInvalidateItems } from '../../../state/useInvalidate';
-import { usePlaces } from '../../../state/usePlaces';
-import { ITEM_KIND_ICONS } from '../../theme/kinds';
+import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 import { AttendeesPanel } from './AttendeesPanel';
 import { CalendarsPanel } from './CalendarsPanel';
 import { CompletenessBadge } from './CompletenessBadge';
@@ -59,15 +58,13 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
   const [location, setLocation] = useState('');
   const [rrule, setRrule] = useState(item.recurrenceRule ?? '');
   const [newTag, setNewTag] = useState('');
-  const places = usePlaces([item.placeId]);
-  const place = item.placeId ? places.get(item.placeId) : undefined;
 
   return (
     <div className="drawer-pad">
       <div className="drawer-title-row">
-        {item.kind && item.kind !== 'Generic' && (
-          <span className="kind-icon" title={item.kind}>
-            {ITEM_KIND_ICONS[item.kind] ?? ''}
+        {item.category && item.category !== 'General' && (
+          <span className="kind-icon" title={item.category}>
+            {ITEM_CATEGORY_ICONS[item.category] ?? ''}
           </span>
         )}
         <input
@@ -89,11 +86,11 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             <option key={s}>{s}</option>
           ))}
         </select>
-        {item.kind === 'Availability' && (
+        {item.details?.presence && (
           <>
             <label>Availability</label>
             <select
-              value={item.kindDetails?.availability?.status ?? ''}
+              value={item.details.presence.status ?? ''}
               onChange={(e) => e.target.value && patch({ availability: e.target.value as AvailabilityStatus })}
             >
               <option value="">(set…)</option>
@@ -167,22 +164,10 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
 
       <section className="drawer-section">
         <h3>Where</h3>
-        {place && (
-          <p className="field-value">
-            📍 {place.name}
-            {place.latitude != null && place.longitude != null && (
-              <>
-                {' '}
-                <a className="linklike" href={`https://www.openstreetmap.org/?mlat=${place.latitude}&mlon=${place.longitude}#map=16/${place.latitude}/${place.longitude}`} target="_blank" rel="noreferrer">
-                  map ↗
-                </a>
-              </>
-            )}
-          </p>
-        )}
+        {item.locationLabel && <p className="field-value">📍 {item.locationLabel}</p>}
         <input
           className="text-input"
-          placeholder={place ? 'Change location…' : 'Add location…'}
+          placeholder={item.locationLabel ? 'Change location…' : 'Add location…'}
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           onBlur={() => location && patch({ location })}
@@ -226,7 +211,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         </div>
       </section>
 
-      <KindDetailsCard details={item.kindDetails} />
+      <KindDetailsCard details={item.details} />
       <PayloadPanel item={item} />
       <AttendeesPanel item={item} />
       <CalendarsPanel item={item} />
@@ -236,7 +221,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       {errText(update.error) && <p className="error-text">{errText(update.error)}</p>}
       <div className="drawer-footer">
         <span className="meta" title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
-          {item.kind ?? 'Generic'} item
+          {item.category ?? 'General'} item
         </span>
         <button className="btn destructive" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>
           Delete item

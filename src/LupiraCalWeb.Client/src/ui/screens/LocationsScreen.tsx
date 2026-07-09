@@ -1,26 +1,18 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useGetPlace, useSearchContacts } from '../../data/api/lupiraCalApi';
-import { PlaceKind, type CalendarItemDto } from '../../data/api/models';
-import { buildParentChain, formatCoords, osmUrl, type PlaceNode } from '../../domain/places';
+import { useSearchContacts } from '../../data/api/lupiraCalApi';
+import type { CalendarItemDto } from '../../data/api/models';
+import { formatCoords, osmUrl } from '../../domain/places';
 import { fmtDate, fmtDateTime, parseYmd } from '../../domain/time';
-import { usePlaceItems, usePlaces, useSearchPlaces } from '../../state/usePlaces';
-import { ITEM_KIND_ICONS } from '../theme/kinds';
+import { useGeoPlace, usePlaceItems, useSearchPlaces } from '../../state/usePlaces';
+import { ITEM_CATEGORY_ICONS } from '../theme/kinds';
 
-const KIND_LABEL: Record<PlaceKind, string> = {
-  Country: 'Country',
-  City: 'City',
-  Address: 'Address',
-  Venue: 'Venue',
-};
-
-/** Find a place in the shared catalog and show what's anchored to it: hierarchy, items, contacts. */
+/** Find a place in the LupiraGeoApi gazetteer and show what's anchored to it: containment, items, contacts. */
 export function LocationsScreen() {
   const [params, setParams] = useSearchParams();
   const search = params.get('q') ?? '';
-  const kind = (params.get('kind') ?? '') as PlaceKind | '';
   const selectedId = params.get('place') ?? undefined;
 
-  const placesQ = useSearchPlaces({ search, kind });
+  const placesQ = useSearchPlaces({ q: search || undefined });
   const places = placesQ.data ?? [];
 
   const setParam = (key: string, value: string) =>
@@ -46,14 +38,6 @@ export function LocationsScreen() {
           value={search}
           onChange={(e) => setParam('q', e.target.value)}
         />
-        <select value={kind} onChange={(e) => setParam('kind', e.target.value)}>
-          <option value="">All kinds</option>
-          {Object.values(PlaceKind).map((k) => (
-            <option key={k} value={k}>
-              {KIND_LABEL[k]}
-            </option>
-          ))}
-        </select>
       </div>
 
       <div className="locations-split">
@@ -66,7 +50,7 @@ export function LocationsScreen() {
               onClick={() => setParam('place', p.id)}
             >
               <span className="location-name">{p.name}</span>
-              <span className="badge">{KIND_LABEL[p.kind]}</span>
+              <span className="badge">{p.category}</span>
             </button>
           ))}
           {!placesQ.isLoading && places.length === 0 && <p className="empty">No places match.</p>}
@@ -74,7 +58,7 @@ export function LocationsScreen() {
 
         <div className="location-detail">
           {selectedId ? (
-            <PlaceDetail placeId={selectedId} onSelect={(id) => setParam('place', id)} />
+            <PlaceDetail placeId={selectedId} />
           ) : (
             <p className="empty">Select a place to see what’s connected to it.</p>
           )}
@@ -84,50 +68,33 @@ export function LocationsScreen() {
   );
 }
 
-function PlaceDetail({ placeId, onSelect }: { placeId: string; onSelect: (id: string) => void }) {
-  const { data: place, isLoading } = useGetPlace(placeId);
-
-  // Resolve the ancestor chain to build the breadcrumb. The catalog is shallow (Country→City→Address→Venue),
-  // so a fixed number of hops covers it; each hop is enabled only once its child resolves.
-  const l1 = usePlaces([place?.parentPlaceId]);
-  const p1 = place?.parentPlaceId ? l1.get(place.parentPlaceId) : undefined;
-  const l2 = usePlaces([p1?.parentPlaceId]);
-  const p2 = p1?.parentPlaceId ? l2.get(p1.parentPlaceId) : undefined;
-  const l3 = usePlaces([p2?.parentPlaceId]);
-  const p3 = p2?.parentPlaceId ? l3.get(p2.parentPlaceId) : undefined;
-
+function PlaceDetail({ placeId }: { placeId: string }) {
+  const { data: place, isLoading } = useGeoPlace(placeId);
   if (isLoading) return <p className="meta">Loading…</p>;
   if (!place) return <p className="empty">Place not found.</p>;
 
-  const byId = new Map<string, PlaceNode>();
-  for (const n of [place, p1, p2, p3]) if (n) byId.set(n.id, { id: n.id, parentPlaceId: n.parentPlaceId, name: n.name, kind: n.kind });
-  const chain = buildParentChain(place.id, byId);
   const coords = formatCoords(place.latitude, place.longitude);
   const map = osmUrl(place.latitude, place.longitude);
+  const containment = place.containment ?? [];
 
   return (
     <>
       <section className="card">
         <div className="drawer-title-row">
           <h3 style={{ margin: 0, flex: 1 }}>{place.name}</h3>
-          <span className="badge">{KIND_LABEL[place.kind]}</span>
+          <span className="badge">{place.category}</span>
         </div>
-        {chain.length > 1 && (
+        {containment.length > 0 && (
           <div className="loc-breadcrumb">
-            {chain.map((n, i) => (
-              <span key={n.id}>
+            {containment.map((a, i) => (
+              <span key={a.id}>
                 {i > 0 && <span className="sep"> › </span>}
-                {n.id === place.id ? (
-                  n.name
-                ) : (
-                  <button className="linklike" onClick={() => onSelect(n.id)}>
-                    {n.name}
-                  </button>
-                )}
+                {a.name}
               </span>
             ))}
           </div>
         )}
+        {place.formattedAddress && <p className="field-value">{place.formattedAddress}</p>}
         {(coords || map) && (
           <p className="field-value">
             📍 {coords}
@@ -143,29 +110,9 @@ function PlaceDetail({ placeId, onSelect }: { placeId: string; onSelect: (id: st
         )}
       </section>
 
-      <ChildrenPanel placeId={placeId} onSelect={onSelect} />
       <ItemsPanel placeId={placeId} />
       <ContactsPanel placeId={placeId} />
     </>
-  );
-}
-
-function ChildrenPanel({ placeId, onSelect }: { placeId: string; onSelect: (id: string) => void }) {
-  const query = useSearchPlaces({ parentPlaceId: placeId });
-  const children = query.data ?? [];
-  if (children.length === 0) return null;
-  return (
-    <section className="drawer-section">
-      <h3>Contains</h3>
-      <div className="location-list">
-        {children.map((c) => (
-          <button key={c.id} className="location-row" onClick={() => onSelect(c.id)}>
-            <span className="location-name">{c.name}</span>
-            <span className="badge">{KIND_LABEL[c.kind]}</span>
-          </button>
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -186,7 +133,9 @@ function ItemsPanel({ placeId }: { placeId: string }) {
       {!isLoading && (items ?? []).length === 0 && <p className="empty">No items reference this place.</p>}
       {(items ?? []).map((item) => (
         <Link key={item.id} to={itemHref(item.id)} className="location-row">
-          {item.kind && ITEM_KIND_ICONS[item.kind] && <span className="kind-icon">{ITEM_KIND_ICONS[item.kind]}</span>}
+          {item.category && ITEM_CATEGORY_ICONS[item.category] && (
+            <span className="kind-icon">{ITEM_CATEGORY_ICONS[item.category]}</span>
+          )}
           <span className="location-name">{item.title || '(untitled)'}</span>
           <span className="meta">{whenOf(item)}</span>
           {roleOf(item, placeId) && <span className="loc-role">{roleOf(item, placeId)}</span>}
@@ -212,15 +161,12 @@ function ContactsPanel({ placeId }: { placeId: string }) {
   );
 }
 
-/** Which role the place plays for an item: its location, or a travel/car endpoint. */
+/** Which role the place plays for an item: its location, or a travel endpoint. */
 function roleOf(item: CalendarItemDto, placeId: string): string {
   if (item.placeId === placeId) return 'At';
-  const t = item.kindDetails?.travel;
+  const t = item.details?.travel;
   if (t?.toPlaceId === placeId) return 'To';
   if (t?.fromPlaceId === placeId) return 'From';
-  const car = item.kindDetails?.car;
-  if (car?.pickupPlaceId === placeId) return 'Pickup';
-  if (car?.dropoffPlaceId === placeId) return 'Dropoff';
   return '';
 }
 

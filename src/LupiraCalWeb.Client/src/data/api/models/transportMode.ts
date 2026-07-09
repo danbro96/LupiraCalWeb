@@ -6,20 +6,19 @@
  * OpenAPI spec version: v1
  */
 
-export type ItemKind = typeof ItemKind[keyof typeof ItemKind];
+export type TransportMode = typeof TransportMode[keyof typeof TransportMode];
 
 
-export const ItemKind = {
-  Generic: 'Generic',
-  Travel: 'Travel',
+export const TransportMode = {
   Flight: 'Flight',
   Train: 'Train',
+  Metro: 'Metro',
+  Tram: 'Tram',
   Bus: 'Bus',
+  Coach: 'Coach',
   Car: 'Car',
-  Lodging: 'Lodging',
-  Appointment: 'Appointment',
-  Ticketed: 'Ticketed',
-  Delivery: 'Delivery',
-  Bill: 'Bill',
-  Availability: 'Availability',
+  Ferry: 'Ferry',
+  Bike: 'Bike',
+  Walk: 'Walk',
+  Other: 'Other',
 } as const;

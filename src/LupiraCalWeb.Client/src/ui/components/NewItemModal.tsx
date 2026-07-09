@@ -58,7 +58,6 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
       startDate: isAllDay ? startDate || null : null,
       endDate: isAllDay ? endDate || null : null,
       recurrenceRule: rrule || null,
-      kind: isAvailabilityCalendar || availability ? 'Availability' : null,
       availability: availability || null,
       tags: tags
         ? tags

@@ -1,4 +1,4 @@
-import type { AvailabilityStatus, CalendarKind, ContainerDto, ItemKind, ParticipationStatus } from '../../data/api/models';
+import type { AvailabilityStatus, CalendarKind, ContainerDto, ItemCategory, ParticipationStatus } from '../../data/api/models';
 
 /** Fallback calendar colors by kind (used when the container has no stored color). */
 const KIND_COLORS: Record<CalendarKind, string> = {
@@ -31,18 +31,18 @@ export const CALENDAR_KIND_ICONS: Record<CalendarKind, string> = {
   Generic: '📅',
 };
 
-export const ITEM_KIND_ICONS: Partial<Record<ItemKind, string>> = {
-  Travel: '🧳',
-  Flight: '✈️',
-  Train: '🚆',
-  Bus: '🚌',
-  Car: '🚗',
-  Lodging: '🏨',
+export const ITEM_CATEGORY_ICONS: Partial<Record<ItemCategory, string>> = {
+  General: '📅',
+  Meeting: '👥',
   Appointment: '🩺',
-  Ticketed: '🎫',
-  Delivery: '📦',
-  Bill: '💰',
-  Availability: '🕘',
+  Meal: '🍽️',
+  Occasion: '🎉',
+  Outing: '🚶',
+  Trip: '🧳',
+  Stay: '🏨',
+  Activity: '🏃',
+  Focus: '🎯',
+  Chore: '🧹',
 };
 
 export const AVAILABILITY_COLORS: Record<AvailabilityStatus, string> = {

@@ -1,25 +1,18 @@
-import { useMemo } from 'react';
-import { useGetPlaceItems, useGetPlaces } from '../data/api/lupiraCalApi';
-import type { GetPlacesParams, PlaceDto, PlaceKind } from '../data/api/models';
+import { useGetItemsByPlace } from '../data/api/lupiraCalApi';
+import { useGetPlace, useSearchPlaces as useSearchGeoPlaces } from '../data/api-geo/lupiraGeoApi';
+import type { SearchPlacesParams } from '../data/api-geo/models';
 
-/** Batch-resolve place ids → PlaceDto (place ids are opaque GUIDs everywhere else in the API). */
-export function usePlaces(ids: Array<string | null | undefined>): Map<string, PlaceDto> {
-  const unique = useMemo(() => [...new Set(ids.filter((id): id is string => !!id))].sort(), [ids]);
-  const query = useGetPlaces({ ids: unique }, { query: { enabled: unique.length > 0 } });
-  return useMemo(() => new Map((query.data ?? []).map((p) => [p.id, p])), [query.data]);
+/** Browse/search the LupiraGeoApi gazetteer (text `q`, category, spatial `near`/`bbox`). */
+export function useSearchPlaces(params: SearchPlacesParams) {
+  return useSearchGeoPlaces(params);
 }
 
-/** Browse/search the shared catalog by name/kind/parent. Empty filters list the whole catalog (server-capped). */
-export function useSearchPlaces(filters: { search?: string; kind?: PlaceKind | ''; parentPlaceId?: string }) {
-  const params: GetPlacesParams = {
-    search: filters.search?.trim() || undefined,
-    kind: filters.kind || undefined,
-    parentPlaceId: filters.parentPlaceId || undefined,
-  };
-  return useGetPlaces(params);
+/** A single gazetteer place with its containment chain (outermost→innermost). */
+export function useGeoPlace(placeId: string | undefined) {
+  return useGetPlace(placeId ?? '', { query: { enabled: !!placeId } });
 }
 
-/** Calendar items anchored to a place (its location, or a travel/car endpoint). */
+/** Calendar items anchored to a geo place (its location, or a travel endpoint). */
 export function usePlaceItems(placeId: string | undefined) {
-  return useGetPlaceItems(placeId ?? '', { query: { enabled: !!placeId } });
+  return useGetItemsByPlace(placeId ?? '', { query: { enabled: !!placeId } });
 }

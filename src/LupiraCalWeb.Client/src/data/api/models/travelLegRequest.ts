@@ -5,8 +5,10 @@
  * Calendar, contacts, and CalDAV backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
+import type { TransportMode } from './transportMode';
 
-export interface TravelDetailRequest {
+export interface TravelLegRequest {
+  mode?: TransportMode;
   /** @nullable */
   toPlace?: string | null;
   /** @nullable */
@@ -18,5 +20,13 @@ export interface TravelDetailRequest {
   /** @nullable */
   carrier?: string | null;
   /** @nullable */
-  bookingReference?: string | null;
+  serviceNumber?: string | null;
+  /** @nullable */
+  departurePoint?: string | null;
+  /** @nullable */
+  arrivalPoint?: string | null;
+  /** @nullable */
+  seat?: string | null;
+  /** @nullable */
+  driverContactId?: string | null;
 }

@@ -31,7 +31,7 @@ export function useAvailabilitySegments(
   return useMemo(() => {
     const statusById = new Map<string, AvailabilityStatus>();
     details.forEach((d, i) => {
-      const status = d.data?.kindDetails?.availability?.status;
+      const status = d.data?.details?.presence?.status;
       if (status) statusById.set(ids[i], status);
     });
     return (occurrences.data ?? []).flatMap((o) => {

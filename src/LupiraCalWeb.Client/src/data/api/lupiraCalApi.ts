@@ -38,17 +38,16 @@ import type {
   CreateRelationRequest,
   FileItemToCalendarParams,
   FindRelatedItemsParams,
-  GetPlacesParams,
   GrantOwnerRequest,
   InviteParticipantParams,
   JsonNode,
   MeDto,
   OwnerGrantDto,
-  PlaceDto,
   ProblemDetails,
   RelationDto,
   RenameContactGroupParams,
   RespondToInvitationParams,
+  ReviseContactRequest,
   RevokeAddressBookOwnerParams,
   RevokeCalendarOwnerParams,
   SearchContactsParams,
@@ -1149,6 +1148,107 @@ export const useDeleteItem = <TError = void,
       return useMutation(getDeleteItemMutationOptions(options), queryClient);
     }
 
+export const getGetItemsByPlaceUrl = (placeId: string,) => {
+
+
+
+
+  return `/items/by-place/${placeId}`
+}
+
+/**
+ * @summary Calendar items anchored to a LupiraGeoApi place (its location, or a travel endpoint). Only items in a calendar you can read.
+ */
+export const getItemsByPlace = async (placeId: string, options?: RequestInit): Promise<CalendarItemDto[]> => {
+
+  return customFetch<CalendarItemDto[]>(getGetItemsByPlaceUrl(placeId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetItemsByPlaceQueryKey = (placeId: string,) => {
+    return [
+    `/items/by-place/${placeId}`
+    ] as const;
+    }
+
+
+export const getGetItemsByPlaceQueryOptions = <TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetItemsByPlaceQueryKey(placeId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getItemsByPlace>>> = ({ signal }) => getItemsByPlace(placeId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: placeId !== null && placeId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetItemsByPlaceQueryResult = NonNullable<Awaited<ReturnType<typeof getItemsByPlace>>>
+export type GetItemsByPlaceQueryError = void
+
+
+export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(
+ placeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getItemsByPlace>>,
+          TError,
+          Awaited<ReturnType<typeof getItemsByPlace>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(
+ placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getItemsByPlace>>,
+          TError,
+          Awaited<ReturnType<typeof getItemsByPlace>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(
+ placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Calendar items anchored to a LupiraGeoApi place (its location, or a travel endpoint). Only items in a calendar you can read.
+ */
+
+export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(
+ placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetItemsByPlaceQueryOptions(placeId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export const getMergeItemMetadataUrl = (id: string,) => {
 
 
@@ -1786,6 +1886,78 @@ export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TE
 
 
 
+
+export const getReviseContactUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}`
+}
+
+/**
+ * @summary Update a contact (merge — provided fields overwrite/append, unmentioned fields are kept).
+ */
+export const reviseContact = async (id: string,
+    reviseContactRequest: ReviseContactRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetch<ContactDto>(getReviseContactUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(reviseContactRequest)
+  }
+);}
+
+
+
+
+
+export const getReviseContactMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviseContact>>, TError,{id: string;data: ReviseContactRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof reviseContact>>, TError,{id: string;data: ReviseContactRequest}, TContext> => {
+
+const mutationKey = ['reviseContact'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof reviseContact>>, {id: string;data: ReviseContactRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  reviseContact(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ReviseContactMutationResult = NonNullable<Awaited<ReturnType<typeof reviseContact>>>
+    export type ReviseContactMutationBody = ReviseContactRequest
+    export type ReviseContactMutationError = void | ProblemDetails
+
+    /**
+ * @summary Update a contact (merge — provided fields overwrite/append, unmentioned fields are kept).
+ */
+export const useReviseContact = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviseContact>>, TError,{id: string;data: ReviseContactRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof reviseContact>>,
+        TError,
+        {id: string;data: ReviseContactRequest},
+        TContext
+      > => {
+      return useMutation(getReviseContactMutationOptions(options), queryClient);
+    }
 
 export const getDeleteContactUrl = (id: string,) => {
 
@@ -3333,315 +3505,3 @@ export const useRemoveContactGroupMember = <TError = void,
       > => {
       return useMutation(getRemoveContactGroupMemberMutationOptions(options), queryClient);
     }
-
-export const getGetPlacesUrl = (params?: GetPlacesParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["ids"];
-
-    if (Array.isArray(value) && explodeParameters.includes(key)) {
-      value.forEach((v) => {
-        normalizedParams.append(key, v === null ? 'null' : String(v));
-      });
-      return;
-    }
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/places?${stringifiedParams}` : `/places`
-}
-
-/**
- * @summary Browse/search the shared location catalog: filter by name (search), kind, or parentPlaceId; or batch-resolve by repeating ids= (ids wins; unknown ids omitted).
- */
-export const getPlaces = async (params?: GetPlacesParams, options?: RequestInit): Promise<PlaceDto[]> => {
-
-  return customFetch<PlaceDto[]>(getGetPlacesUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetPlacesQueryKey = (params?: GetPlacesParams,) => {
-    return [
-    `/places`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-
-export const getGetPlacesQueryOptions = <TData = Awaited<ReturnType<typeof getPlaces>>, TError = void>(params?: GetPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetPlacesQueryKey(params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPlaces>>> = ({ signal }) => getPlaces(params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlaces>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof getPlaces>>>
-export type GetPlacesQueryError = void
-
-
-export function useGetPlaces<TData = Awaited<ReturnType<typeof getPlaces>>, TError = void>(
- params: undefined |  GetPlacesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaces>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPlaces>>,
-          TError,
-          Awaited<ReturnType<typeof getPlaces>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlaces<TData = Awaited<ReturnType<typeof getPlaces>>, TError = void>(
- params?: GetPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaces>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPlaces>>,
-          TError,
-          Awaited<ReturnType<typeof getPlaces>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlaces<TData = Awaited<ReturnType<typeof getPlaces>>, TError = void>(
- params?: GetPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Browse/search the shared location catalog: filter by name (search), kind, or parentPlaceId; or batch-resolve by repeating ids= (ids wins; unknown ids omitted).
- */
-
-export function useGetPlaces<TData = Awaited<ReturnType<typeof getPlaces>>, TError = void>(
- params?: GetPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetPlacesQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export const getGetPlaceUrl = (id: string,) => {
-
-
-
-
-  return `/places/${id}`
-}
-
-/**
- * @summary A single place from the shared location catalog.
- */
-export const getPlace = async (id: string, options?: RequestInit): Promise<PlaceDto> => {
-
-  return customFetch<PlaceDto>(getGetPlaceUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetPlaceQueryKey = (id: string,) => {
-    return [
-    `/places/${id}`
-    ] as const;
-    }
-
-
-export const getGetPlaceQueryOptions = <TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetPlaceQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPlace>>> = ({ signal }) => getPlace(id, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetPlaceQueryResult = NonNullable<Awaited<ReturnType<typeof getPlace>>>
-export type GetPlaceQueryError = void
-
-
-export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPlace>>,
-          TError,
-          Awaited<ReturnType<typeof getPlace>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPlace>>,
-          TError,
-          Awaited<ReturnType<typeof getPlace>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary A single place from the shared location catalog.
- */
-
-export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetPlaceQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export const getGetPlaceItemsUrl = (id: string,) => {
-
-
-
-
-  return `/places/${id}/items`
-}
-
-/**
- * @summary Calendar items anchored to this place (its location, or a travel/car endpoint). Only items in a calendar you can read.
- */
-export const getPlaceItems = async (id: string, options?: RequestInit): Promise<CalendarItemDto[]> => {
-
-  return customFetch<CalendarItemDto[]>(getGetPlaceItemsUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetPlaceItemsQueryKey = (id: string,) => {
-    return [
-    `/places/${id}/items`
-    ] as const;
-    }
-
-
-export const getGetPlaceItemsQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceItems>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetPlaceItemsQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPlaceItems>>> = ({ signal }) => getPlaceItems(id, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlaceItems>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetPlaceItemsQueryResult = NonNullable<Awaited<ReturnType<typeof getPlaceItems>>>
-export type GetPlaceItemsQueryError = void
-
-
-export function useGetPlaceItems<TData = Awaited<ReturnType<typeof getPlaceItems>>, TError = void>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceItems>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPlaceItems>>,
-          TError,
-          Awaited<ReturnType<typeof getPlaceItems>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlaceItems<TData = Awaited<ReturnType<typeof getPlaceItems>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceItems>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPlaceItems>>,
-          TError,
-          Awaited<ReturnType<typeof getPlaceItems>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlaceItems<TData = Awaited<ReturnType<typeof getPlaceItems>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Calendar items anchored to this place (its location, or a travel/car endpoint). Only items in a calendar you can read.
- */
-
-export function useGetPlaceItems<TData = Awaited<ReturnType<typeof getPlaceItems>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetPlaceItemsQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}

@@ -6,7 +6,15 @@
  * OpenAPI spec version: v1
  */
 
-export interface BillDetail {
+export interface BookingDetail {
+  /** @nullable */
+  providerContactId: string | null;
+  /** @nullable */
+  confirmationNumber: string | null;
+  /** @nullable */
+  reference: string | null;
+  /** @nullable */
+  url: string | null;
   /**
      * @nullable
      * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
@@ -14,10 +22,9 @@ export interface BillDetail {
   amount: number | string | null;
   /** @nullable */
   currency: string | null;
-  /** @nullable */
-  payee: string | null;
-  /** @nullable */
-  invoiceNumber: string | null;
-  /** @nullable */
-  paidAt: string | null;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)$
+     */
+  partySize: number | string | null;
 }

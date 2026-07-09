@@ -13,6 +13,8 @@ export interface CalendarItemOccurrenceDto {
   title?: string | null;
   /** @nullable */
   placeId?: string | null;
+  /** @nullable */
+  locationLabel?: string | null;
   isAllDay: boolean;
   start: string;
   /** @nullable */

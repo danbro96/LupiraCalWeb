@@ -9,10 +9,9 @@ import {
 } from '../../../data/api/lupiraCalApi';
 import { fmtDate, parseYmd } from '../../../domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
-import { usePlaces } from '../../../state/usePlaces';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
 
-/** Right pane for a contact: reach fields, place-resolved addresses, profiles, group membership,
+/** Right pane for a contact: reach fields, postal addresses, profiles, group membership,
  *  completeness, delete. Fields are read-only over REST — edits sync via CardDAV. */
 export function ContactDetailPane() {
   const { contactId } = useParams();
@@ -23,7 +22,6 @@ export function ContactDetailPane() {
   const addMember = useAddContactGroupMember({ mutation: { onSuccess: invalidate } });
   const removeMember = useRemoveContactGroupMember({ mutation: { onSuccess: invalidate } });
   const del = useDeleteContact({ mutation: { onSuccess: () => { invalidate(); navigate('/contacts'); } } });
-  const places = usePlaces((contact?.addresses ?? []).map((a) => a.placeId ?? null));
   const [groupId, setGroupId] = useState('');
 
   if (isLoading) return <div className="contacts-detail-pane"><p className="meta">Loading…</p></div>;
@@ -73,7 +71,7 @@ export function ContactDetailPane() {
         {contact.addresses.map((a, i) => (
           <div key={i}>
             <dt>{a.type} address</dt>
-            <dd>📍 {(a.placeId && places.get(a.placeId)?.name) || '…'}</dd>
+            <dd>📍 {a.formattedAddress || '…'}</dd>
           </div>
         ))}
         {contact.profiles.map((p, i) => (
