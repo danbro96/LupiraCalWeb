@@ -15,6 +15,7 @@ export default [
       'node_modules/**',
       'dist/**',
       'src/data/api/**', // orval-generated client (from backend-openapi.json)
+      'src/data/api-geo/**', // orval-generated client (from backend-geo-openapi.json)
       '*.config.js',
       '*.config.mjs',
       '*.config.ts',

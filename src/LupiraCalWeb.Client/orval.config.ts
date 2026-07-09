@@ -21,4 +21,20 @@ export default defineConfig({
       },
     },
   },
+  // LupiraGeoApi (gazetteer/geocoding/saved places). Proxied same-origin by the BFF at /geo-api;
+  // requests go through customFetchGeo (GEO_API_BASE_URL).
+  lupiraGeoApi: {
+    input: { target: './backend-geo-openapi.json' },
+    output: {
+      target: './src/data/api-geo/lupiraGeoApi.ts',
+      schemas: './src/data/api-geo/models',
+      client: 'react-query',
+      httpClient: 'fetch',
+      clean: true,
+      override: {
+        mutator: { path: './src/data/fetcher.ts', name: 'customFetchGeo' },
+        fetch: { includeHttpResponseReturnType: false },
+      },
+    },
+  },
 });

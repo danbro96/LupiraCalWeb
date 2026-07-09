@@ -5,3 +5,7 @@
  */
 const raw = import.meta.env.VITE_API_BASE_URL as string | undefined;
 export const API_BASE_URL = (raw ?? '/api').replace(/\/$/, '');
+
+/** LupiraGeoApi (gazetteer/geocoding/saved places), proxied same-origin by the BFF at `/geo-api/*`. */
+const rawGeo = import.meta.env.VITE_GEO_API_BASE_URL as string | undefined;
+export const GEO_API_BASE_URL = (rawGeo ?? '/geo-api').replace(/\/$/, '');

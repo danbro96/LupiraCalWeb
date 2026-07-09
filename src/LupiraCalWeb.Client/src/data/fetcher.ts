@@ -1,9 +1,10 @@
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, GEO_API_BASE_URL } from '../config';
 
 /**
  * Mutator for every orval-generated request. Auth rides the BFF's HttpOnly cookie session
  * (same-origin), so we send credentials and never a bearer. A 401 means the session expired →
- * bounce to the BFF sign-in, returning here afterwards.
+ * bounce to the BFF sign-in, returning here afterwards. `customFetch` targets LupiraCalApi (`/api`),
+ * `customFetchGeo` targets LupiraGeoApi (`/geo-api`) — both proxied same-origin by the BFF.
  */
 export class ApiError extends Error {
   status: number;
@@ -15,10 +16,10 @@ export class ApiError extends Error {
   }
 }
 
-export async function customFetch<T>(url: string, init?: RequestInit): Promise<T> {
+async function request<T>(base: string, url: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${API_BASE_URL}${url}`, { credentials: 'include', ...init });
+    res = await fetch(`${base}${url}`, { credentials: 'include', ...init });
   } catch {
     throw new ApiError(0, 'Network error — check your connection and try again.');
   }
@@ -41,6 +42,14 @@ export async function customFetch<T>(url: string, init?: RequestInit): Promise<T
   }
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
+}
+
+export function customFetch<T>(url: string, init?: RequestInit): Promise<T> {
+  return request<T>(API_BASE_URL, url, init);
+}
+
+export function customFetchGeo<T>(url: string, init?: RequestInit): Promise<T> {
+  return request<T>(GEO_API_BASE_URL, url, init);
 }
 
 export default customFetch;
