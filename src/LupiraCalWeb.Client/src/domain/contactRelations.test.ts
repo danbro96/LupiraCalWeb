@@ -32,7 +32,7 @@ describe('kind taxonomy', () => {
 const center = { id: 'Y', label: 'Yara' };
 
 describe('buildRelationGraph', () => {
-  it('collapses a stored edge and its derived inverse into one edge', () => {
+  it('collapses a stored edge and its derived inverse into one parent→child edge', () => {
     // Stored on Y: "X is Y's Parent (dad)". Y sees it Outgoing; X sees Y as an Incoming Child.
     const entries = new Map<string, RelationEntry[]>([
       ['Y', [{ contactId: 'X', displayName: 'Xavier', kind: 'Parent', label: 'dad', direction: 'Outgoing' }]],
@@ -40,8 +40,8 @@ describe('buildRelationGraph', () => {
     ]);
     const g = buildRelationGraph(center, entries);
     expect(g.edges).toHaveLength(1);
-    const e = g.edges[0];
-    expect(e).toMatchObject({ source: 'Y', target: 'X', kind: 'Parent', label: 'dad', directed: true });
+    // Normalized parent → child: X (parent) → Y (child).
+    expect(g.edges[0]).toMatchObject({ source: 'X', target: 'Y', kind: 'Parent', label: 'dad', directed: true });
     expect(g.nodes.map((n) => n.id).sort()).toEqual(['X', 'Y']);
   });
 
@@ -52,8 +52,31 @@ describe('buildRelationGraph', () => {
     ]);
     const g = buildRelationGraph(center, entries);
     expect(g.edges).toHaveLength(1);
-    expect(g.edges[0]).toMatchObject({ source: 'Z', target: 'Y', kind: 'Child' });
+    // Z is Y's parent → arrow Z (parent) → Y (child).
+    expect(g.edges[0]).toMatchObject({ source: 'Z', target: 'Y', kind: 'Parent' });
     expect(g.nodes.find((n) => n.id === 'Z')?.label).toBe('Zoe');
+  });
+
+  it('orients both children of a parent identically regardless of which side stored the fact', () => {
+    // Centered on parent P: A stored as P's child (outgoing); B stored P as its parent (→ incoming).
+    const p = { id: 'P', label: 'Parent' };
+    const entries = new Map<string, RelationEntry[]>([
+      [
+        'P',
+        [
+          { contactId: 'A', displayName: 'A', kind: 'Child', direction: 'Outgoing' },
+          { contactId: 'B', displayName: 'B', kind: 'Child', direction: 'Incoming' },
+        ],
+      ],
+    ]);
+    const g = buildRelationGraph(p, entries);
+    expect(g.edges).toHaveLength(2);
+    for (const e of g.edges) {
+      expect(e.source).toBe('P');
+      expect(e.kind).toBe('Parent');
+      expect(e.directed).toBe(true);
+    }
+    expect(g.edges.map((e) => e.target).sort()).toEqual(['A', 'B']);
   });
 
   it('marks symmetric relations undirected and categorizes nodes by the reaching edge', () => {
@@ -67,7 +90,7 @@ describe('buildRelationGraph', () => {
       ],
     ]);
     const g = buildRelationGraph(center, entries);
-    expect(g.edges.find((e) => e.target === 'S')?.directed).toBe(false);
+    expect(g.edges.find((e) => e.source === 'S' || e.target === 'S')?.directed).toBe(false);
     expect(g.nodes.find((n) => n.id === 'S')?.category).toBe('Family');
     expect(g.nodes.find((n) => n.id === 'C')?.category).toBe('Professional');
     expect(g.nodes.find((n) => n.isCenter)?.category).toBe('self');

@@ -109,6 +109,23 @@ export interface RelationGraph {
 const RING = 220;
 
 /**
+ * Normalize a stored edge to a single display orientation so identical relationships read the same
+ * regardless of which contact stored them (and so mirror/redundant facts dedupe to one edge):
+ * Parent/Child → arrow parent → child; symmetric kinds → endpoints sorted; Emergency stays owner →
+ * contact (directed, no reciprocal).
+ */
+function orient(owner: string, target: string, storedKind: RelationKind): { source: string; target: string; kind: RelationKind } {
+  if (storedKind === 'Parent') return { source: target, target: owner, kind: 'Parent' }; // target is owner's parent
+  if (storedKind === 'Child') return { source: owner, target, kind: 'Parent' }; // owner is the parent
+  if (isSymmetric(storedKind)) {
+    return owner < target
+      ? { source: owner, target, kind: storedKind }
+      : { source: target, target: owner, kind: storedKind };
+  }
+  return { source: owner, target, kind: storedKind };
+}
+
+/**
  * Merge per-contact relation lists into one deduped directed ego-graph, radially laid out around
  * `center`. Each entry is canonicalized to its stored edge (owner → target, storedKind) so a
  * stored edge and its derived inverse collapse to a single edge — and an unexpanded neighbor still
@@ -128,17 +145,18 @@ export function buildRelationGraph(
       const owner = outgoing ? viewer : e.contactId;
       const target = outgoing ? e.contactId : viewer;
       const storedKind = outgoing ? e.kind : inverseKind(e.kind);
-      const key = `${owner}|${target}|${storedKind}`;
+      const o = orient(owner, target, storedKind);
+      const key = `${o.source}|${o.target}|${o.kind}`;
       const existing = edges.get(key);
       if (!existing) {
         edges.set(key, {
           id: key,
-          source: owner,
-          target,
-          kind: storedKind,
+          source: o.source,
+          target: o.target,
+          kind: o.kind,
           label: outgoing ? e.label ?? null : null,
-          category: kindCategory(storedKind),
-          directed: !isSymmetric(storedKind),
+          category: kindCategory(o.kind),
+          directed: !isSymmetric(o.kind),
         });
       } else if (outgoing && e.label && !existing.label) {
         existing.label = e.label; // the label lives on the owner's outgoing entry
