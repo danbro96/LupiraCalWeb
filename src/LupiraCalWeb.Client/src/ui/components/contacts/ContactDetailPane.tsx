@@ -6,7 +6,7 @@ import {
   useGetContact,
   useListContactGroups,
   useRemoveContactGroupMember,
-} from '../../../data/api/lupiraCalApi';
+} from '../../../data/api-contact/lupiraContactApi';
 import { fmtDate, parseYmd } from '../../../domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';

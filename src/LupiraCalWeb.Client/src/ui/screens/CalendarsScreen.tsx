@@ -1,20 +1,19 @@
 import { useState } from 'react';
-import {
-  useCreateCalendar,
-  useGrantAddressBookOwner,
-  useGrantCalendarOwner,
-  useRevokeAddressBookOwner,
-  useRevokeCalendarOwner,
-} from '../../data/api/lupiraCalApi';
+import { useCreateCalendar, useGrantCalendarOwner, useRevokeCalendarOwner } from '../../data/api/lupiraCalApi';
 import { CalendarClass, CalendarKind, type ContainerDto } from '../../data/api/models';
+import { useCreateAddressBook, useGrantAddressBookOwner, useRevokeAddressBookOwner } from '../../data/api-contact/lupiraContactApi';
+import type { AddressBookDto } from '../../data/api-contact/models';
 import { calendarLabel, useContainers } from '../../state/useContainers';
-import { useInvalidateContainers } from '../../state/useInvalidate';
+import { addressBookLabel, useAddressBooks } from '../../state/useAddressBooks';
+import { useInvalidateAddressBooks, useInvalidateContainers } from '../../state/useInvalidate';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 import { errText } from '../components/errText';
 
-/** Container management: the full classified set (class/kind/color/tz/access), creation, and sharing. */
+/** Container management: calendars (class/kind/color/tz, from cal-api) and address books (from
+ *  contact-api), with creation and per-owner sharing. */
 export function CalendarsScreen() {
-  const { calendars, addressBooks } = useContainers();
+  const { calendars } = useContainers();
+  const { addressBooks } = useAddressBooks();
   const [creating, setCreating] = useState(false);
 
   return (
@@ -40,8 +39,11 @@ export function CalendarsScreen() {
           </tr>
         </thead>
         <tbody>
-          {[...calendars, ...addressBooks].map((c) => (
-            <ContainerRow key={c.id} container={c} />
+          {calendars.map((c) => (
+            <CalendarRow key={c.id} c={c} />
+          ))}
+          {addressBooks.map((b) => (
+            <BookRow key={b.id} b={b} />
           ))}
         </tbody>
       </table>
@@ -49,16 +51,16 @@ export function CalendarsScreen() {
   );
 }
 
-function ContainerRow({ container: c }: { container: ContainerDto }) {
+function CalendarRow({ c }: { c: ContainerDto }) {
   const [sharing, setSharing] = useState(false);
   return (
     <>
       <tr>
         <td>
-          <span className="color-dot" style={{ background: c.type === 'calendar' ? calendarColor(c) : 'var(--border)' }} />
+          <span className="color-dot" style={{ background: calendarColor(c) }} />
         </td>
         <td>
-          {c.kind ? `${CALENDAR_KIND_ICONS[c.kind]} ` : '📇 '}
+          {c.kind ? `${CALENDAR_KIND_ICONS[c.kind]} ` : ''}
           {calendarLabel(c)}
         </td>
         <td>
@@ -79,7 +81,7 @@ function ContainerRow({ container: c }: { container: ContainerDto }) {
       {sharing && (
         <tr>
           <td colSpan={8}>
-            <SharePanel container={c} />
+            <SharePanel kind="calendar" id={c.id} />
           </td>
         </tr>
       )}
@@ -87,18 +89,56 @@ function ContainerRow({ container: c }: { container: ContainerDto }) {
   );
 }
 
-/** Grant/revoke by email. The API has no owner-list endpoint, so this is action-only. */
-function SharePanel({ container }: { container: ContainerDto }) {
-  const invalidate = useInvalidateContainers();
-  const opts = { mutation: { onSuccess: invalidate } };
-  const grantCal = useGrantCalendarOwner(opts);
-  const grantBook = useGrantAddressBookOwner(opts);
-  const revokeCal = useRevokeCalendarOwner(opts);
-  const revokeBook = useRevokeAddressBookOwner(opts);
+function BookRow({ b }: { b: AddressBookDto }) {
+  const [sharing, setSharing] = useState(false);
+  return (
+    <>
+      <tr>
+        <td>
+          <span className="color-dot" style={{ background: 'var(--border)' }} />
+        </td>
+        <td>📇 {addressBookLabel(b)}</td>
+        <td>
+          <code>{b.slug}</code>
+        </td>
+        <td className="meta">—</td>
+        <td className="meta">—</td>
+        <td className="meta">—</td>
+        <td className="meta">{b.access}</td>
+        <td>
+          {b.access === 'Owner' && (
+            <button className="linklike" onClick={() => setSharing((s) => !s)}>
+              {sharing ? 'close' : 'share…'}
+            </button>
+          )}
+        </td>
+      </tr>
+      {sharing && (
+        <tr>
+          <td colSpan={8}>
+            <SharePanel kind="book" id={b.id} />
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+/** Grant/revoke by email. The API has no owner-list endpoint, so this is action-only. Calendars
+ *  share via cal-api owners, address books via contact-api owners. */
+function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
+  const invalidateContainers = useInvalidateContainers();
+  const invalidateBooks = useInvalidateAddressBooks();
+  const calOpts = { mutation: { onSuccess: invalidateContainers } };
+  const bookOpts = { mutation: { onSuccess: invalidateBooks } };
+  const grantCal = useGrantCalendarOwner(calOpts);
+  const revokeCal = useRevokeCalendarOwner(calOpts);
+  const grantBook = useGrantAddressBookOwner(bookOpts);
+  const revokeBook = useRevokeAddressBookOwner(bookOpts);
   const [email, setEmail] = useState('');
   const [access, setAccess] = useState('read-write');
 
-  const isCalendar = container.type === 'calendar';
+  const isCalendar = kind === 'calendar';
   const grant = isCalendar ? grantCal : grantBook;
   const revoke = isCalendar ? revokeCal : revokeBook;
   const error = [grantCal, grantBook, revokeCal, revokeBook].map((m) => errText(m.error)).find(Boolean);
@@ -116,8 +156,8 @@ function SharePanel({ container }: { container: ContainerDto }) {
         disabled={!email}
         onClick={() =>
           isCalendar
-            ? grantCal.mutate({ calendarId: container.id, data: { email, access } })
-            : grantBook.mutate({ addressBookId: container.id, data: { email, access } })
+            ? grantCal.mutate({ calendarId: id, data: { email, access } })
+            : grantBook.mutate({ addressBookId: id, data: { email, access } })
         }
       >
         Grant
@@ -127,8 +167,8 @@ function SharePanel({ container }: { container: ContainerDto }) {
         disabled={!email}
         onClick={() =>
           isCalendar
-            ? revokeCal.mutate({ calendarId: container.id, params: { email } })
-            : revokeBook.mutate({ addressBookId: container.id, params: { email } })
+            ? revokeCal.mutate({ calendarId: id, params: { email } })
+            : revokeBook.mutate({ addressBookId: id, params: { email } })
         }
       >
         Revoke
@@ -140,15 +180,10 @@ function SharePanel({ container }: { container: ContainerDto }) {
 }
 
 function NewContainerForm({ onDone }: { onDone: () => void }) {
-  const invalidate = useInvalidateContainers();
-  const create = useCreateCalendar({
-    mutation: {
-      onSuccess: () => {
-        invalidate();
-        onDone();
-      },
-    },
-  });
+  const invalidateContainers = useInvalidateContainers();
+  const invalidateBooks = useInvalidateAddressBooks();
+  const createCal = useCreateCalendar({ mutation: { onSuccess: () => { invalidateContainers(); onDone(); } } });
+  const createBook = useCreateAddressBook({ mutation: { onSuccess: () => { invalidateBooks(); onDone(); } } });
   const [form, setForm] = useState({
     type: 'calendar',
     slug: '',
@@ -159,22 +194,30 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
     kind: 'Generic' as CalendarKind,
   });
 
+  const isBook = form.type === 'addressbook';
+  const error = errText(createCal.error) || errText(createBook.error);
+  const pending = createCal.isPending || createBook.isPending;
+
   return (
     <form
       className="card"
       onSubmit={(e) => {
         e.preventDefault();
-        create.mutate({
-          data: {
-            type: form.type,
-            slug: form.slug,
-            displayName: form.displayName || null,
-            color: form.type === 'calendar' ? form.color : null,
-            defaultTimezone: form.type === 'calendar' ? form.defaultTimezone || null : null,
-            class: form.type === 'calendar' ? form.class : null,
-            kind: form.type === 'calendar' ? form.kind : null,
-          },
-        });
+        if (isBook) {
+          createBook.mutate({ data: { slug: form.slug, displayName: form.displayName || null } });
+        } else {
+          createCal.mutate({
+            data: {
+              type: 'calendar',
+              slug: form.slug,
+              displayName: form.displayName || null,
+              color: form.color,
+              defaultTimezone: form.defaultTimezone || null,
+              class: form.class,
+              kind: form.kind,
+            },
+          });
+        }
       }}
     >
       <div className="form-row">
@@ -185,7 +228,7 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
         <input className="text-input" placeholder="slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} required />
         <input className="text-input" placeholder="Display name" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
       </div>
-      {form.type === 'calendar' && (
+      {!isBook && (
         <div className="form-row">
           <input type="color" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} title="Color" />
           <input className="text-input" placeholder="IANA timezone" value={form.defaultTimezone} onChange={(e) => setForm({ ...form, defaultTimezone: e.target.value })} />
@@ -201,9 +244,9 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
           </select>
         </div>
       )}
-      {errText(create.error) && <p className="error-text">{errText(create.error)}</p>}
+      {error && <p className="error-text">{error}</p>}
       <div className="chip-row">
-        <button className="btn primary" type="submit" disabled={create.isPending}>
+        <button className="btn primary" type="submit" disabled={pending}>
           Create
         </button>
         <button className="btn" type="button" onClick={onDone}>

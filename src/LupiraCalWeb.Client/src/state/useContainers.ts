@@ -6,9 +6,9 @@ import type { ContainerDto } from '../data/api/models';
 export function useContainers() {
   const query = useListContainers();
   const containers = useMemo(() => query.data ?? [], [query.data]);
-  const calendars = useMemo(() => containers.filter((c) => c.type === 'calendar'), [containers]);
-  const addressBooks = useMemo(() => containers.filter((c) => c.type === 'addressbook'), [containers]);
-  return { ...query, containers, calendars, addressBooks };
+  // Containers are all calendars now — address books moved to LupiraContactApi (useAddressBooks).
+  const calendars = containers;
+  return { ...query, containers, calendars };
 }
 
 /** First-login seeding: once containers load with no calendars, run /me/bootstrap (idempotent) once. */

@@ -5,8 +5,8 @@ import {
   useListContactRelations,
   useRemoveContactRelation,
   useSearchContacts,
-} from '../../../data/api/lupiraCalApi';
-import type { ContactDto, ContactRelationKind } from '../../../data/api/models';
+} from '../../../data/api-contact/lupiraContactApi';
+import type { ContactDto, ContactRelationKind } from '../../../data/api-contact/models';
 import { kindCategory, RELATION_KINDS } from '../../../domain/contactRelations';
 import type { RelationKind } from '../../../domain/contactRelations';
 import { useInvalidateContacts } from '../../../state/useInvalidate';

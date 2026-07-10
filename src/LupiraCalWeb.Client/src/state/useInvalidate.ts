@@ -31,3 +31,8 @@ export function useInvalidateContainers() {
   const queryClient = useQueryClient();
   return () => queryClient.invalidateQueries({ predicate: (q) => String(q.queryKey[0] ?? '').startsWith('/calendars') });
 }
+
+export function useInvalidateAddressBooks() {
+  const queryClient = useQueryClient();
+  return () => queryClient.invalidateQueries({ predicate: (q) => String(q.queryKey[0] ?? '').startsWith('/address-books') });
+}

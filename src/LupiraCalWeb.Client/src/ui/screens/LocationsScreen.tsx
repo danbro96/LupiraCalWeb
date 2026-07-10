@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useSearchContacts } from '../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../data/api/models';
+import { useSearchContacts } from '../../data/api-contact/lupiraContactApi';
 import { formatCoords, osmUrl } from '../../domain/places';
 import { fmtDate, fmtDateTime, parseYmd } from '../../domain/time';
 import { useGeoPlace, usePlaceItems, useSearchPlaces } from '../../state/usePlaces';

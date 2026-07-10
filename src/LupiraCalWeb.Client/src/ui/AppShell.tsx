@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router-dom'
 import { logout } from '../data/session';
 import { useSession } from '../state/useSession';
 import { useEnsureBootstrap } from '../state/useContainers';
+import { useEnsureContactBootstrap } from '../state/useAddressBooks';
 import { CalendarVisibilityProvider } from './components/CalendarVisibility';
 import { Sidebar } from './components/Sidebar';
 import { ItemDrawer } from './components/drawer/ItemDrawer';
@@ -12,6 +13,7 @@ import { NewItemModal } from './components/NewItemModal';
 export function AppShell() {
   const { data: user } = useSession();
   useEnsureBootstrap();
+  useEnsureContactBootstrap();
   const [searchParams, setSearchParams] = useSearchParams();
   const [creating, setCreating] = useState(false);
   const itemId = searchParams.get('item');

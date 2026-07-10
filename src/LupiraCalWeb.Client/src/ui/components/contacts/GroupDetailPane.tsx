@@ -6,7 +6,7 @@ import {
   useRemoveContactGroupMember,
   useRenameContactGroup,
   useSearchContacts,
-} from '../../../data/api/lupiraCalApi';
+} from '../../../data/api-contact/lupiraContactApi';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useGroup } from './useGroup';
 

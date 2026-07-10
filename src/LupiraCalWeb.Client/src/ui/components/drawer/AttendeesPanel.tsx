@@ -5,9 +5,9 @@ import {
   useLeaveItem,
   useRemoveParticipant,
   useRespondToInvitation,
-  useSearchContacts,
 } from '../../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../../data/api/models';
+import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 

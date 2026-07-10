@@ -4,8 +4,8 @@ import { useQueries } from '@tanstack/react-query';
 import { Background, Controls, Handle, MarkerType, Position, ReactFlow } from '@xyflow/react';
 import type { Edge, Node, NodeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { getListContactRelationsQueryKey, listContactRelations } from '../../../data/api/lupiraCalApi';
-import type { ContactRelationEntryDto } from '../../../data/api/models';
+import { getListContactRelationsQueryKey, listContactRelations } from '../../../data/api-contact/lupiraContactApi';
+import type { ContactRelationEntryDto } from '../../../data/api-contact/models';
 import { buildRelationGraph } from '../../../domain/contactRelations';
 
 type RelationNodeData = {

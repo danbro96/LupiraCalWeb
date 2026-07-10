@@ -16,6 +16,7 @@ export default [
       'dist/**',
       'src/data/api/**', // orval-generated client (from backend-openapi.json)
       'src/data/api-geo/**', // orval-generated client (from backend-geo-openapi.json)
+      'src/data/api-contact/**', // orval-generated client (from backend-contact-openapi.json)
       '*.config.js',
       '*.config.mjs',
       '*.config.ts',

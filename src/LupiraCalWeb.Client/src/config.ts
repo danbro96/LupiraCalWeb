@@ -9,3 +9,7 @@ export const API_BASE_URL = (raw ?? '/api').replace(/\/$/, '');
 /** LupiraGeoApi (gazetteer/geocoding/saved places), proxied same-origin by the BFF at `/geo-api/*`. */
 const rawGeo = import.meta.env.VITE_GEO_API_BASE_URL as string | undefined;
 export const GEO_API_BASE_URL = (rawGeo ?? '/geo-api').replace(/\/$/, '');
+
+/** LupiraContactApi (contacts, address books, groups, relations), proxied same-origin at `/contact-api/*`. */
+const rawContact = import.meta.env.VITE_CONTACT_API_BASE_URL as string | undefined;
+export const CONTACT_API_BASE_URL = (rawContact ?? '/contact-api').replace(/\/$/, '');

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-dom';
-import { useCreateContact, useSearchContacts } from '../../../data/api/lupiraCalApi';
-import { calendarLabel, useContainers } from '../../../state/useContainers';
+import { useCreateContact, useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
+import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useGroup } from './useGroup';
@@ -16,7 +16,7 @@ export function ContactList() {
   const groupId = useMatch('/contacts/groups/:groupId')?.params.groupId;
   const group = useGroup(bookId || undefined, groupId);
 
-  const { addressBooks } = useContainers();
+  const { addressBooks } = useAddressBooks();
   const { data: contacts } = useSearchContacts({
     query: query || undefined,
     addressBookId: bookId || undefined,
@@ -70,7 +70,7 @@ export function ContactList() {
 function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onDone: () => void }) {
   const invalidate = useInvalidateContacts();
   const create = useCreateContact({ mutation: { onSuccess: () => { invalidate(); onDone(); } } });
-  const { addressBooks } = useContainers();
+  const { addressBooks } = useAddressBooks();
   const [form, setForm] = useState({
     addressBookId: defaultBookId ?? '',
     givenName: '',
@@ -104,7 +104,7 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
           <option value="">Address book…</option>
           {addressBooks.map((b) => (
             <option key={b.id} value={b.id}>
-              {calendarLabel(b)}
+              {addressBookLabel(b)}
             </option>
           ))}
         </select>

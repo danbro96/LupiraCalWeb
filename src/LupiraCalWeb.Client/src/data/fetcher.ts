@@ -1,10 +1,11 @@
-import { API_BASE_URL, GEO_API_BASE_URL } from '../config';
+import { API_BASE_URL, CONTACT_API_BASE_URL, GEO_API_BASE_URL } from '../config';
 
 /**
  * Mutator for every orval-generated request. Auth rides the BFF's HttpOnly cookie session
  * (same-origin), so we send credentials and never a bearer. A 401 means the session expired →
  * bounce to the BFF sign-in, returning here afterwards. `customFetch` targets LupiraCalApi (`/api`),
- * `customFetchGeo` targets LupiraGeoApi (`/geo-api`) — both proxied same-origin by the BFF.
+ * `customFetchGeo` targets LupiraGeoApi (`/geo-api`), `customFetchContact` targets LupiraContactApi
+ * (`/contact-api`) — all proxied same-origin by the BFF.
  */
 export class ApiError extends Error {
   status: number;
@@ -50,6 +51,10 @@ export function customFetch<T>(url: string, init?: RequestInit): Promise<T> {
 
 export function customFetchGeo<T>(url: string, init?: RequestInit): Promise<T> {
   return request<T>(GEO_API_BASE_URL, url, init);
+}
+
+export function customFetchContact<T>(url: string, init?: RequestInit): Promise<T> {
+  return request<T>(CONTACT_API_BASE_URL, url, init);
 }
 
 export default customFetch;

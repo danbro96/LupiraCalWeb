@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useMatch, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  useCreateCalendar,
+  useCreateAddressBook,
   useCreateContactGroup,
   useListContactGroups,
   useSearchContacts,
-} from '../../../data/api/lupiraCalApi';
-import type { ContainerDto } from '../../../data/api/models';
-import { calendarLabel, useContainers } from '../../../state/useContainers';
-import { useInvalidateContacts, useInvalidateContainers } from '../../../state/useInvalidate';
+} from '../../../data/api-contact/lupiraContactApi';
+import type { AddressBookDto } from '../../../data/api-contact/models';
+import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
+import { useInvalidateAddressBooks, useInvalidateContacts } from '../../../state/useInvalidate';
 
 /** Left rail: address books → their groups/orgs, with contact and member counts.
  *  Book click filters the list (?book); group click opens the group pane + filters to members. */
@@ -17,7 +17,7 @@ export function ContactsTree() {
   const [params] = useSearchParams();
   const activeBookId = params.get('book') ?? '';
   const activeGroupId = useMatch('/contacts/groups/:groupId')?.params.groupId ?? '';
-  const { addressBooks } = useContainers();
+  const { addressBooks } = useAddressBooks();
   const { data: allContacts } = useSearchContacts({});
   const [addingBook, setAddingBook] = useState(false);
 
@@ -64,7 +64,7 @@ function BookNode({
   activeBookId,
   activeGroupId,
 }: {
-  book: ContainerDto;
+  book: AddressBookDto;
   count: number;
   activeBookId: string;
   activeGroupId: string;
@@ -91,7 +91,7 @@ function BookNode({
         >
           {expanded ? '▾' : '▸'}
         </span>
-        <span className="tree-label">📇 {calendarLabel(book)}</span>
+        <span className="tree-label">📇 {addressBookLabel(book)}</span>
         <span className="tree-count">{count}</span>
       </button>
 
@@ -156,8 +156,8 @@ function NewGroupForm({ addressBookId, onDone }: { addressBookId: string; onDone
 }
 
 function NewBookForm({ onDone }: { onDone: () => void }) {
-  const invalidate = useInvalidateContainers();
-  const create = useCreateCalendar({ mutation: { onSuccess: () => { invalidate(); onDone(); } } });
+  const invalidate = useInvalidateAddressBooks();
+  const create = useCreateAddressBook({ mutation: { onSuccess: () => { invalidate(); onDone(); } } });
   const [slug, setSlug] = useState('');
   const [displayName, setDisplayName] = useState('');
 
@@ -166,10 +166,7 @@ function NewBookForm({ onDone }: { onDone: () => void }) {
       className="tree-add"
       onSubmit={(e) => {
         e.preventDefault();
-        if (slug)
-          create.mutate({
-            data: { type: 'addressbook', slug, displayName: displayName || null, color: null, defaultTimezone: null, class: null, kind: null },
-          });
+        if (slug) create.mutate({ data: { slug, displayName: displayName || null } });
       }}
     >
       <input className="text-input" placeholder="slug" value={slug} autoFocus onChange={(e) => setSlug(e.target.value)} />
