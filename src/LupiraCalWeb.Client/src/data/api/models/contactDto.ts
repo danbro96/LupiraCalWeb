@@ -7,6 +7,7 @@
  */
 import type { CompletenessScore } from './completenessScore';
 import type { ContactPostalAddress } from './contactPostalAddress';
+import type { ContactRelation } from './contactRelation';
 import type { ContactSocialProfile } from './contactSocialProfile';
 import type { JsonNode } from './jsonNode';
 
@@ -31,6 +32,7 @@ export interface ContactDto {
   tags?: string[] | null;
   addresses: ContactPostalAddress[];
   profiles: ContactSocialProfile[];
+  relations: ContactRelation[];
   metadata?: null | JsonNode;
   completeness?: null | CompletenessScore;
   etag: string;

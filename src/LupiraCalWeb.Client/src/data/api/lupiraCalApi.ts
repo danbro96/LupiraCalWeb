@@ -26,10 +26,12 @@ import type {
 
 import type {
   AddContactGroupMemberParams,
+  AddContactRelationRequest,
   CalendarItemDto,
   CalendarItemOccurrenceDto,
   ContactDto,
   ContactGroupDto,
+  ContactRelationEntryDto,
   ContainerDto,
   CreateCalendarItemRequest,
   CreateCalendarRequest,
@@ -45,6 +47,7 @@ import type {
   OwnerGrantDto,
   ProblemDetails,
   RelationDto,
+  RemoveContactRelationParams,
   RenameContactGroupParams,
   RespondToInvitationParams,
   ReviseContactRequest,
@@ -2028,6 +2031,261 @@ export const useDeleteContact = <TError = void,
         TContext
       > => {
       return useMutation(getDeleteContactMutationOptions(options), queryClient);
+    }
+
+export const getListContactRelationsUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/relations`
+}
+
+/**
+ * @summary Resolved relations, both directions: each entry's kind is the other contact's role relative to this one (incoming = derived inverse).
+ */
+export const listContactRelations = async (id: string, options?: RequestInit): Promise<ContactRelationEntryDto[]> => {
+
+  return customFetch<ContactRelationEntryDto[]>(getListContactRelationsUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListContactRelationsQueryKey = (id: string,) => {
+    return [
+    `/contacts/${id}/relations`
+    ] as const;
+    }
+
+
+export const getListContactRelationsQueryOptions = <TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListContactRelationsQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listContactRelations>>> = ({ signal }) => listContactRelations(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListContactRelationsQueryResult = NonNullable<Awaited<ReturnType<typeof listContactRelations>>>
+export type ListContactRelationsQueryError = void | ProblemDetails
+
+
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listContactRelations>>,
+          TError,
+          Awaited<ReturnType<typeof listContactRelations>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listContactRelations>>,
+          TError,
+          Awaited<ReturnType<typeof listContactRelations>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Resolved relations, both directions: each entry's kind is the other contact's role relative to this one (incoming = derived inverse).
+ */
+
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListContactRelationsQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAddContactRelationUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/relations`
+}
+
+/**
+ * @summary Upsert a relation: 'toContactId is this contact's kind' (re-adding the same target+kind revises the label).
+ */
+export const addContactRelation = async (id: string,
+    addContactRelationRequest: AddContactRelationRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetch<ContactDto>(getAddContactRelationUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(addContactRelationRequest)
+  }
+);}
+
+
+
+
+
+export const getAddContactRelationMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactRelation>>, TError,{id: string;data: AddContactRelationRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof addContactRelation>>, TError,{id: string;data: AddContactRelationRequest}, TContext> => {
+
+const mutationKey = ['addContactRelation'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addContactRelation>>, {id: string;data: AddContactRelationRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  addContactRelation(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddContactRelationMutationResult = NonNullable<Awaited<ReturnType<typeof addContactRelation>>>
+    export type AddContactRelationMutationBody = AddContactRelationRequest
+    export type AddContactRelationMutationError = ProblemDetails | void
+
+    /**
+ * @summary Upsert a relation: 'toContactId is this contact's kind' (re-adding the same target+kind revises the label).
+ */
+export const useAddContactRelation = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactRelation>>, TError,{id: string;data: AddContactRelationRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof addContactRelation>>,
+        TError,
+        {id: string;data: AddContactRelationRequest},
+        TContext
+      > => {
+      return useMutation(getAddContactRelationMutationOptions(options), queryClient);
+    }
+
+export const getRemoveContactRelationUrl = (id: string,
+    toContactId: string,
+    params: RemoveContactRelationParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/contacts/${id}/relations/${toContactId}?${stringifiedParams}` : `/contacts/${id}/relations/${toContactId}`
+}
+
+/**
+ * @summary Remove the relation edge to a contact with the given kind.
+ */
+export const removeContactRelation = async (id: string,
+    toContactId: string,
+    params: RemoveContactRelationParams, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetch<ContactDto>(getRemoveContactRelationUrl(id,toContactId,params),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getRemoveContactRelationMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactRelation>>, TError,{id: string;toContactId: string;params: RemoveContactRelationParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeContactRelation>>, TError,{id: string;toContactId: string;params: RemoveContactRelationParams}, TContext> => {
+
+const mutationKey = ['removeContactRelation'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeContactRelation>>, {id: string;toContactId: string;params: RemoveContactRelationParams}> = (props) => {
+          const {id,toContactId,params} = props ?? {};
+
+          return  removeContactRelation(id,toContactId,params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveContactRelationMutationResult = NonNullable<Awaited<ReturnType<typeof removeContactRelation>>>
+
+    export type RemoveContactRelationMutationError = void | ProblemDetails
+
+    /**
+ * @summary Remove the relation edge to a contact with the given kind.
+ */
+export const useRemoveContactRelation = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactRelation>>, TError,{id: string;toContactId: string;params: RemoveContactRelationParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removeContactRelation>>,
+        TError,
+        {id: string;toContactId: string;params: RemoveContactRelationParams},
+        TContext
+      > => {
+      return useMutation(getRemoveContactRelationMutationOptions(options), queryClient);
     }
 
 export const getCreateItemRelationUrl = (id: string,) => {

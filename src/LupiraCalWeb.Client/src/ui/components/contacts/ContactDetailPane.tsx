@@ -10,6 +10,7 @@ import {
 import { fmtDate, parseYmd } from '../../../domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
+import { ContactRelationsPanel } from './ContactRelationsPanel';
 
 /** Right pane for a contact: reach fields, postal addresses, profiles, group membership,
  *  completeness, delete. Fields are read-only over REST — edits sync via CardDAV. */
@@ -138,6 +139,8 @@ export function ContactDetailPane() {
           </button>
         </div>
       </section>
+
+      <ContactRelationsPanel contact={contact} />
 
       <p className="meta">vCard UID {contact.externalId} · edits sync via CardDAV</p>
       <button className="btn destructive" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
