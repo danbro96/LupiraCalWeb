@@ -6,6 +6,7 @@
  * OpenAPI spec version: v1
  */
 import type { AdminAreaDto } from './adminAreaDto';
+import type { PlaceAliasDto } from './placeAliasDto';
 import type { PlaceCategory } from './placeCategory';
 import type { PlaceExternalIdDto } from './placeExternalIdDto';
 import type { PlaceKind } from './placeKind';
@@ -37,7 +38,7 @@ export interface PlaceDto {
      * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
      */
   distanceM?: number | string | null;
-  aliases?: string[];
+  aliases?: PlaceAliasDto[];
   containment?: AdminAreaDto[];
   externalIds?: PlaceExternalIdDto[];
 }

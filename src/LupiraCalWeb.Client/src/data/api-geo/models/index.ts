@@ -6,6 +6,7 @@
  * OpenAPI spec version: v1
  */
 
+export * from './addAliasRequest';
 export * from './adminAreaDto';
 export * from './adminLevel';
 export * from './createPlaceRequest';
@@ -15,16 +16,22 @@ export * from './forwardGeocodeParams';
 export * from './geocodeResultDto';
 export * from './listAdminAreasParams';
 export * from './meDto';
+export * from './mergePlaceRequest';
+export * from './placeAliasDto';
 export * from './placeCategory';
 export * from './placeDto';
 export * from './placeExternalIdDto';
 export * from './placeKind';
 export * from './placeSource';
+export * from './placeSuggestionDto';
 export * from './problemDetails';
 export * from './resolvePlaceRequest';
 export * from './resolvePlaceResponse';
+export * from './resolvePlacesBatchRequest';
 export * from './reverseGeocodeParams';
 export * from './savedPlaceDto';
 export * from './searchPlacesParams';
+export * from './suggestionType';
+export * from './suggestPlacesParams';
 export * from './updatePlaceRequest';
 export * from './updateSavedPlaceRequest';
