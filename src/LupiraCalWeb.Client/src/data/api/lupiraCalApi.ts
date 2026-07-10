@@ -43,7 +43,9 @@ import type {
   GrantOwnerRequest,
   InviteParticipantParams,
   JsonNode,
+  ListContactRelationsParams,
   MeDto,
+  NormalizeContactSiblingsParams,
   OwnerGrantDto,
   ProblemDetails,
   RelationDto,
@@ -2033,20 +2035,29 @@ export const useDeleteContact = <TError = void,
       return useMutation(getDeleteContactMutationOptions(options), queryClient);
     }
 
-export const getListContactRelationsUrl = (id: string,) => {
+export const getListContactRelationsUrl = (id: string,
+    params?: ListContactRelationsParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/contacts/${id}/relations`
+  return stringifiedParams.length > 0 ? `/contacts/${id}/relations?${stringifiedParams}` : `/contacts/${id}/relations`
 }
 
 /**
- * @summary Resolved relations, both directions: each entry's kind is the other contact's role relative to this one (incoming = derived inverse).
+ * @summary Resolved relations, both directions: each entry's kind is the other contact's role relative to this one (incoming = derived inverse). Set includeInferred=true to also return kin derived from the parent/child graph (siblings, grandparents/-children, aunts/uncles, cousins, nieces/nephews), tagged Provenance=Inferred.
  */
-export const listContactRelations = async (id: string, options?: RequestInit): Promise<ContactRelationEntryDto[]> => {
+export const listContactRelations = async (id: string,
+    params?: ListContactRelationsParams, options?: RequestInit): Promise<ContactRelationEntryDto[]> => {
 
-  return customFetch<ContactRelationEntryDto[]>(getListContactRelationsUrl(id),
+  return customFetch<ContactRelationEntryDto[]>(getListContactRelationsUrl(id,params),
   {
     ...options,
     method: 'GET'
@@ -2059,23 +2070,25 @@ export const listContactRelations = async (id: string, options?: RequestInit): P
 
 
 
-export const getListContactRelationsQueryKey = (id: string,) => {
+export const getListContactRelationsQueryKey = (id: string,
+    params?: ListContactRelationsParams,) => {
     return [
-    `/contacts/${id}/relations`
+    `/contacts/${id}/relations`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getListContactRelationsQueryOptions = <TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getListContactRelationsQueryOptions = <TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(id: string,
+    params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListContactRelationsQueryKey(id);
+  const queryKey =  queryOptions?.queryKey ?? getListContactRelationsQueryKey(id,params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listContactRelations>>> = ({ signal }) => listContactRelations(id, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listContactRelations>>> = ({ signal }) => listContactRelations(id,params, { signal, ...requestOptions });
 
 
 
@@ -2089,7 +2102,8 @@ export type ListContactRelationsQueryError = void | ProblemDetails
 
 
 export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
+ id: string,
+    params: undefined |  ListContactRelationsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listContactRelations>>,
           TError,
@@ -2099,7 +2113,8 @@ export function useListContactRelations<TData = Awaited<ReturnType<typeof listCo
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
+ id: string,
+    params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listContactRelations>>,
           TError,
@@ -2109,19 +2124,21 @@ export function useListContactRelations<TData = Awaited<ReturnType<typeof listCo
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: string,
+    params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Resolved relations, both directions: each entry's kind is the other contact's role relative to this one (incoming = derived inverse).
+ * @summary Resolved relations, both directions: each entry's kind is the other contact's role relative to this one (incoming = derived inverse). Set includeInferred=true to also return kin derived from the parent/child graph (siblings, grandparents/-children, aunts/uncles, cousins, nieces/nephews), tagged Provenance=Inferred.
  */
 
 export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: string,
+    params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getListContactRelationsQueryOptions(id,options)
+  const queryOptions = getListContactRelationsQueryOptions(id,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -2204,6 +2221,84 @@ export const useAddContactRelation = <TError = ProblemDetails | void,
         TContext
       > => {
       return useMutation(getAddContactRelationMutationOptions(options), queryClient);
+    }
+
+export const getNormalizeContactSiblingsUrl = (params?: NormalizeContactSiblingsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/contacts/relations/normalize?${stringifiedParams}` : `/contacts/relations/normalize`
+}
+
+/**
+ * @summary One-time, idempotent cleanup: convert explicit Sibling edges whose endpoints have a recorded parent into shared parentage. Scoped to the caller's writable books; returns the number of edges converted.
+ */
+export const normalizeContactSiblings = async (params?: NormalizeContactSiblingsParams, options?: RequestInit): Promise<number | string> => {
+
+  return customFetch<number | string>(getNormalizeContactSiblingsUrl(params),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getNormalizeContactSiblingsMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof normalizeContactSiblings>>, TError,{params?: NormalizeContactSiblingsParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof normalizeContactSiblings>>, TError,{params?: NormalizeContactSiblingsParams}, TContext> => {
+
+const mutationKey = ['normalizeContactSiblings'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof normalizeContactSiblings>>, {params?: NormalizeContactSiblingsParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  normalizeContactSiblings(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NormalizeContactSiblingsMutationResult = NonNullable<Awaited<ReturnType<typeof normalizeContactSiblings>>>
+
+    export type NormalizeContactSiblingsMutationError = void | ProblemDetails
+
+    /**
+ * @summary One-time, idempotent cleanup: convert explicit Sibling edges whose endpoints have a recorded parent into shared parentage. Scoped to the caller's writable books; returns the number of edges converted.
+ */
+export const useNormalizeContactSiblings = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof normalizeContactSiblings>>, TError,{params?: NormalizeContactSiblingsParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof normalizeContactSiblings>>,
+        TError,
+        {params?: NormalizeContactSiblingsParams},
+        TContext
+      > => {
+      return useMutation(getNormalizeContactSiblingsMutationOptions(options), queryClient);
     }
 
 export const getRemoveContactRelationUrl = (id: string,

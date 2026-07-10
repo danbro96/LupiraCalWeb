@@ -12,6 +12,11 @@ describe('kind taxonomy', () => {
     expect(kindCategory('Other')).toBe('Other');
   });
 
+  it('categorizes inferred kinships as Family', () => {
+    for (const k of ['Grandparent', 'Grandchild', 'AuntUncle', 'NieceNephew', 'Cousin'] as const)
+      expect(kindCategory(k)).toBe('Family');
+  });
+
   it('inverts Parent↔Child, Emergency→Other, else self', () => {
     expect(inverseKind('Parent')).toBe('Child');
     expect(inverseKind('Child')).toBe('Parent');
@@ -55,6 +60,23 @@ describe('buildRelationGraph', () => {
     // Z is Y's parent → arrow Z (parent) → Y (child).
     expect(g.edges[0]).toMatchObject({ source: 'Z', target: 'Y', kind: 'Parent' });
     expect(g.nodes.find((n) => n.id === 'Z')?.label).toBe('Zoe');
+  });
+
+  it('renders inferred kin as dashed, undirected spokes from the center', () => {
+    const entries = new Map<string, RelationEntry[]>([
+      [
+        'Y',
+        [
+          { contactId: 'P', displayName: 'Pat', kind: 'Parent', direction: 'Outgoing' },
+          { contactId: 'G', displayName: 'Gramps', kind: 'Grandparent', direction: 'Incoming', provenance: 'Inferred' },
+        ],
+      ],
+    ]);
+    const g = buildRelationGraph(center, entries);
+    const kin = g.edges.find((e) => e.target === 'G')!;
+    expect(kin).toMatchObject({ source: 'Y', kind: 'Grandparent', inferred: true, directed: false, category: 'Family' });
+    expect(g.edges.find((e) => e.kind === 'Parent')?.inferred).toBeUndefined(); // stored edge unaffected
+    expect(g.nodes.find((n) => n.id === 'G')?.label).toBe('Gramps');
   });
 
   it('orients both children of a parent identically regardless of which side stored the fact', () => {

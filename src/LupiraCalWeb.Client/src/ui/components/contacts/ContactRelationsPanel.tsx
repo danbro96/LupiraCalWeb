@@ -6,7 +6,7 @@ import {
   useRemoveContactRelation,
   useSearchContacts,
 } from '../../../data/api/lupiraCalApi';
-import type { ContactDto } from '../../../data/api/models';
+import type { ContactDto, ContactRelationKind } from '../../../data/api/models';
 import { kindCategory, RELATION_KINDS } from '../../../domain/contactRelations';
 import type { RelationKind } from '../../../domain/contactRelations';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
@@ -14,11 +14,13 @@ import { errText } from '../errText';
 import { ContactRelationGraph } from './ContactRelationGraph';
 
 /** Relations network for a contact: interactive graph + an editable list. Only OUTGOING (stored)
- *  edges are editable here; incoming edges are derived and managed on the other contact's card. */
+ *  edges are editable here; incoming edges are derived and managed on the other contact's card.
+ *  A toggle reveals kin CalApi infers from the parent/child graph (grandparents, cousins, …), read-only. */
 export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
   const location = useLocation();
   const invalidate = useInvalidateContacts();
-  const { data: relations } = useListContactRelations(contact.id);
+  const [showExtended, setShowExtended] = useState(false);
+  const { data: relations } = useListContactRelations(contact.id, { includeInferred: showExtended });
   const { data: candidates } = useSearchContacts({ addressBookId: contact.addressBookId });
   const add = useAddContactRelation({ mutation: { onSuccess: invalidate } });
   const remove = useRemoveContactRelation({ mutation: { onSuccess: invalidate } });
@@ -27,8 +29,9 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
   const [kind, setKind] = useState<RelationKind>('Friend');
   const [label, setLabel] = useState('');
 
-  const outgoing = (relations ?? []).filter((r) => r.direction === 'Outgoing');
-  const incoming = (relations ?? []).filter((r) => r.direction === 'Incoming');
+  const outgoing = (relations ?? []).filter((r) => r.direction === 'Outgoing' && r.provenance !== 'Inferred');
+  const incoming = (relations ?? []).filter((r) => r.direction === 'Incoming' && r.provenance !== 'Inferred');
+  const inferred = (relations ?? []).filter((r) => r.provenance === 'Inferred');
   const relatedIds = new Set(outgoing.map((r) => r.contactId));
   const pickable = (candidates ?? []).filter((c) => c.id !== contact.id && !relatedIds.has(c.id));
   const categories = [...new Set((relations ?? []).map((r) => kindCategory(r.kind)))];
@@ -37,9 +40,14 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
 
   return (
     <section className="drawer-section">
-      <h3>Relations</h3>
+      <div className="page-head">
+        <h3>Relations</h3>
+        <button className="linklike" onClick={() => setShowExtended((v) => !v)}>
+          {showExtended ? 'Hide extended family' : 'Show extended family'}
+        </button>
+      </div>
 
-      <ContactRelationGraph centerId={contact.id} centerLabel={contact.displayName} />
+      <ContactRelationGraph centerId={contact.id} centerLabel={contact.displayName} includeInferred={showExtended} />
 
       {categories.length > 0 && (
         <div className="relation-legend">
@@ -63,7 +71,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
             className="icon-btn"
             title="Remove relation"
             disabled={remove.isPending}
-            onClick={() => remove.mutate({ id: contact.id, toContactId: r.contactId, params: { kind: r.kind } })}
+            onClick={() => remove.mutate({ id: contact.id, toContactId: r.contactId, params: { kind: r.kind as ContactRelationKind } })}
           >
             ×
           </button>
@@ -79,6 +87,21 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
           <span className="meta">· managed on their card</span>
         </div>
       ))}
+
+      {inferred.length > 0 && (
+        <>
+          <p className="section-label">Extended family (inferred)</p>
+          {inferred.map((r) => (
+            <div key={`kin-${r.contactId}-${r.kind}`} className="relation-row inferred">
+              <span className={`badge cat-${kindCategory(r.kind)}`}>{r.kind}</span>
+              <Link className="membership-name" to={link(r.contactId)}>
+                {r.displayName}
+              </Link>
+              <span className="meta">· derived</span>
+            </div>
+          ))}
+        </>
+      )}
 
       <form
         className="form-row"

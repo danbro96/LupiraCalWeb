@@ -1224,6 +1224,7 @@ select {
 .rel-edge.cat-Professional .react-flow__edge-path { stroke: var(--cat-professional); }
 .rel-edge.cat-Emergency .react-flow__edge-path { stroke: var(--cat-emergency); }
 .rel-edge .react-flow__edge-text { font-size: 10px; fill: var(--text-muted); }
+.rel-edge.inferred .react-flow__edge-path { stroke-dasharray: 5 4; opacity: 0.75; }
 
 .badge.cat-Family { color: var(--cat-family); border-color: var(--cat-family); }
 .badge.cat-Social { color: var(--cat-social); border-color: var(--cat-social); }
@@ -1232,6 +1233,7 @@ select {
 .badge.cat-Other { color: var(--cat-other); border-color: var(--cat-other); }
 
 .relation-row.incoming { opacity: 0.65; }
+.relation-row.inferred { opacity: 0.75; font-style: italic; }
 
 .relation-legend {
   display: flex;

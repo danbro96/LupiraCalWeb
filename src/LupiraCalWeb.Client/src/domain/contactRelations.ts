@@ -15,8 +15,17 @@ export type RelationKind =
 
 export type RelationDirection = 'Outgoing' | 'Incoming';
 
+/** Read-only kinships CalApi derives from the parent/child graph (never storable). */
+export type InferredKind = 'Grandparent' | 'Grandchild' | 'AuntUncle' | 'NieceNephew' | 'Cousin';
+
+/** The full resolved kind set (== generated KinshipKind): storable kinds + inferred kinships. */
+export type KinKind = RelationKind | InferredKind;
+
+export type RelationProvenance = 'Explicit' | 'Inferred';
+
 export type RelationCategory = 'Family' | 'Social' | 'Professional' | 'Emergency' | 'Other';
 
+/** The kinds a user can store/edit (the add-form select); inferred kinds are display-only. */
 export const RELATION_KINDS: RelationKind[] = [
   'Parent',
   'Child',
@@ -30,12 +39,17 @@ export const RELATION_KINDS: RelationKind[] = [
   'Other',
 ];
 
-const CATEGORY: Record<RelationKind, RelationCategory> = {
+const CATEGORY: Record<KinKind, RelationCategory> = {
   Parent: 'Family',
   Child: 'Family',
   Sibling: 'Family',
   Spouse: 'Family',
   Partner: 'Family',
+  Grandparent: 'Family',
+  Grandchild: 'Family',
+  AuntUncle: 'Family',
+  NieceNephew: 'Family',
+  Cousin: 'Family',
   Friend: 'Social',
   Neighbor: 'Social',
   Colleague: 'Professional',
@@ -57,7 +71,7 @@ const INVERSE: Record<RelationKind, RelationKind> = {
   Other: 'Other',
 };
 
-export function kindCategory(kind: RelationKind): RelationCategory {
+export function kindCategory(kind: KinKind): RelationCategory {
   return CATEGORY[kind];
 }
 
@@ -73,9 +87,10 @@ export function isSymmetric(kind: RelationKind): boolean {
 export interface RelationEntry {
   contactId: string;
   displayName: string;
-  kind: RelationKind;
+  kind: KinKind;
   label?: string | null;
   direction: RelationDirection;
+  provenance?: RelationProvenance;
 }
 
 export interface GraphNode {
@@ -91,14 +106,16 @@ export interface GraphNode {
 
 export interface GraphEdge {
   id: string;
-  /** Stored owner ("target is owner's kind"). */
+  /** Stored owner ("target is owner's kind"); for inferred edges, the center contact. */
   source: string;
   target: string;
-  kind: RelationKind;
+  kind: KinKind;
   label?: string | null;
   category: RelationCategory;
   /** Asymmetric kinds (Parent/Child, Emergency) get an arrowhead. */
   directed: boolean;
+  /** Derived from the kinship graph rather than a stored edge (rendered dashed, read-only). */
+  inferred?: boolean;
 }
 
 export interface RelationGraph {
@@ -141,10 +158,29 @@ export function buildRelationGraph(
   for (const [viewer, entries] of entriesByContact) {
     for (const e of entries) {
       names.set(e.contactId, e.displayName);
+
+      // Inferred kin (only ever supplied for the center): a dashed spoke, not a stored edge.
+      if (e.provenance === 'Inferred') {
+        const key = `kin|${viewer}|${e.contactId}|${e.kind}`;
+        if (!edges.has(key))
+          edges.set(key, {
+            id: key,
+            source: viewer,
+            target: e.contactId,
+            kind: e.kind,
+            label: null,
+            category: kindCategory(e.kind),
+            directed: false,
+            inferred: true,
+          });
+        continue;
+      }
+
+      const stored = e.kind as RelationKind; // explicit entries only ever carry storable kinds
       const outgoing = e.direction === 'Outgoing';
       const owner = outgoing ? viewer : e.contactId;
       const target = outgoing ? e.contactId : viewer;
-      const storedKind = outgoing ? e.kind : inverseKind(e.kind);
+      const storedKind = outgoing ? stored : inverseKind(stored);
       const o = orient(owner, target, storedKind);
       const key = `${o.source}|${o.target}|${o.kind}`;
       const existing = edges.get(key);

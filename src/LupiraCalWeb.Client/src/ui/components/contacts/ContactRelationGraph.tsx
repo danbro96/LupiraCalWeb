@@ -42,8 +42,9 @@ function RelationNode({ id, data }: NodeProps<RelationFlowNode>) {
 
 const nodeTypes = { relation: RelationNode };
 
-/** Interactive ego-graph: center contact + expand-on-click neighbours, one query per fetched node. */
-export function ContactRelationGraph({ centerId, centerLabel }: { centerId: string; centerLabel: string }) {
+/** Interactive ego-graph: center contact + expand-on-click neighbours, one query per fetched node.
+ *  Inferred kin (grandparents, cousins, …) are fetched for the center only and drawn as dashed spokes. */
+export function ContactRelationGraph({ centerId, centerLabel, includeInferred }: { centerId: string; centerLabel: string; includeInferred: boolean }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedIds, setExpandedIds] = useState<string[]>([centerId]);
@@ -53,10 +54,10 @@ export function ContactRelationGraph({ centerId, centerLabel }: { centerId: stri
   );
 
   const results = useQueries({
-    queries: expandedIds.map((id) => ({
-      queryKey: getListContactRelationsQueryKey(id),
-      queryFn: () => listContactRelations(id),
-    })),
+    queries: expandedIds.map((id) => {
+      const params = id === centerId && includeInferred ? { includeInferred: true } : undefined;
+      return { queryKey: getListContactRelationsQueryKey(id, params), queryFn: () => listContactRelations(id, params) };
+    }),
   });
 
   const entriesByContact = useMemo(() => {
@@ -86,7 +87,7 @@ export function ContactRelationGraph({ centerId, centerLabel }: { centerId: stri
     target: e.target,
     label: e.label ?? e.kind,
     type: 'straight',
-    className: `rel-edge cat-${e.category}`,
+    className: `rel-edge cat-${e.category}${e.inferred ? ' inferred' : ''}`,
     markerEnd: e.directed ? { type: MarkerType.ArrowClosed } : undefined,
   }));
 
