@@ -8,6 +8,7 @@ services:
       Auth__Oidc__ClientId: ${AUTH_CLIENT_ID:-lupira-cal}
       Auth__Oidc__ClientSecret: ${AUTH_CLIENT_SECRET:-}
       ReverseProxy__Clusters__cal-api__Destinations__primary__Address: ${CAL_API_BASE_URL:-https://cal-api.lupira.com}
+      ReverseProxy__Clusters__geo-api__Destinations__primary__Address: ${GEO_API_BASE_URL:-https://geo-api.lupira.com}
       ReverseProxy__Clusters__contact-api__Destinations__primary__Address: ${CONTACT_API_BASE_URL:-https://contact-api.lupira.com}
       DataProtection__KeyPath: /keys
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
