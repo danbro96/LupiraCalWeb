@@ -5,8 +5,7 @@ import {
   useReviseContact,
   useSearchContacts,
   useSetContactAddresses,
-  useSetContactEmails,
-  useSetContactPhones,
+  useSetContactChannels,
   useSetContactProfiles,
   useSetContactTags,
   useSetEmergencyContacts,
@@ -14,17 +13,18 @@ import {
 import type {
   ContactDto,
   ContactPostalAddress,
+  ContactReachChannel,
   ContactSocialProfile,
   ReviseContactRequest,
 } from '../../../data/api-contact/models';
-import { ContactAddressType } from '../../../data/api-contact/models';
+import { ContactAddressType, ReachMedium } from '../../../data/api-contact/models';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 
 const norm = (s?: string | null) => (s ?? '').trim();
 const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((v, i) => v === b[i]);
 
-/** Add/remove editor for a simple string list (emails, phones, tags). */
+/** Add/remove editor for a simple string list (tags). */
 function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: {
   label: string;
   values: string[];
@@ -80,8 +80,7 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
 export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDone: () => void }) {
   const invalidate = useInvalidateContacts();
   const revise = useReviseContact();
-  const setEmails = useSetContactEmails();
-  const setPhones = useSetContactPhones();
+  const setChannels = useSetContactChannels();
   const setTags = useSetContactTags();
   const setAddresses = useSetContactAddresses();
   const setProfiles = useSetContactProfiles();
@@ -94,8 +93,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   const [familyName, setFamilyName] = useState(contact.familyName ?? '');
   const [nickname, setNickname] = useState(contact.nickname ?? '');
   const [birthday, setBirthday] = useState(contact.birthday ?? '');
-  const [emails, setEmailsState] = useState<string[]>(contact.emails ?? []);
-  const [phones, setPhonesState] = useState<string[]>(contact.phones ?? []);
+  const [channels, setChannelsState] = useState<ContactReachChannel[]>(contact.channels.map((c) => ({ ...c })));
   const [tags, setTagsState] = useState<string[]>(contact.tags ?? []);
   const [addresses, setAddressesState] = useState<ContactPostalAddress[]>(contact.addresses.map((a) => ({ ...a })));
   const [profiles, setProfilesState] = useState<ContactSocialProfile[]>(contact.profiles.map((p) => ({ ...p })));
@@ -120,8 +118,8 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       if (birthday && birthday !== (contact.birthday ?? '')) rev.birthday = birthday;
       if (Object.keys(rev).length > 0) await revise.mutateAsync({ id, data: rev });
 
-      if (!sameList(emails, contact.emails ?? [])) await setEmails.mutateAsync({ id, data: { emails } });
-      if (!sameList(phones, contact.phones ?? [])) await setPhones.mutateAsync({ id, data: { phones } });
+      const cleanChannels = channels.filter((c) => c.value.trim()).map((c) => ({ ...c, value: c.value.trim() }));
+      if (JSON.stringify(cleanChannels) !== JSON.stringify(contact.channels)) await setChannels.mutateAsync({ id, data: { channels: cleanChannels } });
       if (!sameList(tags, contact.tags ?? [])) await setTags.mutateAsync({ id, data: { tags } });
 
       const cleanAddresses = addresses.filter((a) => a.placeId || norm(a.formattedAddress));
@@ -174,8 +172,64 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         <input className="text-input" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
       </div>
 
-      <ChipList label="Emails" values={emails} onChange={setEmailsState} placeholder="name@example.com" inputType="email" />
-      <ChipList label="Phones" values={phones} onChange={setPhonesState} placeholder="+46…" inputType="tel" />
+      <div className="edit-field">
+        <label>Reach channels</label>
+        {channels.map((c, i) => (
+          <div key={i} className="form-row">
+            <select
+              value={c.medium}
+              onChange={(e) => setChannelsState(channels.map((x, j) => (j === i ? { ...x, medium: e.target.value as ReachMedium } : x)))}
+            >
+              {Object.values(ReachMedium).map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+            <input
+              className="text-input"
+              placeholder={c.medium === ReachMedium.Phone ? '+46…' : 'name@example.com'}
+              value={c.value}
+              onChange={(e) => setChannelsState(channels.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)))}
+            />
+            <input
+              className="text-input"
+              placeholder="type (home/work…)"
+              value={c.type ?? ''}
+              onChange={(e) => setChannelsState(channels.map((x, j) => (j === i ? { ...x, type: e.target.value || null } : x)))}
+            />
+            <label className="meta">
+              <input
+                type="checkbox"
+                checked={c.preferred}
+                onChange={(e) =>
+                  setChannelsState(
+                    channels.map((x, j) =>
+                      j === i
+                        ? { ...x, preferred: e.target.checked }
+                        : e.target.checked && x.medium === c.medium
+                          ? { ...x, preferred: false } // ≤1 preferred per medium
+                          : x,
+                    ),
+                  )
+                }
+              />{' '}
+              preferred
+            </label>
+            <button type="button" className="icon-btn" title="Remove channel" onClick={() => setChannelsState(channels.filter((_, j) => j !== i))}>
+              ×
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          className="linklike"
+          onClick={() => setChannelsState([...channels, { medium: ReachMedium.Email, value: '', type: null, preferred: false }])}
+        >
+          + Add channel
+        </button>
+      </div>
+
       <ChipList label="Tags" values={tags} onChange={setTagsState} placeholder="work, family…" />
 
       <div className="edit-field">

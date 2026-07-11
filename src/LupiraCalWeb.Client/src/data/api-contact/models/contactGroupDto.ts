@@ -13,4 +13,10 @@ export interface ContactGroupDto {
   kind: ContactGroupKind;
   name: string;
   members: string[];
+  createdAt?: string;
+  /** @nullable */
+  createdBy?: string | null;
+  updatedAt?: string;
+  /** @nullable */
+  updatedBy?: string | null;
 }

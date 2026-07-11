@@ -48,8 +48,7 @@ import type {
   RevokeAddressBookOwnerParams,
   SearchContactsParams,
   SetContactAddressesRequest,
-  SetContactEmailsRequest,
-  SetContactPhonesRequest,
+  SetContactChannelsRequest,
   SetContactProfilesRequest,
   SetContactTagsRequest,
   SetDeceasedRequest,
@@ -1779,26 +1778,26 @@ export const useSetEmergencyContacts = <TError = ProblemDetails | void,
       return useMutation(getSetEmergencyContactsMutationOptions(options), queryClient);
     }
 
-export const getSetContactEmailsUrl = (id: string,) => {
+export const getSetContactChannelsUrl = (id: string,) => {
 
 
 
 
-  return `/contacts/${id}/emails`
+  return `/contacts/${id}/channels`
 }
 
 /**
- * @summary Replace the contact's email addresses wholesale (empty clears). Unlike the merge update, this can remove an address; entries are trimmed and de-duplicated case-insensitively.
+ * @summary Replace the contact's reach channels (emails + phones) wholesale (empty clears). Unlike the merge update, this can remove a channel; values are trimmed, type tokens lowercased, duplicates dropped, at most one preferred per medium.
  */
-export const setContactEmails = async (id: string,
-    setContactEmailsRequest: SetContactEmailsRequest, options?: RequestInit): Promise<ContactDto> => {
+export const setContactChannels = async (id: string,
+    setContactChannelsRequest: SetContactChannelsRequest, options?: RequestInit): Promise<ContactDto> => {
 
-  return customFetchContact<ContactDto>(getSetContactEmailsUrl(id),
+  return customFetchContact<ContactDto>(getSetContactChannelsUrl(id),
   {
     ...options,
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(setContactEmailsRequest)
+    body: JSON.stringify(setContactChannelsRequest)
   }
 );}
 
@@ -1806,11 +1805,11 @@ export const setContactEmails = async (id: string,
 
 
 
-export const getSetContactEmailsMutationOptions = <TError = void | ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactEmails>>, TError,{id: string;data: SetContactEmailsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
-): UseMutationOptions<Awaited<ReturnType<typeof setContactEmails>>, TError,{id: string;data: SetContactEmailsRequest}, TContext> => {
+export const getSetContactChannelsMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactChannels>>, TError,{id: string;data: SetContactChannelsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setContactChannels>>, TError,{id: string;data: SetContactChannelsRequest}, TContext> => {
 
-const mutationKey = ['setContactEmails'];
+const mutationKey = ['setContactChannels'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1820,10 +1819,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactEmails>>, {id: string;data: SetContactEmailsRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactChannels>>, {id: string;data: SetContactChannelsRequest}> = (props) => {
           const {id,data} = props ?? {};
 
-          return  setContactEmails(id,data,requestOptions)
+          return  setContactChannels(id,data,requestOptions)
         }
 
 
@@ -1833,94 +1832,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type SetContactEmailsMutationResult = NonNullable<Awaited<ReturnType<typeof setContactEmails>>>
-    export type SetContactEmailsMutationBody = SetContactEmailsRequest
-    export type SetContactEmailsMutationError = void | ProblemDetails
+    export type SetContactChannelsMutationResult = NonNullable<Awaited<ReturnType<typeof setContactChannels>>>
+    export type SetContactChannelsMutationBody = SetContactChannelsRequest
+    export type SetContactChannelsMutationError = ProblemDetails | void
 
     /**
- * @summary Replace the contact's email addresses wholesale (empty clears). Unlike the merge update, this can remove an address; entries are trimmed and de-duplicated case-insensitively.
+ * @summary Replace the contact's reach channels (emails + phones) wholesale (empty clears). Unlike the merge update, this can remove a channel; values are trimmed, type tokens lowercased, duplicates dropped, at most one preferred per medium.
  */
-export const useSetContactEmails = <TError = void | ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactEmails>>, TError,{id: string;data: SetContactEmailsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+export const useSetContactChannels = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactChannels>>, TError,{id: string;data: SetContactChannelsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof setContactEmails>>,
+        Awaited<ReturnType<typeof setContactChannels>>,
         TError,
-        {id: string;data: SetContactEmailsRequest},
+        {id: string;data: SetContactChannelsRequest},
         TContext
       > => {
-      return useMutation(getSetContactEmailsMutationOptions(options), queryClient);
-    }
-
-export const getSetContactPhonesUrl = (id: string,) => {
-
-
-
-
-  return `/contacts/${id}/phones`
-}
-
-/**
- * @summary Replace the contact's phone numbers wholesale (empty clears). Unlike the merge update, this can remove a number; entries are trimmed and de-duplicated case-insensitively.
- */
-export const setContactPhones = async (id: string,
-    setContactPhonesRequest: SetContactPhonesRequest, options?: RequestInit): Promise<ContactDto> => {
-
-  return customFetchContact<ContactDto>(getSetContactPhonesUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(setContactPhonesRequest)
-  }
-);}
-
-
-
-
-
-export const getSetContactPhonesMutationOptions = <TError = void | ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactPhones>>, TError,{id: string;data: SetContactPhonesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
-): UseMutationOptions<Awaited<ReturnType<typeof setContactPhones>>, TError,{id: string;data: SetContactPhonesRequest}, TContext> => {
-
-const mutationKey = ['setContactPhones'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactPhones>>, {id: string;data: SetContactPhonesRequest}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  setContactPhones(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SetContactPhonesMutationResult = NonNullable<Awaited<ReturnType<typeof setContactPhones>>>
-    export type SetContactPhonesMutationBody = SetContactPhonesRequest
-    export type SetContactPhonesMutationError = void | ProblemDetails
-
-    /**
- * @summary Replace the contact's phone numbers wholesale (empty clears). Unlike the merge update, this can remove a number; entries are trimmed and de-duplicated case-insensitively.
- */
-export const useSetContactPhones = <TError = void | ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactPhones>>, TError,{id: string;data: SetContactPhonesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof setContactPhones>>,
-        TError,
-        {id: string;data: SetContactPhonesRequest},
-        TContext
-      > => {
-      return useMutation(getSetContactPhonesMutationOptions(options), queryClient);
+      return useMutation(getSetContactChannelsMutationOptions(options), queryClient);
     }
 
 export const getSetContactTagsUrl = (id: string,) => {

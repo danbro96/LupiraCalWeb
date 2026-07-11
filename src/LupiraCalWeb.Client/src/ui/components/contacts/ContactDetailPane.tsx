@@ -72,22 +72,15 @@ export function ContactDetailPane() {
                 <dd>🎂 {fmtDate(parseYmd(contact.birthday))}</dd>
               </div>
             )}
-            {(contact.emails ?? []).map((e) => (
-              <div key={e}>
-                <dt>Email</dt>
+            {contact.channels.map((c, i) => (
+              <div key={i}>
+                <dt>
+                  {c.type || c.medium}
+                  {c.preferred && ' ★'}
+                </dt>
                 <dd>
-                  <a className="linklike" href={`mailto:${e}`}>
-                    {e}
-                  </a>
-                </dd>
-              </div>
-            ))}
-            {(contact.phones ?? []).map((p) => (
-              <div key={p}>
-                <dt>Phone</dt>
-                <dd>
-                  <a className="linklike" href={`tel:${p}`}>
-                    {p}
+                  <a className="linklike" href={`${c.medium === 'Phone' ? 'tel' : 'mailto'}:${c.value}`}>
+                    {c.value}
                   </a>
                 </dd>
               </div>
@@ -194,6 +187,12 @@ export function ContactDetailPane() {
         {showCircles && <ContactCircles focusId={contact.id} />}
       </section>
 
+      {contact.updatedAt && (
+        <p className="meta">
+          Updated {fmtDate(new Date(contact.updatedAt))}
+          {contact.createdAt && ` · added ${fmtDate(new Date(contact.createdAt))}`}
+        </p>
+      )}
       <div className="detail-footer">
         <button className="linklike" disabled={setMe.isPending} onClick={() => setMe.mutate({ data: { contactId: contact.id } })}>
           This is me

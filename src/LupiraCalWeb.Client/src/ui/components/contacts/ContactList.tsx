@@ -1,10 +1,21 @@
 import { useState } from 'react';
 import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-dom';
 import { useCreateContact, useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
+import type { ContactReachChannel } from '../../../data/api-contact/models';
+import { ReachMedium } from '../../../data/api-contact/models';
 import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useGroup } from './useGroup';
+
+/** Split a comma-separated input into reach channels of one medium (create-form convenience). */
+function toChannels(raw: string, medium: ReachMedium): ContactReachChannel[] {
+  return raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((value) => ({ medium, value, type: null, preferred: false }));
+}
 
 /** Middle pane: search + the contact rows, filtered by the selected book (?book) and, when a
  *  group is open, narrowed to that group's members (client-side — the API has no group filter). */
@@ -86,14 +97,14 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
       className="card"
       onSubmit={(e) => {
         e.preventDefault();
+        const channels = [...toChannels(form.emails, ReachMedium.Email), ...toChannels(form.phones, ReachMedium.Phone)];
         create.mutate({
           data: {
             addressBookId: form.addressBookId,
             givenName: form.givenName || null,
             familyName: form.familyName || null,
             nickname: form.nickname || null,
-            emails: form.emails ? form.emails.split(',').map((s) => s.trim()) : null,
-            phones: form.phones ? form.phones.split(',').map((s) => s.trim()) : null,
+            channels: channels.length ? channels : null,
             birthday: form.birthday || null,
           },
         });

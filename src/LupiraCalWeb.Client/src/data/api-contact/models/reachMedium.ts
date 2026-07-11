@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
-export interface SetContactEmailsRequest {
-  emails: string[];
-}
+export type ReachMedium = typeof ReachMedium[keyof typeof ReachMedium];
+
+
+export const ReachMedium = {
+  Email: 'Email',
+  Phone: 'Phone',
+} as const;

@@ -7,6 +7,7 @@
  */
 import type { CompletenessScore } from './completenessScore';
 import type { ContactPostalAddress } from './contactPostalAddress';
+import type { ContactReachChannel } from './contactReachChannel';
 import type { ContactRelation } from './contactRelation';
 import type { ContactSocialProfile } from './contactSocialProfile';
 import type { JsonNode } from './jsonNode';
@@ -22,10 +23,7 @@ export interface ContactDto {
   familyName?: string | null;
   /** @nullable */
   nickname?: string | null;
-  /** @nullable */
-  emails?: string[] | null;
-  /** @nullable */
-  phones?: string[] | null;
+  channels: ContactReachChannel[];
   /** @nullable */
   birthday?: string | null;
   deceased?: boolean;
@@ -39,5 +37,11 @@ export interface ContactDto {
   relations: ContactRelation[];
   metadata?: null | JsonNode;
   completeness?: null | CompletenessScore;
+  createdAt?: string;
+  /** @nullable */
+  createdBy?: string | null;
+  updatedAt?: string;
+  /** @nullable */
+  updatedBy?: string | null;
   etag: string;
 }

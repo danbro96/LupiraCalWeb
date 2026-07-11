@@ -5,7 +5,8 @@
  * Contacts, address books, and kinship backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
+import type { ContactReachChannel } from './contactReachChannel';
 
-export interface SetContactPhonesRequest {
-  phones: string[];
+export interface SetContactChannelsRequest {
+  channels: ContactReachChannel[];
 }
