@@ -6,15 +6,18 @@
  * OpenAPI spec version: v1
  */
 import type { ContactRelationDirection } from './contactRelationDirection';
-import type { KinshipKind } from './kinshipKind';
+import type { ContactRelationKind } from './contactRelationKind';
 import type { RelationProvenance } from './relationProvenance';
 
 export interface ContactRelationEntryDto {
   contactId: string;
   displayName: string;
-  kind: KinshipKind;
+  kind: ContactRelationKind;
   /** @nullable */
   label?: string | null;
   direction: ContactRelationDirection;
   provenance?: RelationProvenance;
+  ended?: boolean;
+  /** @nullable */
+  until?: string | null;
 }

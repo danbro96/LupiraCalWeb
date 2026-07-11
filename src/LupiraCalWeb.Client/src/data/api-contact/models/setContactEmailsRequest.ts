@@ -6,11 +6,6 @@
  * OpenAPI spec version: v1
  */
 
-export interface MeDto {
-  id: string;
-  email: string;
-  /** @nullable */
-  displayName?: string | null;
-  /** @nullable */
-  contactId?: string | null;
+export interface SetContactEmailsRequest {
+  emails: string[];
 }

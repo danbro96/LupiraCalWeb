@@ -18,6 +18,10 @@ export const ContactRelationKind = {
   Friend: 'Friend',
   Colleague: 'Colleague',
   Neighbor: 'Neighbor',
-  Emergency: 'Emergency',
   Other: 'Other',
+  Grandparent: 'Grandparent',
+  Grandchild: 'Grandchild',
+  AuntUncle: 'AuntUncle',
+  NieceNephew: 'NieceNephew',
+  Cousin: 'Cousin',
 } as const;

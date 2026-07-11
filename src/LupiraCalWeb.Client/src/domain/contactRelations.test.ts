@@ -8,29 +8,33 @@ describe('kind taxonomy', () => {
     expect(kindCategory('Friend')).toBe('Social');
     expect(kindCategory('Neighbor')).toBe('Social');
     expect(kindCategory('Colleague')).toBe('Professional');
-    expect(kindCategory('Emergency')).toBe('Emergency');
     expect(kindCategory('Other')).toBe('Other');
   });
 
-  it('categorizes inferred kinships as Family', () => {
+  it('categorizes extended-family kinds as Family', () => {
     for (const k of ['Grandparent', 'Grandchild', 'AuntUncle', 'NieceNephew', 'Cousin'] as const)
       expect(kindCategory(k)).toBe('Family');
   });
 
-  it('inverts Parent↔Child, Emergency→Other, else self', () => {
+  it('inverts the directed kinship pairs, else self', () => {
     expect(inverseKind('Parent')).toBe('Child');
     expect(inverseKind('Child')).toBe('Parent');
-    expect(inverseKind('Emergency')).toBe('Other');
+    expect(inverseKind('Grandparent')).toBe('Grandchild');
+    expect(inverseKind('Grandchild')).toBe('Grandparent');
+    expect(inverseKind('AuntUncle')).toBe('NieceNephew');
+    expect(inverseKind('NieceNephew')).toBe('AuntUncle');
     expect(inverseKind('Sibling')).toBe('Sibling');
+    expect(inverseKind('Cousin')).toBe('Cousin');
     expect(inverseKind('Friend')).toBe('Friend');
   });
 
   it('flags symmetric kinds', () => {
     expect(isSymmetric('Sibling')).toBe(true);
     expect(isSymmetric('Spouse')).toBe(true);
+    expect(isSymmetric('Cousin')).toBe(true);
     expect(isSymmetric('Parent')).toBe(false);
-    expect(isSymmetric('Child')).toBe(false);
-    expect(isSymmetric('Emergency')).toBe(false);
+    expect(isSymmetric('Grandparent')).toBe(false);
+    expect(isSymmetric('AuntUncle')).toBe(false);
   });
 });
 
@@ -48,6 +52,17 @@ describe('buildRelationGraph', () => {
     // Normalized parent → child: X (parent) → Y (child).
     expect(g.edges[0]).toMatchObject({ source: 'X', target: 'Y', kind: 'Parent', label: 'dad', directed: true });
     expect(g.nodes.map((n) => n.id).sort()).toEqual(['X', 'Y']);
+  });
+
+  it('collapses a stored Grandparent edge and its derived Grandchild inverse into one elder→younger edge', () => {
+    // Stored on Y: "X is Y's Grandparent". Y sees it Outgoing; X sees Y as an Incoming Grandchild.
+    const entries = new Map<string, RelationEntry[]>([
+      ['Y', [{ contactId: 'X', displayName: 'Xavier', kind: 'Grandparent', direction: 'Outgoing' }]],
+      ['X', [{ contactId: 'Y', displayName: 'Yara', kind: 'Grandchild', direction: 'Incoming' }]],
+    ]);
+    const g = buildRelationGraph(center, entries);
+    expect(g.edges).toHaveLength(1);
+    expect(g.edges[0]).toMatchObject({ source: 'X', target: 'Y', kind: 'Grandparent', directed: true });
   });
 
   it('derives the edge for an unexpanded neighbor from the center list alone', () => {
@@ -116,6 +131,22 @@ describe('buildRelationGraph', () => {
     expect(g.nodes.find((n) => n.id === 'S')?.category).toBe('Family');
     expect(g.nodes.find((n) => n.id === 'C')?.category).toBe('Professional');
     expect(g.nodes.find((n) => n.isCenter)?.category).toBe('self');
+  });
+
+  it('excludes ended relationships from the graph', () => {
+    const entries = new Map<string, RelationEntry[]>([
+      [
+        'Y',
+        [
+          { contactId: 'E', displayName: 'Ex', kind: 'Spouse', direction: 'Outgoing', ended: true },
+          { contactId: 'F', displayName: 'Fern', kind: 'Friend', direction: 'Outgoing' },
+        ],
+      ],
+    ]);
+    const g = buildRelationGraph(center, entries);
+    expect(g.edges).toHaveLength(1);
+    expect([g.edges[0].source, g.edges[0].target]).toContain('F'); // the surviving edge is the (non-ended) Friend to F
+    expect(g.nodes.map((n) => n.id).sort()).toEqual(['F', 'Y']);
   });
 
   it('places the center at the origin and neighbors on the first ring, deterministically', () => {

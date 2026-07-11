@@ -6,24 +6,33 @@ import {
   useGetContact,
   useListContactGroups,
   useRemoveContactGroupMember,
+  useSearchContacts,
+  useSetMyContact,
 } from '../../../data/api-contact/lupiraContactApi';
 import { fmtDate, parseYmd } from '../../../domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
+import { errText } from '../errText';
+import { ContactCircles } from './ContactCircles';
+import { ContactEditForm } from './ContactEditForm';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
 
-/** Right pane for a contact: reach fields, postal addresses, profiles, group membership,
- *  completeness, delete. Fields are read-only over REST — edits sync via CardDAV. */
+/** Right pane for a contact: reach fields, postal addresses, profiles, emergency designation, group membership,
+ *  completeness, and relations. Fields edit inline via ContactEditForm; all writes go over REST. */
 export function ContactDetailPane() {
   const { contactId } = useParams();
   const navigate = useNavigate();
   const { data: contact, isLoading } = useGetContact(contactId ?? '', { query: { enabled: !!contactId } });
   const { data: groups } = useListContactGroups(contact?.addressBookId ?? '', { query: { enabled: !!contact } });
+  const { data: bookContacts } = useSearchContacts({ addressBookId: contact?.addressBookId ?? '' }, { query: { enabled: !!contact } });
   const invalidate = useInvalidateContacts();
   const addMember = useAddContactGroupMember({ mutation: { onSuccess: invalidate } });
   const removeMember = useRemoveContactGroupMember({ mutation: { onSuccess: invalidate } });
   const del = useDeleteContact({ mutation: { onSuccess: () => { invalidate(); navigate('/contacts'); } } });
+  const setMe = useSetMyContact({ mutation: { onSuccess: invalidate } });
   const [groupId, setGroupId] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [showCircles, setShowCircles] = useState(false);
 
   if (isLoading) return <div className="contacts-detail-pane"><p className="meta">Loading…</p></div>;
   if (!contact) return <div className="contacts-detail-pane"><p className="empty">Contact not found.</p></div>;
@@ -31,6 +40,8 @@ export function ContactDetailPane() {
   const memberOf = (groups ?? []).filter((g) => g.members.includes(contact.id));
   const joinable = (groups ?? []).filter((g) => !g.members.includes(contact.id));
   const groupSearch = `?book=${contact.addressBookId}`;
+  const link = (id: string) => ({ pathname: `/contacts/${id}`, search: groupSearch });
+  const nameOf = (cid: string) => bookContacts?.find((c) => c.id === cid)?.displayName ?? cid.slice(0, 8);
 
   return (
     <div className="contacts-detail-pane">
@@ -38,67 +49,98 @@ export function ContactDetailPane() {
         <h2>
           {contact.displayName}
           {contact.nickname && <span className="meta"> “{contact.nickname}”</span>}
+          {contact.deceased && <span className="badge" title={contact.deathDate ? `died ${contact.deathDate}` : 'deceased'}>†</span>}
         </h2>
-        <CompletenessBadge score={contact.completeness} />
+        <div className="head-actions">
+          <CompletenessBadge score={contact.completeness} />
+          {!editing && (
+            <button className="btn" onClick={() => setEditing(true)}>
+              Edit
+            </button>
+          )}
+        </div>
       </div>
 
-      <dl className="detail-grid">
-        {contact.birthday && (
-          <div>
-            <dt>Birthday</dt>
-            <dd>🎂 {fmtDate(parseYmd(contact.birthday))}</dd>
-          </div>
-        )}
-        {(contact.emails ?? []).map((e) => (
-          <div key={e}>
-            <dt>Email</dt>
-            <dd>
-              <a className="linklike" href={`mailto:${e}`}>
-                {e}
-              </a>
-            </dd>
-          </div>
-        ))}
-        {(contact.phones ?? []).map((p) => (
-          <div key={p}>
-            <dt>Phone</dt>
-            <dd>
-              <a className="linklike" href={`tel:${p}`}>
-                {p}
-              </a>
-            </dd>
-          </div>
-        ))}
-        {contact.addresses.map((a, i) => (
-          <div key={i}>
-            <dt>{a.type} address</dt>
-            <dd>📍 {a.formattedAddress || '…'}</dd>
-          </div>
-        ))}
-        {contact.profiles.map((p, i) => (
-          <div key={i}>
-            <dt>{p.service}</dt>
-            <dd>
-              {p.url ? (
-                <a className="linklike" href={p.url} target="_blank" rel="noreferrer">
-                  {p.handle} ↗
-                </a>
-              ) : (
-                p.handle
-              )}
-            </dd>
-          </div>
-        ))}
-      </dl>
+      {editing ? (
+        <ContactEditForm contact={contact} onDone={() => setEditing(false)} />
+      ) : (
+        <>
+          <dl className="detail-grid">
+            {contact.birthday && (
+              <div>
+                <dt>Birthday</dt>
+                <dd>🎂 {fmtDate(parseYmd(contact.birthday))}</dd>
+              </div>
+            )}
+            {(contact.emails ?? []).map((e) => (
+              <div key={e}>
+                <dt>Email</dt>
+                <dd>
+                  <a className="linklike" href={`mailto:${e}`}>
+                    {e}
+                  </a>
+                </dd>
+              </div>
+            ))}
+            {(contact.phones ?? []).map((p) => (
+              <div key={p}>
+                <dt>Phone</dt>
+                <dd>
+                  <a className="linklike" href={`tel:${p}`}>
+                    {p}
+                  </a>
+                </dd>
+              </div>
+            ))}
+            {contact.addresses.map((a, i) => (
+              <div key={i}>
+                <dt>{a.type} address</dt>
+                <dd>📍 {a.formattedAddress || '…'}</dd>
+              </div>
+            ))}
+            {contact.profiles.map((p, i) => (
+              <div key={i}>
+                <dt>
+                  {p.service}
+                  {p.preferred && ' ★'}
+                </dt>
+                <dd>
+                  {p.url ? (
+                    <a className="linklike" href={p.url} target="_blank" rel="noreferrer">
+                      {p.handle} ↗
+                    </a>
+                  ) : (
+                    p.handle
+                  )}
+                </dd>
+              </div>
+            ))}
+          </dl>
 
-      {(contact.tags ?? []).length > 0 && (
-        <div className="chip-row">
-          {(contact.tags ?? []).map((t) => (
-            <span key={t} className="tag-chip">
-              {t}
-            </span>
-          ))}
-        </div>
+          {(contact.tags ?? []).length > 0 && (
+            <div className="chip-row">
+              {(contact.tags ?? []).map((t) => (
+                <span key={t} className="tag-chip">
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {contact.emergencyContactIds.length > 0 && (
+            <section className="drawer-section">
+              <h3>Emergency contacts</h3>
+              {contact.emergencyContactIds.map((cid, i) => (
+                <div key={cid} className="membership-row">
+                  <span className="badge">{i + 1}</span>
+                  <Link className="membership-name" to={link(cid)}>
+                    {nameOf(cid)}
+                  </Link>
+                </div>
+              ))}
+            </section>
+          )}
+        </>
       )}
 
       <section className="drawer-section">
@@ -142,10 +184,25 @@ export function ContactDetailPane() {
 
       <ContactRelationsPanel contact={contact} />
 
-      <p className="meta">vCard UID {contact.externalId} · edits sync via CardDAV</p>
-      <button className="btn destructive" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
-        Delete contact
-      </button>
+      <section className="drawer-section">
+        <div className="page-head">
+          <h3>Social circles</h3>
+          <button className="linklike" onClick={() => setShowCircles((v) => !v)}>
+            {showCircles ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        {showCircles && <ContactCircles focusId={contact.id} />}
+      </section>
+
+      <div className="detail-footer">
+        <button className="linklike" disabled={setMe.isPending} onClick={() => setMe.mutate({ data: { contactId: contact.id } })}>
+          This is me
+        </button>
+        <button className="btn destructive" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
+          Delete contact
+        </button>
+      </div>
+      {errText(setMe.error) && <p className="error-text">{errText(setMe.error)}</p>}
     </div>
   );
 }

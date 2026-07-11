@@ -5,12 +5,9 @@
  * Contacts, address books, and kinship backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
+import type { ContactCircleDto } from './contactCircleDto';
 
-export interface MeDto {
-  id: string;
-  email: string;
-  /** @nullable */
-  displayName?: string | null;
-  /** @nullable */
-  contactId?: string | null;
+export interface ContactCirclesDto {
+  focusContactId: string;
+  circles: ContactCircleDto[];
 }

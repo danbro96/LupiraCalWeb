@@ -7,12 +7,8 @@
  */
 import type { ContactRelationKind } from './contactRelationKind';
 
-export interface ContactRelation {
-  toContactId?: string;
-  kind?: ContactRelationKind;
-  /** @nullable */
-  label?: string | null;
-  ended?: boolean;
+export interface EndContactRelationRequest {
+  kind: ContactRelationKind;
   /** @nullable */
   until?: string | null;
 }

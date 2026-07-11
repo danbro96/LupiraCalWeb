@@ -28,10 +28,14 @@ export interface ContactDto {
   phones?: string[] | null;
   /** @nullable */
   birthday?: string | null;
+  deceased?: boolean;
+  /** @nullable */
+  deathDate?: string | null;
   /** @nullable */
   tags?: string[] | null;
   addresses: ContactPostalAddress[];
   profiles: ContactSocialProfile[];
+  emergencyContactIds: string[];
   relations: ContactRelation[];
   metadata?: null | JsonNode;
   completeness?: null | CompletenessScore;

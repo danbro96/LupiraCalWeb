@@ -9,6 +9,7 @@ import {
 import type { AddressBookDto } from '../../../data/api-contact/models';
 import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateAddressBooks, useInvalidateContacts } from '../../../state/useInvalidate';
+import { AddressBookManage } from './AddressBookManage';
 
 /** Left rail: address books → their groups/orgs, with contact and member counts.
  *  Book click filters the list (?book); group click opens the group pane + filters to members. */
@@ -73,6 +74,7 @@ function BookNode({
   const isActive = activeBookId === book.id;
   const [expanded, setExpanded] = useState(() => isActive);
   const [adding, setAdding] = useState(false);
+  const [managing, setManaging] = useState(false);
   const { data: groups } = useListContactGroups(book.id, { query: { enabled: expanded } });
 
   return (
@@ -92,8 +94,31 @@ function BookNode({
           {expanded ? '▾' : '▸'}
         </span>
         <span className="tree-label">📇 {addressBookLabel(book)}</span>
+        {book.access === 'Owner' && (
+          <span
+            className="tree-manage"
+            role="button"
+            title="Manage address book"
+            onClick={(e) => {
+              e.stopPropagation();
+              setManaging((x) => !x);
+            }}
+          >
+            ⚙
+          </span>
+        )}
         <span className="tree-count">{count}</span>
       </button>
+
+      {managing && (
+        <AddressBookManage
+          book={book}
+          onDeleted={() => {
+            setManaging(false);
+            navigate('/contacts');
+          }}
+        />
+      )}
 
       {expanded && (
         <>

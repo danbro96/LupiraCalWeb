@@ -6,13 +6,13 @@
  * OpenAPI spec version: v1
  */
 import type { ContactRelationKind } from './contactRelationKind';
+import type { RelationProvenance } from './relationProvenance';
 
-export interface ContactRelation {
-  toContactId?: string;
-  kind?: ContactRelationKind;
-  /** @nullable */
-  label?: string | null;
-  ended?: boolean;
-  /** @nullable */
-  until?: string | null;
+export interface CircleMemberDto {
+  contactId: string;
+  displayName: string;
+  kind?: null | ContactRelationKind;
+  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  degree: number | string;
+  provenance: RelationProvenance;
 }

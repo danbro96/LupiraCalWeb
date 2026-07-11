@@ -6,11 +6,13 @@
  * OpenAPI spec version: v1
  */
 
-export interface MeDto {
-  id: string;
-  email: string;
-  /** @nullable */
-  displayName?: string | null;
-  /** @nullable */
-  contactId?: string | null;
-}
+export type CircleKind = typeof CircleKind[keyof typeof CircleKind];
+
+
+export const CircleKind = {
+  CloseFamily: 'CloseFamily',
+  ExtendedFamily: 'ExtendedFamily',
+  Friends: 'Friends',
+  Colleagues: 'Colleagues',
+  Household: 'Household',
+} as const;

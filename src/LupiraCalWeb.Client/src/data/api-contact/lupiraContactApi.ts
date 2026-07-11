@@ -28,23 +28,34 @@ import type {
   AddContactGroupMemberParams,
   AddContactRelationRequest,
   AddressBookDto,
+  ContactCirclesDto,
   ContactDto,
   ContactGroupDto,
   ContactRelationEntryDto,
   CreateAddressBookRequest,
   CreateContactGroupParams,
   CreateContactRequest,
+  EndContactRelationRequest,
+  GetContactCirclesParams,
   GrantOwnerRequest,
   ListContactRelationsParams,
   MeDto,
-  NormalizeContactSiblingsParams,
   OwnerGrantDto,
   ProblemDetails,
   RemoveContactRelationParams,
   RenameContactGroupParams,
   ReviseContactRequest,
   RevokeAddressBookOwnerParams,
-  SearchContactsParams
+  SearchContactsParams,
+  SetContactAddressesRequest,
+  SetContactEmailsRequest,
+  SetContactPhonesRequest,
+  SetContactProfilesRequest,
+  SetContactTagsRequest,
+  SetDeceasedRequest,
+  SetEmergencyContactsRequest,
+  SetMyContactRequest,
+  UpdateAddressBookRequest
 } from './models';
 
 import { customFetchContact } from '../fetcher';
@@ -239,6 +250,77 @@ export const useBootstrapMe = <TError = void,
       return useMutation(getBootstrapMeMutationOptions(options), queryClient);
     }
 
+export const getSetMyContactUrl = () => {
+
+
+
+
+  return `/me/contact`
+}
+
+/**
+ * @summary Link the caller's identity to its own contact ("this card is me") — the default focus for contact circles.
+ */
+export const setMyContact = async (setMyContactRequest: SetMyContactRequest, options?: RequestInit): Promise<void> => {
+
+  return customFetchContact<void>(getSetMyContactUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setMyContactRequest)
+  }
+);}
+
+
+
+
+
+export const getSetMyContactMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setMyContact>>, TError,{data: SetMyContactRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setMyContact>>, TError,{data: SetMyContactRequest}, TContext> => {
+
+const mutationKey = ['setMyContact'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setMyContact>>, {data: SetMyContactRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  setMyContact(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetMyContactMutationResult = NonNullable<Awaited<ReturnType<typeof setMyContact>>>
+    export type SetMyContactMutationBody = SetMyContactRequest
+    export type SetMyContactMutationError = void | ProblemDetails
+
+    /**
+ * @summary Link the caller's identity to its own contact ("this card is me") — the default focus for contact circles.
+ */
+export const useSetMyContact = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setMyContact>>, TError,{data: SetMyContactRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setMyContact>>,
+        TError,
+        {data: SetMyContactRequest},
+        TContext
+      > => {
+      return useMutation(getSetMyContactMutationOptions(options), queryClient);
+    }
+
 export const getListAddressBooksUrl = () => {
 
 
@@ -410,6 +492,250 @@ export const useCreateAddressBook = <TError = void,
       > => {
       return useMutation(getCreateAddressBookMutationOptions(options), queryClient);
     }
+
+export const getUpdateAddressBookUrl = (addressBookId: string,) => {
+
+
+
+
+  return `/address-books/${addressBookId}`
+}
+
+/**
+ * @summary Rename an address book or change its display name (owner only; merge — omitted fields are kept).
+ */
+export const updateAddressBook = async (addressBookId: string,
+    updateAddressBookRequest: UpdateAddressBookRequest, options?: RequestInit): Promise<AddressBookDto> => {
+
+  return customFetchContact<AddressBookDto>(getUpdateAddressBookUrl(addressBookId),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updateAddressBookRequest)
+  }
+);}
+
+
+
+
+
+export const getUpdateAddressBookMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAddressBook>>, TError,{addressBookId: string;data: UpdateAddressBookRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAddressBook>>, TError,{addressBookId: string;data: UpdateAddressBookRequest}, TContext> => {
+
+const mutationKey = ['updateAddressBook'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAddressBook>>, {addressBookId: string;data: UpdateAddressBookRequest}> = (props) => {
+          const {addressBookId,data} = props ?? {};
+
+          return  updateAddressBook(addressBookId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAddressBookMutationResult = NonNullable<Awaited<ReturnType<typeof updateAddressBook>>>
+    export type UpdateAddressBookMutationBody = UpdateAddressBookRequest
+    export type UpdateAddressBookMutationError = ProblemDetails | void
+
+    /**
+ * @summary Rename an address book or change its display name (owner only; merge — omitted fields are kept).
+ */
+export const useUpdateAddressBook = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAddressBook>>, TError,{addressBookId: string;data: UpdateAddressBookRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateAddressBook>>,
+        TError,
+        {addressBookId: string;data: UpdateAddressBookRequest},
+        TContext
+      > => {
+      return useMutation(getUpdateAddressBookMutationOptions(options), queryClient);
+    }
+
+export const getDeleteAddressBookUrl = (addressBookId: string,) => {
+
+
+
+
+  return `/address-books/${addressBookId}`
+}
+
+/**
+ * @summary Delete an empty address book (owner only). 409 if it still holds contacts or groups, or is the personal book.
+ */
+export const deleteAddressBook = async (addressBookId: string, options?: RequestInit): Promise<void> => {
+
+  return customFetchContact<void>(getDeleteAddressBookUrl(addressBookId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteAddressBookMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAddressBook>>, TError,{addressBookId: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteAddressBook>>, TError,{addressBookId: string}, TContext> => {
+
+const mutationKey = ['deleteAddressBook'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAddressBook>>, {addressBookId: string}> = (props) => {
+          const {addressBookId} = props ?? {};
+
+          return  deleteAddressBook(addressBookId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteAddressBookMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAddressBook>>>
+
+    export type DeleteAddressBookMutationError = ProblemDetails | void
+
+    /**
+ * @summary Delete an empty address book (owner only). 409 if it still holds contacts or groups, or is the personal book.
+ */
+export const useDeleteAddressBook = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAddressBook>>, TError,{addressBookId: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteAddressBook>>,
+        TError,
+        {addressBookId: string},
+        TContext
+      > => {
+      return useMutation(getDeleteAddressBookMutationOptions(options), queryClient);
+    }
+
+export const getListAddressBookOwnersUrl = (addressBookId: string,) => {
+
+
+
+
+  return `/address-books/${addressBookId}/owners`
+}
+
+/**
+ * @summary List who has access to an address book and at what level (owner only).
+ */
+export const listAddressBookOwners = async (addressBookId: string, options?: RequestInit): Promise<OwnerGrantDto[]> => {
+
+  return customFetchContact<OwnerGrantDto[]>(getListAddressBookOwnersUrl(addressBookId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListAddressBookOwnersQueryKey = (addressBookId: string,) => {
+    return [
+    `/address-books/${addressBookId}/owners`
+    ] as const;
+    }
+
+
+export const getListAddressBookOwnersQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListAddressBookOwnersQueryKey(addressBookId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAddressBookOwners>>> = ({ signal }) => listAddressBookOwners(addressBookId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: addressBookId !== null && addressBookId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListAddressBookOwnersQueryResult = NonNullable<Awaited<ReturnType<typeof listAddressBookOwners>>>
+export type ListAddressBookOwnersQueryError = ProblemDetails | void
+
+
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(
+ addressBookId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAddressBookOwners>>,
+          TError,
+          Awaited<ReturnType<typeof listAddressBookOwners>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAddressBookOwners>>,
+          TError,
+          Awaited<ReturnType<typeof listAddressBookOwners>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List who has access to an address book and at what level (owner only).
+ */
+
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListAddressBookOwnersQueryOptions(addressBookId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getGrantAddressBookOwnerUrl = (addressBookId: string,) => {
 
@@ -986,6 +1312,689 @@ export const useDeleteContact = <TError = void,
       return useMutation(getDeleteContactMutationOptions(options), queryClient);
     }
 
+export const getGetContactCirclesUrl = (params?: GetContactCirclesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/contacts/circles?${stringifiedParams}` : `/contacts/circles`
+}
+
+/**
+ * @summary Computed social circles (close family, extended family, friends, colleagues, household) around a focus contact — the caller's own linked contact unless focusId overrides. Degree is a closeness bucket (1 immediate, 2 two-generation kin, 3 cousin). Ended relations are excluded.
+ */
+export const getContactCircles = async (params?: GetContactCirclesParams, options?: RequestInit): Promise<ContactCirclesDto> => {
+
+  return customFetchContact<ContactCirclesDto>(getGetContactCirclesUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetContactCirclesQueryKey = (params?: GetContactCirclesParams,) => {
+    return [
+    `/contacts/circles`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetContactCirclesQueryOptions = <TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetContactCirclesQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getContactCircles>>> = ({ signal }) => getContactCircles(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetContactCirclesQueryResult = NonNullable<Awaited<ReturnType<typeof getContactCircles>>>
+export type GetContactCirclesQueryError = ProblemDetails | void
+
+
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(
+ params: undefined |  GetContactCirclesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getContactCircles>>,
+          TError,
+          Awaited<ReturnType<typeof getContactCircles>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(
+ params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getContactCircles>>,
+          TError,
+          Awaited<ReturnType<typeof getContactCircles>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(
+ params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Computed social circles (close family, extended family, friends, colleagues, household) around a focus contact — the caller's own linked contact unless focusId overrides. Degree is a closeness bucket (1 immediate, 2 two-generation kin, 3 cousin). Ended relations are excluded.
+ */
+
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(
+ params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetContactCirclesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getMarkContactDeceasedUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/deceased`
+}
+
+/**
+ * @summary Mark a contact as deceased (idempotent; the date may be unknown). Deceased contacts stay in the kinship graph — death is not deletion.
+ */
+export const markContactDeceased = async (id: string,
+    setDeceasedRequest: SetDeceasedRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getMarkContactDeceasedUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setDeceasedRequest)
+  }
+);}
+
+
+
+
+
+export const getMarkContactDeceasedMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markContactDeceased>>, TError,{id: string;data: SetDeceasedRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof markContactDeceased>>, TError,{id: string;data: SetDeceasedRequest}, TContext> => {
+
+const mutationKey = ['markContactDeceased'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof markContactDeceased>>, {id: string;data: SetDeceasedRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  markContactDeceased(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MarkContactDeceasedMutationResult = NonNullable<Awaited<ReturnType<typeof markContactDeceased>>>
+    export type MarkContactDeceasedMutationBody = SetDeceasedRequest
+    export type MarkContactDeceasedMutationError = void | ProblemDetails
+
+    /**
+ * @summary Mark a contact as deceased (idempotent; the date may be unknown). Deceased contacts stay in the kinship graph — death is not deletion.
+ */
+export const useMarkContactDeceased = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markContactDeceased>>, TError,{id: string;data: SetDeceasedRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof markContactDeceased>>,
+        TError,
+        {id: string;data: SetDeceasedRequest},
+        TContext
+      > => {
+      return useMutation(getMarkContactDeceasedMutationOptions(options), queryClient);
+    }
+
+export const getClearContactDeceasedUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/deceased`
+}
+
+/**
+ * @summary Undo a deceased marking recorded in error. (CardDAV can set but never clear deceased — clearing is API-only.)
+ */
+export const clearContactDeceased = async (id: string, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getClearContactDeceasedUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getClearContactDeceasedMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['clearContactDeceased'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof clearContactDeceased>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  clearContactDeceased(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ClearContactDeceasedMutationResult = NonNullable<Awaited<ReturnType<typeof clearContactDeceased>>>
+
+    export type ClearContactDeceasedMutationError = void | ProblemDetails
+
+    /**
+ * @summary Undo a deceased marking recorded in error. (CardDAV can set but never clear deceased — clearing is API-only.)
+ */
+export const useClearContactDeceased = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof clearContactDeceased>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getClearContactDeceasedMutationOptions(options), queryClient);
+    }
+
+export const getSetContactProfilesUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/profiles`
+}
+
+/**
+ * @summary Replace the contact's social/IM handles wholesale. Service names are canonicalized; well-known services (telegram, messenger, whatsapp…) get the profile URL derived from the handle. At most one preferred handle per service.
+ */
+export const setContactProfiles = async (id: string,
+    setContactProfilesRequest: SetContactProfilesRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getSetContactProfilesUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setContactProfilesRequest)
+  }
+);}
+
+
+
+
+
+export const getSetContactProfilesMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactProfiles>>, TError,{id: string;data: SetContactProfilesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setContactProfiles>>, TError,{id: string;data: SetContactProfilesRequest}, TContext> => {
+
+const mutationKey = ['setContactProfiles'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactProfiles>>, {id: string;data: SetContactProfilesRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  setContactProfiles(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetContactProfilesMutationResult = NonNullable<Awaited<ReturnType<typeof setContactProfiles>>>
+    export type SetContactProfilesMutationBody = SetContactProfilesRequest
+    export type SetContactProfilesMutationError = ProblemDetails | void
+
+    /**
+ * @summary Replace the contact's social/IM handles wholesale. Service names are canonicalized; well-known services (telegram, messenger, whatsapp…) get the profile URL derived from the handle. At most one preferred handle per service.
+ */
+export const useSetContactProfiles = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactProfiles>>, TError,{id: string;data: SetContactProfilesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setContactProfiles>>,
+        TError,
+        {id: string;data: SetContactProfilesRequest},
+        TContext
+      > => {
+      return useMutation(getSetContactProfilesMutationOptions(options), queryClient);
+    }
+
+export const getSetContactAddressesUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/addresses`
+}
+
+/**
+ * @summary Replace the contact's postal addresses wholesale; each entry needs a geo place id or a formatted address.
+ */
+export const setContactAddresses = async (id: string,
+    setContactAddressesRequest: SetContactAddressesRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getSetContactAddressesUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setContactAddressesRequest)
+  }
+);}
+
+
+
+
+
+export const getSetContactAddressesMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAddresses>>, TError,{id: string;data: SetContactAddressesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setContactAddresses>>, TError,{id: string;data: SetContactAddressesRequest}, TContext> => {
+
+const mutationKey = ['setContactAddresses'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactAddresses>>, {id: string;data: SetContactAddressesRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  setContactAddresses(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetContactAddressesMutationResult = NonNullable<Awaited<ReturnType<typeof setContactAddresses>>>
+    export type SetContactAddressesMutationBody = SetContactAddressesRequest
+    export type SetContactAddressesMutationError = ProblemDetails | void
+
+    /**
+ * @summary Replace the contact's postal addresses wholesale; each entry needs a geo place id or a formatted address.
+ */
+export const useSetContactAddresses = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAddresses>>, TError,{id: string;data: SetContactAddressesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setContactAddresses>>,
+        TError,
+        {id: string;data: SetContactAddressesRequest},
+        TContext
+      > => {
+      return useMutation(getSetContactAddressesMutationOptions(options), queryClient);
+    }
+
+export const getSetEmergencyContactsUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/emergency-contacts`
+}
+
+/**
+ * @summary Replace the contact's emergency-contact designation wholesale (order = priority, empty clears). A designation, not a relation kind — your emergency contact is usually also a spouse or friend.
+ */
+export const setEmergencyContacts = async (id: string,
+    setEmergencyContactsRequest: SetEmergencyContactsRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getSetEmergencyContactsUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setEmergencyContactsRequest)
+  }
+);}
+
+
+
+
+
+export const getSetEmergencyContactsMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setEmergencyContacts>>, TError,{id: string;data: SetEmergencyContactsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setEmergencyContacts>>, TError,{id: string;data: SetEmergencyContactsRequest}, TContext> => {
+
+const mutationKey = ['setEmergencyContacts'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setEmergencyContacts>>, {id: string;data: SetEmergencyContactsRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  setEmergencyContacts(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetEmergencyContactsMutationResult = NonNullable<Awaited<ReturnType<typeof setEmergencyContacts>>>
+    export type SetEmergencyContactsMutationBody = SetEmergencyContactsRequest
+    export type SetEmergencyContactsMutationError = ProblemDetails | void
+
+    /**
+ * @summary Replace the contact's emergency-contact designation wholesale (order = priority, empty clears). A designation, not a relation kind — your emergency contact is usually also a spouse or friend.
+ */
+export const useSetEmergencyContacts = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setEmergencyContacts>>, TError,{id: string;data: SetEmergencyContactsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setEmergencyContacts>>,
+        TError,
+        {id: string;data: SetEmergencyContactsRequest},
+        TContext
+      > => {
+      return useMutation(getSetEmergencyContactsMutationOptions(options), queryClient);
+    }
+
+export const getSetContactEmailsUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/emails`
+}
+
+/**
+ * @summary Replace the contact's email addresses wholesale (empty clears). Unlike the merge update, this can remove an address; entries are trimmed and de-duplicated case-insensitively.
+ */
+export const setContactEmails = async (id: string,
+    setContactEmailsRequest: SetContactEmailsRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getSetContactEmailsUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setContactEmailsRequest)
+  }
+);}
+
+
+
+
+
+export const getSetContactEmailsMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactEmails>>, TError,{id: string;data: SetContactEmailsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setContactEmails>>, TError,{id: string;data: SetContactEmailsRequest}, TContext> => {
+
+const mutationKey = ['setContactEmails'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactEmails>>, {id: string;data: SetContactEmailsRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  setContactEmails(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetContactEmailsMutationResult = NonNullable<Awaited<ReturnType<typeof setContactEmails>>>
+    export type SetContactEmailsMutationBody = SetContactEmailsRequest
+    export type SetContactEmailsMutationError = void | ProblemDetails
+
+    /**
+ * @summary Replace the contact's email addresses wholesale (empty clears). Unlike the merge update, this can remove an address; entries are trimmed and de-duplicated case-insensitively.
+ */
+export const useSetContactEmails = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactEmails>>, TError,{id: string;data: SetContactEmailsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setContactEmails>>,
+        TError,
+        {id: string;data: SetContactEmailsRequest},
+        TContext
+      > => {
+      return useMutation(getSetContactEmailsMutationOptions(options), queryClient);
+    }
+
+export const getSetContactPhonesUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/phones`
+}
+
+/**
+ * @summary Replace the contact's phone numbers wholesale (empty clears). Unlike the merge update, this can remove a number; entries are trimmed and de-duplicated case-insensitively.
+ */
+export const setContactPhones = async (id: string,
+    setContactPhonesRequest: SetContactPhonesRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getSetContactPhonesUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setContactPhonesRequest)
+  }
+);}
+
+
+
+
+
+export const getSetContactPhonesMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactPhones>>, TError,{id: string;data: SetContactPhonesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setContactPhones>>, TError,{id: string;data: SetContactPhonesRequest}, TContext> => {
+
+const mutationKey = ['setContactPhones'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactPhones>>, {id: string;data: SetContactPhonesRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  setContactPhones(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetContactPhonesMutationResult = NonNullable<Awaited<ReturnType<typeof setContactPhones>>>
+    export type SetContactPhonesMutationBody = SetContactPhonesRequest
+    export type SetContactPhonesMutationError = void | ProblemDetails
+
+    /**
+ * @summary Replace the contact's phone numbers wholesale (empty clears). Unlike the merge update, this can remove a number; entries are trimmed and de-duplicated case-insensitively.
+ */
+export const useSetContactPhones = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactPhones>>, TError,{id: string;data: SetContactPhonesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setContactPhones>>,
+        TError,
+        {id: string;data: SetContactPhonesRequest},
+        TContext
+      > => {
+      return useMutation(getSetContactPhonesMutationOptions(options), queryClient);
+    }
+
+export const getSetContactTagsUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/tags`
+}
+
+/**
+ * @summary Replace the contact's tags wholesale (empty clears). Unlike the merge update, this can remove a tag; entries are trimmed and de-duplicated case-insensitively.
+ */
+export const setContactTags = async (id: string,
+    setContactTagsRequest: SetContactTagsRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getSetContactTagsUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setContactTagsRequest)
+  }
+);}
+
+
+
+
+
+export const getSetContactTagsMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactTags>>, TError,{id: string;data: SetContactTagsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setContactTags>>, TError,{id: string;data: SetContactTagsRequest}, TContext> => {
+
+const mutationKey = ['setContactTags'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactTags>>, {id: string;data: SetContactTagsRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  setContactTags(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetContactTagsMutationResult = NonNullable<Awaited<ReturnType<typeof setContactTags>>>
+    export type SetContactTagsMutationBody = SetContactTagsRequest
+    export type SetContactTagsMutationError = void | ProblemDetails
+
+    /**
+ * @summary Replace the contact's tags wholesale (empty clears). Unlike the merge update, this can remove a tag; entries are trimmed and de-duplicated case-insensitively.
+ */
+export const useSetContactTags = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactTags>>, TError,{id: string;data: SetContactTagsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setContactTags>>,
+        TError,
+        {id: string;data: SetContactTagsRequest},
+        TContext
+      > => {
+      return useMutation(getSetContactTagsMutationOptions(options), queryClient);
+    }
+
 export const getListContactRelationsUrl = (id: string,
     params?: ListContactRelationsParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -1174,84 +2183,6 @@ export const useAddContactRelation = <TError = ProblemDetails | void,
       return useMutation(getAddContactRelationMutationOptions(options), queryClient);
     }
 
-export const getNormalizeContactSiblingsUrl = (params?: NormalizeContactSiblingsParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/contacts/relations/normalize?${stringifiedParams}` : `/contacts/relations/normalize`
-}
-
-/**
- * @summary One-time, idempotent cleanup: convert explicit Sibling edges whose endpoints have a recorded parent into shared parentage. Scoped to the caller's writable books; returns the number of edges converted.
- */
-export const normalizeContactSiblings = async (params?: NormalizeContactSiblingsParams, options?: RequestInit): Promise<number | string> => {
-
-  return customFetchContact<number | string>(getNormalizeContactSiblingsUrl(params),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-
-export const getNormalizeContactSiblingsMutationOptions = <TError = void | ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof normalizeContactSiblings>>, TError,{params?: NormalizeContactSiblingsParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
-): UseMutationOptions<Awaited<ReturnType<typeof normalizeContactSiblings>>, TError,{params?: NormalizeContactSiblingsParams}, TContext> => {
-
-const mutationKey = ['normalizeContactSiblings'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof normalizeContactSiblings>>, {params?: NormalizeContactSiblingsParams}> = (props) => {
-          const {params} = props ?? {};
-
-          return  normalizeContactSiblings(params,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type NormalizeContactSiblingsMutationResult = NonNullable<Awaited<ReturnType<typeof normalizeContactSiblings>>>
-
-    export type NormalizeContactSiblingsMutationError = void | ProblemDetails
-
-    /**
- * @summary One-time, idempotent cleanup: convert explicit Sibling edges whose endpoints have a recorded parent into shared parentage. Scoped to the caller's writable books; returns the number of edges converted.
- */
-export const useNormalizeContactSiblings = <TError = void | ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof normalizeContactSiblings>>, TError,{params?: NormalizeContactSiblingsParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof normalizeContactSiblings>>,
-        TError,
-        {params?: NormalizeContactSiblingsParams},
-        TContext
-      > => {
-      return useMutation(getNormalizeContactSiblingsMutationOptions(options), queryClient);
-    }
-
 export const getRemoveContactRelationUrl = (id: string,
     toContactId: string,
     params: RemoveContactRelationParams,) => {
@@ -1270,7 +2201,7 @@ export const getRemoveContactRelationUrl = (id: string,
 }
 
 /**
- * @summary Remove the relation edge to a contact with the given kind.
+ * @summary Remove the relation edge to a contact with the given kind — for edges entered by mistake. A relationship that ran its course should be ended instead.
  */
 export const removeContactRelation = async (id: string,
     toContactId: string,
@@ -1321,7 +2252,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type RemoveContactRelationMutationError = void | ProblemDetails
 
     /**
- * @summary Remove the relation edge to a contact with the given kind.
+ * @summary Remove the relation edge to a contact with the given kind — for edges entered by mistake. A relationship that ran its course should be ended instead.
  */
 export const useRemoveContactRelation = <TError = void | ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactRelation>>, TError,{id: string;toContactId: string;params: RemoveContactRelationParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
@@ -1332,6 +2263,80 @@ export const useRemoveContactRelation = <TError = void | ProblemDetails,
         TContext
       > => {
       return useMutation(getRemoveContactRelationMutationOptions(options), queryClient);
+    }
+
+export const getEndContactRelationUrl = (id: string,
+    toContactId: string,) => {
+
+
+
+
+  return `/contacts/${id}/relations/${toContactId}/end`
+}
+
+/**
+ * @summary Mark a relation as ended (ex-spouse, falling-out): the edge stays, flagged with an optional end date, and no longer asserts current kinship. Re-adding the same relation revives it.
+ */
+export const endContactRelation = async (id: string,
+    toContactId: string,
+    endContactRelationRequest: EndContactRelationRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getEndContactRelationUrl(id,toContactId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(endContactRelationRequest)
+  }
+);}
+
+
+
+
+
+export const getEndContactRelationMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endContactRelation>>, TError,{id: string;toContactId: string;data: EndContactRelationRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof endContactRelation>>, TError,{id: string;toContactId: string;data: EndContactRelationRequest}, TContext> => {
+
+const mutationKey = ['endContactRelation'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof endContactRelation>>, {id: string;toContactId: string;data: EndContactRelationRequest}> = (props) => {
+          const {id,toContactId,data} = props ?? {};
+
+          return  endContactRelation(id,toContactId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type EndContactRelationMutationResult = NonNullable<Awaited<ReturnType<typeof endContactRelation>>>
+    export type EndContactRelationMutationBody = EndContactRelationRequest
+    export type EndContactRelationMutationError = void | ProblemDetails
+
+    /**
+ * @summary Mark a relation as ended (ex-spouse, falling-out): the edge stays, flagged with an optional end date, and no longer asserts current kinship. Re-adding the same relation revives it.
+ */
+export const useEndContactRelation = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endContactRelation>>, TError,{id: string;toContactId: string;data: EndContactRelationRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof endContactRelation>>,
+        TError,
+        {id: string;toContactId: string;data: EndContactRelationRequest},
+        TContext
+      > => {
+      return useMutation(getEndContactRelationMutationOptions(options), queryClient);
     }
 
 export const getListContactGroupsUrl = (addressBookId: string,) => {

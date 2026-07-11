@@ -11,4 +11,5 @@ export interface ContactSocialProfile {
   handle?: string;
   /** @nullable */
   url?: string | null;
+  preferred?: boolean;
 }

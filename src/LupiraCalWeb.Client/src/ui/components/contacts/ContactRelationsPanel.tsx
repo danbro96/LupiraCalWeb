@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   useAddContactRelation,
+  useEndContactRelation,
   useListContactRelations,
   useRemoveContactRelation,
   useSearchContacts,
@@ -23,6 +24,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
   const { data: relations } = useListContactRelations(contact.id, { includeInferred: showExtended });
   const { data: candidates } = useSearchContacts({ addressBookId: contact.addressBookId });
   const add = useAddContactRelation({ mutation: { onSuccess: invalidate } });
+  const end = useEndContactRelation({ mutation: { onSuccess: invalidate } });
   const remove = useRemoveContactRelation({ mutation: { onSuccess: invalidate } });
 
   const [toContactId, setToContactId] = useState('');
@@ -61,15 +63,35 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
       )}
 
       {outgoing.map((r) => (
-        <div key={`out-${r.contactId}-${r.kind}`} className="relation-row">
+        <div key={`out-${r.contactId}-${r.kind}`} className={`relation-row${r.ended ? ' ended' : ''}`}>
           <span className={`badge cat-${kindCategory(r.kind)}`}>{r.kind}</span>
           <Link className="membership-name" to={link(r.contactId)}>
             {r.displayName}
           </Link>
           {r.label && <span className="meta">“{r.label}”</span>}
+          {r.ended && <span className="meta">· ended{r.until ? ` ${r.until}` : ''}</span>}
+          {r.ended ? (
+            <button
+              className="icon-btn"
+              title="Revive relationship"
+              disabled={add.isPending}
+              onClick={() => add.mutate({ id: contact.id, data: { toContactId: r.contactId, kind: r.kind as ContactRelationKind, label: r.label ?? null } })}
+            >
+              ↺
+            </button>
+          ) : (
+            <button
+              className="icon-btn"
+              title="End relationship (ran its course)"
+              disabled={end.isPending}
+              onClick={() => end.mutate({ id: contact.id, toContactId: r.contactId, data: { kind: r.kind as ContactRelationKind } })}
+            >
+              ⏻
+            </button>
+          )}
           <button
             className="icon-btn"
-            title="Remove relation"
+            title="Remove relation (entered by mistake)"
             disabled={remove.isPending}
             onClick={() => remove.mutate({ id: contact.id, toContactId: r.contactId, params: { kind: r.kind as ContactRelationKind } })}
           >
@@ -139,6 +161,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
         </button>
       </form>
       {errText(add.error) && <p className="error-text">{errText(add.error)}</p>}
+      {errText(end.error) && <p className="error-text">{errText(end.error)}</p>}
       {errText(remove.error) && <p className="error-text">{errText(remove.error)}</p>}
     </section>
   );

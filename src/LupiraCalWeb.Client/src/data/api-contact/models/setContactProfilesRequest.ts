@@ -5,7 +5,8 @@
  * Contacts, address books, and kinship backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
+import type { ContactSocialProfile } from './contactSocialProfile';
 
-export type NormalizeContactSiblingsParams = {
-addressBookId?: string;
-};
+export interface SetContactProfilesRequest {
+  profiles: ContactSocialProfile[];
+}

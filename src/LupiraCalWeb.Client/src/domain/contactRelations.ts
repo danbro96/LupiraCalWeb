@@ -1,6 +1,9 @@
 // Contact↔contact relation taxonomy + ego-graph builder. Pure: the UI maps generated DTOs onto
 // the structural RelationEntry shape and feeds one entry list per fetched contact.
 
+// All kinds are storable (== generated ContactRelationKind). The extended-family kinds are also produced by the
+// API's read-time inference over the parent/child graph — explicit vs inferred is carried by RelationProvenance,
+// not by the kind.
 export type RelationKind =
   | 'Parent'
   | 'Child'
@@ -10,22 +13,23 @@ export type RelationKind =
   | 'Friend'
   | 'Colleague'
   | 'Neighbor'
-  | 'Emergency'
-  | 'Other';
+  | 'Other'
+  | 'Grandparent'
+  | 'Grandchild'
+  | 'AuntUncle'
+  | 'NieceNephew'
+  | 'Cousin';
 
 export type RelationDirection = 'Outgoing' | 'Incoming';
 
-/** Read-only kinships CalApi derives from the parent/child graph (never storable). */
-export type InferredKind = 'Grandparent' | 'Grandchild' | 'AuntUncle' | 'NieceNephew' | 'Cousin';
-
-/** The full resolved kind set (== generated KinshipKind): storable kinds + inferred kinships. */
-export type KinKind = RelationKind | InferredKind;
+/** Alias kept for the resolved-entry shape; identical to RelationKind now that extended kin are storable. */
+export type KinKind = RelationKind;
 
 export type RelationProvenance = 'Explicit' | 'Inferred';
 
-export type RelationCategory = 'Family' | 'Social' | 'Professional' | 'Emergency' | 'Other';
+export type RelationCategory = 'Family' | 'Social' | 'Professional' | 'Other';
 
-/** The kinds a user can store/edit (the add-form select); inferred kinds are display-only. */
+/** The kinds a user can store/edit (the add-form select), immediate/social first, extended kin last. */
 export const RELATION_KINDS: RelationKind[] = [
   'Parent',
   'Child',
@@ -35,8 +39,12 @@ export const RELATION_KINDS: RelationKind[] = [
   'Friend',
   'Colleague',
   'Neighbor',
-  'Emergency',
   'Other',
+  'Grandparent',
+  'Grandchild',
+  'AuntUncle',
+  'NieceNephew',
+  'Cousin',
 ];
 
 const CATEGORY: Record<KinKind, RelationCategory> = {
@@ -53,21 +61,25 @@ const CATEGORY: Record<KinKind, RelationCategory> = {
   Friend: 'Social',
   Neighbor: 'Social',
   Colleague: 'Professional',
-  Emergency: 'Emergency',
   Other: 'Other',
 };
 
-// Mirrors CalApi's ContactRelationKinds.Inverse: Parent↔Child, Emergency→Other, else symmetric.
+// Mirrors the API's ContactRelationKinds.Inverse: Parent↔Child, Grandparent↔Grandchild,
+// AuntUncle↔NieceNephew; the rest (incl. Sibling, Cousin) are symmetric.
 const INVERSE: Record<RelationKind, RelationKind> = {
   Parent: 'Child',
   Child: 'Parent',
-  Emergency: 'Other',
+  Grandparent: 'Grandchild',
+  Grandchild: 'Grandparent',
+  AuntUncle: 'NieceNephew',
+  NieceNephew: 'AuntUncle',
   Sibling: 'Sibling',
   Spouse: 'Spouse',
   Partner: 'Partner',
   Friend: 'Friend',
   Colleague: 'Colleague',
   Neighbor: 'Neighbor',
+  Cousin: 'Cousin',
   Other: 'Other',
 };
 
@@ -91,6 +103,8 @@ export interface RelationEntry {
   label?: string | null;
   direction: RelationDirection;
   provenance?: RelationProvenance;
+  /** Ended relationships (ex-spouse, falling-out) no longer assert current kinship — excluded from the graph. */
+  ended?: boolean;
 }
 
 export interface GraphNode {
@@ -112,7 +126,7 @@ export interface GraphEdge {
   kind: KinKind;
   label?: string | null;
   category: RelationCategory;
-  /** Asymmetric kinds (Parent/Child, Emergency) get an arrowhead. */
+  /** Asymmetric kinds (Parent/Child) get an arrowhead. */
   directed: boolean;
   /** Derived from the kinship graph rather than a stored edge (rendered dashed, read-only). */
   inferred?: boolean;
@@ -125,15 +139,21 @@ export interface RelationGraph {
 
 const RING = 220;
 
+// Directed kinship pairs collapse to one elder-rooted edge (arrow elder→younger) so a stored edge and its
+// derived inverse dedupe: the "younger" kind maps to its "elder" partner. Symmetric kinds fall through.
+const ELDER_KIND: Partial<Record<RelationKind, RelationKind>> = { Parent: 'Parent', Grandparent: 'Grandparent', AuntUncle: 'AuntUncle' };
+const YOUNGER_TO_ELDER: Partial<Record<RelationKind, RelationKind>> = { Child: 'Parent', Grandchild: 'Grandparent', NieceNephew: 'AuntUncle' };
+
 /**
  * Normalize a stored edge to a single display orientation so identical relationships read the same
  * regardless of which contact stored them (and so mirror/redundant facts dedupe to one edge):
- * Parent/Child → arrow parent → child; symmetric kinds → endpoints sorted; Emergency stays owner →
- * contact (directed, no reciprocal).
+ * directed kinships → arrow elder → younger; symmetric kinds → endpoints sorted.
  */
 function orient(owner: string, target: string, storedKind: RelationKind): { source: string; target: string; kind: RelationKind } {
-  if (storedKind === 'Parent') return { source: target, target: owner, kind: 'Parent' }; // target is owner's parent
-  if (storedKind === 'Child') return { source: owner, target, kind: 'Parent' }; // owner is the parent
+  const elder = ELDER_KIND[storedKind];
+  if (elder) return { source: target, target: owner, kind: elder }; // target is owner's elder (parent/grandparent/aunt-uncle)
+  const asElder = YOUNGER_TO_ELDER[storedKind];
+  if (asElder) return { source: owner, target, kind: asElder }; // owner is the elder
   if (isSymmetric(storedKind)) {
     return owner < target
       ? { source: owner, target, kind: storedKind }
@@ -175,6 +195,8 @@ export function buildRelationGraph(
           });
         continue;
       }
+
+      if (e.ended) continue; // ended relationships stay listed on the card but leave the graph
 
       const stored = e.kind as RelationKind; // explicit entries only ever carry storable kinds
       const outgoing = e.direction === 'Outgoing';

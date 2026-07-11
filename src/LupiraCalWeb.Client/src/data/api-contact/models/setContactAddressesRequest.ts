@@ -5,12 +5,8 @@
  * Contacts, address books, and kinship backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
+import type { ContactPostalAddress } from './contactPostalAddress';
 
-export interface MeDto {
-  id: string;
-  email: string;
-  /** @nullable */
-  displayName?: string | null;
-  /** @nullable */
-  contactId?: string | null;
+export interface SetContactAddressesRequest {
+  addresses: ContactPostalAddress[];
 }
