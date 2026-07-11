@@ -11,5 +11,7 @@ export interface OwnerGrantDto {
   containerId: string;
   principalId: string;
   email: string;
+  /** @nullable */
+  displayName?: string | null;
   access: Access;
 }

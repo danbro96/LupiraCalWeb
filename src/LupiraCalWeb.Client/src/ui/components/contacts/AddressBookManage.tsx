@@ -53,7 +53,7 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
       {(owners ?? []).map((o) => (
         <div key={o.principalId} className="membership-row">
           <span className="badge">{o.access}</span>
-          <span className="membership-name">{o.email}</span>
+          <span className="membership-name">{o.displayName ?? o.email}</span>
           <button
             className="icon-btn"
             title="Revoke access"

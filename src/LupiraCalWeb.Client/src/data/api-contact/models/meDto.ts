@@ -7,7 +7,7 @@
  */
 
 export interface MeDto {
-  id: string;
+  principalId: string;
   email: string;
   /** @nullable */
   displayName?: string | null;
