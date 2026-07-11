@@ -47,7 +47,7 @@ export function AppShell() {
             + New
           </button>
           <div className="account">
-            <span className="account-email">{user?.email}</span>
+            <span className="account-email">{user?.name ?? user?.email}</span>
             <button className="linklike" onClick={logout}>
               Sign out
             </button>

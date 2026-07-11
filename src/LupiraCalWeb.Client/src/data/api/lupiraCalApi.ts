@@ -249,7 +249,7 @@ export const getListContainersUrl = () => {
 }
 
 /**
- * @summary List the calendars and address books the caller can access.
+ * @summary List the calendars the caller can access.
  */
 export const listContainers = async ( options?: RequestInit): Promise<ContainerDto[]> => {
 
@@ -320,7 +320,7 @@ export function useListContainers<TData = Awaited<ReturnType<typeof listContaine
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List the calendars and address books the caller can access.
+ * @summary List the calendars the caller can access.
  */
 
 export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = void>(
@@ -350,7 +350,7 @@ export const getCreateCalendarUrl = () => {
 }
 
 /**
- * @summary Create a calendar or address book (kind = 'calendar' | 'addressbook').
+ * @summary Create a calendar. (Address books are managed by LupiraContactApi.)
  */
 export const createCalendar = async (createCalendarRequest: CreateCalendarRequest, options?: RequestInit): Promise<ContainerDto> => {
 
@@ -399,7 +399,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateCalendarMutationError = void
 
     /**
- * @summary Create a calendar or address book (kind = 'calendar' | 'addressbook').
+ * @summary Create a calendar. (Address books are managed by LupiraContactApi.)
  */
 export const useCreateCalendar = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCalendar>>, TError,{data: CreateCalendarRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
