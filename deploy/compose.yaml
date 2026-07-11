@@ -7,6 +7,10 @@ services:
       Auth__Oidc__Authority: ${AUTH_AUTHORITY:-https://auth.lupira.com/application/o/lupira-cal/}
       Auth__Oidc__ClientId: ${AUTH_CLIENT_ID:-lupira-cal}
       Auth__Oidc__ClientSecret: ${AUTH_CLIENT_SECRET:-}
+      # Audience scopes appended to the base OIDC scopes (indexes 0-4 in appsettings). Each triggers an
+      # Authentik mapping that stamps the aud contact-api/geo-api require; without them the token is rejected.
+      Auth__Oidc__Scopes__5: ${AUTH_SCOPE_CONTACT:-lupira-contact-aud}
+      Auth__Oidc__Scopes__6: ${AUTH_SCOPE_GEO:-lupira-geo-aud}
       ReverseProxy__Clusters__cal-api__Destinations__primary__Address: ${CAL_API_BASE_URL:-https://cal-api.lupira.com}
       ReverseProxy__Clusters__geo-api__Destinations__primary__Address: ${GEO_API_BASE_URL:-https://geo-api.lupira.com}
       ReverseProxy__Clusters__contact-api__Destinations__primary__Address: ${CONTACT_API_BASE_URL:-https://contact-api.lupira.com}
