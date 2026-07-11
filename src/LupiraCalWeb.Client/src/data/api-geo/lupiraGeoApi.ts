@@ -1712,7 +1712,7 @@ export const getUpdateSavedPlaceUrl = (id: string,) => {
 }
 
 /**
- * @summary Rename, re-icon, or (un)favorite a saved place.
+ * @summary Rename, re-icon, annotate, or (un)favorite a saved place.
  */
 export const updateSavedPlace = async (id: string,
     updateSavedPlaceRequest: UpdateSavedPlaceRequest, options?: RequestInit): Promise<SavedPlaceDto> => {
@@ -1762,7 +1762,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type UpdateSavedPlaceMutationError = ProblemDetails | void
 
     /**
- * @summary Rename, re-icon, or (un)favorite a saved place.
+ * @summary Rename, re-icon, annotate, or (un)favorite a saved place.
  */
 export const useUpdateSavedPlace = <TError = ProblemDetails | void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateSavedPlace>>, TError,{id: string;data: UpdateSavedPlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}

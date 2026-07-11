@@ -6,6 +6,7 @@
  * OpenAPI spec version: v1
  */
 import type { ContactReachChannel } from './contactReachChannel';
+import type { PartialDate } from './partialDate';
 
 export interface ReviseContactRequest {
   /** @nullable */
@@ -22,8 +23,11 @@ export interface ReviseContactRequest {
   nickname?: string | null;
   /** @nullable */
   channels?: ContactReachChannel[] | null;
-  /** @nullable */
-  birthday?: string | null;
+  birthday?: null | PartialDate;
   /** @nullable */
   tags?: string[] | null;
+  /** @nullable */
+  notes?: string | null;
+  /** @nullable */
+  pronouns?: string | null;
 }

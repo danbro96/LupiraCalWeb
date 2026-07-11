@@ -20,6 +20,7 @@ import type {
 import { ContactAddressType, ReachMedium } from '../../../data/api-contact/models';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
+import { inputToPartialDate, partialDateKey, partialDateToInput } from './partialDate';
 
 const norm = (s?: string | null) => (s ?? '').trim();
 const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((v, i) => v === b[i]);
@@ -92,7 +93,8 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   const [givenName, setGivenName] = useState(contact.givenName ?? '');
   const [familyName, setFamilyName] = useState(contact.familyName ?? '');
   const [nickname, setNickname] = useState(contact.nickname ?? '');
-  const [birthday, setBirthday] = useState(contact.birthday ?? '');
+  const [birthday, setBirthday] = useState(partialDateToInput(contact.birthday));
+  const [birthdayYearKnown, setBirthdayYearKnown] = useState(contact.birthday?.year != null);
   const [channels, setChannelsState] = useState<ContactReachChannel[]>(contact.channels.map((c) => ({ ...c })));
   const [tags, setTagsState] = useState<string[]>(contact.tags ?? []);
   const [addresses, setAddressesState] = useState<ContactPostalAddress[]>(contact.addresses.map((a) => ({ ...a })));
@@ -115,7 +117,8 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       if (norm(givenName) !== norm(contact.givenName)) rev.givenName = givenName;
       if (norm(familyName) !== norm(contact.familyName)) rev.familyName = familyName;
       if (norm(nickname) !== norm(contact.nickname)) rev.nickname = nickname;
-      if (birthday && birthday !== (contact.birthday ?? '')) rev.birthday = birthday;
+      const nextBirthday = inputToPartialDate(birthday, birthdayYearKnown);
+      if (partialDateKey(nextBirthday) !== partialDateKey(contact.birthday)) rev.birthday = nextBirthday;
       if (Object.keys(rev).length > 0) await revise.mutateAsync({ id, data: rev });
 
       const cleanChannels = channels.filter((c) => c.value.trim()).map((c) => ({ ...c, value: c.value.trim() }));
@@ -170,6 +173,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       <div className="edit-field">
         <label>Birthday</label>
         <input className="text-input" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
+        <label className="meta">
+          <input type="checkbox" checked={!birthdayYearKnown} onChange={(e) => setBirthdayYearKnown(!e.target.checked)} disabled={!birthday} /> Year unknown
+        </label>
       </div>
 
       <div className="edit-field">

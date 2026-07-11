@@ -12,6 +12,10 @@ export interface ContactRelation {
   kind?: ContactRelationKind;
   /** @nullable */
   label?: string | null;
+  /** @nullable */
+  since?: string | null;
+  /** @nullable */
+  note?: string | null;
   ended?: boolean;
   /** @nullable */
   until?: string | null;

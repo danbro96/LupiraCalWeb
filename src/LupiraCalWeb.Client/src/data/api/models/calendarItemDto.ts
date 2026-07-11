@@ -7,6 +7,7 @@
  */
 import type { CalendarMembershipDto } from './calendarMembershipDto';
 import type { CompletenessScore } from './completenessScore';
+import type { DatePrecision } from './datePrecision';
 import type { ItemAction } from './itemAction';
 import type { ItemAttendee } from './itemAttendee';
 import type { ItemCategory } from './itemCategory';
@@ -32,6 +33,8 @@ export interface CalendarItemDto {
   startDate?: string | null;
   /** @nullable */
   endDate?: string | null;
+  startPrecision?: null | DatePrecision;
+  endPrecision?: null | DatePrecision;
   /** @nullable */
   recurrenceRule?: string | null;
   category?: null | ItemCategory;

@@ -6,9 +6,7 @@
  * OpenAPI spec version: v1
  */
 
-export type AddContactGroupMemberParams = {
-contactId: string;
-role?: string;
-since?: string;
-until?: string;
-};
+export interface SetContactAvatarRequest {
+  /** @nullable */
+  avatarRef?: string | null;
+}

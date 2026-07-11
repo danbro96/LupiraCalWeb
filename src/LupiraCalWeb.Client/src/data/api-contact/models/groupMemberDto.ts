@@ -6,9 +6,12 @@
  * OpenAPI spec version: v1
  */
 
-export type AddContactGroupMemberParams = {
-contactId: string;
-role?: string;
-since?: string;
-until?: string;
-};
+export interface GroupMemberDto {
+  contactId: string;
+  /** @nullable */
+  role?: string | null;
+  /** @nullable */
+  since?: string | null;
+  /** @nullable */
+  until?: string | null;
+}

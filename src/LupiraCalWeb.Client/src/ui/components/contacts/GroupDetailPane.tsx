@@ -36,8 +36,8 @@ export function GroupDetailPane() {
     );
   }
 
-  const members = (bookContacts ?? []).filter((c) => group.members.includes(c.id));
-  const nonMembers = (bookContacts ?? []).filter((c) => !group.members.includes(c.id));
+  const members = (bookContacts ?? []).filter((c) => group.members.some((m) => m.contactId === c.id));
+  const nonMembers = (bookContacts ?? []).filter((c) => !group.members.some((m) => m.contactId === c.id));
   const backSearch = `?book=${bookId}`;
 
   return (

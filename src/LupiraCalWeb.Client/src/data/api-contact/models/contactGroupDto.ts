@@ -6,13 +6,14 @@
  * OpenAPI spec version: v1
  */
 import type { ContactGroupKind } from './contactGroupKind';
+import type { GroupMemberDto } from './groupMemberDto';
 
 export interface ContactGroupDto {
   id: string;
   addressBookId: string;
   kind: ContactGroupKind;
   name: string;
-  members: string[];
+  members: GroupMemberDto[];
   createdAt?: string;
   /** @nullable */
   createdBy?: string | null;

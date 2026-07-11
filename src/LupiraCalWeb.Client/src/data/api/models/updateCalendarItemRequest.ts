@@ -6,6 +6,7 @@
  * OpenAPI spec version: v1
  */
 import type { AvailabilityStatus } from './availabilityStatus';
+import type { DatePrecision } from './datePrecision';
 import type { ItemDetailsRequest } from './itemDetailsRequest';
 
 export interface UpdateCalendarItemRequest {
@@ -23,6 +24,8 @@ export interface UpdateCalendarItemRequest {
   endsAt?: string | null;
   /** @nullable */
   recurrenceRule?: string | null;
+  startPrecision?: null | DatePrecision;
+  endPrecision?: null | DatePrecision;
   /** @nullable */
   category?: string | null;
   /** @nullable */

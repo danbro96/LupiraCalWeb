@@ -12,4 +12,8 @@ export interface AddContactRelationRequest {
   kind: ContactRelationKind;
   /** @nullable */
   label?: string | null;
+  /** @nullable */
+  since?: string | null;
+  /** @nullable */
+  note?: string | null;
 }

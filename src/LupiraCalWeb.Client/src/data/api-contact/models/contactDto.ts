@@ -11,6 +11,7 @@ import type { ContactReachChannel } from './contactReachChannel';
 import type { ContactRelation } from './contactRelation';
 import type { ContactSocialProfile } from './contactSocialProfile';
 import type { JsonNode } from './jsonNode';
+import type { PartialDate } from './partialDate';
 
 export interface ContactDto {
   id: string;
@@ -24,13 +25,18 @@ export interface ContactDto {
   /** @nullable */
   nickname?: string | null;
   channels: ContactReachChannel[];
-  /** @nullable */
-  birthday?: string | null;
+  birthday?: null | PartialDate;
   deceased?: boolean;
   /** @nullable */
   deathDate?: string | null;
   /** @nullable */
   tags?: string[] | null;
+  /** @nullable */
+  notes?: string | null;
+  /** @nullable */
+  pronouns?: string | null;
+  /** @nullable */
+  avatarRef?: string | null;
   addresses: ContactPostalAddress[];
   profiles: ContactSocialProfile[];
   emergencyContactIds: string[];

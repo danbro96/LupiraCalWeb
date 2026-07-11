@@ -22,5 +22,7 @@ export interface CreateSavedPlaceRequest {
   longitude?: number | string | null;
   /** @nullable */
   icon?: string | null;
+  /** @nullable */
+  notes?: string | null;
   isFavorite?: boolean;
 }

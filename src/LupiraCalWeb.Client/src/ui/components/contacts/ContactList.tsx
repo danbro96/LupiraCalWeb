@@ -6,6 +6,7 @@ import { ReachMedium } from '../../../data/api-contact/models';
 import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
+import { inputToPartialDate, partialDateBadge } from './partialDate';
 import { useGroup } from './useGroup';
 
 /** Split a comma-separated input into reach channels of one medium (create-form convenience). */
@@ -34,7 +35,7 @@ export function ContactList() {
   });
   const [creating, setCreating] = useState(false);
 
-  const rows = groupId ? (contacts ?? []).filter((c) => group?.members.includes(c.id)) : contacts ?? [];
+  const rows = groupId ? (contacts ?? []).filter((c) => group?.members.some((m) => m.contactId === c.id)) : contacts ?? [];
 
   const setQuery = (q: string) =>
     setParams(
@@ -64,7 +65,7 @@ export function ContactList() {
               {c.displayName}
               {c.nickname ? <span className="meta"> “{c.nickname}”</span> : null}
             </span>
-            {c.birthday && <span className="badge">🎂 {c.birthday.slice(5)}</span>}
+            {c.birthday && <span className="badge">🎂 {partialDateBadge(c.birthday)}</span>}
             {c.completeness && (
               <span className="completeness-bar" title={`Completeness ${Math.round(Number(c.completeness.score) * 100)}%`}>
                 <span style={{ width: `${Math.round(Number(c.completeness.score) * 100)}%` }} />
@@ -105,7 +106,7 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
             familyName: form.familyName || null,
             nickname: form.nickname || null,
             channels: channels.length ? channels : null,
-            birthday: form.birthday || null,
+            birthday: inputToPartialDate(form.birthday, true),
           },
         });
       }}

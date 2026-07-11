@@ -48,6 +48,7 @@ import type {
   RevokeAddressBookOwnerParams,
   SearchContactsParams,
   SetContactAddressesRequest,
+  SetContactAvatarRequest,
   SetContactChannelsRequest,
   SetContactProfilesRequest,
   SetContactTagsRequest,
@@ -1634,6 +1635,78 @@ export const useSetContactProfiles = <TError = ProblemDetails | void,
       return useMutation(getSetContactProfilesMutationOptions(options), queryClient);
     }
 
+export const getSetContactAvatarUrl = (id: string,) => {
+
+
+
+
+  return `/contacts/${id}/avatar`
+}
+
+/**
+ * @summary Set (or clear, with an empty value) the contact's avatar — a URL/media id, never image bytes.
+ */
+export const setContactAvatar = async (id: string,
+    setContactAvatarRequest: SetContactAvatarRequest, options?: RequestInit): Promise<ContactDto> => {
+
+  return customFetchContact<ContactDto>(getSetContactAvatarUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setContactAvatarRequest)
+  }
+);}
+
+
+
+
+
+export const getSetContactAvatarMutationOptions = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAvatar>>, TError,{id: string;data: SetContactAvatarRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof setContactAvatar>>, TError,{id: string;data: SetContactAvatarRequest}, TContext> => {
+
+const mutationKey = ['setContactAvatar'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setContactAvatar>>, {id: string;data: SetContactAvatarRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  setContactAvatar(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetContactAvatarMutationResult = NonNullable<Awaited<ReturnType<typeof setContactAvatar>>>
+    export type SetContactAvatarMutationBody = SetContactAvatarRequest
+    export type SetContactAvatarMutationError = void | ProblemDetails
+
+    /**
+ * @summary Set (or clear, with an empty value) the contact's avatar — a URL/media id, never image bytes.
+ */
+export const useSetContactAvatar = <TError = void | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAvatar>>, TError,{id: string;data: SetContactAvatarRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setContactAvatar>>,
+        TError,
+        {id: string;data: SetContactAvatarRequest},
+        TContext
+      > => {
+      return useMutation(getSetContactAvatarMutationOptions(options), queryClient);
+    }
+
 export const getSetContactAddressesUrl = (id: string,) => {
 
 
@@ -2615,7 +2688,7 @@ export const getAddContactGroupMemberUrl = (groupId: string,
 }
 
 /**
- * @summary Add a contact to a group.
+ * @summary Add a contact to a group; for an organization, role is the title held there (re-adding updates it).
  */
 export const addContactGroupMember = async (groupId: string,
     params: AddContactGroupMemberParams, options?: RequestInit): Promise<ContactGroupDto> => {
@@ -2665,7 +2738,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AddContactGroupMemberMutationError = void
 
     /**
- * @summary Add a contact to a group.
+ * @summary Add a contact to a group; for an organization, role is the title held there (re-adding updates it).
  */
 export const useAddContactGroupMember = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactGroupMember>>, TError,{groupId: string;params: AddContactGroupMemberParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}

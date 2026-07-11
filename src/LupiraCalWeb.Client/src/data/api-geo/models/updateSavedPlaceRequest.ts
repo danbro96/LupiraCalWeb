@@ -12,5 +12,7 @@ export interface UpdateSavedPlaceRequest {
   /** @nullable */
   icon?: string | null;
   /** @nullable */
+  notes?: string | null;
+  /** @nullable */
   isFavorite?: boolean | null;
 }

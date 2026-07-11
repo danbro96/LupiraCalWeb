@@ -6,7 +6,9 @@
  * OpenAPI spec version: v1
  */
 import type { AvailabilityStatus } from './availabilityStatus';
+import type { DatePrecision } from './datePrecision';
 import type { ItemDetailsRequest } from './itemDetailsRequest';
+import type { JsonObject } from './jsonObject';
 
 export interface CreateCalendarItemRequest {
   /** @nullable */
@@ -36,6 +38,9 @@ export interface CreateCalendarItemRequest {
   category?: string | null;
   /** @nullable */
   tags?: string[] | null;
+  startPrecision?: null | DatePrecision;
+  endPrecision?: null | DatePrecision;
+  metadata?: null | JsonObject;
   availability?: null | AvailabilityStatus;
   details?: null | ItemDetailsRequest;
 }

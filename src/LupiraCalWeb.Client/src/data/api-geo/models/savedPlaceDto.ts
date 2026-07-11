@@ -23,5 +23,7 @@ export interface SavedPlaceDto {
   label: string;
   /** @nullable */
   icon?: string | null;
+  /** @nullable */
+  notes?: string | null;
   isFavorite: boolean;
 }

@@ -9,13 +9,14 @@ import {
   useSearchContacts,
   useSetMyContact,
 } from '../../../data/api-contact/lupiraContactApi';
-import { fmtDate, parseYmd } from '../../../domain/time';
+import { fmtDate } from '../../../domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
 import { errText } from '../errText';
 import { ContactCircles } from './ContactCircles';
 import { ContactEditForm } from './ContactEditForm';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
+import { fmtPartialDate } from './partialDate';
 
 /** Right pane for a contact: reach fields, postal addresses, profiles, emergency designation, group membership,
  *  completeness, and relations. Fields edit inline via ContactEditForm; all writes go over REST. */
@@ -37,8 +38,8 @@ export function ContactDetailPane() {
   if (isLoading) return <div className="contacts-detail-pane"><p className="meta">Loading…</p></div>;
   if (!contact) return <div className="contacts-detail-pane"><p className="empty">Contact not found.</p></div>;
 
-  const memberOf = (groups ?? []).filter((g) => g.members.includes(contact.id));
-  const joinable = (groups ?? []).filter((g) => !g.members.includes(contact.id));
+  const memberOf = (groups ?? []).filter((g) => g.members.some((m) => m.contactId === contact.id));
+  const joinable = (groups ?? []).filter((g) => !g.members.some((m) => m.contactId === contact.id));
   const groupSearch = `?book=${contact.addressBookId}`;
   const link = (id: string) => ({ pathname: `/contacts/${id}`, search: groupSearch });
   const nameOf = (cid: string) => bookContacts?.find((c) => c.id === cid)?.displayName ?? cid.slice(0, 8);
@@ -69,7 +70,7 @@ export function ContactDetailPane() {
             {contact.birthday && (
               <div>
                 <dt>Birthday</dt>
-                <dd>🎂 {fmtDate(parseYmd(contact.birthday))}</dd>
+                <dd>🎂 {fmtPartialDate(contact.birthday)}</dd>
               </div>
             )}
             {contact.channels.map((c, i) => (
