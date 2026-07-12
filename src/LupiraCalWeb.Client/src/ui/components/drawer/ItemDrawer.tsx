@@ -13,6 +13,7 @@ import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 import { AttendeesPanel } from './AttendeesPanel';
 import { CalendarsPanel } from './CalendarsPanel';
 import { CompletenessBadge } from './CompletenessBadge';
+import { HierarchyPanel } from './HierarchyPanel';
 import { isoToLocalInput, localInputToIso } from './inputs';
 import { KindDetailsCard } from './KindDetailsCard';
 import { MetadataPanel } from './MetadataPanel';
@@ -215,6 +216,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <PayloadPanel item={item} />
       <AttendeesPanel item={item} />
       <CalendarsPanel item={item} />
+      <HierarchyPanel item={item} />
       <RelationsPanel itemId={item.id} />
       <MetadataPanel itemId={item.id} metadata={item.metadata} />
 

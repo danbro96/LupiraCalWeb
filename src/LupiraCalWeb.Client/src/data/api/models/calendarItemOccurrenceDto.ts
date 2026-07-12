@@ -26,6 +26,12 @@ export interface CalendarItemOccurrenceDto {
   status?: null | ItemStatus;
   /** @nullable */
   tags?: string[] | null;
+  /** @nullable */
+  parentItemId?: string | null;
+  /** @nullable */
+  parentTitle?: string | null;
+  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  childCount: number | string;
   completeness?: null | CompletenessScore;
   etag: string;
 }

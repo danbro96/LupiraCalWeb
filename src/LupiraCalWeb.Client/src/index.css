@@ -1740,3 +1740,57 @@ select {
     display: none;
   }
 }
+
+/* ---- Items hierarchy (nesting, drill-down). ---- */
+.item-child {
+  margin-left: 26px;
+  border-left: 2px solid var(--divider);
+  padding-left: var(--sp-sm);
+}
+.items-caret {
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  padding: 0 2px;
+  flex: none;
+}
+.items-subcount,
+.items-parent-chip {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 1px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex: none;
+}
+.items-subcount:hover,
+.items-parent-chip:hover {
+  color: var(--text);
+  border-color: var(--text-subtle);
+}
+.items-drill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.items-drill-chip button {
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  padding: 0 0 0 2px;
+}

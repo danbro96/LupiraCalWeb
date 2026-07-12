@@ -86,3 +86,9 @@ export function fmtDate(d: Date): string {
 export function fmtDateTime(d: Date): string {
   return `${fmtDate(d)} ${fmtTime(d)}`;
 }
+
+/** All-day starts are midnight UTC — render the UTC date part; local conversion can shift the day. */
+export function fmtWhen(startIso: string, isAllDay: boolean): string {
+  if (isAllDay) return fmtDate(parseYmd(startIso.slice(0, 10)));
+  return fmtDateTime(new Date(startIso));
+}

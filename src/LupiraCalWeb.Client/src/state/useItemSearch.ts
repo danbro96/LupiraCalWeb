@@ -22,14 +22,18 @@ export function useItemSearch() {
   const range: RangePreset = RANGE_PRESETS.includes(rangeParam as RangePreset) ? (rangeParam as RangePreset) : 'upcoming';
   const from = searchParams.get('from') ?? '';
   const to = searchParams.get('to') ?? '';
+  const parent = searchParams.get('parent') ?? '';
 
-  const window = rangeToWindow(range, from || null, to || null, new Date());
+  // A parent drill-down lists all of an item's children regardless of date — the API defaults
+  // parentId searches to all-time, so no window is sent.
+  const window = parent ? { from: undefined, to: undefined, desc: false } : rangeToWindow(range, from || null, to || null, new Date());
   const params: SearchItemsParams = {
     query: q || undefined,
     tag: tag || undefined,
     calendarId: cal || undefined,
     category: category || undefined,
     status: status || undefined,
+    parentId: parent || undefined,
     from: window.from,
     to: window.to,
     desc: window.desc,
@@ -45,7 +49,7 @@ export function useItemSearch() {
   });
 
   return {
-    filters: { q, tag, cal, category, status, range, from, to },
+    filters: { q, tag, cal, category, status, range, from, to, parent },
     occurrences: query.data?.pages.flat() ?? [],
     isLoading: query.isLoading,
     isFetching: query.isFetching,
