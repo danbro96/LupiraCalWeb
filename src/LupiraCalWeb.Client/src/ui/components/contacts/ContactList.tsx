@@ -63,7 +63,7 @@ export function ContactList() {
             <span className="avatar">{(c.displayName[0] ?? '?').toUpperCase()}</span>
             <span className="contact-name">
               {c.displayName}
-              {c.nickname ? <span className="meta"> “{c.nickname}”</span> : null}
+              {c.nickname && c.nickname !== c.displayName ? <span className="meta"> “{c.nickname}”</span> : null}
             </span>
             {c.birthday && <span className="badge">🎂 {partialDateBadge(c.birthday)}</span>}
             {c.completeness && (

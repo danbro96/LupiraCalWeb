@@ -1043,7 +1043,7 @@
         "tags": [
           "Contacts"
         ],
-        "summary": "Replace the contact's postal addresses wholesale; each entry needs a geo place id or a formatted address.",
+        "summary": "Replace the contact's postal addresses wholesale; each entry needs a LupiraGeoApi place id (resolve the address there first — no free-text).",
         "operationId": "SetContactAddresses",
         "parameters": [
           {
@@ -2154,6 +2154,9 @@
           "displayName": {
             "type": "string"
           },
+          "displayNameFormat": {
+            "$ref": "#/components/schemas/DisplayNameFormat"
+          },
           "givenName": {
             "type": [
               "null",
@@ -2368,12 +2371,6 @@
               "string"
             ],
             "format": "uuid"
-          },
-          "formattedAddress": {
-            "type": [
-              "null",
-              "string"
-            ]
           },
           "type": {
             "$ref": "#/components/schemas/ContactAddressType"
@@ -2610,6 +2607,16 @@
               "string"
             ]
           },
+          "displayNameFormat": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DisplayNameFormat"
+              }
+            ]
+          },
           "channels": {
             "type": [
               "null",
@@ -2651,6 +2658,13 @@
             ]
           }
         }
+      },
+      "DisplayNameFormat": {
+        "enum": [
+          "Full",
+          "FirstLast",
+          "NickName"
+        ]
       },
       "EndContactRelationRequest": {
         "required": [
@@ -2908,6 +2922,16 @@
             "type": [
               "null",
               "string"
+            ]
+          },
+          "displayNameFormat": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DisplayNameFormat"
+              }
             ]
           },
           "channels": {

@@ -6,6 +6,7 @@
  * OpenAPI spec version: v1
  */
 import type { ContactReachChannel } from './contactReachChannel';
+import type { DisplayNameFormat } from './displayNameFormat';
 import type { PartialDate } from './partialDate';
 
 export interface CreateContactRequest {
@@ -22,6 +23,7 @@ export interface CreateContactRequest {
   nameSuffix?: string | null;
   /** @nullable */
   nickname?: string | null;
+  displayNameFormat?: null | DisplayNameFormat;
   /** @nullable */
   channels?: ContactReachChannel[] | null;
   birthday?: null | PartialDate;

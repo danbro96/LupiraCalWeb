@@ -30,6 +30,7 @@ export * from './contactSocialProfile';
 export * from './createAddressBookRequest';
 export * from './createContactGroupParams';
 export * from './createContactRequest';
+export * from './displayNameFormat';
 export * from './endContactRelationRequest';
 export * from './gapSeverity';
 export * from './getContactCirclesParams';

@@ -1365,6 +1365,46 @@ select {
   cursor: pointer;
   padding: 0 0 0 4px;
 }
+.place-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  flex: 1;
+  flex-wrap: wrap;
+}
+.place-picker .text-input {
+  flex: 1;
+}
+.place-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+  max-height: 220px;
+  overflow-y: auto;
+}
+.place-suggestions button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 6px var(--sp-sm);
+  cursor: pointer;
+}
+.place-suggestions button:hover {
+  background: var(--surface);
+}
 .tree-manage {
   flex: none;
   color: var(--text-subtle);

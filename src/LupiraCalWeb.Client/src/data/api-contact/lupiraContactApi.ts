@@ -1716,7 +1716,7 @@ export const getSetContactAddressesUrl = (id: string,) => {
 }
 
 /**
- * @summary Replace the contact's postal addresses wholesale; each entry needs a geo place id or a formatted address.
+ * @summary Replace the contact's postal addresses wholesale; each entry needs a LupiraGeoApi place id (resolve the address there first — no free-text).
  */
 export const setContactAddresses = async (id: string,
     setContactAddressesRequest: SetContactAddressesRequest, options?: RequestInit): Promise<ContactDto> => {
@@ -1766,7 +1766,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type SetContactAddressesMutationError = ProblemDetails | void
 
     /**
- * @summary Replace the contact's postal addresses wholesale; each entry needs a geo place id or a formatted address.
+ * @summary Replace the contact's postal addresses wholesale; each entry needs a LupiraGeoApi place id (resolve the address there first — no free-text).
  */
 export const useSetContactAddresses = <TError = ProblemDetails | void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAddresses>>, TError,{id: string;data: SetContactAddressesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}

@@ -17,13 +17,20 @@ import type {
   ContactSocialProfile,
   ReviseContactRequest,
 } from '../../../data/api-contact/models';
-import { ContactAddressType, ReachMedium } from '../../../data/api-contact/models';
+import { ContactAddressType, DisplayNameFormat, ReachMedium } from '../../../data/api-contact/models';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
+import { PlacePicker } from '../places/PlacePicker';
 import { errText } from '../errText';
 import { inputToPartialDate, partialDateKey, partialDateToInput } from './partialDate';
 
 const norm = (s?: string | null) => (s ?? '').trim();
 const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((v, i) => v === b[i]);
+
+const DISPLAY_NAME_FORMAT_LABELS: Record<DisplayNameFormat, string> = {
+  [DisplayNameFormat.Full]: 'Full name',
+  [DisplayNameFormat.FirstLast]: 'First & last',
+  [DisplayNameFormat.NickName]: 'Nickname',
+};
 
 /** Add/remove editor for a simple string list (tags). */
 function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: {
@@ -94,6 +101,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   const [middleName, setMiddleName] = useState(contact.middleName ?? '');
   const [familyName, setFamilyName] = useState(contact.familyName ?? '');
   const [nickname, setNickname] = useState(contact.nickname ?? '');
+  const [displayNameFormat, setDisplayNameFormat] = useState(contact.displayNameFormat ?? DisplayNameFormat.Full);
   const [birthday, setBirthday] = useState(partialDateToInput(contact.birthday));
   const [birthdayYearKnown, setBirthdayYearKnown] = useState(contact.birthday?.year != null);
   const [channels, setChannelsState] = useState<ContactReachChannel[]>(contact.channels.map((c) => ({ ...c })));
@@ -119,6 +127,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       if (norm(middleName) !== norm(contact.middleName)) rev.middleName = middleName;
       if (norm(familyName) !== norm(contact.familyName)) rev.familyName = familyName;
       if (norm(nickname) !== norm(contact.nickname)) rev.nickname = nickname;
+      if (displayNameFormat !== (contact.displayNameFormat ?? DisplayNameFormat.Full)) rev.displayNameFormat = displayNameFormat;
       const nextBirthday = inputToPartialDate(birthday, birthdayYearKnown);
       if (partialDateKey(nextBirthday) !== partialDateKey(contact.birthday)) rev.birthday = nextBirthday;
       if (Object.keys(rev).length > 0) await revise.mutateAsync({ id, data: rev });
@@ -127,7 +136,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       if (JSON.stringify(cleanChannels) !== JSON.stringify(contact.channels)) await setChannels.mutateAsync({ id, data: { channels: cleanChannels } });
       if (!sameList(tags, contact.tags ?? [])) await setTags.mutateAsync({ id, data: { tags } });
 
-      const cleanAddresses = addresses.filter((a) => a.placeId || norm(a.formattedAddress));
+      const cleanAddresses = addresses.filter((a) => a.placeId);
       if (JSON.stringify(cleanAddresses) !== JSON.stringify(contact.addresses))
         await setAddresses.mutateAsync({ id, data: { addresses: cleanAddresses } });
 
@@ -175,6 +184,16 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       <div className="edit-field">
         <label>Nickname</label>
         <input className="text-input" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+      </div>
+      <div className="edit-field">
+        <label>Display as</label>
+        <select value={displayNameFormat} onChange={(e) => setDisplayNameFormat(e.target.value as DisplayNameFormat)}>
+          {Object.values(DisplayNameFormat).map((f) => (
+            <option key={f} value={f}>
+              {DISPLAY_NAME_FORMAT_LABELS[f]}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="edit-field">
         <label>Birthday</label>
@@ -258,18 +277,17 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 </option>
               ))}
             </select>
-            <input
-              className="text-input"
+            <PlacePicker
+              placeId={a.placeId ?? null}
               placeholder="Street, city…"
-              value={a.formattedAddress ?? ''}
-              onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, formattedAddress: e.target.value } : x)))}
+              onChange={(placeId) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, placeId } : x)))}
             />
             <button type="button" className="icon-btn" title="Remove address" onClick={() => setAddressesState(addresses.filter((_, j) => j !== i))}>
               ×
             </button>
           </div>
         ))}
-        <button type="button" className="linklike" onClick={() => setAddressesState([...addresses, { type: ContactAddressType.Home, formattedAddress: '' }])}>
+        <button type="button" className="linklike" onClick={() => setAddressesState([...addresses, { type: ContactAddressType.Home, placeId: null }])}>
           + Add address
         </button>
       </div>

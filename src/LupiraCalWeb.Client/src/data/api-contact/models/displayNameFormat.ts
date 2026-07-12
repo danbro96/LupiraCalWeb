@@ -5,10 +5,12 @@
  * Contacts, address books, and kinship backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
-import type { ContactAddressType } from './contactAddressType';
 
-export interface ContactPostalAddress {
-  /** @nullable */
-  placeId?: string | null;
-  type?: ContactAddressType;
-}
+export type DisplayNameFormat = typeof DisplayNameFormat[keyof typeof DisplayNameFormat];
+
+
+export const DisplayNameFormat = {
+  Full: 'Full',
+  FirstLast: 'FirstLast',
+  NickName: 'NickName',
+} as const;

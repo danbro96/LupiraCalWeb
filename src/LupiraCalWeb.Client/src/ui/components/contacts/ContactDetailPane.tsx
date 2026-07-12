@@ -13,6 +13,7 @@ import { fmtDate } from '../../../domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
 import { errText } from '../errText';
+import { PlaceLabel } from '../places/PlaceLabel';
 import { ContactCircles } from './ContactCircles';
 import { ContactEditForm } from './ContactEditForm';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
@@ -49,7 +50,7 @@ export function ContactDetailPane() {
       <div className="page-head">
         <h2>
           {contact.displayName}
-          {contact.nickname && <span className="meta"> “{contact.nickname}”</span>}
+          {contact.nickname && contact.nickname !== contact.displayName && <span className="meta"> “{contact.nickname}”</span>}
           {contact.deceased && <span className="badge" title={contact.deathDate ? `died ${contact.deathDate}` : 'deceased'}>†</span>}
         </h2>
         <div className="head-actions">
@@ -86,10 +87,10 @@ export function ContactDetailPane() {
                 </dd>
               </div>
             ))}
-            {contact.addresses.map((a, i) => (
+            {contact.addresses.filter((a) => a.placeId).map((a, i) => (
               <div key={i}>
                 <dt>{a.type} address</dt>
-                <dd>📍 {a.formattedAddress || '…'}</dd>
+                <dd>📍 <PlaceLabel placeId={a.placeId} link /></dd>
               </div>
             ))}
             {contact.profiles.map((p, i) => (

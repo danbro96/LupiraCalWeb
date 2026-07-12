@@ -10,6 +10,7 @@ import type { ContactPostalAddress } from './contactPostalAddress';
 import type { ContactReachChannel } from './contactReachChannel';
 import type { ContactRelation } from './contactRelation';
 import type { ContactSocialProfile } from './contactSocialProfile';
+import type { DisplayNameFormat } from './displayNameFormat';
 import type { JsonNode } from './jsonNode';
 import type { PartialDate } from './partialDate';
 
@@ -18,6 +19,7 @@ export interface ContactDto {
   addressBookId: string;
   externalId: string;
   displayName: string;
+  displayNameFormat?: DisplayNameFormat;
   /** @nullable */
   givenName?: string | null;
   /** @nullable */
