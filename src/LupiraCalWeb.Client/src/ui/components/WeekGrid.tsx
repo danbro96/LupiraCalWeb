@@ -140,7 +140,10 @@ function DayColumn({
             {p.item.icon ? `${p.item.icon} ` : ''}
             {p.item.title}
           </span>
-          <span className="timed-time">{fmtTime(p.item.start)}</span>
+          <span className="timed-time">
+            {fmtTime(p.item.start)}
+            {p.item.ghost ? ' · proposed' : ''}
+          </span>
         </button>
       ))}
       {isToday(day) && <div className="now-line" style={{ top: (nowMin / 60) * HOUR_PX }} />}

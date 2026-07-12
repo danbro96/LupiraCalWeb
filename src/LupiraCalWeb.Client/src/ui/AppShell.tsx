@@ -4,6 +4,7 @@ import { logout } from '../data/session';
 import { useSession } from '../state/useSession';
 import { useEnsureBootstrap } from '../state/useContainers';
 import { useEnsureContactBootstrap } from '../state/useAddressBooks';
+import { BottomNav } from './components/BottomNav';
 import { CalendarVisibilityProvider } from './components/CalendarVisibility';
 import { Sidebar } from './components/Sidebar';
 import { ItemDrawer } from './components/drawer/ItemDrawer';
@@ -59,6 +60,7 @@ export function AppShell() {
             <Outlet />
           </main>
         </div>
+        <BottomNav />
       </div>
       {itemId && <ItemDrawer itemId={itemId} onClose={closeDrawer} />}
       {creating && <NewItemModal onClose={() => setCreating(false)} />}

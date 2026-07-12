@@ -19,6 +19,11 @@ export function addDays(d: Date, n: number): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 }
 
+/** count consecutive days starting at start's local midnight. */
+export function daysFrom(start: Date, count: number): Date[] {
+  return Array.from({ length: count }, (_, i) => addDays(start, i));
+}
+
 /** Monday-first week start. */
 export function startOfWeek(d: Date): Date {
   const dow = (d.getDay() + 6) % 7;

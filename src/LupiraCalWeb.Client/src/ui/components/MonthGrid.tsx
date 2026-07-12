@@ -10,13 +10,15 @@ interface Props {
   weeks: Date[][];
   entries: GridEntry[];
   segments: AvailabilitySegment[];
+  /** Phone treatment: each cell is one tap-to-day button showing event dots instead of chips. */
+  compact?: boolean;
   onOpenItem: (id: string) => void;
   onOpenDay: (d: Date) => void;
 }
 
-export function MonthGrid({ date, weeks, entries, segments, onOpenItem, onOpenDay }: Props) {
+export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem, onOpenDay }: Props) {
   return (
-    <div className="month-grid">
+    <div className={`month-grid ${compact ? 'compact' : ''}`}>
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
         <div key={d} className="month-head">
           {d}
@@ -28,8 +30,28 @@ export function MonthGrid({ date, weeks, entries, segments, onOpenItem, onOpenDa
           .sort((a, b) => Number(b.isAllDay) - Number(a.isAllDay) || a.start.getTime() - b.start.getTime());
         const shown = dayEntries.slice(0, MAX_PER_CELL);
         const daySegments = segments.filter((s) => spansDay({ start: new Date(s.start), end: s.end ? new Date(s.end) : null, isAllDay: s.isAllDay }, day));
+        const otherMonth = day.getMonth() !== date.getMonth() ? 'other-month' : '';
+        if (compact)
+          return (
+            <button key={day.toISOString()} className={`month-cell compact-cell ${otherMonth}`} onClick={() => onOpenDay(day)}>
+              <span className={`day-number ${isToday(day) ? 'today' : ''}`}>{day.getDate()}</span>
+              <span className="dot-row">
+                {shown.map((e) => (
+                  <span key={e.key} className={`chip-dot ${e.ghost ? 'ghost' : ''}`} style={{ background: e.color }} />
+                ))}
+                {dayEntries.length > shown.length && <span className="dot-more">+{dayEntries.length - shown.length}</span>}
+              </span>
+              {daySegments.length > 0 && (
+                <span className="avail-dots">
+                  {daySegments.map((s, i) => (
+                    <span key={i} className="avail-dot" style={{ background: AVAILABILITY_COLORS[s.status] }} />
+                  ))}
+                </span>
+              )}
+            </button>
+          );
         return (
-          <div key={day.toISOString()} className={`month-cell ${day.getMonth() !== date.getMonth() ? 'other-month' : ''}`}>
+          <div key={day.toISOString()} className={`month-cell ${otherMonth}`}>
             <div className="month-cell-head">
               <button className={`day-number ${isToday(day) ? 'today' : ''}`} onClick={() => onOpenDay(day)}>
                 {day.getDate()}
@@ -53,6 +75,7 @@ export function MonthGrid({ date, weeks, entries, segments, onOpenItem, onOpenDa
                 <span className="chip-title">
                   {e.icon ? `${e.icon} ` : ''}
                   {e.title}
+                  {e.ghost ? ' (proposed)' : ''}
                 </span>
               </button>
             ))}

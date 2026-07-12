@@ -48,7 +48,7 @@ export function ContactsTree() {
       <div className="section-label">Address books</div>
       <button
         className={`tree-node ${!activeBookId && !activeGroupId ? 'active' : ''}`}
-        onClick={() => navigate('/contacts')}
+        onClick={() => navigate('/contacts?pane=list')}
       >
         <span className="tree-caret" />
         <span className="tree-label">All contacts</span>

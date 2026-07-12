@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { addDays, addMonths, fmtDayTitle, fmtMonthTitle, monthMatrix, parseYmd, startOfWeek, ymd, fmtDate } from '../../domain/time';
 import { useContainers } from '../../state/useContainers';
 import { useRangeOccurrences } from '../../state/useRangeOccurrences';
 import { useProposedByCalendar } from '../../state/useProposed';
@@ -9,17 +8,21 @@ import { useCalendarVisibility } from '../components/CalendarVisibility';
 import { fromOccurrence, fromProposed, type GridEntry } from '../components/entries';
 import { MonthGrid } from '../components/MonthGrid';
 import { WeekGrid } from '../components/WeekGrid';
-
-type View = 'month' | 'week' | 'day';
+import { Sidebar } from '../components/Sidebar';
+import { useCalendarRange } from '../useCalendarRange';
+import { useIsPhone } from '../useIsPhone';
 
 export function CalendarScreen() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const view = (searchParams.get('view') as View) ?? 'week';
-  const dateParam = searchParams.get('d');
-  const date = useMemo(() => (dateParam ? parseYmd(dateParam) : new Date()), [dateParam]);
+  const isPhone = useIsPhone();
+  const { view, date, weeks, days, range, title, setView, setDate, navigate, openDay } = useCalendarRange({
+    defaultView: isPhone ? 'day' : 'week',
+    weekDayCount: isPhone ? 3 : 7,
+  });
   const tag = searchParams.get('tag') ?? '';
   const q = searchParams.get('q') ?? '';
   const [search, setSearch] = useState(q);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const setParam = (key: string, value: string | null) => {
     setSearchParams((prev) => {
@@ -30,12 +33,6 @@ export function CalendarScreen() {
     });
   };
 
-  const weeks = useMemo(() => monthMatrix(date), [date]);
-  const range = useMemo(() => {
-    if (view === 'month') return { start: weeks[0][0], end: addDays(weeks[weeks.length - 1][6], 1) };
-    if (view === 'week') return { start: startOfWeek(date), end: addDays(startOfWeek(date), 7) };
-    return { start: date, end: addDays(date, 1) };
-  }, [view, date, weeks]);
   const from = range.start.toISOString();
   const to = range.end.toISOString();
 
@@ -65,27 +62,7 @@ export function CalendarScreen() {
     return [...accepted, ...ghosts];
   }, [byCalendar, proposed, range]);
 
-  const navigate = (dir: -1 | 1) => {
-    const next = view === 'month' ? addMonths(date, dir) : addDays(date, dir * (view === 'week' ? 7 : 1));
-    setParam('d', ymd(next));
-  };
-
   const openItem = (id: string) => setParam('item', id);
-  const openDay = (d: Date) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set('view', 'day');
-      next.set('d', ymd(d));
-      return next;
-    });
-  };
-
-  const title =
-    view === 'month'
-      ? fmtMonthTitle(date)
-      : view === 'week'
-        ? `${fmtDate(startOfWeek(date))} – ${fmtDate(addDays(startOfWeek(date), 6))}`
-        : fmtDayTitle(date);
 
   return (
     <div className="cal-screen">
@@ -94,7 +71,7 @@ export function CalendarScreen() {
           <button className="btn" onClick={() => navigate(-1)} aria-label="Previous">
             ‹
           </button>
-          <button className="btn" onClick={() => setParam('d', null)}>
+          <button className="btn" onClick={() => setDate(null)}>
             Today
           </button>
           <button className="btn" onClick={() => navigate(1)} aria-label="Next">
@@ -128,22 +105,36 @@ export function CalendarScreen() {
           />
           <div className="seg">
             {(['month', 'week', 'day'] as const).map((v) => (
-              <button key={v} className={`seg-btn ${view === v ? 'active' : ''}`} onClick={() => setParam('view', v)}>
+              <button key={v} className={`seg-btn ${view === v ? 'active' : ''}`} onClick={() => setView(v)}>
                 {v}
               </button>
             ))}
           </div>
+          <button className="btn phone-only" onClick={() => setSheetOpen(true)}>
+            🗂 Calendars
+          </button>
         </div>
       </div>
       {view === 'month' ? (
-        <MonthGrid date={date} weeks={weeks} entries={entries} segments={segments} onOpenItem={openItem} onOpenDay={openDay} />
-      ) : (
-        <WeekGrid
-          days={view === 'week' ? Array.from({ length: 7 }, (_, i) => addDays(startOfWeek(date), i)) : [date]}
+        <MonthGrid
+          date={date}
+          weeks={weeks}
           entries={entries}
           segments={segments}
+          compact={isPhone}
           onOpenItem={openItem}
+          onOpenDay={openDay}
         />
+      ) : (
+        <WeekGrid days={days} entries={entries} segments={segments} onOpenItem={openItem} />
+      )}
+      {sheetOpen && (
+        <>
+          <div className="drawer-backdrop" onClick={() => setSheetOpen(false)} />
+          <div className="sheet">
+            <Sidebar />
+          </div>
+        </>
       )}
     </div>
   );

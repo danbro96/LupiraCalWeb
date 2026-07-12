@@ -79,6 +79,11 @@ select {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
+}
+/* Phone-only/desktop-only structural toggles; flipped in the phone media block at the end. */
+.phone-only {
+  display: none;
 }
 .topbar {
   display: flex;
@@ -457,7 +462,7 @@ select {
   z-index: 1;
 }
 .drawer-pad {
-  padding: 0 var(--sp-lg) var(--sp-xl);
+  padding: 0 var(--sp-lg) calc(var(--sp-xl) + env(safe-area-inset-bottom));
 }
 .drawer-title-row {
   display: flex;
@@ -838,6 +843,7 @@ select {
   border-radius: var(--r-md);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
   min-width: 220px;
+  max-width: calc(100vw - 32px);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1029,6 +1035,7 @@ select {
 .share-panel {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--sp-sm);
   padding: var(--sp-sm);
   background: var(--surface);
@@ -1050,6 +1057,7 @@ select {
   width: 100%;
   max-width: 560px;
   max-height: 92vh;
+  max-height: 92dvh;
   overflow-y: auto;
   border-radius: var(--r-lg);
 }
@@ -1062,12 +1070,13 @@ select {
   background: var(--bg);
 }
 .modal-body {
-  padding: 0 var(--sp-lg) var(--sp-xl);
+  padding: 0 var(--sp-lg) calc(var(--sp-xl) + env(safe-area-inset-bottom));
 }
 
 /* ---- Centered states. ---- */
 .centered {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1090,11 +1099,6 @@ select {
   gap: var(--sp-xl);
   align-items: start;
   margin-top: var(--sp-md);
-}
-@media (max-width: 820px) {
-  .locations-split {
-    grid-template-columns: 1fr;
-  }
 }
 .location-list {
   display: flex;
@@ -1390,6 +1394,7 @@ select {
   border-radius: var(--r-sm);
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
   max-height: 220px;
+  max-width: calc(100vw - 32px);
   overflow-y: auto;
 }
 .place-suggestions button {
@@ -1444,3 +1449,261 @@ select {
 .legend-dot.cat-Professional { background: var(--cat-professional); }
 .legend-dot.cat-Emergency { background: var(--cat-emergency); }
 .legend-dot.cat-Other { background: var(--cat-other); }
+
+/* ---- Mobile. Class-driven pieces (only rendered on phones) sit outside the media
+   query; width-driven overrides of desktop rules live inside it. ---- */
+
+/* Bottom tab bar: static flex footer of the .shell column, shown on phones only. */
+.bottom-nav {
+  display: none;
+}
+.bottom-tab {
+  flex: 1;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.bottom-tab .tab-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.bottom-tab.active {
+  color: var(--primary);
+}
+
+/* Bottom sheet hosting the calendar-visibility sidebar on phones. */
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 11;
+  max-height: 70dvh;
+  overflow-y: auto;
+  background: var(--bg);
+  border-top: 1px solid var(--divider);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.sheet .sidebar {
+  display: block;
+  width: auto;
+  border-right: 0;
+}
+
+/* Compact month: the whole cell is one button with event dots; tap opens the day view. */
+.month-grid.compact {
+  grid-template-rows: max-content;
+  grid-auto-rows: minmax(52px, 1fr);
+}
+.month-cell.compact-cell {
+  border: 0;
+  border-right: 1px solid var(--divider);
+  border-bottom: 1px solid var(--divider);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px 6px;
+  min-height: 52px;
+  cursor: pointer;
+}
+.compact-cell .day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.dot-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+  min-height: 7px;
+}
+.dot-row .chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+}
+.dot-more {
+  font-size: 10px;
+  color: var(--text-subtle);
+  line-height: 1;
+}
+
+/* Stacked contacts navigation (one pane at a time) with a sticky back bar. */
+.contacts-stack {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pane-back {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--sp-sm);
+  background: var(--bg);
+  border-bottom: 1px solid var(--divider);
+  flex: none;
+}
+.pane-back .linklike {
+  font-size: 15px;
+  padding: 8px;
+}
+
+/* Phone stand-in for the inline relation-graph embed. */
+.graph-open {
+  align-self: flex-start;
+  margin: var(--sp-sm) 0 var(--sp-md);
+}
+
+/* Phone breakpoint — keep in sync with ui/useIsPhone.ts. */
+@media (max-width: 820px) {
+  .phone-only {
+    display: revert;
+  }
+  .desktop-only {
+    display: none;
+  }
+
+  /* Shell: nav moves to the bottom tabs; topbar keeps brand + New + Sign out. */
+  .topnav,
+  .account-email {
+    display: none;
+  }
+  .brand {
+    flex: 1;
+  }
+  .sidebar {
+    display: none;
+  }
+  .bottom-nav {
+    display: flex;
+    flex: none;
+    background: var(--bg);
+    border-top: 1px solid var(--divider);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .page {
+    padding: var(--sp-lg);
+  }
+
+  /* Calendar toolbar wraps into two clean lines; search stretches. */
+  .cal-title {
+    font-size: 16px;
+  }
+  .cal-filters {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .cal-filters form {
+    flex: 1;
+    display: flex;
+    min-width: 140px;
+  }
+
+  /* Contacts panes fill the stacked layout. */
+  .contacts-tree,
+  .contacts-list-pane {
+    width: auto;
+    flex: 1;
+    border-right: 0;
+  }
+  .contacts-detail-pane {
+    padding: var(--sp-lg);
+  }
+
+  /* Contact editor: text inputs take a full line so multi-control rows wrap predictably. */
+  .contact-edit .form-row > .text-input {
+    flex: 1 1 100%;
+  }
+
+  /* Manage table: drop Slug/Kind/Timezone so the rest fits narrow screens. */
+  .containers-table th:nth-child(3),
+  .containers-table td:nth-child(3),
+  .containers-table th:nth-child(5),
+  .containers-table td:nth-child(5),
+  .containers-table th:nth-child(6),
+  .containers-table td:nth-child(6) {
+    display: none;
+  }
+
+  .locations-split {
+    grid-template-columns: 1fr;
+  }
+
+  /* Relation-graph fullscreen modal goes edge-to-edge. */
+  .relation-modal {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .relation-graph.fullscreen {
+    flex: 1;
+    height: auto;
+  }
+}
+
+/* Touch ergonomics: grow hit areas (negative margins preserve visual density). */
+@media (pointer: coarse) {
+  .icon-btn {
+    padding: 10px;
+  }
+  .seg-btn {
+    padding: 10px 14px;
+  }
+  .cal-toggle {
+    padding: 10px var(--sp-lg);
+  }
+  .cal-toggle input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+  }
+  .tree-node {
+    padding: 10px var(--sp-lg);
+  }
+  .tree-caret {
+    width: 32px;
+    min-height: 32px;
+    margin: -6px 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tree-manage {
+    padding: 10px;
+    margin: -10px 0;
+  }
+  .chip-x,
+  .tag-x {
+    padding: 10px 10px 10px 6px;
+    margin: -10px -6px -10px 0;
+  }
+  .day-number {
+    width: 36px;
+    height: 36px;
+  }
+  .more-link,
+  .linklike {
+    padding: 6px 2px;
+  }
+  .rel-expand {
+    font-size: 16px;
+    padding: 8px;
+    margin: -8px -2px;
+  }
+}

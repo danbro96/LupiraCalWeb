@@ -8,6 +8,7 @@ import { getListContactRelationsQueryKey, listContactRelations } from '../../../
 import type { ContactRelationEntryDto } from '../../../data/api-contact/models';
 import { buildRelationGraph } from '../../../domain/contactRelations';
 import type { RelationCategory } from '../../../domain/contactRelations';
+import { useIsPhone } from '../../useIsPhone';
 
 type RelationNodeData = {
   label: string;
@@ -82,6 +83,7 @@ export function ContactRelationGraph({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const isPhone = useIsPhone();
   const [expandedIds, setExpandedIds] = useState<string[]>([centerId]);
   const [fullscreen, setFullscreen] = useState(false);
   const expand = useCallback(
@@ -172,10 +174,10 @@ export function ContactRelationGraph({
       <Panel position="top-right">
         <button
           className="icon-btn"
-          title={fullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          title={fullscreen ? 'Close' : 'Fullscreen'}
           onClick={() => setFullscreen((v) => !v)}
         >
-          ⛶
+          {fullscreen ? '✕' : '⛶'}
         </button>
       </Panel>
     </ReactFlow>
@@ -188,6 +190,13 @@ export function ContactRelationGraph({
           <div className="relation-graph fullscreen">{flow}</div>
         </div>
       </div>
+    );
+  // The inline embed is unusable at phone width — offer the fullscreen modal instead.
+  if (isPhone)
+    return (
+      <button className="btn graph-open" onClick={() => setFullscreen(true)}>
+        ⛶ Open relation graph
+      </button>
     );
   return <div className="relation-graph">{flow}</div>;
 }

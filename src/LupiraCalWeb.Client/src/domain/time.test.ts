@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addDays, monthMatrix, parseYmd, sameDay, startOfWeek, ymd } from './time';
+import { addDays, daysFrom, monthMatrix, parseYmd, sameDay, startOfWeek, ymd } from './time';
 
 describe('ymd round-trip', () => {
   it('formats and parses local dates', () => {
@@ -23,6 +23,13 @@ describe('addDays', () => {
   it('crosses month boundaries', () => {
     expect(ymd(addDays(new Date(2026, 6, 31), 1))).toBe('2026-08-01');
     expect(ymd(addDays(new Date(2026, 0, 1), -1))).toBe('2025-12-31');
+  });
+});
+
+describe('daysFrom', () => {
+  it('yields consecutive days from the anchor, crossing months', () => {
+    const days = daysFrom(new Date(2026, 6, 30), 3);
+    expect(days.map(ymd)).toEqual(['2026-07-30', '2026-07-31', '2026-08-01']);
   });
 });
 
