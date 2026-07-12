@@ -3,6 +3,7 @@ import { useMatch, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useCreateAddressBook,
   useCreateContactGroup,
+  useGetMe,
   useListContactGroups,
   useSearchContacts,
 } from '../../../data/api-contact/lupiraContactApi';
@@ -18,14 +19,32 @@ export function ContactsTree() {
   const [params] = useSearchParams();
   const activeBookId = params.get('book') ?? '';
   const activeGroupId = useMatch('/contacts/groups/:groupId')?.params.groupId ?? '';
+  const openContactId = useMatch('/contacts/:contactId')?.params.contactId ?? '';
   const { addressBooks } = useAddressBooks();
   const { data: allContacts } = useSearchContacts({});
+  const { data: me } = useGetMe();
   const [addingBook, setAddingBook] = useState(false);
 
   const countFor = (bookId: string) => (allContacts ?? []).filter((c) => c.addressBookId === bookId).length;
 
   return (
     <aside className="contacts-tree">
+      {me?.contactId ? (
+        <button
+          className={`tree-node you-node ${openContactId === me.contactId ? 'active' : ''}`}
+          onClick={() => navigate(`/contacts/${me.contactId}`)}
+        >
+          <span className="tree-label">👤 {me.displayName || 'You'}</span>
+          {me.displayName && <span className="badge">You</span>}
+        </button>
+      ) : (
+        me &&
+        (allContacts?.length ?? 0) > 0 && (
+          <div className="tree-add">
+            <span className="meta">Open your card → “This is me” to pin it here.</span>
+          </div>
+        )
+      )}
       <div className="section-label">Address books</div>
       <button
         className={`tree-node ${!activeBookId && !activeGroupId ? 'active' : ''}`}

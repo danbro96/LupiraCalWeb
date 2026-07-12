@@ -937,6 +937,12 @@ select {
 .tree-node.tree-group {
   padding-left: calc(var(--sp-lg) + 20px);
 }
+/* The signed-in user's own contact, pinned at the very top. */
+.tree-node.you-node {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--sp-xs);
+  font-weight: 600;
+}
 .tree-caret {
   width: 14px;
   flex: none;
