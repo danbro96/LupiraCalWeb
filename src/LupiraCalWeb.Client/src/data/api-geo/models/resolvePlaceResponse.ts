@@ -5,9 +5,12 @@
  * Gazetteer, geocoding, and saved-places backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
+import type { PlaceResolution } from './placeResolution';
 
 export interface ResolvePlaceResponse {
-  placeId: string;
+  resolution: PlaceResolution;
+  /** @nullable */
+  placeId?: string | null;
   name: string;
   /**
      * @nullable

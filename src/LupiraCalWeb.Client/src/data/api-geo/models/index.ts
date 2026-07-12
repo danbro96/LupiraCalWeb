@@ -22,6 +22,7 @@ export * from './placeCategory';
 export * from './placeDto';
 export * from './placeExternalIdDto';
 export * from './placeKind';
+export * from './placeResolution';
 export * from './placeSource';
 export * from './placeSuggestionDto';
 export * from './problemDetails';

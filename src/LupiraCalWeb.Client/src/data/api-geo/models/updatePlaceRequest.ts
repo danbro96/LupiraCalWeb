@@ -13,4 +13,18 @@ export interface UpdatePlaceRequest {
   category?: null | PlaceCategory;
   /** @nullable */
   verified?: boolean | null;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  latitude?: number | string | null;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  longitude?: number | string | null;
+  /** @nullable */
+  formattedAddress?: string | null;
+  /** @nullable */
+  withinAreaId?: string | null;
 }

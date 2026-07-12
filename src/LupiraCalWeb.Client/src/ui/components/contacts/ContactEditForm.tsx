@@ -91,6 +91,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   const { data: bookContacts } = useSearchContacts({ addressBookId: contact.addressBookId });
 
   const [givenName, setGivenName] = useState(contact.givenName ?? '');
+  const [middleName, setMiddleName] = useState(contact.middleName ?? '');
   const [familyName, setFamilyName] = useState(contact.familyName ?? '');
   const [nickname, setNickname] = useState(contact.nickname ?? '');
   const [birthday, setBirthday] = useState(partialDateToInput(contact.birthday));
@@ -115,6 +116,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
     try {
       const rev: ReviseContactRequest = {};
       if (norm(givenName) !== norm(contact.givenName)) rev.givenName = givenName;
+      if (norm(middleName) !== norm(contact.middleName)) rev.middleName = middleName;
       if (norm(familyName) !== norm(contact.familyName)) rev.familyName = familyName;
       if (norm(nickname) !== norm(contact.nickname)) rev.nickname = nickname;
       const nextBirthday = inputToPartialDate(birthday, birthdayYearKnown);
@@ -161,6 +163,10 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       <div className="edit-field">
         <label>Given name</label>
         <input className="text-input" value={givenName} onChange={(e) => setGivenName(e.target.value)} />
+      </div>
+      <div className="edit-field">
+        <label>Middle name</label>
+        <input className="text-input" value={middleName} onChange={(e) => setMiddleName(e.target.value)} />
       </div>
       <div className="edit-field">
         <label>Family name</label>

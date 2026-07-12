@@ -21,6 +21,8 @@ export interface ContactDto {
   /** @nullable */
   givenName?: string | null;
   /** @nullable */
+  middleName?: string | null;
+  /** @nullable */
   familyName?: string | null;
   /** @nullable */
   nickname?: string | null;

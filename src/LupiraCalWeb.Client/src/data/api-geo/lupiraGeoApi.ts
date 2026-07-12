@@ -747,6 +747,77 @@ export const useUpdatePlace = <TError = ProblemDetails | void,
       return useMutation(getUpdatePlaceMutationOptions(options), queryClient);
     }
 
+export const getDeletePlaceUrl = (id: string,) => {
+
+
+
+
+  return `/places/${id}`
+}
+
+/**
+ * @summary Soft-delete a bad entry (e.g. a wrong geocode) with no valid survivor to merge into: tombstoned, so reads 404 and search/resolve exclude it, but the row stays for the audit trail. Idempotent.
+ */
+export const deletePlace = async (id: string, options?: RequestInit): Promise<void> => {
+
+  return customFetchGeo<void>(getDeletePlaceUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeletePlaceMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+): UseMutationOptions<Awaited<ReturnType<typeof deletePlace>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['deletePlace'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePlace>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deletePlace(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeletePlaceMutationResult = NonNullable<Awaited<ReturnType<typeof deletePlace>>>
+
+    export type DeletePlaceMutationError = void
+
+    /**
+ * @summary Soft-delete a bad entry (e.g. a wrong geocode) with no valid survivor to merge into: tombstoned, so reads 404 and search/resolve exclude it, but the row stays for the audit trail. Idempotent.
+ */
+export const useDeletePlace = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deletePlace>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getDeletePlaceMutationOptions(options), queryClient);
+    }
+
 export const getAddPlaceAliasUrl = (id: string,) => {
 
 
@@ -962,6 +1033,77 @@ export const useMergePlace = <TError = ProblemDetails | void,
         TContext
       > => {
       return useMutation(getMergePlaceMutationOptions(options), queryClient);
+    }
+
+export const getRegeocodePlaceUrl = (id: string,) => {
+
+
+
+
+  return `/places/${id}/regeocode`
+}
+
+/**
+ * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. 400 on a no-hit or transient geocoder outage; the place is left unchanged.
+ */
+export const regeocodePlace = async (id: string, options?: RequestInit): Promise<PlaceDto> => {
+
+  return customFetchGeo<PlaceDto>(getRegeocodePlaceUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getRegeocodePlaceMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+): UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['regeocodePlace'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof regeocodePlace>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  regeocodePlace(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RegeocodePlaceMutationResult = NonNullable<Awaited<ReturnType<typeof regeocodePlace>>>
+
+    export type RegeocodePlaceMutationError = ProblemDetails | void
+
+    /**
+ * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. 400 on a no-hit or transient geocoder outage; the place is left unchanged.
+ */
+export const useRegeocodePlace = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof regeocodePlace>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getRegeocodePlaceMutationOptions(options), queryClient);
     }
 
 export const getResolvePlaceUrl = () => {
