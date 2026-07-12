@@ -1,5 +1,6 @@
 // Contact↔contact relation taxonomy + ego-graph builder. Pure: the UI maps generated DTOs onto
 // the structural RelationEntry shape and feeds one entry list per fetched contact.
+import { CATEGORY_ORDER, sectorRadialLayout } from './relationLayout';
 
 // All kinds are storable (== generated ContactRelationKind). The extended-family kinds are also produced by the
 // API's read-time inference over the parent/child graph — explicit vs inferred is carried by RelationProvenance,
@@ -137,7 +138,10 @@ export interface RelationGraph {
   edges: GraphEdge[];
 }
 
-const RING = 220;
+export interface RelationGraphOptions {
+  /** Keep only these categories' edges (empty/undefined = all); nodes left unreachable drop out. */
+  categories?: ReadonlySet<RelationCategory>;
+}
 
 // Directed kinship pairs collapse to one elder-rooted edge (arrow elder→younger) so a stored edge and its
 // derived inverse dedupe: the "younger" kind maps to its "elder" partner. Symmetric kinds fall through.
@@ -171,6 +175,7 @@ function orient(owner: string, target: string, storedKind: RelationKind): { sour
 export function buildRelationGraph(
   center: { id: string; label: string },
   entriesByContact: ReadonlyMap<string, readonly RelationEntry[]>,
+  opts?: RelationGraphOptions,
 ): RelationGraph {
   const names = new Map<string, string>([[center.id, center.label]]);
   const edges = new Map<string, GraphEdge>();
@@ -222,24 +227,20 @@ export function buildRelationGraph(
     }
   }
 
-  const edgeList = [...edges.values()];
-  const { depth, category, children } = walkFromCenter(center.id, edgeList);
-  const pos = radialLayout(center.id, children, depth);
+  const active = opts?.categories;
+  const allEdges = [...edges.values()].filter((e) => !active?.size || active.has(e.category));
+  const { depth, category, children } = walkFromCenter(center.id, allEdges);
+  const pos = sectorRadialLayout(center.id, children, depth, category, names);
 
-  const nodeIds = new Set<string>([center.id]);
-  for (const e of edgeList) {
-    nodeIds.add(e.source);
-    nodeIds.add(e.target);
-  }
-
-  let fallback = 0;
-  const nodes: GraphNode[] = [...nodeIds].map((id) => {
-    const p = pos.get(id) ?? outerFallback(fallback++);
+  // Only what's reachable from the center is drawn (matters once category filtering cuts edges).
+  const edgeList = allEdges.filter((e) => depth.has(e.source) && depth.has(e.target));
+  const nodes: GraphNode[] = [...depth.keys()].map((id) => {
+    const p = pos.get(id)!;
     return {
       id,
       label: names.get(id) ?? id.slice(0, 8),
       category: id === center.id ? 'self' : category.get(id) ?? 'Other',
-      depth: depth.get(id) ?? 99,
+      depth: depth.get(id)!,
       isCenter: id === center.id,
       x: p.x,
       y: p.y,
@@ -247,6 +248,37 @@ export function buildRelationGraph(
   });
 
   return { nodes, edges: edgeList };
+}
+
+export interface RelationEntryGroup<T> {
+  category: RelationCategory;
+  total: number;
+  outgoing: T[];
+  incoming: T[];
+  inferred: T[];
+}
+
+/** Bucket relation entries per category (in CATEGORY_ORDER, empty ones omitted) and per
+ *  direction/provenance within it, alphabetically — the shape the grouped list renders. */
+export function groupRelationEntries<
+  T extends Pick<RelationEntry, 'kind' | 'direction' | 'provenance' | 'displayName'>,
+>(entries: readonly T[]): RelationEntryGroup<T>[] {
+  const byName = (a: T, b: T) => a.displayName.localeCompare(b.displayName);
+  const groups = new Map<RelationCategory, RelationEntryGroup<T>>();
+  for (const e of entries) {
+    const cat = kindCategory(e.kind);
+    let g = groups.get(cat);
+    if (!g) groups.set(cat, (g = { category: cat, total: 0, outgoing: [], incoming: [], inferred: [] }));
+    const bucket = e.provenance === 'Inferred' ? g.inferred : e.direction === 'Outgoing' ? g.outgoing : g.incoming;
+    bucket.push(e);
+    g.total++;
+  }
+  for (const g of groups.values()) {
+    g.outgoing.sort(byName);
+    g.incoming.sort(byName);
+    g.inferred.sort(byName);
+  }
+  return CATEGORY_ORDER.filter((c) => groups.has(c)).map((c) => groups.get(c)!);
 }
 
 interface Walk {
@@ -287,43 +319,3 @@ function walkFromCenter(centerId: string, edges: GraphEdge[]): Walk {
   return { depth, category, children };
 }
 
-/** Leaf-weighted radial tree layout: each subtree gets an angular slice ∝ its leaf count; a node
- *  sits at the middle of its slice, radius = depth × RING. Deterministic given sorted children. */
-function radialLayout(
-  centerId: string,
-  children: Map<string, string[]>,
-  depth: Map<string, number>,
-): Map<string, { x: number; y: number }> {
-  const leaves = new Map<string, number>();
-  const countLeaves = (id: string): number => {
-    const kids = children.get(id) ?? [];
-    if (kids.length === 0) return 1;
-    const n = kids.reduce((sum, k) => sum + countLeaves(k), 0);
-    leaves.set(id, n);
-    return n;
-  };
-  countLeaves(centerId);
-
-  const pos = new Map<string, { x: number; y: number }>([[centerId, { x: 0, y: 0 }]]);
-  const place = (id: string, a0: number, a1: number) => {
-    const kids = children.get(id) ?? [];
-    const total = kids.reduce((s, k) => s + (leaves.get(k) ?? 1), 0) || 1;
-    let a = a0;
-    for (const k of kids) {
-      const span = ((leaves.get(k) ?? 1) / total) * (a1 - a0);
-      const mid = a + span / 2;
-      const r = (depth.get(k) ?? 1) * RING;
-      pos.set(k, { x: Math.cos(mid) * r, y: Math.sin(mid) * r });
-      place(k, a, a + span);
-      a += span;
-    }
-  };
-  place(centerId, 0, Math.PI * 2);
-  return pos;
-}
-
-function outerFallback(i: number): { x: number; y: number } {
-  const a = i * 1.1;
-  const r = 3 * RING;
-  return { x: Math.cos(a) * r, y: Math.sin(a) * r };
-}

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildRelationGraph, inverseKind, isSymmetric, kindCategory } from './contactRelations';
+import { buildRelationGraph, groupRelationEntries, inverseKind, isSymmetric, kindCategory } from './contactRelations';
 import type { RelationEntry } from './contactRelations';
+import { DEFAULT_LAYOUT } from './relationLayout';
 
 describe('kind taxonomy', () => {
   it('maps kinds to categories', () => {
@@ -149,7 +150,7 @@ describe('buildRelationGraph', () => {
     expect(g.nodes.map((n) => n.id).sort()).toEqual(['F', 'Y']);
   });
 
-  it('places the center at the origin and neighbors on the first ring, deterministically', () => {
+  it('places the center at the origin and neighbors beyond the first ring, deterministically', () => {
     const entries = new Map<string, RelationEntry[]>([
       [
         'Y',
@@ -164,7 +165,53 @@ describe('buildRelationGraph', () => {
     const c = g1.nodes.find((n) => n.isCenter)!;
     expect([c.x, c.y]).toEqual([0, 0]);
     const radius = (n: { x: number; y: number }) => Math.hypot(n.x, n.y);
-    for (const n of g1.nodes.filter((n) => n.depth === 1)) expect(radius(n)).toBeCloseTo(220);
+    for (const n of g1.nodes.filter((n) => n.depth === 1))
+      expect(radius(n)).toBeGreaterThanOrEqual(DEFAULT_LAYOUT.baseRadius);
     expect(g1.nodes.map((n) => [n.id, n.x, n.y])).toEqual(g2.nodes.map((n) => [n.id, n.x, n.y]));
+  });
+
+  it('drops filtered-out categories and anything only reachable through them', () => {
+    // S (Social) bridges to C (Professional, from S's own list); F is Family.
+    const entries = new Map<string, RelationEntry[]>([
+      [
+        'Y',
+        [
+          { contactId: 'F', displayName: 'Fam', kind: 'Parent', direction: 'Outgoing' },
+          { contactId: 'S', displayName: 'Soc', kind: 'Friend', direction: 'Outgoing' },
+        ],
+      ],
+      ['S', [{ contactId: 'C', displayName: 'Col', kind: 'Colleague', direction: 'Outgoing' }]],
+    ]);
+    const g = buildRelationGraph(center, entries, { categories: new Set(['Family']) });
+    expect(g.nodes.map((n) => n.id).sort()).toEqual(['F', 'Y']);
+    expect(g.edges).toHaveLength(1);
+    // An empty set means no filter.
+    const all = buildRelationGraph(center, entries, { categories: new Set() });
+    expect(all.nodes.map((n) => n.id).sort()).toEqual(['C', 'F', 'S', 'Y']);
+  });
+});
+
+describe('groupRelationEntries', () => {
+  it('buckets by category in fixed order, splitting direction/provenance, alphabetically', () => {
+    const entries: RelationEntry[] = [
+      { contactId: '1', displayName: 'Zoe', kind: 'Friend', direction: 'Outgoing' },
+      { contactId: '2', displayName: 'Anna', kind: 'Friend', direction: 'Outgoing' },
+      { contactId: '3', displayName: 'Boss', kind: 'Colleague', direction: 'Incoming' },
+      { contactId: '4', displayName: 'Mum', kind: 'Parent', direction: 'Outgoing' },
+      { contactId: '5', displayName: 'Gran', kind: 'Grandparent', direction: 'Incoming', provenance: 'Inferred' },
+    ];
+    const groups = groupRelationEntries(entries);
+    expect(groups.map((g) => g.category)).toEqual(['Family', 'Social', 'Professional']); // Other omitted
+    const family = groups[0];
+    expect(family.total).toBe(2);
+    expect(family.outgoing.map((e) => e.displayName)).toEqual(['Mum']);
+    expect(family.inferred.map((e) => e.displayName)).toEqual(['Gran']);
+    const social = groups[1];
+    expect(social.outgoing.map((e) => e.displayName)).toEqual(['Anna', 'Zoe']);
+    expect(groups[2].incoming.map((e) => e.displayName)).toEqual(['Boss']);
+  });
+
+  it('returns nothing for no entries', () => {
+    expect(groupRelationEntries([])).toEqual([]);
   });
 });
