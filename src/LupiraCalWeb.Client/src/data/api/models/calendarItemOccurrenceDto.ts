@@ -6,6 +6,8 @@
  * OpenAPI spec version: v1
  */
 import type { CompletenessScore } from './completenessScore';
+import type { ItemCategory } from './itemCategory';
+import type { ItemStatus } from './itemStatus';
 
 export interface CalendarItemOccurrenceDto {
   id: string;
@@ -19,6 +21,11 @@ export interface CalendarItemOccurrenceDto {
   start: string;
   /** @nullable */
   end?: string | null;
+  calendarIds: string[];
+  category?: null | ItemCategory;
+  status?: null | ItemStatus;
+  /** @nullable */
+  tags?: string[] | null;
   completeness?: null | CompletenessScore;
   etag: string;
 }

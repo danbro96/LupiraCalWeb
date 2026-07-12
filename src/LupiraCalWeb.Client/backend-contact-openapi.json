@@ -2571,12 +2571,6 @@
             "type": "string",
             "format": "uuid"
           },
-          "namePrefix": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "givenName": {
             "type": [
               "null",
@@ -2590,12 +2584,6 @@
             ]
           },
           "familyName": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "nameSuffix": {
             "type": [
               "null",
               "string"
@@ -2888,12 +2876,6 @@
       "ReviseContactRequest": {
         "type": "object",
         "properties": {
-          "namePrefix": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "givenName": {
             "type": [
               "null",
@@ -2907,12 +2889,6 @@
             ]
           },
           "familyName": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "nameSuffix": {
             "type": [
               "null",
               "string"

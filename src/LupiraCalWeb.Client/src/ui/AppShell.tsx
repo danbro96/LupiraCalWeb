@@ -39,6 +39,7 @@ export function AppShell() {
             <NavLink to="/" end>
               Calendar
             </NavLink>
+            <NavLink to="/items">Items</NavLink>
             <NavLink to="/inbox">Inbox</NavLink>
             <NavLink to="/contacts">Contacts</NavLink>
             <NavLink to="/locations">Locations</NavLink>

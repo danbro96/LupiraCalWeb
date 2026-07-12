@@ -12,4 +12,16 @@ from?: string;
 to?: string;
 calendarId?: string;
 tag?: string;
+parentId?: string;
+category?: string;
+status?: string;
+/**
+ * @pattern ^-?(?:0|[1-9]\d*)$
+ */
+skip?: number | string;
+/**
+ * @pattern ^-?(?:0|[1-9]\d*)$
+ */
+take?: number | string;
+desc?: boolean;
 };

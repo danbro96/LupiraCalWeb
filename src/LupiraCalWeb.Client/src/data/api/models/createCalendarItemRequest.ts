@@ -14,6 +14,8 @@ export interface CreateCalendarItemRequest {
   /** @nullable */
   calendarId?: string | null;
   /** @nullable */
+  parentItemId?: string | null;
+  /** @nullable */
   title?: string | null;
   /** @nullable */
   description?: string | null;

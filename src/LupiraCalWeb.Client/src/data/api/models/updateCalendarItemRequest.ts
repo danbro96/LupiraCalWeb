@@ -27,6 +27,8 @@ export interface UpdateCalendarItemRequest {
   startPrecision?: null | DatePrecision;
   endPrecision?: null | DatePrecision;
   /** @nullable */
+  parentItemId?: string | null;
+  /** @nullable */
   category?: string | null;
   /** @nullable */
   tags?: string[] | null;

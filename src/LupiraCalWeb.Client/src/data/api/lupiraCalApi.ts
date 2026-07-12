@@ -580,7 +580,7 @@ export const getSearchItemsUrl = (params?: SearchItemsParams,) => {
 }
 
 /**
- * @summary Search calendar items (text + tag filter; recurrence expanded in-window). Only items accepted into a calendar you can read.
+ * @summary Search calendar items (text + tag + parent + category/status filter; recurrence expanded in-window). Text queries with no from/to match all-time; without a query the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.
  */
 export const searchItems = async (params?: SearchItemsParams, options?: RequestInit): Promise<CalendarItemOccurrenceDto[]> => {
 
@@ -604,7 +604,7 @@ export const getSearchItemsQueryKey = (params?: SearchItemsParams,) => {
     }
 
 
-export const getSearchItemsQueryOptions = <TData = Awaited<ReturnType<typeof searchItems>>, TError = void | ProblemDetails>(params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getSearchItemsQueryOptions = <TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -623,10 +623,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SearchItemsQueryResult = NonNullable<Awaited<ReturnType<typeof searchItems>>>
-export type SearchItemsQueryError = void | ProblemDetails
+export type SearchItemsQueryError = ProblemDetails | void
 
 
-export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = void | ProblemDetails>(
+export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
  params: undefined |  SearchItemsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof searchItems>>,
@@ -636,7 +636,7 @@ export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, 
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = void | ProblemDetails>(
+export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
  params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof searchItems>>,
@@ -646,15 +646,15 @@ export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, 
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = void | ProblemDetails>(
+export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
  params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Search calendar items (text + tag filter; recurrence expanded in-window). Only items accepted into a calendar you can read.
+ * @summary Search calendar items (text + tag + parent + category/status filter; recurrence expanded in-window). Text queries with no from/to match all-time; without a query the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.
  */
 
-export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = void | ProblemDetails>(
+export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
  params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

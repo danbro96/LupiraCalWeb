@@ -11,15 +11,11 @@ import type { PartialDate } from './partialDate';
 
 export interface ReviseContactRequest {
   /** @nullable */
-  namePrefix?: string | null;
-  /** @nullable */
   givenName?: string | null;
   /** @nullable */
   middleName?: string | null;
   /** @nullable */
   familyName?: string | null;
-  /** @nullable */
-  nameSuffix?: string | null;
   /** @nullable */
   nickname?: string | null;
   displayNameFormat?: null | DisplayNameFormat;

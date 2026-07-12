@@ -1707,3 +1707,36 @@ select {
     margin: -8px -2px;
   }
 }
+
+/* ---- Items list/search page. ---- */
+.items-filters {
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-md);
+}
+.items-list .location-row {
+  text-decoration: none;
+}
+.items-cal,
+.items-when {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  flex: none;
+}
+.items-more {
+  display: block;
+  margin: var(--sp-md) auto;
+}
+.items-sheet {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-md);
+  padding: var(--sp-lg);
+}
+@media (max-width: 820px) {
+  .items-list .items-cal {
+    display: none;
+  }
+}

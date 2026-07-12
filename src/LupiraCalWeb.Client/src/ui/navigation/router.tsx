@@ -4,6 +4,7 @@ import { RequireAuth } from './RequireAuth';
 import { AppShell } from '../AppShell';
 import { CalendarScreen } from '../screens/CalendarScreen';
 import { InboxScreen } from '../screens/InboxScreen';
+import { ItemsScreen } from '../screens/ItemsScreen';
 import { ContactsLayout } from '../screens/ContactsLayout';
 import { EmptyDetail } from '../components/contacts/EmptyDetail';
 import { ContactDetailPane } from '../components/contacts/ContactDetailPane';
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
             element: <AppShell />,
             children: [
               { index: true, element: <CalendarScreen /> },
+              { path: 'items', element: <ItemsScreen /> },
               { path: 'inbox', element: <InboxScreen /> },
               {
                 path: 'contacts',
