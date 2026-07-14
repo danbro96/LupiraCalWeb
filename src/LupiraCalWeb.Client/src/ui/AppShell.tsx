@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router-dom';
-import { logout } from '../data/session';
-import { useSession } from '../state/useSession';
 import { useEnsureBootstrap } from '../state/useContainers';
 import { useEnsureContactBootstrap } from '../state/useAddressBooks';
 import { BottomNav } from './components/BottomNav';
@@ -10,9 +8,8 @@ import { Sidebar } from './components/Sidebar';
 import { ItemDrawer } from './components/drawer/ItemDrawer';
 import { NewItemModal } from './components/NewItemModal';
 
-/** Full-width app frame: topbar, calendar sidebar, routed content, and the ?item= drawer host. */
+/** Full-width app frame: section nav, calendar sidebar, routed content, and the ?item= drawer host. */
 export function AppShell() {
-  const { data: user } = useSession();
   useEnsureBootstrap();
   useEnsureContactBootstrap();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -34,7 +31,6 @@ export function AppShell() {
     <CalendarVisibilityProvider>
       <div className="shell">
         <header className="topbar">
-          <span className="brand">Lupira Calendar</span>
           <nav className="topnav">
             <NavLink to="/" end>
               Calendar
@@ -45,15 +41,6 @@ export function AppShell() {
             <NavLink to="/locations">Locations</NavLink>
             <NavLink to="/calendars">Manage</NavLink>
           </nav>
-          <button className="btn primary" onClick={() => setCreating(true)}>
-            + New
-          </button>
-          <div className="account">
-            <span className="account-email">{user?.name ?? user?.email}</span>
-            <button className="linklike" onClick={logout}>
-              Sign out
-            </button>
-          </div>
         </header>
         <div className="shell-body">
           {showSidebar && <Sidebar />}
@@ -61,6 +48,9 @@ export function AppShell() {
             <Outlet />
           </main>
         </div>
+        <button className="fab" onClick={() => setCreating(true)} aria-label="New item" title="New item">
+          +
+        </button>
         <BottomNav />
       </div>
       {itemId && <ItemDrawer itemId={itemId} onClose={closeDrawer} />}

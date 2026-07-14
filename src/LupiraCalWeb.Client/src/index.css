@@ -93,10 +93,6 @@ select {
   border-bottom: 1px solid var(--divider);
   flex: none;
 }
-.brand {
-  font-weight: 700;
-  font-size: 17px;
-}
 .topnav {
   display: flex;
   gap: var(--sp-sm);
@@ -113,15 +109,6 @@ select {
 .topnav a.active {
   background: var(--surface);
   color: var(--text);
-}
-.account {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-sm);
-}
-.account-email {
-  color: var(--text-subtle);
-  font-size: 13px;
 }
 .shell-body {
   display: flex;
@@ -151,6 +138,29 @@ select {
   align-items: center;
   gap: var(--sp-md);
   justify-content: space-between;
+}
+.account-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-md);
+  padding: var(--sp-md) var(--sp-lg);
+  margin-bottom: var(--sp-lg);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.account-who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.account-name {
+  font-weight: 700;
+}
+.account-sub {
+  color: var(--text-subtle);
+  font-size: 13px;
 }
 
 /* ---- Sidebar calendar toggles. ---- */
@@ -194,14 +204,47 @@ select {
 .cal-title {
   margin: 0 var(--sp-sm);
   font-size: 18px;
+  text-align: center;
 }
-.cal-filters {
+.cal-arrow {
+  font-size: 22px;
+}
+.today-btn {
+  margin-left: var(--sp-sm);
+}
+.cal-right {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  flex-wrap: wrap;
+}
+.cal-actions,
+.cal-search {
   display: flex;
   align-items: center;
   gap: var(--sp-sm);
 }
 .tag-input {
   width: 90px;
+}
+.spinner {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: var(--r-pill);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
 }
 
 /* ---- Month grid. ---- */
@@ -1537,6 +1580,10 @@ select {
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 600;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
 }
 .bottom-tab .tab-icon {
   font-size: 18px;
@@ -1564,6 +1611,51 @@ select {
   display: block;
   width: auto;
   border-right: 0;
+}
+
+/* Floating "New" action — sits bottom-right, lifted above the bottom nav on phones. */
+.fab {
+  position: fixed;
+  right: var(--sp-lg);
+  bottom: var(--sp-lg);
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--primary);
+  border-radius: var(--r-pill);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  z-index: 30;
+}
+
+/* "More" overflow for secondary sections, above the bottom tabs. */
+.more-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(48px + env(safe-area-inset-bottom));
+  z-index: 12;
+  background: var(--bg);
+  border-top: 1px solid var(--divider);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-sm) 0;
+}
+.more-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  padding: var(--sp-md) var(--sp-lg);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+.more-item.active {
+  color: var(--primary);
 }
 
 /* Compact month: the whole cell is one button with event dots; tap opens the day view. */
@@ -1643,13 +1735,9 @@ select {
     display: none;
   }
 
-  /* Shell: nav moves to the bottom tabs; topbar keeps brand + New + Sign out. */
-  .topnav,
-  .account-email {
+  /* Shell: the top bar is dropped entirely — bottom tabs navigate, the FAB creates. */
+  .topbar {
     display: none;
-  }
-  .brand {
-    flex: 1;
   }
   .sidebar {
     display: none;
@@ -1661,20 +1749,37 @@ select {
     border-top: 1px solid var(--divider);
     padding-bottom: env(safe-area-inset-bottom);
   }
+  .fab {
+    bottom: calc(48px + env(safe-area-inset-bottom) + var(--sp-md));
+  }
 
   .page {
     padding: var(--sp-lg);
   }
 
-  /* Calendar toolbar wraps into two clean lines; search stretches. */
+  /* Calendar toolbar: date nav on its own line, the actions row below, search expands on demand. */
   .cal-title {
     font-size: 16px;
+    flex: 1;
   }
-  .cal-filters {
+  .cal-nav,
+  .cal-right {
     width: 100%;
-    flex-wrap: wrap;
   }
-  .cal-filters form {
+  .cal-actions {
+    width: 100%;
+  }
+  .cal-actions .seg {
+    margin-right: auto;
+  }
+  .cal-search {
+    width: 100%;
+    display: none;
+  }
+  .cal-search.open {
+    display: flex;
+  }
+  .cal-search form {
     flex: 1;
     display: flex;
     min-width: 140px;

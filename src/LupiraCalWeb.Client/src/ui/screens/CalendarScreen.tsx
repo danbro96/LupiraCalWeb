@@ -24,6 +24,7 @@ export function CalendarScreen() {
   const q = searchParams.get('q') ?? '';
   const [search, setSearch] = useState(q);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const setParam = (key: string, value: string | null) => {
     setSearchParams((prev) => {
@@ -36,6 +37,8 @@ export function CalendarScreen() {
 
   const from = range.start.toISOString();
   const to = range.end.toISOString();
+  const now = new Date();
+  const todayVisible = now >= range.start && now < range.end;
 
   const { calendars } = useContainers();
   const { isVisible } = useCalendarVisibility();
@@ -83,51 +86,65 @@ export function CalendarScreen() {
     <div className="cal-screen">
       <div className="cal-toolbar">
         <div className="cal-nav">
-          <button className="btn" onClick={() => navigate(-1)} aria-label="Previous">
+          <button className="icon-btn cal-arrow" onClick={() => navigate(-1)} aria-label="Previous">
             ‹
           </button>
-          <button className="btn" onClick={() => setDate(null)}>
-            Today
-          </button>
-          <button className="btn" onClick={() => navigate(1)} aria-label="Next">
+          <h2 className="cal-title">{title}</h2>
+          <button className="icon-btn cal-arrow" onClick={() => navigate(1)} aria-label="Next">
             ›
           </button>
-          <h2 className="cal-title">{title}</h2>
-          {isLoading && <span className="meta">loading…</span>}
+          {!todayVisible && (
+            <button className="btn today-btn" onClick={() => setDate(null)}>
+              Today
+            </button>
+          )}
+          {isLoading && <span className="spinner" aria-label="loading" />}
         </div>
-        <div className="cal-filters">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setParam('q', search || null);
-            }}
-          >
-            <input
-              className="text-input"
-              placeholder="Search title/description…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </form>
-          <input
-            className="text-input tag-input"
-            placeholder="tag"
-            defaultValue={tag}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') setParam('tag', (e.target as HTMLInputElement).value || null);
-            }}
-            onBlur={(e) => setParam('tag', e.target.value || null)}
-          />
-          <div className="seg">
-            {(['month', 'week', 'day'] as const).map((v) => (
-              <button key={v} className={`seg-btn ${view === v ? 'active' : ''}`} onClick={() => setView(v)}>
-                {v}
-              </button>
-            ))}
+        <div className="cal-right">
+          <div className="cal-actions">
+            <div className="seg">
+              {(['month', 'week', 'day'] as const).map((v) => (
+                <button key={v} className={`seg-btn ${view === v ? 'active' : ''}`} onClick={() => setView(v)}>
+                  {v}
+                </button>
+              ))}
+            </div>
+            <button
+              className="btn phone-only"
+              onClick={() => setSearchOpen((o) => !o)}
+              aria-label="Search"
+              aria-pressed={searchOpen}
+            >
+              🔍
+            </button>
+            <button className="btn phone-only" onClick={() => setSheetOpen(true)} aria-label="Calendars">
+              🗂
+            </button>
           </div>
-          <button className="btn phone-only" onClick={() => setSheetOpen(true)}>
-            🗂 Calendars
-          </button>
+          <div className={`cal-search ${searchOpen ? 'open' : ''}`}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setParam('q', search || null);
+              }}
+            >
+              <input
+                className="text-input"
+                placeholder="Search title/description…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </form>
+            <input
+              className="text-input tag-input"
+              placeholder="tag"
+              defaultValue={tag}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') setParam('tag', (e.target as HTMLInputElement).value || null);
+              }}
+              onBlur={(e) => setParam('tag', e.target.value || null)}
+            />
+          </div>
         </div>
       </div>
       {view === 'month' ? (

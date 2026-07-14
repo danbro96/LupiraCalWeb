@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { logout } from '../../data/session';
+import { useSession } from '../../state/useSession';
 import { useCreateCalendar, useGrantCalendarOwner, useRevokeCalendarOwner } from '../../data/api/lupiraCalApi';
 import { CalendarClass, CalendarKind, type ContainerDto } from '../../data/api/models';
 import { useCreateAddressBook, useGrantAddressBookOwner, useRevokeAddressBookOwner } from '../../data/api-contact/lupiraContactApi';
@@ -14,10 +16,22 @@ import { errText } from '../components/errText';
 export function CalendarsScreen() {
   const { calendars } = useContainers();
   const { addressBooks } = useAddressBooks();
+  const { data: user } = useSession();
   const [creating, setCreating] = useState(false);
 
   return (
     <div className="page">
+      <div className="account-card">
+        <div className="account-who">
+          <span className="account-name">{user?.name ?? user?.email}</span>
+          {user?.name && user?.email && user.name !== user.email && (
+            <span className="account-sub">{user.email}</span>
+          )}
+        </div>
+        <button className="btn" onClick={logout}>
+          Sign out
+        </button>
+      </div>
       <div className="page-head">
         <h2>Calendars & address books</h2>
         <button className="btn primary" onClick={() => setCreating((c) => !c)}>
