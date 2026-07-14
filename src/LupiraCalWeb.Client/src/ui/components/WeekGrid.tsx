@@ -10,6 +10,7 @@ const HOUR_PX = 48;
 const RAIL_SLOT_PX = 5; // 3px rail + 2px gap
 const MIN_BLOCK_PX = 18; // min block height; drives column packing so short neighbours don't overlap
 const MIN_BLOCK_MINUTES = (MIN_BLOCK_PX / HOUR_PX) * 60;
+const HEADER_PX = 18; // timed-parent header height; children starting under it drop below
 
 interface Props {
   days: Date[];
@@ -147,6 +148,18 @@ function DayColumn({
     [segments, day],
   );
 
+  // Earliest child top per timed parent — decides whether its header sits in the gap or above the start.
+  const firstChildTopByRail = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const p of positioned) {
+      if (!p.item.parentItemId) continue;
+      const top = (p.startMin / 60) * HOUR_PX;
+      const cur = m.get(p.item.parentItemId);
+      if (cur == null || top < cur) m.set(p.item.parentItemId, top);
+    }
+    return m;
+  }, [positioned]);
+
   // A single rail tints its span (the whole column for an all-day parent, the parent's hours for a
   // timed one); two rails would blend into mud, so no tint then.
   const tintRail = rails.length === 1 ? rails[0] : null;
@@ -201,6 +214,33 @@ function DayColumn({
           onMouseLeave={() => onHoverFamily(null)}
         />
       ))}
+      {/* Timed parents have no all-day chip, so label them with a header at the top of their span —
+          in the gap before the first child when there's room, otherwise just above the start so it
+          never hides a child that begins at the same time. */}
+      {rails.map((r) => {
+        if (r.startMin == null) return null;
+        const railTopPx = (r.startMin / 60) * HOUR_PX;
+        const firstChildTop = firstChildTopByRail.get(r.itemId);
+        const atStart = firstChildTop == null || firstChildTop - railTopPx >= HEADER_PX;
+        return (
+          <button
+            key={`rail-hd-${r.itemId}`}
+            className={`family-rail-label ${famClass(r.itemId)}`}
+            style={{
+              top: atStart ? railTopPx : railTopPx - HEADER_PX,
+              left: rails.length * RAIL_SLOT_PX,
+              ['--family-accent' as string]: familyAccent(r.itemId),
+            }}
+            title={r.title}
+            onClick={() => onOpenItem(r.itemId)}
+            onMouseEnter={() => onHoverFamily(r.itemId)}
+            onMouseLeave={() => onHoverFamily(null)}
+          >
+            {r.title}
+            {r.childCount > 0 ? ` · ${r.childCount}` : ''}
+          </button>
+        );
+      })}
       {positioned.map((p) => {
         const fk = familyKey(p.item);
         const railIdx = p.item.parentItemId ? rails.findIndex((r) => r.itemId === p.item.parentItemId) : -1;
@@ -231,24 +271,6 @@ function DayColumn({
               {p.item.ghost ? ' · proposed' : ''}
             </span>
           </button>
-        );
-      })}
-      {positioned.map((p) => {
-        if (p.col !== 0 || !p.item.parentItemId) return null;
-        const railIdx = rails.findIndex((r) => r.itemId === p.item.parentItemId);
-        if (railIdx < 0) return null;
-        const from = railIdx * RAIL_SLOT_PX + 3;
-        return (
-          <div
-            key={`tick-${p.item.key}`}
-            className="family-tick"
-            style={{
-              top: (p.startMin / 60) * HOUR_PX + 5,
-              left: from,
-              width: rails.length * RAIL_SLOT_PX + 2 - from,
-              background: familyAccent(p.item.parentItemId),
-            }}
-          />
         );
       })}
       {isToday(day) && <div className="now-line" style={{ top: (nowMin / 60) * HOUR_PX }} />}

@@ -25,6 +25,7 @@ export interface DayRail {
   /** Parent item id — also the family key. */
   itemId: string;
   title: string;
+  childCount: number;
   /** Vertical span in minutes for a timed parent; absent means all-day → full-column rail. */
   startMin?: number;
   endMin?: number;
@@ -47,13 +48,17 @@ export function railsForDay(entries: RailSource[], day: Date): DayRail[] {
     if (e.isAllDay) {
       if (!(sameDay(e.start, day) || (e.end !== null && e.start <= day && e.end >= day))) continue;
       seen.add(e.itemId);
-      rails.push({ rail: { itemId: e.itemId, title: e.title }, allDay: true, order: e.start.getTime() });
+      rails.push({
+        rail: { itemId: e.itemId, title: e.title, childCount: e.childCount ?? 0 },
+        allDay: true,
+        order: e.start.getTime(),
+      });
     } else {
       const span = clampToDay(e.start, e.end ?? e.start, day);
       if (!span) continue;
       seen.add(e.itemId);
       rails.push({
-        rail: { itemId: e.itemId, title: e.title, startMin: span.startMin, endMin: span.endMin },
+        rail: { itemId: e.itemId, title: e.title, childCount: e.childCount ?? 0, startMin: span.startMin, endMin: span.endMin },
         allDay: false,
         order: span.startMin,
       });

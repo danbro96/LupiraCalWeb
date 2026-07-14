@@ -35,7 +35,7 @@ describe('familyKey', () => {
 describe('railsForDay', () => {
   it('emits a rail for a single-day all-day parent', () => {
     expect(railsForDay([rail({ itemId: 'p', title: 'Trip' })], day)).toEqual([
-      { itemId: 'p', title: 'Trip' },
+      { itemId: 'p', title: 'Trip', childCount: 2 },
     ]);
   });
 
@@ -80,7 +80,9 @@ describe('railsForDay', () => {
       start: new Date(2026, 6, 7, 16, 0),
       end: new Date(2026, 6, 7, 23, 30),
     });
-    expect(railsForDay([party], day)).toEqual([{ itemId: 'p', title: 'p', startMin: 960, endMin: 1410 }]);
+    expect(railsForDay([party], day)).toEqual([
+      { itemId: 'p', title: 'p', childCount: 2, startMin: 960, endMin: 1410 },
+    ]);
   });
 
   it('excludes a timed parent that does not overlap the day', () => {
