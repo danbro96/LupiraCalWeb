@@ -53,6 +53,24 @@ export const AVAILABILITY_COLORS: Record<AvailabilityStatus, string> = {
   Leave: '#9333ea',
 };
 
+/** Accents for parent/child item families — a separate color channel from calendar colors. */
+export const FAMILY_ACCENTS = [
+  '#e11d48', // rose
+  '#d97706', // amber
+  '#7c3aed', // violet
+  '#059669', // emerald
+  '#c026d3', // fuchsia
+  '#0284c7', // sky
+  '#ca8a04', // dark yellow
+  '#dc2626', // red
+] as const;
+
+export function familyAccent(key: string): string {
+  let h = 5381;
+  for (let i = 0; i < key.length; i++) h = (h * 33 + key.charCodeAt(i)) >>> 0;
+  return FAMILY_ACCENTS[h % FAMILY_ACCENTS.length];
+}
+
 export const PARTICIPATION_STATUS_LABELS: Record<ParticipationStatus, string> = {
   NeedsAction: 'invited',
   Accepted: 'accepted',

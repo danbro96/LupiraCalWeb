@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import type { AvailabilitySegment } from '../../state/useAvailability';
+import { familyKey } from '../../domain/family';
 import { fmtTime, isToday, sameDay } from '../../domain/time';
-import { AVAILABILITY_COLORS } from '../theme/kinds';
+import { AVAILABILITY_COLORS, familyAccent } from '../theme/kinds';
 import type { GridEntry } from './entries';
 
 const MAX_PER_CELL = 4;
@@ -14,9 +16,15 @@ interface Props {
   compact?: boolean;
   onOpenItem: (id: string) => void;
   onOpenDay: (d: Date) => void;
+  selectedFamilyKey?: string;
 }
 
-export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem, onOpenDay }: Props) {
+export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem, onOpenDay, selectedFamilyKey }: Props) {
+  const [hoverFamily, setHoverFamily] = useState<string | null>(null);
+  const activeFamily = hoverFamily ?? selectedFamilyKey ?? null;
+  const famClass = (key: string | undefined) =>
+    activeFamily ? (key === activeFamily ? 'family-hi' : 'family-dim') : '';
+
   return (
     <div className={`month-grid ${compact ? 'compact' : ''}`}>
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
@@ -62,23 +70,29 @@ export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem,
                 ))}
               </span>
             </div>
-            {shown.map((e) => (
-              <button
-                key={e.key}
-                className={`month-chip ${e.ghost ? 'ghost' : ''}`}
-                style={{ borderColor: e.color }}
-                onClick={() => onOpenItem(e.itemId)}
-                title={e.ghost ? `${e.title} (proposed)` : e.title}
-              >
-                <span className="chip-dot" style={{ background: e.color }} />
-                {!e.isAllDay && <span className="chip-time">{fmtTime(e.start)}</span>}
-                <span className="chip-title">
-                  {e.icon ? `${e.icon} ` : ''}
-                  {e.title}
-                  {e.ghost ? ' (proposed)' : ''}
-                </span>
-              </button>
-            ))}
+            {shown.map((e) => {
+              const fk = familyKey(e);
+              return (
+                <button
+                  key={e.key}
+                  className={`month-chip ${e.ghost ? 'ghost' : ''} ${famClass(fk)}`}
+                  style={{ borderColor: e.color, ['--family-accent' as string]: fk ? familyAccent(fk) : undefined }}
+                  onClick={() => onOpenItem(e.itemId)}
+                  onMouseEnter={fk ? () => setHoverFamily(fk) : undefined}
+                  onMouseLeave={fk ? () => setHoverFamily(null) : undefined}
+                  title={e.ghost ? `${e.title} (proposed)` : e.title}
+                >
+                  <span className="chip-dot" style={{ background: e.color }} />
+                  {!e.isAllDay && <span className="chip-time">{fmtTime(e.start)}</span>}
+                  <span className="chip-title">
+                    {e.icon ? `${e.icon} ` : ''}
+                    {e.title}
+                    {e.ghost ? ' (proposed)' : ''}
+                  </span>
+                  {fk && <span className="family-dot" style={{ background: familyAccent(fk) }} />}
+                </button>
+              );
+            })}
             {dayEntries.length > shown.length && (
               <button className="linklike more-link" onClick={() => onOpenDay(day)}>
                 +{dayEntries.length - shown.length} more

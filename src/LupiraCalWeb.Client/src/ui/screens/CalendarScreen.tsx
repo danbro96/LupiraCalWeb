@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { familyKey } from '../../domain/family';
 import { useContainers } from '../../state/useContainers';
 import { useRangeOccurrences } from '../../state/useRangeOccurrences';
 import { useProposedByCalendar } from '../../state/useProposed';
@@ -64,6 +65,20 @@ export function CalendarScreen() {
 
   const openItem = (id: string) => setParam('item', id);
 
+  const selectedItemId = searchParams.get('item');
+  const selectedFamilyKey = useMemo(() => {
+    if (!selectedItemId) return undefined;
+    for (const e of entries) {
+      if (e.itemId === selectedItemId) {
+        const k = familyKey(e);
+        if (k) return k;
+      }
+      // The selected item may be an out-of-range parent whose children are on-screen.
+      if (e.parentItemId === selectedItemId) return selectedItemId;
+    }
+    return undefined;
+  }, [entries, selectedItemId]);
+
   return (
     <div className="cal-screen">
       <div className="cal-toolbar">
@@ -124,9 +139,10 @@ export function CalendarScreen() {
           compact={isPhone}
           onOpenItem={openItem}
           onOpenDay={openDay}
+          selectedFamilyKey={selectedFamilyKey}
         />
       ) : (
-        <WeekGrid days={days} entries={entries} segments={segments} onOpenItem={openItem} />
+        <WeekGrid days={days} entries={entries} segments={segments} onOpenItem={openItem} selectedFamilyKey={selectedFamilyKey} />
       )}
       {sheetOpen && (
         <>

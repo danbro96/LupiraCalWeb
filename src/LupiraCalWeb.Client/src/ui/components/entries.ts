@@ -14,6 +14,9 @@ export interface GridEntry {
   icon?: string;
   ghost?: boolean;
   completeness?: number | null;
+  parentItemId: string | null;
+  parentTitle?: string | null;
+  childCount: number;
 }
 
 export function fromOccurrence(o: CalendarItemOccurrenceDto, calendar: ContainerDto): GridEntry {
@@ -27,6 +30,9 @@ export function fromOccurrence(o: CalendarItemOccurrenceDto, calendar: Container
     color: calendarColor(calendar),
     icon: calendar.class === 'System' && calendar.kind ? CALENDAR_KIND_ICONS[calendar.kind] : undefined,
     completeness: o.completeness ? Number(o.completeness.score) : null,
+    parentItemId: o.parentItemId ?? null,
+    parentTitle: o.parentTitle,
+    childCount: Number(o.childCount),
   };
 }
 
@@ -44,5 +50,7 @@ export function fromProposed(item: CalendarItemDto, calendar: ContainerDto): Gri
     isAllDay: item.isAllDay,
     color: calendarColor(calendar),
     ghost: true,
+    parentItemId: item.parentItemId ?? null,
+    childCount: 0,
   };
 }
