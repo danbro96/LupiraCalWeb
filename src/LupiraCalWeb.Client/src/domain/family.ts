@@ -1,5 +1,6 @@
 // Family identity and per-day parent rails for the calendar grids.
 
+import { clampToDay } from './occurrences';
 import { sameDay } from './time';
 
 export interface FamilyFields {
@@ -24,26 +25,48 @@ export interface DayRail {
   /** Parent item id — also the family key. */
   itemId: string;
   title: string;
+  /** Vertical span in minutes for a timed parent; absent means all-day → full-column rail. */
+  startMin?: number;
+  endMin?: number;
 }
 
 export const MAX_RAILS_PER_DAY = 2;
 
 /**
- * Spine rails for one day: all-day parents (childCount > 0) covering the day, using the same
- * coverage predicate as the all-day chip strip so rails always match chips. Recurring parents
- * dedup by itemId; sorted by start then itemId (stable slots across days); capped, extras dropped.
+ * Spine rails for one day. All-day parents (childCount > 0) covering the day render a full-column
+ * rail — same coverage predicate as the all-day chip strip so rails always match chips. Timed
+ * parents render a rail spanning their own clamped time range, so an event with sub-events (a party,
+ * a conference day) brackets its children. Recurring parents dedup by itemId; all-day rails sort
+ * first, then timed by start; capped, extras dropped.
  */
 export function railsForDay(entries: RailSource[], day: Date): DayRail[] {
   const seen = new Set<string>();
-  return entries
-    .filter(
-      (e) =>
-        e.isAllDay &&
-        (e.childCount ?? 0) > 0 &&
-        (sameDay(e.start, day) || (e.end !== null && e.start <= day && e.end >= day)),
+  const rails: { rail: DayRail; allDay: boolean; order: number }[] = [];
+  for (const e of entries) {
+    if ((e.childCount ?? 0) <= 0 || seen.has(e.itemId)) continue;
+    if (e.isAllDay) {
+      if (!(sameDay(e.start, day) || (e.end !== null && e.start <= day && e.end >= day))) continue;
+      seen.add(e.itemId);
+      rails.push({ rail: { itemId: e.itemId, title: e.title }, allDay: true, order: e.start.getTime() });
+    } else {
+      const span = clampToDay(e.start, e.end ?? e.start, day);
+      if (!span) continue;
+      seen.add(e.itemId);
+      rails.push({
+        rail: { itemId: e.itemId, title: e.title, startMin: span.startMin, endMin: span.endMin },
+        allDay: false,
+        order: span.startMin,
+      });
+    }
+  }
+  return rails
+    .sort((a, b) =>
+      a.allDay !== b.allDay
+        ? a.allDay
+          ? -1
+          : 1
+        : a.order - b.order || a.rail.itemId.localeCompare(b.rail.itemId),
     )
-    .filter((e) => !seen.has(e.itemId) && seen.add(e.itemId))
-    .sort((a, b) => a.start.getTime() - b.start.getTime() || a.itemId.localeCompare(b.itemId))
     .slice(0, MAX_RAILS_PER_DAY)
-    .map((e) => ({ itemId: e.itemId, title: e.title }));
+    .map((r) => r.rail);
 }

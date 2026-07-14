@@ -499,6 +499,12 @@ select {
   pointer-events: none;
   z-index: 2;
 }
+.family-tint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 2px;
+}
 .allday-chip.family-parent {
   box-shadow: inset 3px 0 0 0 var(--family-accent);
   padding-left: 9px;

@@ -72,4 +72,37 @@ describe('railsForDay', () => {
     );
     expect(rails.map((r) => r.itemId)).toEqual(['c', 'a']);
   });
+
+  it('emits a time-bounded rail for a timed parent that spans its children', () => {
+    const party = rail({
+      itemId: 'p',
+      isAllDay: false,
+      start: new Date(2026, 6, 7, 16, 0),
+      end: new Date(2026, 6, 7, 23, 30),
+    });
+    expect(railsForDay([party], day)).toEqual([{ itemId: 'p', title: 'p', startMin: 960, endMin: 1410 }]);
+  });
+
+  it('excludes a timed parent that does not overlap the day', () => {
+    const party = rail({
+      itemId: 'p',
+      isAllDay: false,
+      start: new Date(2026, 6, 8, 16, 0),
+      end: new Date(2026, 6, 8, 20, 0),
+    });
+    expect(railsForDay([party], day)).toEqual([]);
+  });
+
+  it('orders an all-day rail before a timed rail on the same day', () => {
+    const rails = railsForDay(
+      [
+        rail({ itemId: 't', isAllDay: false, start: new Date(2026, 6, 7, 9), end: new Date(2026, 6, 7, 17) }),
+        rail({ itemId: 'a' }),
+      ],
+      day,
+    );
+    expect(rails.map((r) => r.itemId)).toEqual(['a', 't']);
+    expect(rails[0].startMin).toBeUndefined();
+    expect(rails[1].startMin).toBe(540);
+  });
 });

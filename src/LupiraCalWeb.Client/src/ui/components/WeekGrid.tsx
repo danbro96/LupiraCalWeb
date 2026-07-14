@@ -31,8 +31,8 @@ export function WeekGrid({ days, entries, segments, onOpenItem, selectedFamilyKe
     activeFamily ? (key === activeFamily ? 'family-hi' : 'family-dim') : '';
 
   const railsByDay = useMemo(
-    () => new Map(days.map((d) => [ymd(d), railsForDay(allDay, d)])),
-    [allDay, days],
+    () => new Map(days.map((d) => [ymd(d), railsForDay(entries, d)])),
+    [entries, days],
   );
 
   return (
@@ -117,12 +117,17 @@ function DayColumn({
   onOpenItem: (id: string) => void;
 }) {
   const positioned = useMemo(() => {
-    const spans = timed.flatMap((e) => {
-      const span = clampToDay(e.start, e.end ?? new Date(e.start.getTime() + 30 * 60000), day);
-      return span ? [{ ...span, item: e }] : [];
-    });
+    // Parents drawn as a rail are excluded from column packing so they bracket their children
+    // instead of stealing a column.
+    const railIds = new Set(rails.map((r) => r.itemId));
+    const spans = timed
+      .filter((e) => !railIds.has(e.itemId))
+      .flatMap((e) => {
+        const span = clampToDay(e.start, e.end ?? new Date(e.start.getTime() + 30 * 60000), day);
+        return span ? [{ ...span, item: e }] : [];
+      });
     return layoutColumns(spans);
-  }, [timed, day]);
+  }, [timed, day, rails]);
 
   const daySegments = useMemo(
     () =>
@@ -140,10 +145,12 @@ function DayColumn({
     [segments, day],
   );
 
-  const tint = rails.length === 1 ? `color-mix(in srgb, ${familyAccent(rails[0].itemId)} 3%, transparent)` : undefined;
+  // A single rail tints its span (the whole column for an all-day parent, the parent's hours for a
+  // timed one); two rails would blend into mud, so no tint then.
+  const tintRail = rails.length === 1 ? rails[0] : null;
 
   return (
-    <div className="day-col" style={{ height: 24 * HOUR_PX, background: tint }}>
+    <div className="day-col" style={{ height: 24 * HOUR_PX }}>
       {Array.from({ length: 24 }, (_, h) => (
         <div key={h} className="hour-line" style={{ top: h * HOUR_PX }} />
       ))}
@@ -161,11 +168,30 @@ function DayColumn({
           <span className="avail-label">{s.status}</span>
         </div>
       ))}
+      {tintRail && (
+        <div
+          className="family-tint"
+          style={{
+            top: tintRail.startMin != null ? (tintRail.startMin / 60) * HOUR_PX : 0,
+            height:
+              tintRail.startMin != null && tintRail.endMin != null
+                ? ((tintRail.endMin - tintRail.startMin) / 60) * HOUR_PX
+                : 24 * HOUR_PX,
+            background: `color-mix(in srgb, ${familyAccent(tintRail.itemId)} 6%, transparent)`,
+          }}
+        />
+      )}
       {rails.map((r, i) => (
         <button
           key={`rail-${r.itemId}`}
           className={`family-rail ${famClass(r.itemId)}`}
-          style={{ left: i * RAIL_SLOT_PX, ['--family-accent' as string]: familyAccent(r.itemId) }}
+          style={{
+            left: i * RAIL_SLOT_PX,
+            top: r.startMin != null ? (r.startMin / 60) * HOUR_PX : 0,
+            height: r.startMin != null && r.endMin != null ? ((r.endMin - r.startMin) / 60) * HOUR_PX : undefined,
+            bottom: r.startMin != null ? 'auto' : 0,
+            ['--family-accent' as string]: familyAccent(r.itemId),
+          }}
           title={r.title}
           aria-label={r.title}
           onClick={() => onOpenItem(r.itemId)}
