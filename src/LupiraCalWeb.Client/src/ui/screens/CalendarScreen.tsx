@@ -7,6 +7,7 @@ import { useProposedByCalendar } from '../../state/useProposed';
 import { useAvailabilitySegments } from '../../state/useAvailability';
 import { useCalendarVisibility } from '../components/CalendarVisibility';
 import { fromOccurrence, fromProposed, type GridEntry } from '../components/entries';
+import { MiniMonthPicker } from '../components/MiniMonthPicker';
 import { MonthGrid } from '../components/MonthGrid';
 import { WeekGrid } from '../components/WeekGrid';
 import { Sidebar } from '../components/Sidebar';
@@ -25,6 +26,7 @@ export function CalendarScreen() {
   const [search, setSearch] = useState(q);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [dateOpen, setDateOpen] = useState(false);
 
   const setParam = (key: string, value: string | null) => {
     setSearchParams((prev) => {
@@ -89,7 +91,12 @@ export function CalendarScreen() {
           <button className="icon-btn cal-arrow" onClick={() => navigate(-1)} aria-label="Previous">
             ‹
           </button>
-          <h2 className="cal-title">{title}</h2>
+          <button className="cal-title" onClick={() => setDateOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={dateOpen}>
+            {title}
+            <span className="dp-caret" aria-hidden>
+              ▾
+            </span>
+          </button>
           <button className="icon-btn cal-arrow" onClick={() => navigate(1)} aria-label="Next">
             ›
           </button>
@@ -99,6 +106,16 @@ export function CalendarScreen() {
             </button>
           )}
           {isLoading && <span className="spinner" aria-label="loading" />}
+          {dateOpen && (
+            <MiniMonthPicker
+              selected={date}
+              onPick={(d) => {
+                setDate(d);
+                setDateOpen(false);
+              }}
+              onClose={() => setDateOpen(false)}
+            />
+          )}
         </div>
         <div className="cal-right">
           <div className="cal-actions">

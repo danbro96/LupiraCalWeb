@@ -200,11 +200,30 @@ select {
   display: flex;
   align-items: center;
   gap: var(--sp-sm);
+  position: relative;
 }
 .cal-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   margin: 0 var(--sp-sm);
+  padding: 2px 8px;
+  border: 0;
+  background: none;
+  border-radius: var(--r-md);
+  color: var(--text);
   font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
   text-align: center;
+}
+.cal-title:hover {
+  background: var(--surface);
+}
+.dp-caret {
+  font-size: 11px;
+  color: var(--text-subtle);
 }
 .cal-arrow {
   font-size: 22px;
@@ -245,6 +264,75 @@ select {
   .spinner {
     animation: none;
   }
+}
+
+/* ---- Date picker popover (tap the title to jump to any date). ---- */
+.picker-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+.date-picker {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 21;
+  width: 260px;
+  max-width: calc(100vw - 2 * var(--sp-lg));
+  padding: var(--sp-sm);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+.dp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-xs);
+}
+.dp-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+.dp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.dp-dow {
+  padding: 2px 0;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-subtle);
+}
+.dp-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 0;
+  background: none;
+  border-radius: var(--r-sm);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+.dp-day:hover {
+  background: var(--surface);
+}
+.dp-day.other {
+  color: var(--text-disabled);
+}
+.dp-day.today {
+  font-weight: 700;
+  color: var(--primary);
+}
+.dp-day.sel,
+.dp-day.sel.today {
+  background: var(--primary);
+  color: var(--on-primary);
 }
 
 /* ---- Month grid. ---- */
