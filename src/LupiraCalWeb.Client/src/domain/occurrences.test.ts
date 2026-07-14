@@ -22,6 +22,11 @@ describe('clampToDay', () => {
     const span = clampToDay(new Date(2026, 6, 7, 9), new Date(2026, 6, 7, 9), day);
     expect(span).toEqual({ startMin: 540, endMin: 555 });
   });
+
+  it('treats an event ending at the next midnight as running to end of day', () => {
+    const span = clampToDay(new Date(2026, 6, 7, 20), new Date(2026, 6, 8, 0, 0), day);
+    expect(span).toEqual({ startMin: 1200, endMin: 1440 });
+  });
 });
 
 describe('layoutColumns', () => {
@@ -58,5 +63,17 @@ describe('layoutColumns', () => {
     const c = placed.find((p) => p.item === 'c')!;
     expect(c.col).toBe(0);
     expect(c.cols).toBe(1);
+  });
+
+  it('splits back-to-back short events into columns when minMinutes would overlap them', () => {
+    // Two touching 15-min events: without a min they share a column; with a 22.5-min floor they collide.
+    const spans = [
+      { startMin: 0, endMin: 15, item: 'a' },
+      { startMin: 15, endMin: 30, item: 'b' },
+    ];
+    expect(layoutColumns(spans).every((p) => p.col === 0)).toBe(true);
+    const withMin = layoutColumns(spans, 22.5);
+    expect(withMin.find((p) => p.item === 'a')!.col).toBe(0);
+    expect(withMin.find((p) => p.item === 'b')!.col).toBe(1);
   });
 });

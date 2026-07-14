@@ -8,6 +8,8 @@ import type { GridEntry } from './entries';
 
 const HOUR_PX = 48;
 const RAIL_SLOT_PX = 5; // 3px rail + 2px gap
+const MIN_BLOCK_PX = 18; // min block height; drives column packing so short neighbours don't overlap
+const MIN_BLOCK_MINUTES = (MIN_BLOCK_PX / HOUR_PX) * 60;
 
 interface Props {
   days: Date[];
@@ -126,7 +128,7 @@ function DayColumn({
         const span = clampToDay(e.start, e.end ?? new Date(e.start.getTime() + 30 * 60000), day);
         return span ? [{ ...span, item: e }] : [];
       });
-    return layoutColumns(spans);
+    return layoutColumns(spans, MIN_BLOCK_MINUTES);
   }, [timed, day, rails]);
 
   const daySegments = useMemo(
@@ -209,7 +211,7 @@ function DayColumn({
             className={`timed-block ${p.item.ghost ? 'ghost' : ''} ${p.item.parentItemId ? 'family-child' : ''} ${famClass(fk)}`}
             style={{
               top: (p.startMin / 60) * HOUR_PX,
-              height: Math.max(((p.endMin - p.startMin) / 60) * HOUR_PX - 2, 18),
+              height: Math.max(((p.endMin - p.startMin) / 60) * HOUR_PX - 2, MIN_BLOCK_PX),
               left: `calc(${(p.col / p.cols) * 100}% + ${2 + inset}px)`,
               width: `calc(${(1 / p.cols) * 100}% - ${4 + inset}px)`,
               background: p.item.color,

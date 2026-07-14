@@ -12,7 +12,7 @@ export function clampToDay(start: Date, end: Date, day: Date): DaySpan | null {
   const dayEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1);
   if (start >= dayEnd || end <= dayStart) return null;
   const s = start < dayStart ? 0 : start.getHours() * 60 + start.getMinutes();
-  const e = end > dayEnd ? 1440 : end.getHours() * 60 + end.getMinutes();
+  const e = end >= dayEnd ? 1440 : end.getHours() * 60 + end.getMinutes();
   return { startMin: s, endMin: Math.max(e, s + 15) }; // floor at 15 min so zero-length events stay clickable
 }
 
@@ -25,12 +25,15 @@ export interface Positioned<T> extends DaySpan {
 
 /**
  * Assign side-by-side columns to overlapping spans (greedy first-free-column, then each overlap
- * cluster shares its max column count so widths line up).
+ * cluster shares its max column count so widths line up). `minMinutes` treats each span as at least
+ * that long for collision purposes, so short events rendered at a min height don't visually overlap
+ * their neighbours — they get their own column instead.
  */
-export function layoutColumns<T>(spans: Array<DaySpan & { item: T }>): Positioned<T>[] {
+export function layoutColumns<T>(spans: Array<DaySpan & { item: T }>, minMinutes = 0): Positioned<T>[] {
+  const effEnd = (s: DaySpan) => Math.max(s.endMin, s.startMin + minMinutes);
   const sorted = [...spans].sort((a, b) => a.startMin - b.startMin || b.endMin - a.endMin);
   const placed: Positioned<T>[] = [];
-  const colEnds: number[] = []; // per column: the end of its last span
+  const colEnds: number[] = []; // per column: the effective end of its last span
   let cluster: Positioned<T>[] = [];
   let clusterEnd = -1;
 
@@ -45,11 +48,11 @@ export function layoutColumns<T>(spans: Array<DaySpan & { item: T }>): Positione
     if (cluster.length > 0 && span.startMin >= clusterEnd) closeCluster();
     let col = colEnds.findIndex((end) => end <= span.startMin);
     if (col === -1) col = colEnds.length;
-    colEnds[col] = span.endMin;
+    colEnds[col] = effEnd(span);
     const positioned: Positioned<T> = { ...span, col, cols: 1 };
     cluster.push(positioned);
     placed.push(positioned);
-    clusterEnd = Math.max(clusterEnd, span.endMin);
+    clusterEnd = Math.max(clusterEnd, effEnd(span));
   }
   if (cluster.length > 0) closeCluster();
   return placed;
