@@ -18,6 +18,7 @@ import type {
   ReviseContactRequest,
 } from '../../../data/api-contact/models';
 import { ContactAddressType, DisplayNameFormat, ReachMedium } from '../../../data/api-contact/models';
+import { PINNED_TAG } from '../../../domain/contactTiers';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { PlacePicker } from '../places/PlacePicker';
 import { errText } from '../errText';
@@ -105,7 +106,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   const [birthday, setBirthday] = useState(partialDateToInput(contact.birthday));
   const [birthdayYearKnown, setBirthdayYearKnown] = useState(contact.birthday?.year != null);
   const [channels, setChannelsState] = useState<ContactReachChannel[]>(contact.channels.map((c) => ({ ...c })));
-  const [tags, setTagsState] = useState<string[]>(contact.tags ?? []);
+  const [tags, setTagsState] = useState<string[]>((contact.tags ?? []).filter((t) => t !== PINNED_TAG));
   const [addresses, setAddressesState] = useState<ContactPostalAddress[]>(contact.addresses.map((a) => ({ ...a })));
   const [profiles, setProfilesState] = useState<ContactSocialProfile[]>(contact.profiles.map((p) => ({ ...p })));
   const [emergency, setEmergencyState] = useState<string[]>([...contact.emergencyContactIds]);
@@ -134,7 +135,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
 
       const cleanChannels = channels.filter((c) => c.value.trim()).map((c) => ({ ...c, value: c.value.trim() }));
       if (JSON.stringify(cleanChannels) !== JSON.stringify(contact.channels)) await setChannels.mutateAsync({ id, data: { channels: cleanChannels } });
-      if (!sameList(tags, contact.tags ?? [])) await setTags.mutateAsync({ id, data: { tags } });
+      // The pin sentinel is hidden from the editor — preserve it across an edit.
+      const nextTags = (contact.tags ?? []).includes(PINNED_TAG) ? [...tags, PINNED_TAG] : tags;
+      if (!sameList(nextTags, contact.tags ?? [])) await setTags.mutateAsync({ id, data: { tags: nextTags } });
 
       const cleanAddresses = addresses.filter((a) => a.placeId);
       if (JSON.stringify(cleanAddresses) !== JSON.stringify(contact.addresses))

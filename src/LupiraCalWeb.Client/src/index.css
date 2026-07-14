@@ -1123,6 +1123,39 @@ select {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.pin-btn {
+  flex: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-subtle);
+  opacity: 0.2;
+  transition: opacity 0.12s, color 0.12s;
+}
+.contact-row:hover .pin-btn {
+  opacity: 0.7;
+}
+.pin-btn.pinned {
+  color: var(--primary);
+  opacity: 1;
+}
+.contact-section-head {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--divider);
+  margin-top: var(--sp-md);
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-subtle);
+}
 
 /* ---- Containers table. ---- */
 .containers-table {

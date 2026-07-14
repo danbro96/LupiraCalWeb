@@ -9,6 +9,7 @@ import {
   useSearchContacts,
   useSetMyContact,
 } from '../../../data/api-contact/lupiraContactApi';
+import { PINNED_TAG } from '../../../domain/contactTiers';
 import { fmtDate } from '../../../domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
@@ -113,9 +114,9 @@ export function ContactDetailPane() {
             ))}
           </dl>
 
-          {(contact.tags ?? []).length > 0 && (
+          {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).length > 0 && (
             <div className="chip-row">
-              {(contact.tags ?? []).map((t) => (
+              {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).map((t) => (
                 <span key={t} className="tag-chip">
                   {t}
                 </span>
