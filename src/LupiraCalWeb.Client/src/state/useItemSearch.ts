@@ -23,10 +23,11 @@ export function useItemSearch() {
   const from = searchParams.get('from') ?? '';
   const to = searchParams.get('to') ?? '';
   const parent = searchParams.get('parent') ?? '';
+  const contact = searchParams.get('contact') ?? '';
 
-  // A parent drill-down lists all of an item's children regardless of date — the API defaults
-  // parentId searches to all-time, so no window is sent.
-  const window = parent ? { from: undefined, to: undefined, desc: false } : rangeToWindow(range, from || null, to || null, new Date());
+  // Parent and contact drill-downs list everything regardless of date — the API defaults
+  // parentId/contactId searches to all-time, so no window is sent.
+  const window = parent || contact ? { from: undefined, to: undefined, desc: false } : rangeToWindow(range, from || null, to || null, new Date());
   const params: SearchItemsParams = {
     query: q || undefined,
     tag: tag || undefined,
@@ -34,6 +35,7 @@ export function useItemSearch() {
     category: category || undefined,
     status: status || undefined,
     parentId: parent || undefined,
+    contactId: contact || undefined,
     from: window.from,
     to: window.to,
     desc: window.desc,
@@ -49,7 +51,7 @@ export function useItemSearch() {
   });
 
   return {
-    filters: { q, tag, cal, category, status, range, from, to, parent },
+    filters: { q, tag, cal, category, status, range, from, to, parent, contact },
     occurrences: query.data?.pages.flat() ?? [],
     isLoading: query.isLoading,
     isFetching: query.isFetching,

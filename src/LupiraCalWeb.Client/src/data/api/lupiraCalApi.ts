@@ -29,15 +29,19 @@ import type {
   CalendarItemOccurrenceDto,
   ContainerDto,
   CreateCalendarItemRequest,
+  CreateCalendarItemsBatchRequest,
   CreateCalendarRequest,
   CreateRelationRequest,
   FileItemToCalendarParams,
   FindRelatedItemsParams,
+  GetParticipationSummaryParams,
   GrantOwnerRequest,
   InviteParticipantParams,
+  ItemBatchResult,
   JsonNode,
   MeDto,
   OwnerGrantDto,
+  ParticipationSummaryEntry,
   ProblemDetails,
   RelationDto,
   RespondToInvitationParams,
@@ -45,6 +49,8 @@ import type {
   SearchItemsParams,
   SetItemActionRequest,
   SetItemPromptRequest,
+  SetParticipantsRequest,
+  SetParticipantsResult,
   UpdateCalendarItemRequest
 } from './models';
 
@@ -239,6 +245,114 @@ export const useBootstrapMe = <TError = void,
       > => {
       return useMutation(getBootstrapMeMutationOptions(options), queryClient);
     }
+
+export const getGetParticipationSummaryUrl = (params?: GetParticipationSummaryParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/participation/summary?${stringifiedParams}` : `/participation/summary`
+}
+
+/**
+ * @summary Per-contact participation across your readable calendars (contactId, item count, most recent occurrence start), ordered most-interacted first. Optional from/to restricts the window. A ranking signal for contact pickers/resolvers.
+ */
+export const getParticipationSummary = async (params?: GetParticipationSummaryParams, options?: RequestInit): Promise<ParticipationSummaryEntry[]> => {
+
+  return customFetch<ParticipationSummaryEntry[]>(getGetParticipationSummaryUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetParticipationSummaryQueryKey = (params?: GetParticipationSummaryParams,) => {
+    return [
+    `/participation/summary`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetParticipationSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetParticipationSummaryQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getParticipationSummary>>> = ({ signal }) => getParticipationSummary(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetParticipationSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getParticipationSummary>>>
+export type GetParticipationSummaryQueryError = void
+
+
+export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(
+ params: undefined |  GetParticipationSummaryParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getParticipationSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getParticipationSummary>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(
+ params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getParticipationSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getParticipationSummary>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(
+ params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Per-contact participation across your readable calendars (contactId, item count, most recent occurrence start), ordered most-interacted first. Optional from/to restricts the window. A ranking signal for contact pickers/resolvers.
+ */
+
+export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(
+ params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetParticipationSummaryQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getListContainersUrl = () => {
 
@@ -580,7 +694,7 @@ export const getSearchItemsUrl = (params?: SearchItemsParams,) => {
 }
 
 /**
- * @summary Search calendar items (text + tag + parent + category/status filter; recurrence expanded in-window). Text queries with no from/to match all-time; without a query the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.
+ * @summary Search calendar items (text + tag + parent + attendee contact + category/status filter; recurrence expanded in-window). Text queries and parent/contact filters with no from/to match all-time; otherwise the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.
  */
 export const searchItems = async (params?: SearchItemsParams, options?: RequestInit): Promise<CalendarItemOccurrenceDto[]> => {
 
@@ -651,7 +765,7 @@ export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, 
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Search calendar items (text + tag + parent + category/status filter; recurrence expanded in-window). Text queries with no from/to match all-time; without a query the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.
+ * @summary Search calendar items (text + tag + parent + attendee contact + category/status filter; recurrence expanded in-window). Text queries and parent/contact filters with no from/to match all-time; otherwise the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.
  */
 
 export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
@@ -681,7 +795,7 @@ export const getCreateItemUrl = () => {
 }
 
 /**
- * @summary Create a calendar item (filed into CalendarId if given, else unfiled for later curation).
+ * @summary Create a calendar item (filed into CalendarId if given, else unfiled for later curation). A location must be a resolved PlaceId (free text is CalDAV-only).
  */
 export const createItem = async (createCalendarItemRequest: CreateCalendarItemRequest, options?: RequestInit): Promise<CalendarItemDto> => {
 
@@ -730,7 +844,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateItemMutationError = void | ProblemDetails
 
     /**
- * @summary Create a calendar item (filed into CalendarId if given, else unfiled for later curation).
+ * @summary Create a calendar item (filed into CalendarId if given, else unfiled for later curation). A location must be a resolved PlaceId (free text is CalDAV-only).
  */
 export const useCreateItem = <TError = void | ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItem>>, TError,{data: CreateCalendarItemRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
@@ -741,6 +855,77 @@ export const useCreateItem = <TError = void | ProblemDetails,
         TContext
       > => {
       return useMutation(getCreateItemMutationOptions(options), queryClient);
+    }
+
+export const getCreateItemsBatchUrl = () => {
+
+
+
+
+  return `/items/batch`
+}
+
+/**
+ * @summary Create many items in one call (idempotent per item on SourceKey; children reference parents by ParentSourceKey in any order). Returns a per-item result (created|existed|invalid) in input order.
+ */
+export const createItemsBatch = async (createCalendarItemsBatchRequest: CreateCalendarItemsBatchRequest, options?: RequestInit): Promise<ItemBatchResult[]> => {
+
+  return customFetch<ItemBatchResult[]>(getCreateItemsBatchUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createCalendarItemsBatchRequest)
+  }
+);}
+
+
+
+
+
+export const getCreateItemsBatchMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext> => {
+
+const mutationKey = ['createItemsBatch'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createItemsBatch>>, {data: CreateCalendarItemsBatchRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createItemsBatch(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateItemsBatchMutationResult = NonNullable<Awaited<ReturnType<typeof createItemsBatch>>>
+    export type CreateItemsBatchMutationBody = CreateCalendarItemsBatchRequest
+    export type CreateItemsBatchMutationError = ProblemDetails | void
+
+    /**
+ * @summary Create many items in one call (idempotent per item on SourceKey; children reference parents by ParentSourceKey in any order). Returns a per-item result (created|existed|invalid) in input order.
+ */
+export const useCreateItemsBatch = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createItemsBatch>>,
+        TError,
+        {data: CreateCalendarItemsBatchRequest},
+        TContext
+      > => {
+      return useMutation(getCreateItemsBatchMutationOptions(options), queryClient);
     }
 
 export const getGetItemUrl = (id: string,) => {
@@ -2134,6 +2319,78 @@ export const useInviteParticipant = <TError = void,
         TContext
       > => {
       return useMutation(getInviteParticipantMutationOptions(options), queryClient);
+    }
+
+export const getSetParticipantsUrl = (id: string,) => {
+
+
+
+
+  return `/items/${id}/participants`
+}
+
+/**
+ * @summary Add a set of contacts as attendees in one call (add-only). Attended=true also marks them attended (historical backfill). Slim result (additions + already-present count), not the full item.
+ */
+export const setParticipants = async (id: string,
+    setParticipantsRequest: SetParticipantsRequest, options?: RequestInit): Promise<SetParticipantsResult> => {
+
+  return customFetch<SetParticipantsResult>(getSetParticipantsUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(setParticipantsRequest)
+  }
+);}
+
+
+
+
+
+export const getSetParticipantsMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext> => {
+
+const mutationKey = ['setParticipants'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setParticipants>>, {id: string;data: SetParticipantsRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  setParticipants(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetParticipantsMutationResult = NonNullable<Awaited<ReturnType<typeof setParticipants>>>
+    export type SetParticipantsMutationBody = SetParticipantsRequest
+    export type SetParticipantsMutationError = ProblemDetails | void
+
+    /**
+ * @summary Add a set of contacts as attendees in one call (add-only). Attended=true also marks them attended (historical backfill). Slim result (additions + already-present count), not the full item.
+ */
+export const useSetParticipants = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setParticipants>>,
+        TError,
+        {id: string;data: SetParticipantsRequest},
+        TContext
+      > => {
+      return useMutation(getSetParticipantsMutationOptions(options), queryClient);
     }
 
 export const getRespondToInvitationUrl = (id: string,

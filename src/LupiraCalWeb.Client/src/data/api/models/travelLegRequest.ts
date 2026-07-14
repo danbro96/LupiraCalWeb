@@ -14,6 +14,10 @@ export interface TravelLegRequest {
   /** @nullable */
   fromPlace?: string | null;
   /** @nullable */
+  toPlaceId?: string | null;
+  /** @nullable */
+  fromPlaceId?: string | null;
+  /** @nullable */
   departAt?: string | null;
   /** @nullable */
   arriveAt?: string | null;

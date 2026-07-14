@@ -31,10 +31,12 @@ import type {
   ContactCirclesDto,
   ContactDto,
   ContactGroupDto,
+  ContactNameMatch,
   ContactRelationEntryDto,
   CreateAddressBookRequest,
   CreateContactGroupParams,
   CreateContactRequest,
+  CreateContactsBatchRequest,
   EndContactRelationRequest,
   GetContactCirclesParams,
   GrantOwnerRequest,
@@ -44,6 +46,7 @@ import type {
   ProblemDetails,
   RemoveContactRelationParams,
   RenameContactGroupParams,
+  ResolveContactsByNameRequest,
   ReviseContactRequest,
   RevokeAddressBookOwnerParams,
   SearchContactsParams,
@@ -1066,6 +1069,148 @@ export const useCreateContact = <TError = void | ProblemDetails,
         TContext
       > => {
       return useMutation(getCreateContactMutationOptions(options), queryClient);
+    }
+
+export const getCreateContactsBatchUrl = () => {
+
+
+
+
+  return `/contacts/batch`
+}
+
+/**
+ * @summary Create many contacts in one transaction (each carries its AddressBookId); returned index-for-index with the request.
+ */
+export const createContactsBatch = async (createContactsBatchRequest: CreateContactsBatchRequest, options?: RequestInit): Promise<ContactDto[]> => {
+
+  return customFetchContact<ContactDto[]>(getCreateContactsBatchUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createContactsBatchRequest)
+  }
+);}
+
+
+
+
+
+export const getCreateContactsBatchMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContactsBatch>>, TError,{data: CreateContactsBatchRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof createContactsBatch>>, TError,{data: CreateContactsBatchRequest}, TContext> => {
+
+const mutationKey = ['createContactsBatch'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createContactsBatch>>, {data: CreateContactsBatchRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createContactsBatch(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateContactsBatchMutationResult = NonNullable<Awaited<ReturnType<typeof createContactsBatch>>>
+    export type CreateContactsBatchMutationBody = CreateContactsBatchRequest
+    export type CreateContactsBatchMutationError = ProblemDetails | void
+
+    /**
+ * @summary Create many contacts in one transaction (each carries its AddressBookId); returned index-for-index with the request.
+ */
+export const useCreateContactsBatch = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContactsBatch>>, TError,{data: CreateContactsBatchRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createContactsBatch>>,
+        TError,
+        {data: CreateContactsBatchRequest},
+        TContext
+      > => {
+      return useMutation(getCreateContactsBatchMutationOptions(options), queryClient);
+    }
+
+export const getResolveContactsByNameUrl = () => {
+
+
+
+
+  return `/contacts/resolve-names`
+}
+
+/**
+ * @summary Batch-match a list of names to contacts for imports: per name Matched (→contactId) / Ambiguous / NotFound, with candidate refs. Substring + normalized-name match, not phonetic.
+ */
+export const resolveContactsByName = async (resolveContactsByNameRequest: ResolveContactsByNameRequest, options?: RequestInit): Promise<ContactNameMatch[]> => {
+
+  return customFetchContact<ContactNameMatch[]>(getResolveContactsByNameUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(resolveContactsByNameRequest)
+  }
+);}
+
+
+
+
+
+export const getResolveContactsByNameMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolveContactsByName>>, TError,{data: ResolveContactsByNameRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof resolveContactsByName>>, TError,{data: ResolveContactsByNameRequest}, TContext> => {
+
+const mutationKey = ['resolveContactsByName'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resolveContactsByName>>, {data: ResolveContactsByNameRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  resolveContactsByName(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ResolveContactsByNameMutationResult = NonNullable<Awaited<ReturnType<typeof resolveContactsByName>>>
+    export type ResolveContactsByNameMutationBody = ResolveContactsByNameRequest
+    export type ResolveContactsByNameMutationError = ProblemDetails | void
+
+    /**
+ * @summary Batch-match a list of names to contacts for imports: per name Matched (→contactId) / Ambiguous / NotFound, with candidate refs. Substring + normalized-name match, not phonetic.
+ */
+export const useResolveContactsByName = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolveContactsByName>>, TError,{data: ResolveContactsByNameRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof resolveContactsByName>>,
+        TError,
+        {data: ResolveContactsByNameRequest},
+        TContext
+      > => {
+      return useMutation(getResolveContactsByNameMutationOptions(options), queryClient);
     }
 
 export const getGetContactUrl = (id: string,) => {

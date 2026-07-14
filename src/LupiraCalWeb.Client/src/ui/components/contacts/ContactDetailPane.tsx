@@ -16,6 +16,7 @@ import { errText } from '../errText';
 import { PlaceLabel } from '../places/PlaceLabel';
 import { ContactCircles } from './ContactCircles';
 import { ContactEditForm } from './ContactEditForm';
+import { ContactEventsPanel } from './ContactEventsPanel';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
 import { fmtPartialDate } from './partialDate';
 
@@ -176,6 +177,8 @@ export function ContactDetailPane() {
           </button>
         </div>
       </section>
+
+      <ContactEventsPanel contactId={contact.id} />
 
       <ContactRelationsPanel contact={contact} />
 

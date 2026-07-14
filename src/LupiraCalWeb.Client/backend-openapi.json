@@ -67,6 +67,56 @@
         ]
       }
     },
+    "/participation/summary": {
+      "get": {
+        "tags": [
+          "Participation"
+        ],
+        "summary": "Per-contact participation across your readable calendars (contactId, item count, most recent occurrence start), ordered most-interacted first. Optional from/to restricts the window. A ranking signal for contact pickers/resolvers.",
+        "operationId": "GetParticipationSummary",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParticipationSummaryEntry"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/calendars": {
       "get": {
         "tags": [
@@ -270,7 +320,7 @@
         "tags": [
           "CalendarItems"
         ],
-        "summary": "Search calendar items (text + tag + parent + category/status filter; recurrence expanded in-window). Text queries with no from/to match all-time; without a query the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.",
+        "summary": "Search calendar items (text + tag + parent + attendee contact + category/status filter; recurrence expanded in-window). Text queries and parent/contact filters with no from/to match all-time; otherwise the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.",
         "operationId": "SearchItems",
         "parameters": [
           {
@@ -313,6 +363,14 @@
           },
           {
             "name": "parentId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "contactId",
             "in": "query",
             "schema": {
               "type": "string",
@@ -414,7 +472,7 @@
         "tags": [
           "CalendarItems"
         ],
-        "summary": "Create a calendar item (filed into CalendarId if given, else unfiled for later curation).",
+        "summary": "Create a calendar item (filed into CalendarId if given, else unfiled for later curation). A location must be a resolved PlaceId (free text is CalDAV-only).",
         "operationId": "CreateItem",
         "requestBody": {
           "content": {
@@ -433,6 +491,68 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CalendarItemDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/items/batch": {
+      "post": {
+        "tags": [
+          "CalendarItems"
+        ],
+        "summary": "Create many items in one call (idempotent per item on SourceKey; children reference parents by ParentSourceKey in any order). Returns a per-item result (created|existed|invalid) in input order.",
+        "operationId": "CreateItemsBatch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCalendarItemsBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ItemBatchResult"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1279,6 +1399,64 @@
             "Bearer": [ ]
           }
         ]
+      },
+      "put": {
+        "tags": [
+          "Participation"
+        ],
+        "summary": "Add a set of contacts as attendees in one call (add-only). Attended=true also marks them attended (historical backfill). Slim result (additions + already-present count), not the full item.",
+        "operationId": "SetParticipants",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetParticipantsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetParticipantsResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
     "/items/{id}/participants/{participationId}/respond": {
@@ -2073,12 +2251,24 @@
             ],
             "format": "uuid"
           },
+          "sourceKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "parentItemId": {
             "type": [
               "null",
               "string"
             ],
             "format": "uuid"
+          },
+          "parentSourceKey": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "title": {
             "type": [
@@ -2097,6 +2287,13 @@
               "null",
               "string"
             ]
+          },
+          "placeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           },
           "status": {
             "type": [
@@ -2211,6 +2408,20 @@
                 "$ref": "#/components/schemas/ItemDetailsRequest"
               }
             ]
+          }
+        }
+      },
+      "CreateCalendarItemsBatchRequest": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateCalendarItemRequest"
+            }
           }
         }
       },
@@ -2414,6 +2625,39 @@
               "string"
             ],
             "format": "date-time"
+          }
+        }
+      },
+      "ItemBatchResult": {
+        "required": [
+          "sourceKey",
+          "itemId",
+          "status",
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "itemId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "error": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -2645,6 +2889,23 @@
           }
         }
       },
+      "ParticipationRef": {
+        "required": [
+          "contactId",
+          "participationId"
+        ],
+        "type": "object",
+        "properties": {
+          "contactId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "participationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "ParticipationRole": {
         "enum": [
           "Chair",
@@ -2661,6 +2922,35 @@
           "Tentative",
           "Delegated"
         ]
+      },
+      "ParticipationSummaryEntry": {
+        "required": [
+          "contactId",
+          "count",
+          "lastAt"
+        ],
+        "type": "object",
+        "properties": {
+          "contactId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "count": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "lastAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
       },
       "PresenceDetail": {
         "required": [
@@ -2925,6 +3215,52 @@
           }
         }
       },
+      "SetParticipantsRequest": {
+        "required": [
+          "contactIds"
+        ],
+        "type": "object",
+        "properties": {
+          "contactIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "attended": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SetParticipantsResult": {
+        "required": [
+          "itemId",
+          "added",
+          "alreadyPresent"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "added": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParticipationRef"
+            }
+          },
+          "alreadyPresent": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "TransportMode": {
         "enum": [
           "Flight",
@@ -3055,6 +3391,20 @@
               "null",
               "string"
             ]
+          },
+          "toPlaceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "fromPlaceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           },
           "departAt": {
             "type": [
@@ -3235,6 +3585,9 @@
       "name": "Me"
     },
     {
+      "name": "Participation"
+    },
+    {
       "name": "Calendars"
     },
     {
@@ -3248,9 +3601,6 @@
     },
     {
       "name": "Curation"
-    },
-    {
-      "name": "Participation"
     }
   ]
 }

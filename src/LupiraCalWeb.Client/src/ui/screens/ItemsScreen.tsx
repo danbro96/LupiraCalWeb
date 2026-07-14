@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useGetItem } from '../../data/api/lupiraCalApi';
+import { useGetContact } from '../../data/api-contact/lupiraContactApi';
 import { ItemCategory, ItemStatus, type CalendarItemOccurrenceDto, type ContainerDto } from '../../data/api/models';
 import { groupOccurrences } from '../../domain/itemTree';
 import { fmtWhen } from '../../domain/time';
@@ -22,6 +23,7 @@ export function ItemsScreen() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const { data: drillParent } = useGetItem(filters.parent, { query: { enabled: !!filters.parent } });
+  const { data: drillContact } = useGetContact(filters.contact, { query: { enabled: !!filters.contact } });
 
   const setParam = (key: string, value: string | null) => {
     setSearchParams((prev) => {
@@ -37,7 +39,7 @@ export function ItemsScreen() {
     setSearch('');
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      for (const k of ['item', 'q', 'tag', 'cal', 'category', 'status', 'range', 'from', 'to']) next.delete(k);
+      for (const k of ['item', 'q', 'tag', 'cal', 'category', 'status', 'range', 'from', 'to', 'contact']) next.delete(k);
       next.set('parent', id);
       return next;
     });
@@ -157,13 +159,25 @@ export function ItemsScreen() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </form>
-        {filters.parent ? (
-          <span className="items-drill-chip">
-            ↳ sub-items of {drillParent?.title ?? '…'}
-            <button aria-label="Clear parent filter" onClick={() => setParam('parent', null)}>
-              ×
-            </button>
-          </span>
+        {filters.parent || filters.contact ? (
+          <>
+            {filters.parent && (
+              <span className="items-drill-chip">
+                ↳ sub-items of {drillParent?.title ?? '…'}
+                <button aria-label="Clear parent filter" onClick={() => setParam('parent', null)}>
+                  ×
+                </button>
+              </span>
+            )}
+            {filters.contact && (
+              <span className="items-drill-chip">
+                👤 with {drillContact?.displayName ?? '…'}
+                <button aria-label="Clear contact filter" onClick={() => setParam('contact', null)}>
+                  ×
+                </button>
+              </span>
+            )}
+          </>
         ) : (
           rangeControls
         )}

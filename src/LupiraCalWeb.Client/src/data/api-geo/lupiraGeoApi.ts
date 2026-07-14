@@ -26,6 +26,7 @@ import type {
 
 import type {
   AddAliasRequest,
+  AddExternalIdRequest,
   AdminAreaDto,
   CreatePlaceRequest,
   CreateSavedPlaceRequest,
@@ -961,6 +962,153 @@ export const useRemovePlaceAlias = <TError = void,
         TContext
       > => {
       return useMutation(getRemovePlaceAliasMutationOptions(options), queryClient);
+    }
+
+export const getAddPlaceExternalIdUrl = (id: string,) => {
+
+
+
+
+  return `/places/${id}/external-ids`
+}
+
+/**
+ * @summary Attach an external gazetteer id (scheme+value) to a place; multiple ids per scheme are allowed. 409 if the id already belongs to another place (merge those instead) or is already on this place.
+ */
+export const addPlaceExternalId = async (id: string,
+    addExternalIdRequest: AddExternalIdRequest, options?: RequestInit): Promise<PlaceDto> => {
+
+  return customFetchGeo<PlaceDto>(getAddPlaceExternalIdUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(addExternalIdRequest)
+  }
+);}
+
+
+
+
+
+export const getAddPlaceExternalIdMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addPlaceExternalId>>, TError,{id: string;data: AddExternalIdRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+): UseMutationOptions<Awaited<ReturnType<typeof addPlaceExternalId>>, TError,{id: string;data: AddExternalIdRequest}, TContext> => {
+
+const mutationKey = ['addPlaceExternalId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addPlaceExternalId>>, {id: string;data: AddExternalIdRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  addPlaceExternalId(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddPlaceExternalIdMutationResult = NonNullable<Awaited<ReturnType<typeof addPlaceExternalId>>>
+    export type AddPlaceExternalIdMutationBody = AddExternalIdRequest
+    export type AddPlaceExternalIdMutationError = ProblemDetails | void
+
+    /**
+ * @summary Attach an external gazetteer id (scheme+value) to a place; multiple ids per scheme are allowed. 409 if the id already belongs to another place (merge those instead) or is already on this place.
+ */
+export const useAddPlaceExternalId = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addPlaceExternalId>>, TError,{id: string;data: AddExternalIdRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof addPlaceExternalId>>,
+        TError,
+        {id: string;data: AddExternalIdRequest},
+        TContext
+      > => {
+      return useMutation(getAddPlaceExternalIdMutationOptions(options), queryClient);
+    }
+
+export const getRemovePlaceExternalIdUrl = (id: string,
+    scheme: ExternalScheme,
+    value: string,) => {
+
+
+
+
+  return `/places/${id}/external-ids/${scheme}/${value}`
+}
+
+/**
+ * @summary Detach an external id (scheme + full value, e.g. /external-ids/Osm/way/6601741) from a place.
+ */
+export const removePlaceExternalId = async (id: string,
+    scheme: ExternalScheme,
+    value: string, options?: RequestInit): Promise<void> => {
+
+  return customFetchGeo<void>(getRemovePlaceExternalIdUrl(id,scheme,value),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getRemovePlaceExternalIdMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePlaceExternalId>>, TError,{id: string;scheme: ExternalScheme;value: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+): UseMutationOptions<Awaited<ReturnType<typeof removePlaceExternalId>>, TError,{id: string;scheme: ExternalScheme;value: string}, TContext> => {
+
+const mutationKey = ['removePlaceExternalId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removePlaceExternalId>>, {id: string;scheme: ExternalScheme;value: string}> = (props) => {
+          const {id,scheme,value} = props ?? {};
+
+          return  removePlaceExternalId(id,scheme,value,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemovePlaceExternalIdMutationResult = NonNullable<Awaited<ReturnType<typeof removePlaceExternalId>>>
+
+    export type RemovePlaceExternalIdMutationError = ProblemDetails | void
+
+    /**
+ * @summary Detach an external id (scheme + full value, e.g. /external-ids/Osm/way/6601741) from a place.
+ */
+export const useRemovePlaceExternalId = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePlaceExternalId>>, TError,{id: string;scheme: ExternalScheme;value: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removePlaceExternalId>>,
+        TError,
+        {id: string;scheme: ExternalScheme;value: string},
+        TContext
+      > => {
+      return useMutation(getRemovePlaceExternalIdMutationOptions(options), queryClient);
     }
 
 export const getMergePlaceUrl = (id: string,) => {

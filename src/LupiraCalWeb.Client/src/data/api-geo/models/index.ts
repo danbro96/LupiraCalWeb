@@ -7,6 +7,7 @@
  */
 
 export * from './addAliasRequest';
+export * from './addExternalIdRequest';
 export * from './adminAreaDto';
 export * from './adminLevel';
 export * from './createPlaceRequest';

@@ -14,13 +14,19 @@ export interface CreateCalendarItemRequest {
   /** @nullable */
   calendarId?: string | null;
   /** @nullable */
+  sourceKey?: string | null;
+  /** @nullable */
   parentItemId?: string | null;
+  /** @nullable */
+  parentSourceKey?: string | null;
   /** @nullable */
   title?: string | null;
   /** @nullable */
   description?: string | null;
   /** @nullable */
   location?: string | null;
+  /** @nullable */
+  placeId?: string | null;
   /** @nullable */
   status?: string | null;
   isAllDay?: boolean;

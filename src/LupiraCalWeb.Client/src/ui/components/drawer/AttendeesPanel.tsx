@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   useConfirmAttendance,
+  useGetParticipationSummary,
   useInviteParticipant,
   useLeaveItem,
   useRemoveParticipant,
@@ -8,6 +9,7 @@ import {
 } from '../../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
+import { rankByInteraction } from '../../../domain/contactRank';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 
@@ -49,7 +51,12 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
   const [contactId, setContactId] = useState('');
   const [role, setRole] = useState('req-participant');
 
-  const invitable = (contacts ?? []).filter((c) => !item.attendees.some((a) => a.contactId === c.id));
+  // Most-met contacts first; fail-open — while the summary loads (or errors) the list stays alphabetical.
+  const { data: summary } = useGetParticipationSummary();
+  const invitable = rankByInteraction(
+    (contacts ?? []).filter((c) => !item.attendees.some((a) => a.contactId === c.id)),
+    summary,
+  );
 
   return (
     <section className="drawer-section">

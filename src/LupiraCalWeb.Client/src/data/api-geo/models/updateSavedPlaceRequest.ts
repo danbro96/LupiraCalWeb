@@ -10,6 +10,18 @@ export interface UpdateSavedPlaceRequest {
   /** @nullable */
   label?: string | null;
   /** @nullable */
+  placeId?: string | null;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  latitude?: number | string | null;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  longitude?: number | string | null;
+  /** @nullable */
   icon?: string | null;
   /** @nullable */
   notes?: string | null;
