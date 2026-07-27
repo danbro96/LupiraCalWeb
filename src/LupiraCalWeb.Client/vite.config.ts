@@ -24,5 +24,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
+    // Domain tests moved to packages/domain; web has no unit tests until UI/state ones appear.
+    passWithNoTests: true,
   },
 });

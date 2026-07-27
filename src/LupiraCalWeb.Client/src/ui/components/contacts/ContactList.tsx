@@ -3,12 +3,12 @@ import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-do
 import { useCreateContact, useSetContactTags } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto, ContactReachChannel } from '../../../data/api-contact/models';
 import { ReachMedium } from '../../../data/api-contact/models';
-import { PINNED_TAG, isPinned } from '../../../domain/contactTiers';
+import { PINNED_TAG, isPinned } from '@lupira/cal-domain/contactTiers';
 import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useTieredContacts } from '../../../state/useTieredContacts';
 import { errText } from '../errText';
-import { inputToPartialDate, partialDateBadge } from './partialDate';
+import { inputToPartialDate, partialDateBadge } from '@lupira/cal-domain/partialDate';
 import { useGroup } from './useGroup';
 
 /** Split a comma-separated input into reach channels of one medium (create-form convenience). */

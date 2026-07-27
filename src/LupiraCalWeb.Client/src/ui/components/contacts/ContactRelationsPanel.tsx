@@ -8,8 +8,8 @@ import {
   useSearchContacts,
 } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto, ContactRelationEntryDto, ContactRelationKind } from '../../../data/api-contact/models';
-import { groupRelationEntries, RELATION_KINDS } from '../../../domain/contactRelations';
-import type { RelationCategory, RelationKind } from '../../../domain/contactRelations';
+import { groupRelationEntries, RELATION_KINDS } from '@lupira/cal-domain/contactRelations';
+import type { RelationCategory, RelationKind } from '@lupira/cal-domain/contactRelations';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { ContactRelationGraph } from './ContactRelationGraph';

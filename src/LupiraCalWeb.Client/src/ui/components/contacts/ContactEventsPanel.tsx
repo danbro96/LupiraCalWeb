@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useSearchItems } from '../../../data/api/lupiraCalApi';
-import { fmtWhen } from '../../../domain/time';
+import { fmtWhen } from '@lupira/cal-domain/time';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 
 const FETCH_SIZE = 50;

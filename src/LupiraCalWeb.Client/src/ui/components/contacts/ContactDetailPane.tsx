@@ -9,8 +9,8 @@ import {
   useSearchContacts,
   useSetMyContact,
 } from '../../../data/api-contact/lupiraContactApi';
-import { PINNED_TAG } from '../../../domain/contactTiers';
-import { fmtDate } from '../../../domain/time';
+import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
+import { fmtDate } from '@lupira/cal-domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
 import { errText } from '../errText';
@@ -19,7 +19,7 @@ import { ContactCircles } from './ContactCircles';
 import { ContactEditForm } from './ContactEditForm';
 import { ContactEventsPanel } from './ContactEventsPanel';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
-import { fmtPartialDate } from './partialDate';
+import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
 
 /** Right pane for a contact: reach fields, postal addresses, profiles, emergency designation, group membership,
  *  completeness, and relations. Fields edit inline via ContactEditForm; all writes go over REST. */

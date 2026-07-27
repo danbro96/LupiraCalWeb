@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addMonths, fmtMonthTitle, isToday, monthMatrix, sameDay, startOfMonth } from '../../domain/time';
+import { addMonths, fmtMonthTitle, isToday, monthMatrix, sameDay, startOfMonth } from '@lupira/cal-domain/time';
 
 interface Props {
   /** The date to highlight as current. */

@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useGetItem, useSearchItems } from '../../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../../data/api/models';
-import { fmtWhen } from '../../../domain/time';
+import { fmtWhen } from '@lupira/cal-domain/time';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 
 /** Parent link + direct children (ParentItemId nesting — distinct from cross-API Relations). */

@@ -18,11 +18,11 @@ import type {
   ReviseContactRequest,
 } from '../../../data/api-contact/models';
 import { ContactAddressType, DisplayNameFormat, ReachMedium } from '../../../data/api-contact/models';
-import { PINNED_TAG } from '../../../domain/contactTiers';
+import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { PlacePicker } from '../places/PlacePicker';
 import { errText } from '../errText';
-import { inputToPartialDate, partialDateKey, partialDateToInput } from './partialDate';
+import { inputToPartialDate, partialDateKey, partialDateToInput } from '@lupira/cal-domain/partialDate';
 
 const norm = (s?: string | null) => (s ?? '').trim();
 const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((v, i) => v === b[i]);

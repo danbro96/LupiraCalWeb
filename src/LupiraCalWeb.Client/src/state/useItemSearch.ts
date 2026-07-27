@@ -2,7 +2,7 @@ import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { getSearchItemsQueryKey, searchItems } from '../data/api/lupiraCalApi';
 import type { SearchItemsParams } from '../data/api/models';
-import { RANGE_PRESETS, rangeToWindow, type RangePreset } from '../domain/searchRange';
+import { RANGE_PRESETS, rangeToWindow, type RangePreset } from '@lupira/cal-domain/searchRange';
 
 export const SEARCH_PAGE_SIZE = 200;
 

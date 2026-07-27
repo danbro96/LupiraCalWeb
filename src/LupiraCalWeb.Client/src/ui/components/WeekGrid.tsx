@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import type { AvailabilitySegment } from '../../state/useAvailability';
-import { clampToDay, layoutColumns } from '../../domain/occurrences';
-import { type DayRail, familyKey, railsForDay } from '../../domain/family';
-import { fmtDayShort, fmtTime, isToday, minutesOfDay, sameDay, ymd } from '../../domain/time';
+import { clampToDay, layoutColumns } from '@lupira/cal-domain/occurrences';
+import { type DayRail, familyKey, railsForDay } from '@lupira/cal-domain/family';
+import { fmtDayShort, fmtTime, isToday, minutesOfDay, sameDay, ymd } from '@lupira/cal-domain/time';
 import { AVAILABILITY_COLORS, familyAccent } from '../theme/kinds';
 import type { GridEntry } from './entries';
 

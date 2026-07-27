@@ -1,5 +1,5 @@
 import type { CalendarItemDto, CalendarItemOccurrenceDto, ContainerDto, OccurrenceOrigin } from '../../data/api/models';
-import { parseYmd } from '../../domain/time';
+import { parseYmd } from '@lupira/cal-domain/time';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 
 /** One renderable occurrence on a grid — accepted occurrences and ghosted proposed items. */

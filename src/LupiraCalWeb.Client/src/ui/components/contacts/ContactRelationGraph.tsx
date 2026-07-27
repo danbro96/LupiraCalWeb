@@ -6,8 +6,8 @@ import type { Edge, Node, NodeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { getListContactRelationsQueryKey, listContactRelations } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactRelationEntryDto } from '../../../data/api-contact/models';
-import { buildRelationGraph } from '../../../domain/contactRelations';
-import type { RelationCategory } from '../../../domain/contactRelations';
+import { buildRelationGraph } from '@lupira/cal-domain/contactRelations';
+import type { RelationCategory } from '@lupira/cal-domain/contactRelations';
 import { useIsPhone } from '../../useIsPhone';
 
 type RelationNodeData = {

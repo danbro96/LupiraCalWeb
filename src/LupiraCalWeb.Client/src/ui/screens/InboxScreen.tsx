@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { useAcceptItemIntoCalendar, useRemoveItemFromCalendar } from '../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../data/api/models';
-import { fmtDate, fmtDateTime, parseYmd } from '../../domain/time';
+import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { useInvalidateItems } from '../../state/useInvalidate';
 import { useProposedByCalendar } from '../../state/useProposed';

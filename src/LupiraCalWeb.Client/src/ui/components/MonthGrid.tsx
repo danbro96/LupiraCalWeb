@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { AvailabilitySegment } from '../../state/useAvailability';
-import { familyKey } from '../../domain/family';
-import { fmtTime, isToday, sameDay } from '../../domain/time';
+import { familyKey } from '@lupira/cal-domain/family';
+import { fmtTime, isToday, sameDay } from '@lupira/cal-domain/time';
 import { AVAILABILITY_COLORS, familyAccent } from '../theme/kinds';
 import type { GridEntry } from './entries';
 

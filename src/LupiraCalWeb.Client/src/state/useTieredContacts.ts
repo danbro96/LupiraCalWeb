@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useSearchContacts } from '../data/api-contact/lupiraContactApi';
 import type { SearchContactsParams } from '../data/api-contact/models';
 import { useGetParticipationSummary } from '../data/api/lupiraCalApi';
-import { partitionByActivity } from '../domain/contactTiers';
+import { partitionByActivity } from '@lupira/cal-domain/contactTiers';
 
 /**
  * Contact list split into Active / Dormant tiers by behavioral signal. Joins the contact search with

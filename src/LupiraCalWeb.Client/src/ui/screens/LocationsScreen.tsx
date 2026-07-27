@@ -1,8 +1,8 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import type { CalendarItemDto } from '../../data/api/models';
 import { useSearchContacts } from '../../data/api-contact/lupiraContactApi';
-import { formatCoords, osmUrl } from '../../domain/places';
-import { fmtDate, fmtDateTime, parseYmd } from '../../domain/time';
+import { formatCoords, osmUrl } from '@lupira/cal-domain/places';
+import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
 import { useGeoPlace, usePlaceItems, useSearchPlaces } from '../../state/usePlaces';
 import { ITEM_CATEGORY_ICONS } from '../theme/kinds';
 

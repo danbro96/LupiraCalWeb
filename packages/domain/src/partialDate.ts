@@ -1,7 +1,11 @@
-import type { PartialDate } from '../../../data/api-contact/models';
-
 // A contact birthday is a PartialDate: month+day always, year optional (unknown-year birthdays).
-// .NET emits the numeric fields as number | string, so coerce at the boundary.
+// Structural mirror of the contact API DTO — .NET emits the numeric fields as number | string,
+// so coerce at the boundary. Kept generated-code-free: this package never imports DTO types.
+export type PartialDate = {
+  year: number | string | null;
+  month: number | string;
+  day: number | string;
+};
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

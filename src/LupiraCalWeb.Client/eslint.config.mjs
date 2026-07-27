@@ -5,10 +5,11 @@ import tseslint from 'typescript-eslint';
 /** v7 entity-selector helper: `to('domain','data')` → [{ to: { element: { type: 'domain' } } }, …]. */
 const to = (...types) => types.map((t) => ({ to: { element: { type: t } } }));
 
-// Mirrors the mobile app's eslint.config.mjs: a structural gate, not a style overhaul. The only
-// real rule is the layered import boundary. Downward-only: domain → nothing; data → domain/config;
-// state → data/domain/config; ui → everything below. The web has no offline `sync/` layer (it is
-// online-only), so the chain is shorter than the app's.
+// A structural gate, not a style overhaul. The only real rule is the layered import boundary.
+// Downward-only: data → config; state → data/config; ui → everything below. Domain logic lives in
+// @lupira/cal-domain (packages/domain) and arrives as an external package import — allowed from
+// every layer (it is the bottom of the stack); its purity is enforced by its own eslint config.
+// The web has no offline `sync/` layer (it is online-only), so the chain is shorter than the app's.
 export default [
   {
     ignores: [
@@ -31,7 +32,6 @@ export default [
     plugins: { boundaries, 'react-hooks': reactHooks },
     settings: {
       'boundaries/elements': [
-        { type: 'domain', pattern: 'src/domain/**' },
         { type: 'data', pattern: 'src/data/**' },
         { type: 'state', pattern: 'src/state/**' },
         { type: 'ui', pattern: 'src/ui/**' },
@@ -43,10 +43,9 @@ export default [
       'boundaries/dependencies': ['error', {
         default: 'disallow',
         policies: [
-          { from: { element: { type: 'domain' } }, allow: to('domain') },
-          { from: { element: { type: 'data' } }, allow: to('data', 'domain', 'config') },
-          { from: { element: { type: 'state' } }, allow: to('state', 'data', 'domain', 'config') },
-          { from: { element: { type: 'ui' } }, allow: to('ui', 'state', 'data', 'domain', 'config') },
+          { from: { element: { type: 'data' } }, allow: to('data', 'config') },
+          { from: { element: { type: 'state' } }, allow: to('state', 'data', 'config') },
+          { from: { element: { type: 'ui' } }, allow: to('ui', 'state', 'data', 'config') },
           { from: { element: { type: 'config' } }, allow: [] },
         ],
       }],

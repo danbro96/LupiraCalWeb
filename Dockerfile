@@ -6,7 +6,9 @@ FROM node:24-alpine AS client
 WORKDIR /repo
 COPY package.json package-lock.json .npmrc ./
 COPY src/LupiraCalWeb.Client/package.json src/LupiraCalWeb.Client/
+COPY packages/domain/package.json packages/domain/
 RUN npm ci
+COPY packages/domain/ packages/domain/
 COPY src/LupiraCalWeb.Client/ src/LupiraCalWeb.Client/
 RUN npm run build -w src/LupiraCalWeb.Client -- --outDir dist --emptyOutDir
 

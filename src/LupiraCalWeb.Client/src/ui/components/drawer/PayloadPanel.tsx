@@ -17,7 +17,7 @@ import {
   type SetItemActionRequest,
   type SetItemPromptRequest,
 } from '../../../data/api/models';
-import { describeFire } from '../../../domain/fire';
+import { describeFire } from '@lupira/cal-domain/fire';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 

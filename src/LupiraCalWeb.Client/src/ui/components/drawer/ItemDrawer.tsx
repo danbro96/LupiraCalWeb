@@ -6,8 +6,8 @@ import {
   type CalendarItemDto,
   type UpdateCalendarItemRequest,
 } from '../../../data/api/models';
-import { describeRrule, RRULE_PRESETS } from '../../../domain/rrule';
-import { fmtDate, parseYmd } from '../../../domain/time';
+import { describeRrule, RRULE_PRESETS } from '@lupira/cal-domain/rrule';
+import { fmtDate, parseYmd } from '@lupira/cal-domain/time';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 import { AttendeesPanel } from './AttendeesPanel';

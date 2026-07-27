@@ -12,7 +12,7 @@ import {
   startOfDay,
   startOfWeek,
   ymd,
-} from '../domain/time';
+} from '@lupira/cal-domain/time';
 
 export type CalendarView = 'month' | 'week' | 'day';
 

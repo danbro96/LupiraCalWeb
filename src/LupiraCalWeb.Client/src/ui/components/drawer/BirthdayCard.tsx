@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useGetContact } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto } from '../../../data/api-contact/models';
-import { nextBirthday, turningAge } from '../../../domain/birthday';
-import { fmtDate } from '../../../domain/time';
-import { coercePartialDate, fmtPartialDate } from '../contacts/partialDate';
+import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
+import { fmtDate } from '@lupira/cal-domain/time';
+import { coercePartialDate, fmtPartialDate } from '@lupira/cal-domain/partialDate';
 
 /** Read-only view for a birthday occurrence (a contact projection, not a stored item): the birthday date,
  *  the age the contact is turning when known, and a link to the contact. `year` is the clicked occurrence's year. */

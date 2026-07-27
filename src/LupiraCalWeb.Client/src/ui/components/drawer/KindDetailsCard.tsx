@@ -1,5 +1,5 @@
 import type { ItemDetails } from '../../../data/api/models';
-import { fmtDateTime } from '../../../domain/time';
+import { fmtDateTime } from '@lupira/cal-domain/time';
 
 /** Read-only card for the composable item detail: a booking, a travel leg, and/or a presence segment.
  *  Details are authored elsewhere (agent/DAV); REST only writes the presence status. */

@@ -9,7 +9,7 @@ import {
 } from '../../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
-import { rankByInteraction } from '../../../domain/contactRank';
+import { rankByInteraction } from '@lupira/cal-domain/contactRank';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 

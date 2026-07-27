@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { familyKey } from '../../domain/family';
+import { familyKey } from '@lupira/cal-domain/family';
 import { useContainers } from '../../state/useContainers';
 import { useRangeOccurrences } from '../../state/useRangeOccurrences';
 import { useProposedByCalendar } from '../../state/useProposed';
