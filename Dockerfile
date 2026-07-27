@@ -3,11 +3,12 @@
 
 # --- SPA build ---
 FROM node:24-alpine AS client
-WORKDIR /client
-COPY src/LupiraCalWeb.Client/package.json src/LupiraCalWeb.Client/package-lock.json src/LupiraCalWeb.Client/.npmrc ./
+WORKDIR /repo
+COPY package.json package-lock.json .npmrc ./
+COPY src/LupiraCalWeb.Client/package.json src/LupiraCalWeb.Client/
 RUN npm ci
-COPY src/LupiraCalWeb.Client/ ./
-RUN npm run build -- --outDir dist --emptyOutDir
+COPY src/LupiraCalWeb.Client/ src/LupiraCalWeb.Client/
+RUN npm run build -w src/LupiraCalWeb.Client -- --outDir dist --emptyOutDir
 
 # --- backend publish ---
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
@@ -17,7 +18,7 @@ WORKDIR /src/LupiraCalWeb
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet restore "./LupiraCalWeb.csproj"
 RUN dotnet publish "./LupiraCalWeb.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-COPY --from=client /client/dist /app/publish/wwwroot
+COPY --from=client /repo/src/LupiraCalWeb.Client/dist /app/publish/wwwroot
 
 # --- runtime ---
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final

@@ -1,0 +1,26 @@
+{
+  "name": "lupira-cal-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "src/LupiraCalWeb.Client",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w src/LupiraCalWeb.Client",
+    "build": "npm run build -w src/LupiraCalWeb.Client",
+    "preview": "npm run preview -w src/LupiraCalWeb.Client",
+    "gen:api": "npm run gen:api -w src/LupiraCalWeb.Client",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "eslint": "^10.4.1",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-boundaries": "^7.1.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^4.1.10"
+  }
+}
