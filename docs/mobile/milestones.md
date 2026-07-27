@@ -9,7 +9,7 @@ criteria are verifiable commands/observations.
 
 | M  | Title | Repos | Status |
 |----|-------|-------|--------|
-| M0 | Monorepo restructure | LupiraCalWeb | in-progress |
+| M0 | Monorepo restructure | LupiraCalWeb | done |
 | M1 | cal-api sync surface | LupiraCalApi | pending |
 | M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | pending |
 | M3 | App skeleton + auth | LupiraCalWeb | pending |
@@ -23,25 +23,26 @@ Fixed identity: Android package `com.lupira.calendar`, scheme `lupiracalendar`
 (redirect `lupiracalendar://oauthredirect`), Authentik public client `lupira-cal-mobile`,
 display name "Lupira Calendar".
 
-## M0 — Monorepo restructure   [status: in-progress]
+## M0 — Monorepo restructure   [status: done]
 
 npm workspaces; extract `@lupira/cal-domain` (packages/domain, consumed as source via
 `exports: {"./*": "./src/*.ts"}`); web client + BFF stay put; repo/remote/deploys untouched.
 
 ### Scope
-- [ ] Client toolchain bumps in place: TS 7.0.2, eslint-plugin-boundaries ^7.1.0, vitest ^4.1.10, orval ^8.23.0
-- [ ] Root package.json (workspaces: packages/*, src/LupiraCalWeb.Client, apps/*), root lock, `.npmrc` moved to root, toolchain devDeps hoisted
-- [ ] Dockerfile client stage rebuilt for workspace install; tests.yml uses root scripts + root lock cache path
-- [ ] Move 13 domain modules + tests → packages/domain/src; move partialDate.ts with structural PartialDate type (no generated import)
-- [ ] Import codemod to `@lupira/cal-domain/*`; web eslint drops `domain` element; domain package gets purity-enforcing eslint (`boundaries/external` disallow)
-- [ ] Docs: README/CLAUDE.md layout notes; verify skill path fix
+- [x] Client toolchain bumps in place: eslint-plugin-boundaries ^7.1.0 (config migrated to v7 policies/entity selectors; config.ts → config/ so the element still classifies), typescript-eslint ^8.65.0, vitest ^4.1.10, orval ^8.23.0. TS stays 6.0.3 — typescript-eslint peers `<6.1.0` and TS 7 crashes its parser; revisit when support lands
+- [x] Root package.json (workspaces: packages/*, src/LupiraCalWeb.Client, apps/*), root lock, `.npmrc` moved to root, toolchain devDeps hoisted
+- [x] Dockerfile client stage rebuilt for workspace install; tests.yml uses root scripts + root lock cache path
+- [x] Move 13 domain modules + tests → packages/domain/src; move partialDate.ts with structural PartialDate type (no generated import)
+- [x] Import codemod to `@lupira/cal-domain/*`; web eslint drops `domain` element; domain package gets purity-enforcing eslint (`boundaries/external` disallow)
+- [x] Docs: README/CLAUDE.md layout notes; verify skill path fix
 
 ### Exit criteria
-- [ ] Root `npm ci` clean; `node_modules/@lupira/cal-domain` is a workspace symlink
-- [ ] Root `npm run lint && npm run typecheck && npm test` green (domain: 14 suites; web: passWithNoTests)
-- [ ] Root `npm run build` emits to src/LupiraCalWeb/wwwroot; `docker build .` succeeds
-- [ ] `npm run gen:api` still resolves sibling repo specs (client cwd unchanged)
-- [ ] CI green on main
+- [x] Root `npm ci` clean; `node_modules/@lupira/cal-domain` is a workspace symlink
+- [x] Root `npm run lint && npm run typecheck && npm test` green (domain: 13 suites / 87 tests; web: passWithNoTests)
+- [x] Root `npm run build` emits to src/LupiraCalWeb/wwwroot; `docker build .` succeeds
+- [x] `npm run gen:api` still resolves sibling repo specs (client cwd unchanged)
+- [x] Vite dev serves workspace domain source (smoke: `/@fs/**/packages/domain/src/time.ts` transpiled)
+- [ ] CI green on main (pending push)
 
 ### Non-goals
 No Expo app yet; no backend/.NET/slnx/deploy changes; no entries.ts split; no path

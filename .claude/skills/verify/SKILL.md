@@ -25,7 +25,7 @@ cd ~/git/LupiraContactApi/src/LupiraContactApi && ASPNETCORE_ENVIRONMENT=Develop
   dotnet run --no-launch-profile
 
 # SPA
-cd ~/git/LupiraCalWeb/src/LupiraCalWeb.Client && npm run dev
+cd ~/git/LupiraCalWeb && npm run dev
 ```
 
 Smoke: `curl http://localhost:5174/contact-api/address-books` → 200 proves the whole chain.
