@@ -6,6 +6,7 @@ import { useRangeOccurrences } from '../../state/useRangeOccurrences';
 import { useProposedByCalendar } from '../../state/useProposed';
 import { useAvailabilitySegments } from '../../state/useAvailability';
 import { useCalendarVisibility } from '../components/CalendarVisibility';
+import { OriginKind } from '../../data/api/models';
 import { fromOccurrence, fromProposed, type GridEntry } from '../components/entries';
 import { MiniMonthPicker } from '../components/MiniMonthPicker';
 import { MonthGrid } from '../components/MonthGrid';
@@ -68,7 +69,22 @@ export function CalendarScreen() {
     return [...accepted, ...ghosts];
   }, [byCalendar, proposed, range]);
 
-  const openItem = (id: string) => setParam('item', id);
+  // Birthdays are read-time contact projections, not stored items — route them to the read-only card
+  // (the ?item= drawer would 404 on their synthetic id) instead of the editable item drawer.
+  const openItem = (id: string) => {
+    const e = entries.find((x) => x.itemId === id);
+    if (e?.origin?.kind === OriginKind.Birthday) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('birthday', e.origin!.sourceId);
+        next.set('year', String(e.start.getUTCFullYear()));
+        next.delete('item');
+        return next;
+      });
+    } else {
+      setParam('item', id);
+    }
+  };
 
   const selectedItemId = searchParams.get('item');
   const selectedFamilyKey = useMemo(() => {

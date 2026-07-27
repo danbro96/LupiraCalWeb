@@ -1,4 +1,4 @@
-import type { CalendarItemDto, CalendarItemOccurrenceDto, ContainerDto } from '../../data/api/models';
+import type { CalendarItemDto, CalendarItemOccurrenceDto, ContainerDto, OccurrenceOrigin } from '../../data/api/models';
 import { parseYmd } from '../../domain/time';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 
@@ -17,6 +17,8 @@ export interface GridEntry {
   parentItemId: string | null;
   parentTitle?: string | null;
   childCount: number;
+  /** Provenance for read-time projections (birthdays → a contact); routes the click to a read-only view. */
+  origin?: OccurrenceOrigin | null;
 }
 
 export function fromOccurrence(o: CalendarItemOccurrenceDto, calendar: ContainerDto): GridEntry {
@@ -33,6 +35,7 @@ export function fromOccurrence(o: CalendarItemOccurrenceDto, calendar: Container
     parentItemId: o.parentItemId ?? null,
     parentTitle: o.parentTitle,
     childCount: Number(o.childCount),
+    origin: o.origin,
   };
 }
 

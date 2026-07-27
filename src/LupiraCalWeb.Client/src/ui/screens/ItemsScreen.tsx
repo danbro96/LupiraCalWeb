@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useGetItem } from '../../data/api/lupiraCalApi';
 import { useGetContact } from '../../data/api-contact/lupiraContactApi';
-import { ItemCategory, ItemStatus, type CalendarItemOccurrenceDto, type ContainerDto } from '../../data/api/models';
+import { ItemCategory, ItemStatus, OriginKind, type CalendarItemOccurrenceDto, type ContainerDto } from '../../data/api/models';
 import { groupOccurrences } from '../../domain/itemTree';
 import { fmtWhen } from '../../domain/time';
 import { RANGE_PRESETS } from '../../domain/searchRange';
@@ -57,9 +57,19 @@ export function ItemsScreen() {
   const groups = groupOccurrences(occurrences);
   const secondaryCount = [filters.tag, filters.cal, filters.category, filters.status].filter(Boolean).length;
 
-  const itemHref = (id: string) => {
+  // Birthdays are read-time contact projections, not stored items — link to the read-only card
+  // (their synthetic id 404s the ?item= drawer); everything else opens the shared item drawer.
+  const occHref = (o: CalendarItemOccurrenceDto) => {
     const next = new URLSearchParams(searchParams);
-    next.set('item', id);
+    next.delete('item');
+    next.delete('birthday');
+    next.delete('year');
+    if (o.origin?.kind === OriginKind.Birthday) {
+      next.set('birthday', o.origin.sourceId);
+      next.set('year', o.start.slice(0, 4));
+    } else {
+      next.set('item', o.id);
+    }
     return `?${next.toString()}`;
   };
 
@@ -199,7 +209,7 @@ export function ItemsScreen() {
               <ItemRow
                 occurrence={g.occ}
                 byId={byId}
-                href={itemHref(g.occ.id)}
+                href={occHref(g.occ)}
                 open={hasNested ? open : undefined}
                 onToggle={hasNested ? () => toggle(g.occ.id) : undefined}
                 onDrill={drill}
@@ -207,7 +217,7 @@ export function ItemsScreen() {
               />
               {open &&
                 g.children.map((c, ci) => (
-                  <ItemRow key={`${c.id}-${c.start}-${ci}`} occurrence={c} byId={byId} href={itemHref(c.id)} indent onDrill={drill} />
+                  <ItemRow key={`${c.id}-${c.start}-${ci}`} occurrence={c} byId={byId} href={occHref(c)} indent onDrill={drill} />
                 ))}
             </Fragment>
           );

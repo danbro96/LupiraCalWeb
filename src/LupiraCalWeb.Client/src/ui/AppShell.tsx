@@ -6,6 +6,7 @@ import { BottomNav } from './components/BottomNav';
 import { CalendarVisibilityProvider } from './components/CalendarVisibility';
 import { Sidebar } from './components/Sidebar';
 import { ItemDrawer } from './components/drawer/ItemDrawer';
+import { BirthdayCard } from './components/drawer/BirthdayCard';
 import { NewItemModal } from './components/NewItemModal';
 
 /** Full-width app frame: section nav, calendar sidebar, routed content, and the ?item= drawer host. */
@@ -15,17 +16,18 @@ export function AppShell() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [creating, setCreating] = useState(false);
   const itemId = searchParams.get('item');
+  const birthdayContactId = searchParams.get('birthday');
+  const birthdayYear = searchParams.get('year');
   // Contacts and Locations own their own layout, so the calendar sidebar is hidden there.
   const path = useLocation().pathname;
   const showSidebar = !path.startsWith('/contacts') && !path.startsWith('/locations');
 
-  const closeDrawer = () => {
+  const dropParams = (...keys: string[]) =>
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      next.delete('item');
+      for (const k of keys) next.delete(k);
       return next;
     });
-  };
 
   return (
     <CalendarVisibilityProvider>
@@ -53,7 +55,10 @@ export function AppShell() {
         </button>
         <BottomNav />
       </div>
-      {itemId && <ItemDrawer itemId={itemId} onClose={closeDrawer} />}
+      {itemId && <ItemDrawer itemId={itemId} onClose={() => dropParams('item')} />}
+      {birthdayContactId && (
+        <BirthdayCard contactId={birthdayContactId} year={birthdayYear} onClose={() => dropParams('birthday', 'year')} />
+      )}
       {creating && <NewItemModal onClose={() => setCreating(false)} />}
     </CalendarVisibilityProvider>
   );

@@ -43,6 +43,8 @@ export * from './jsonNode';
 export * from './jsonObject';
 export * from './meDto';
 export * from './modelTier';
+export * from './occurrenceOrigin';
+export * from './originKind';
 export * from './outputKind';
 export * from './ownerGrantDto';
 export * from './participationRef';

@@ -8,6 +8,7 @@
 import type { CompletenessScore } from './completenessScore';
 import type { ItemCategory } from './itemCategory';
 import type { ItemStatus } from './itemStatus';
+import type { OccurrenceOrigin } from './occurrenceOrigin';
 
 export interface CalendarItemOccurrenceDto {
   id: string;
@@ -33,5 +34,6 @@ export interface CalendarItemOccurrenceDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   childCount: number | string;
   completeness?: null | CompletenessScore;
+  origin?: null | OccurrenceOrigin;
   etag: string;
 }
