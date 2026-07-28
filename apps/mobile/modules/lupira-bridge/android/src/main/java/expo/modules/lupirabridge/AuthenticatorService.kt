@@ -19,6 +19,9 @@ class StubAuthenticator(private val context: Context) : AbstractAccountAuthentic
     requiredFeatures: Array<out String>?, options: Bundle?,
   ): Bundle? {
     val launch = context.packageManager.getLaunchIntentForPackage(context.packageName) ?: return null
+    // Without NEW_TASK, Settings hosts a second activity instance in its own task → a second React
+    // root → duplicate NavigationContainer linking (observed on device). Route into the app's task.
+    launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
     return Bundle().apply { putParcelable(android.accounts.AccountManager.KEY_INTENT, launch) }
   }
 
