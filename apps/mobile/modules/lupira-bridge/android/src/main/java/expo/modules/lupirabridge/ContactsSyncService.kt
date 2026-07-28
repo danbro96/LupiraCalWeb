@@ -11,14 +11,15 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 
-/// Contacts-authority sync body. S3: publish only — the dirty-capture half (stock-app contact edits →
-/// inbox) lands with S4 and will run before publish, mirroring the calendar adapter's ordering.
+/// Contacts-authority sync body: capture stock-app edits FIRST (so publish can't clobber them), then
+/// publish the mirror — same ordering as the calendar adapter.
 class ContactsSyncAdapter(context: Context) : AbstractThreadedSyncAdapter(context, true) {
   override fun onPerformSync(
     account: Account, extras: Bundle, authority: String, provider: ContentProviderClient, syncResult: SyncResult,
   ) {
     Log.i(Bridge.TAG, "onPerformSync: account=${account.name} authority=$authority")
     try {
+      ContactsCapturer.capture(context)
       ContactsPublisher.publish(context)
     } catch (e: Exception) {
       Log.e(Bridge.TAG, "contacts onPerformSync failed", e)

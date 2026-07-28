@@ -51,6 +51,18 @@ Proven end-to-end: prebuild → Gradle → device, services registered and funct
 - Open oddity: RawContacts total differed between two consecutive reads (1019 → 415);
   suspect profile/visibility scoping — pin down in M7 before relying on counts.
 
+## M7 device findings (addendum, 2026-07-28)
+
+- Samsung Contacts (One UI) does NOT render third-party `ContactsDataKind` rows — the
+  "Open in Lupira" row exists in the provider (and works on AOSP-based contact apps) but is
+  invisible in Samsung's UI. The deep link itself is proven (adb VIEW intent →
+  ContactDetail). Keep the row; don't advertise it as a Samsung feature.
+- Samsung Contacts never offers third-party accounts as contact storage (no `EditSchema`
+  escape hatch honored) → stock-created contacts can't land under our account. Write-back
+  covers edits + deletes of Lupira-owned raw contacts; creation stays in the app/web.
+- Settings → "Add account → Lupira" with a null-returning stub bounces silently; returning
+  a KEY_INTENT launch intent opens the app instead.
+
 ## M7 scope adjustments
 
 1. Add a contacts sync-adapter service (`syncadapter_contacts.xml`, authority

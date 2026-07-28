@@ -70,6 +70,7 @@ class LupiraBridgeModule : Module() {
     AsyncFunction("bridgeSyncNow") {
       CalendarCapturer.capture(context)
       CalendarPublisher.publish(context)
+      ContactsCapturer.capture(context)
       ContactsPublisher.publish(context)
       Bridge.prefs(context).edit().putLong(Bridge.PREF_LAST_SYNC, System.currentTimeMillis()).apply()
     }

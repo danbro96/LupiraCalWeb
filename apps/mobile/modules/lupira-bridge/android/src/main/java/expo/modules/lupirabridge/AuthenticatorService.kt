@@ -11,13 +11,16 @@ import android.os.IBinder
 
 /// Stub authenticator: its only job is making the "Lupira" account type exist so the sync framework
 /// (and Android Settings) will host our account. Real token handling stays in the app — the account
-/// never stores credentials. Spike learning to confirm: Settings → "Add account" needs an activity
-/// intent from addAccount to work; the app creates the account programmatically instead.
-class StubAuthenticator(context: Context) : AbstractAccountAuthenticator(context) {
+/// never stores credentials. Settings → "Add account → Lupira" opens the app (device-verified: a null
+/// bundle just bounces back silently), where Ensure account does the real work.
+class StubAuthenticator(private val context: Context) : AbstractAccountAuthenticator(context) {
   override fun addAccount(
     response: AccountAuthenticatorResponse?, accountType: String?, authTokenType: String?,
     requiredFeatures: Array<out String>?, options: Bundle?,
-  ): Bundle? = null
+  ): Bundle? {
+    val launch = context.packageManager.getLaunchIntentForPackage(context.packageName) ?: return null
+    return Bundle().apply { putParcelable(android.accounts.AccountManager.KEY_INTENT, launch) }
+  }
 
   override fun getAuthToken(
     response: AccountAuthenticatorResponse?, account: Account?, authTokenType: String?, options: Bundle?,

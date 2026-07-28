@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import type { ItemDoc } from './docTypes';
-import type { CalCapturePayload, ParsedCalRow } from './bridgeTranslate';
-import { parseRfc2445Duration, sourceKeyOfPendingMarker, translateCalRow } from './bridgeTranslate';
+import type { ContactDoc, ItemDoc } from './docTypes';
+import type { CalCapturePayload, ContactCapturePayload, ParsedCalRow, ParsedContactRow } from './bridgeTranslate';
+import { contactReviseIsEcho, mergeChannelTypes, parseProviderBirthday, parseRfc2445Duration, sourceKeyOfPendingMarker, translateCalRow, translateContactRow } from './bridgeTranslate';
 
 const payload = (over: Partial<CalCapturePayload> = {}): CalCapturePayload => ({
   title: 'From stock app', description: null, location: null,
@@ -73,6 +73,99 @@ describe('parseRfc2445Duration', () => {
     expect(parseRfc2445Duration('P1DT12H')).toBe(129_600_000);
     expect(parseRfc2445Duration('nonsense')).toBeNull();
     expect(parseRfc2445Duration('P')).toBeNull();
+  });
+});
+
+describe('translateContactRow', () => {
+  const contactRow = (p: Partial<ContactCapturePayload> = {}, kind: ParsedContactRow['kind'] = 'revised'): ParsedContactRow => ({
+    kind, contactId: 'c-1', occurredAt: '2026-08-03T12:30:00.000Z',
+    payload: {
+      given: 'Alva', family: 'B', nickname: null, middle: null, notes: null, birthday: '2019-03-07',
+      phones: [{ value: '070', type: 2, preferred: true }],
+      emails: [{ value: 'a@b.se', type: 2, preferred: false }],
+      ...p,
+    },
+  });
+
+  it('revise carries names/birthday; channels ride the wholesale op with mapped types', () => {
+    const t = translateContactRow(contactRow());
+    if (t.kind !== 'revise') throw new Error(t.kind);
+    expect(t.core).toMatchObject({ givenName: 'Alva', familyName: 'B', birthday: { year: 2019, month: 3, day: 7 }, channels: null, tags: null });
+    expect(t.channels).toEqual([
+      { medium: 'Phone', value: '070', type: null, preferred: true },      // TYPE_MOBILE → no label
+      { medium: 'Email', value: 'a@b.se', type: 'Work', preferred: false },
+    ]);
+  });
+
+  it('year-less provider birthdays parse; junk does not', () => {
+    expect(parseProviderBirthday('--03-07')).toEqual({ year: null, month: 3, day: 7 });
+    expect(parseProviderBirthday('2019-03-07')).toEqual({ year: 2019, month: 3, day: 7 });
+    expect(parseProviderBirthday('March 7')).toBeNull();
+    expect(parseProviderBirthday(null)).toBeNull();
+  });
+
+  it('delete translates', () => {
+    expect(translateContactRow(contactRow({}, 'deleted'))).toMatchObject({ kind: 'delete', contactId: 'c-1' });
+  });
+});
+
+describe('write-back echo guard + type preservation', () => {
+  const doc: ContactDoc = {
+    id: 'c-1', addressBookId: 'b1', givenName: 'Alva', familyName: 'B',
+    birthday: { year: '2019', month: '3', day: '7' },   // wire form: numbers-as-strings
+    channels: [
+      { medium: 'Phone', value: '070', type: 'Mobile', preferred: true },
+      { medium: 'Email', value: 'a@b.se', type: 'Work', preferred: false },
+    ],
+  };
+
+  it('re-attaches mirror channel types the provider ints lost', () => {
+    const merged = mergeChannelTypes(
+      [{ medium: 'Phone', value: '070', type: null, preferred: true }],
+      doc.channels!,
+    );
+    expect(merged[0].type).toBe('Mobile');
+  });
+
+  it('detects an echo (same content, string-vs-number birthday tolerated)', () => {
+    const t = translateContactRow({
+      kind: 'revised', contactId: 'c-1', occurredAt: '2026-08-03T12:30:00.000Z',
+      payload: {
+        given: 'Alva', family: 'B', birthday: '2019-03-07',
+        phones: [{ value: '070', type: 2, preferred: true }],
+        emails: [{ value: 'a@b.se', type: 2, preferred: false }],
+      },
+    });
+    if (t.kind !== 'revise') throw new Error(t.kind);
+    const channels = mergeChannelTypes(t.channels, doc.channels!);
+    expect(contactReviseIsEcho(t.core, channels, doc)).toBe(true);
+  });
+
+  it('a real edit is not an echo', () => {
+    const t = translateContactRow({
+      kind: 'revised', contactId: 'c-1', occurredAt: '2026-08-03T12:30:00.000Z',
+      payload: { given: 'Alva', family: 'Renamed', birthday: '2019-03-07', phones: [{ value: '070', type: 2, preferred: true }], emails: [{ value: 'a@b.se', type: 2, preferred: false }] },
+    });
+    if (t.kind !== 'revise') throw new Error(t.kind);
+    expect(contactReviseIsEcho(t.core, mergeChannelTypes(t.channels, doc.channels!), doc)).toBe(false);
+  });
+
+  it('removing every phone is a change, not an echo', () => {
+    const t = translateContactRow({
+      kind: 'revised', contactId: 'c-1', occurredAt: '2026-08-03T12:30:00.000Z',
+      payload: { given: 'Alva', family: 'B', birthday: '2019-03-07', phones: [], emails: [{ value: 'a@b.se', type: 2, preferred: false }] },
+    });
+    if (t.kind !== 'revise') throw new Error(t.kind);
+    expect(contactReviseIsEcho(t.core, mergeChannelTypes(t.channels, doc.channels!), doc)).toBe(false);
+  });
+
+  it('captured null birthday means keep — still an echo', () => {
+    const t = translateContactRow({
+      kind: 'revised', contactId: 'c-1', occurredAt: '2026-08-03T12:30:00.000Z',
+      payload: { given: 'Alva', family: 'B', birthday: null, phones: [{ value: '070', type: 2, preferred: true }], emails: [{ value: 'a@b.se', type: 2, preferred: false }] },
+    });
+    if (t.kind !== 'revise') throw new Error(t.kind);
+    expect(contactReviseIsEcho(t.core, mergeChannelTypes(t.channels, doc.channels!), doc)).toBe(true);
   });
 });
 

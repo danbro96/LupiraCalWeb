@@ -4,8 +4,8 @@ import { LupiraBridge } from '../../modules/lupira-bridge/src';
 import type { Db } from '../data/db/types';
 import { deterministicIdFor } from '../data/ids';
 import * as mirror from '../data/mirror';
-import type { CalCapturePayload, ParsedCalRow } from '../domain/bridgeTranslate';
-import { PENDING_PREFIX, sourceKeyOfPendingMarker, translateCalRow } from '../domain/bridgeTranslate';
+import type { CalCapturePayload, ContactCapturePayload, ParsedCalRow, ParsedContactRow } from '../domain/bridgeTranslate';
+import { PENDING_PREFIX, contactReviseIsEcho, mergeChannelTypes, sourceKeyOfPendingMarker, translateCalRow, translateContactRow } from '../domain/bridgeTranslate';
 import { currentHorizon } from '../domain/materialize';
 import type { ClientOp } from '../domain/ops';
 import { logDebug } from '../debug/log';
@@ -29,8 +29,14 @@ export async function drainBridgeInbox(db: Db): Promise<number> {
   const ackIds: number[] = [];
 
   for (const row of rows) {
+    if (row.domain === 'contact') {
+      const contactOps = await translateContactInboxRow(db, row);
+      ops.push(...contactOps);
+      ackIds.push(row.id);
+      continue;
+    }
     if (row.domain !== 'cal') {
-      ackIds.push(row.id);   // contacts arrive with S4
+      ackIds.push(row.id);
       continue;
     }
     const parsed = await parseRow(row);
@@ -63,6 +69,40 @@ export async function drainBridgeInbox(db: Db): Promise<number> {
   await LupiraBridge.ackInbox(ackIds);
   logDebug('bridge', `drained ${rows.length} inbox rows → ${ops.length} ops`);
   return ops.length;
+}
+
+async function translateContactInboxRow(db: Db, row: BridgeInboxRow): Promise<ClientOp[]> {
+  if (!row.syncId || !GUID_RE.test(row.syncId)) {
+    logDebug('bridge', `contact inbox row ${row.id}: unusable sync id`);
+    return [];
+  }
+  let payload: ContactCapturePayload;
+  try {
+    payload = JSON.parse(row.payload) as ContactCapturePayload;
+  } catch {
+    logDebug('bridge', `contact inbox row ${row.id}: unparseable payload`);
+    return [];
+  }
+  const parsed: ParsedContactRow = {
+    kind: row.kind === 'deleted' ? 'deleted' : 'revised',
+    contactId: row.syncId,
+    payload,
+    occurredAt: new Date(row.capturedAt).toISOString(),
+  };
+  const t = translateContactRow(parsed);
+  if (t.kind === 'delete') return [{ kind: 'contact.delete', contactId: t.contactId, commandId: uuidv7(), occurredAt: t.occurredAt }];
+
+  const doc = (await mirror.loadContact(db, t.contactId))?.doc ?? null;
+  const channels = doc ? mergeChannelTypes(t.channels, doc.channels ?? []) : t.channels;
+  if (doc && contactReviseIsEcho(t.core, channels, doc)) {
+    logDebug('bridge', `contact inbox row ${row.id}: echo, skipped`);
+    return [];
+  }
+  return [
+    { kind: 'contact.revise', contactId: t.contactId, core: t.core, commandId: uuidv7(), occurredAt: t.occurredAt },
+    // +1ms so the wholesale channel replacement deterministically outranks the revise on the shared guard.
+    { kind: 'contact.channels', contactId: t.contactId, channels, commandId: uuidv7(), occurredAt: new Date(row.capturedAt + 1).toISOString() },
+  ];
 }
 
 async function parseRow(row: BridgeInboxRow): Promise<ParsedCalRow | null> {
