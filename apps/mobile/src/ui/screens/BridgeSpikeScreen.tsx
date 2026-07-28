@@ -44,6 +44,7 @@ export function BridgeSpikeScreen() {
       PermissionsAndroid.PERMISSIONS.READ_CALENDAR,
       PermissionsAndroid.PERMISSIONS.WRITE_CALENDAR,
       PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+      PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
     ]));
 
   const readContacts = run('contacts', async () => {

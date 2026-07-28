@@ -1,0 +1,8 @@
+<!-- Declares the "Open in Lupira" data kind so contact cards render our custom MIME row. -->
+<ContactsAccountType xmlns:android="http://schemas.android.com/apk/res/android">
+  <ContactsDataKind
+    android:mimeType="vnd.android.cursor.item/vnd.com.lupira.calendar.contact"
+    android:icon="@mipmap/ic_launcher"
+    android:summaryColumn="data2"
+    android:detailColumn="data3" />
+</ContactsAccountType>

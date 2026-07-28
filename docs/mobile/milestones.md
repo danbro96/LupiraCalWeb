@@ -170,8 +170,8 @@ stock apps (overwritten by next publish), payload/participants.
 
 ### Scope
 - [x] S1 Calendar publish v2 inside onPerformSync: mirror `items` → one provider calendar per mirror calendar (name/color), events upserted by `_SYNC_ID` = item id, RRULE rows for recurring items (not expanded instances), all-day/timed mapping, content-hash skip via SYNC_DATA1, stale-row/calendar deletion; birthdays left to the contacts bridge
-- [x] S2 Calendar write-back (code; device matrix pending): dirty/deleted/created rows captured to a Kotlin-owned bridge inbox db (capture-then-clear DIRTY as sync adapter), JS drain translates inbox → item.create/revise/delete through the normal outbox/LWW path; stock-created events get `_SYNC_ID` assigned post-create (no duplicate creation); echo suppression = value-hash comparison on publish
-- [ ] S3 Contacts adapter + publish: second sync service on the contacts authority (account becomes a contacts source), raw-contact upsert by `SOURCE_ID` (StructuredName/Phone/Email/Birthday event row), "Open in Lupira" MIME row
+- [x] S2 Calendar write-back (device matrix verified 2026-07-28: stock edit/create/delete → web; web → stock; no duplicates; echo suppressed): dirty/deleted/created rows captured to a Kotlin-owned bridge inbox db (capture-then-clear DIRTY as sync adapter), JS drain translates inbox → item.create/revise/delete through the normal outbox/LWW path; stock-created events get `_SYNC_ID` assigned post-create (no duplicate creation); echo suppression = value-hash comparison on publish
+- [x] S3 Contacts adapter + publish (code; device check pending): second sync service on the contacts authority (account becomes a contacts source), raw-contact upsert by `SOURCE_ID` (StructuredName/Phone/Email/Birthday event row), "Open in Lupira" MIME row
 - [ ] S4 Contacts write-back: dirty raw contacts → inbox → contact.create/revise/channels/delete ops; default address book for stock-created contacts
 - [ ] S5 OS-scheduled drive: auto-sync + periodic sync on both authorities; provider-change upload syncs; inbox drained on app-active + background task (headless-JS drain documented as latency limit)
 

@@ -8,6 +8,20 @@ import org.json.JSONObject
 
 data class MirrorCalendar(val id: String, val displayName: String, val color: Int)
 
+data class MirrorChannel(val medium: String, val value: String, val type: String?, val preferred: Boolean)
+
+data class MirrorContact(
+  val id: String,
+  val displayName: String,
+  val givenName: String?,
+  val middleName: String?,
+  val familyName: String?,
+  val nickname: String?,
+  val channels: List<MirrorChannel>,
+  val birthday: String?,   // "yyyy-MM-dd", or Android's year-less "--MM-dd"
+  val notes: String?,
+)
+
 data class MirrorItem(
   val id: String,
   val calendarId: String,      // first accepted membership — the provider calendar that hosts the event
@@ -48,6 +62,47 @@ object MirrorReader {
       }
       out
     }
+
+  fun contacts(db: SQLiteDatabase): List<MirrorContact> =
+    db.rawQuery("SELECT id, display_name, doc FROM contacts WHERE deleted = 0", null).use { c ->
+      val out = mutableListOf<MirrorContact>()
+      while (c.moveToNext()) {
+        val doc = JSONObject(c.getString(2))
+        val channels = mutableListOf<MirrorChannel>()
+        doc.optJSONArray("channels")?.let { arr ->
+          for (i in 0 until arr.length()) {
+            val ch = arr.optJSONObject(i) ?: continue
+            val value = ch.optString("value").trim()
+            if (value.isEmpty()) continue
+            channels.add(MirrorChannel(ch.optString("medium"), value, ch.optStringOrNull("type"), ch.optBoolean("preferred")))
+          }
+        }
+        out.add(
+          MirrorContact(
+            id = c.getString(0),
+            displayName = c.getString(1),
+            givenName = doc.optStringOrNull("givenName"),
+            middleName = doc.optStringOrNull("middleName"),
+            familyName = doc.optStringOrNull("familyName"),
+            nickname = doc.optStringOrNull("nickname"),
+            channels = channels,
+            birthday = birthdayString(doc.optJSONObject("birthday")),
+            notes = doc.optStringOrNull("notes"),
+          ),
+        )
+      }
+      out
+    }
+
+  /// PartialDate → the contacts provider's Event.START_DATE conventions ("--MM-dd" when year unknown).
+  private fun birthdayString(b: JSONObject?): String? {
+    if (b == null) return null
+    val month = b.optString("month").toIntOrNull() ?: return null
+    val day = b.optString("day").toIntOrNull() ?: return null
+    val year = if (b.isNull("year")) null else b.optString("year").toIntOrNull()
+    val md = "%02d-%02d".format(month, day)
+    return if (year == null) "--$md" else "%04d-$md".format(year)
+  }
 
   private fun fromDoc(id: String, doc: JSONObject): MirrorItem? {
     val calendarId = firstAccepted(doc) ?: return null   // proposed-only items stay out of the provider

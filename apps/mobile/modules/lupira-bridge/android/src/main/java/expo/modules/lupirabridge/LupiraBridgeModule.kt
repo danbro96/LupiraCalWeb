@@ -26,8 +26,10 @@ class LupiraBridgeModule : Module() {
       if (!existed && !am.addAccountExplicitly(Bridge.account, null, null))
         throw CodedException("ERR_ACCOUNT", "addAccountExplicitly returned false", null)
       // Idempotent on purpose: a failed first run must be repairable by tapping again.
-      ContentResolver.setIsSyncable(Bridge.account, Bridge.CALENDAR_AUTHORITY, 1)
-      ContentResolver.setSyncAutomatically(Bridge.account, Bridge.CALENDAR_AUTHORITY, true)
+      for (authority in listOf(Bridge.CALENDAR_AUTHORITY, Bridge.CONTACTS_AUTHORITY)) {
+        ContentResolver.setIsSyncable(Bridge.account, authority, 1)
+        ContentResolver.setSyncAutomatically(Bridge.account, authority, true)
+      }
       existed
     }
 
@@ -44,6 +46,7 @@ class LupiraBridgeModule : Module() {
         putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
       }
       ContentResolver.requestSync(Bridge.account, Bridge.CALENDAR_AUTHORITY, extras)
+      ContentResolver.requestSync(Bridge.account, Bridge.CONTACTS_AUTHORITY, extras)
     }
 
     AsyncFunction("getBridgeState") {
@@ -67,6 +70,7 @@ class LupiraBridgeModule : Module() {
     AsyncFunction("bridgeSyncNow") {
       CalendarCapturer.capture(context)
       CalendarPublisher.publish(context)
+      ContactsPublisher.publish(context)
       Bridge.prefs(context).edit().putLong(Bridge.PREF_LAST_SYNC, System.currentTimeMillis()).apply()
     }
 
