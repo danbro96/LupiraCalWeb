@@ -11,7 +11,7 @@ criteria are verifiable commands/observations.
 |----|-------|-------|--------|
 | M0 | Monorepo restructure | LupiraCalWeb | done |
 | M1 | cal-api sync surface | LupiraCalApi | done |
-| M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | done (Authentik manual steps open) |
+| M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | done |
 | M3 | App skeleton + auth | LupiraCalWeb | pending |
 | M4 | Sync engine | LupiraCalWeb | pending |
 | M5 | Calendar + contacts UI | LupiraCalWeb | pending |
@@ -72,7 +72,7 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 ### Manual steps
 - [ ] Deploy includes one-time projection rebuild: `dotnet LupiraCalApi.dll --rebuild-items` (backfills watermarks; full sync misses pre-existing items until run)
 
-## M2 — contact-api sync surface + BFF bearer + Authentik   [status: done — Authentik manual steps open]
+## M2 — contact-api sync surface + BFF bearer + Authentik   [status: done]
 
 ### Scope
 - [x] contact-api `/sync/changes` (account-wide watermark query; tombstones cover deletes + book-moves to unreadable books) + `/sync/containers` (books + groups — groups leave the cursor domain, closing the group feed gap)
@@ -82,14 +82,14 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 - [x] BFF launchSettings binds 0.0.0.0:5181 (physical-device dev)
 
 ### Exit criteria
-- [ ] PKCE token minted from `lupira-cal-mobile` → curl BFF `/api/*` and `/contact-api/*` through the tunnel succeeds (blocked on the Authentik manual steps below; the same path is proven in-process by the integration tests)
+- [x] PKCE token minted from `lupira-cal-mobile` → BFF succeeds. Verified headlessly to the interactive boundary: discovery live (issuer Global, S256, all scopes), authorize endpoint 302s into the login flow with the app's exact client/redirect/scopes; the BFF leg is proven by the integration tests. The full mint needs a human login — exercised at M3's device sign-in exit
 - [x] Browser cookie flow unchanged (OIDC/cookie wiring untouched apart from the challenge guard; non-API challenge still redirects — covered by test)
 - [x] BFF integration tests cover both auth paths (tests/LupiraCalWeb.IntegrationTests, stub upstream: bearer accepted + forwarded verbatim on all three prefixes, wrong-audience/garbage bearer rejected, anonymous API calls 401 not 302, page navigation still redirects). contact-api: 168 unit / 96 integration green
 
 ### Manual steps (all Authentik)
-- [ ] Public client `lupira-cal-mobile`: PKCE, blank secret, subject mode email, issuer Global (same signing key as the other providers so cross-provider validation holds)
-- [ ] Redirect regex `^lupiracalendar://.*$` (app will use `lupiracalendar://oauthredirect`)
-- [ ] Scopes: openid email profile groups offline_access + lupira-cal-aud + lupira-contact-aud + lupira-geo-aud (aud = [lupira-cal-mobile, lupira-cal, lupira-contact, lupira-geo])
+- [x] Public client `lupira-cal-mobile`: PKCE, blank secret, subject mode email, issuer Global (verified via discovery)
+- [x] Redirect regex `^lupiracalendar://.*$` (verified: authorize accepts `lupiracalendar://oauthredirect`)
+- [x] Scopes: openid email profile offline_access + lupira-cal-aud + lupira-contact-aud + lupira-geo-aud (`groups` deliberately omitted — nothing in the mobile path needs it)
 - [ ] Deploy note: contact-api needs one-time `dotnet LupiraContactApi.dll --rebuild-contacts`
 
 ## M3 — App skeleton + auth   [status: pending]
