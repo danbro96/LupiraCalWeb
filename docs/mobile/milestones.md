@@ -104,7 +104,7 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 - [x] Calendar tab carries the `/api/me` connection smoke (proves token/dev-header → BFF → cal-api)
 
 ### Exit criteria
-- [ ] Dev-client APK on a physical device signs in against prod BFF and Calendar shows "Connected as …" (MANUAL — see below)
+- [x] Dev-client APK on a physical device signs in against prod BFF and Calendar shows "Connected as …" (verified 2026-07-28 on the S23: Authentik sign-in, full sync pulled calendar items + contacts)
 - [ ] LAN preset works unauthenticated against the Development BFF on `0.0.0.0:5181` (MANUAL, same session)
 - [x] Refresh rotation-safe under concurrent calls + token persistence round-trip (vitest: 24 tests — refresh machine, mutator 401/retry paths, retry policy); Metro bundle exports clean; all root gates + docker build green (Docker installs web workspaces only)
 
