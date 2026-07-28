@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text } from 'react-native';
 import { useAuth } from '../../state/auth-store';
+import { BridgeSpikeScreen } from '../screens/BridgeSpikeScreen';
 import { CalendarScreen } from '../screens/CalendarScreen';
 import { ContactDetailScreen } from '../screens/ContactDetailScreen';
 import { ContactEditScreen } from '../screens/ContactEditScreen';
@@ -51,6 +52,7 @@ export function RootNav() {
       <Stack.Screen name="ItemEdit" component={ItemEditScreen} options={{ title: 'Edit event' }} />
       <Stack.Screen name="ContactDetail" component={ContactDetailScreen} options={{ title: 'Contact' }} />
       <Stack.Screen name="ContactEdit" component={ContactEditScreen} options={{ title: 'Edit contact' }} />
+      <Stack.Screen name="BridgeSpike" component={BridgeSpikeScreen} options={{ title: 'Bridge spike' }} />
     </Stack.Navigator>
   );
 }

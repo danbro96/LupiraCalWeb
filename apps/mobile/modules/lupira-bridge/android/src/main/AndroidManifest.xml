@@ -1,0 +1,31 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Merged into the app manifest by the library merger — this is what makes the module approach
+       survive prebuild without any config-plugin manifest surgery. -->
+  <uses-permission android:name="android.permission.READ_CALENDAR" />
+  <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+  <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+  <application>
+    <service
+      android:name="expo.modules.lupirabridge.AuthenticatorService"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="android.accounts.AccountAuthenticator" />
+      </intent-filter>
+      <meta-data
+        android:name="android.accounts.AccountAuthenticator"
+        android:resource="@xml/lupira_authenticator" />
+    </service>
+
+    <service
+      android:name="expo.modules.lupirabridge.CalendarSyncService"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.content.SyncAdapter" />
+      </intent-filter>
+      <meta-data
+        android:name="android.content.SyncAdapter"
+        android:resource="@xml/lupira_syncadapter_calendar" />
+    </service>
+  </application>
+</manifest>

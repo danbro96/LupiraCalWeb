@@ -34,3 +34,4 @@ apps/mobile/ios/
 *.njsproj
 *.sln
 *.sw?
+apps/mobile/modules/*/android/build/

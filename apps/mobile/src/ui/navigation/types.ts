@@ -10,6 +10,8 @@ export type RootStackParamList = {
   ItemEdit: { itemId?: string; day?: string } | undefined;
   ContactDetail: { contactId: string };
   ContactEdit: { contactId?: string } | undefined;
+  /// M6 spike surface — removed when the real bridges land (M7).
+  BridgeSpike: undefined;
 };
 
 export type TabParamList = {

@@ -67,6 +67,9 @@ export function SettingsScreen() {
       <Pressable onPress={() => navigation.navigate('SyncIssues')}>
         <Text style={styles.link}>Sync issues</Text>
       </Pressable>
+      <Pressable onPress={() => navigation.navigate('BridgeSpike')}>
+        <Text style={styles.link}>Bridge spike (M6)</Text>
+      </Pressable>
       <Text style={styles.version}>Lupira Calendar {APP_VERSION}</Text>
     </ScrollView>
   );
