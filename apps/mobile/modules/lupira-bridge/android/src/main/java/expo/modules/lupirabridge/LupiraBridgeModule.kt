@@ -28,7 +28,10 @@ class LupiraBridgeModule : Module() {
       // Idempotent on purpose: a failed first run must be repairable by tapping again.
       for (authority in listOf(Bridge.CALENDAR_AUTHORITY, Bridge.CONTACTS_AUTHORITY)) {
         ContentResolver.setIsSyncable(Bridge.account, authority, 1)
+        // Auto-sync makes the framework schedule an upload sync when provider rows go dirty —
+        // that's the near-immediate stock-app-edit capture. The hourly periodic sync is the backstop.
         ContentResolver.setSyncAutomatically(Bridge.account, authority, true)
+        ContentResolver.addPeriodicSync(Bridge.account, authority, android.os.Bundle.EMPTY, 3600L)
       }
       existed
     }

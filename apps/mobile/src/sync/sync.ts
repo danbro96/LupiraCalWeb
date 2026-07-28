@@ -9,7 +9,7 @@ import { ApiError, isNetworkError } from '../domain/apiError';
 import type { Horizon } from '../domain/materialize';
 import { birthdayRows, currentHorizon, horizonDrifted, monthKeyOf, occurrenceRowsForItem } from '../domain/materialize';
 import { logDebug } from '../debug/log';
-import { drainBridgeInbox } from './bridge';
+import { bridgePublish, drainBridgeInbox } from './bridge';
 import { drain } from './outbox';
 import type { PullDeps } from './pull';
 import { pullCal, pullContacts, pullContainers, realPullDeps } from './pull';
@@ -50,6 +50,11 @@ async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
     invalidateItems();
 
     await maintainHorizon(db, horizon);
+
+    // Provider round-trip: push the freshly pulled mirror into the stock apps, and pick up any
+    // stock-app edits the capture just found (their push rides enqueue's auto-drain).
+    await bridgePublish();
+    await drainBridgeInbox(db);
 
     status.set({ serverReachable: true, lastError: null, lastSyncAt: deps.now().toISOString() });
     logDebug('sync', 'sync complete');

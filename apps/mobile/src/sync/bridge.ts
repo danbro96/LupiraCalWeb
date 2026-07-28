@@ -71,6 +71,16 @@ export async function drainBridgeInbox(db: Db): Promise<number> {
   return ops.length;
 }
 
+/// Mirror → provider refresh at the end of an engine sync (fresh pull state lands in the stock apps
+/// without waiting for the OS scheduler). Silently a no-op when the bridge isn't set up.
+export async function bridgePublish(): Promise<void> {
+  try {
+    await LupiraBridge.bridgeSyncNow();
+  } catch {
+    // No account / permissions / module — the bridge is opt-in.
+  }
+}
+
 async function translateContactInboxRow(db: Db, row: BridgeInboxRow): Promise<ClientOp[]> {
   if (!row.syncId || !GUID_RE.test(row.syncId)) {
     logDebug('bridge', `contact inbox row ${row.id}: unusable sync id`);
