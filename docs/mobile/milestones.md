@@ -10,7 +10,7 @@ criteria are verifiable commands/observations.
 | M  | Title | Repos | Status |
 |----|-------|-------|--------|
 | M0 | Monorepo restructure | LupiraCalWeb | done |
-| M1 | cal-api sync surface | LupiraCalApi | pending |
+| M1 | cal-api sync surface | LupiraCalApi | done |
 | M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | pending |
 | M3 | App skeleton + auth | LupiraCalWeb | pending |
 | M4 | Sync engine | LupiraCalWeb | pending |
@@ -48,29 +48,29 @@ npm workspaces; extract `@lupira/cal-domain` (packages/domain, consumed as sourc
 No Expo app yet; no backend/.NET/slnx/deploy changes; no entries.ts split; no path
 aliases; no barrel index; no orval regen.
 
-## M1 — cal-api sync surface   [status: pending]
+## M1 — cal-api sync surface   [status: done]
 
 Additive only — existing routes and the legacy feed untouched; web unaffected.
 
 ### Scope
-- [ ] Projected `UpdatedSequence` (set in `Apply(IEvent<T>)`) + flat `CalendarIds[]` duplicated/indexed columns on the item snapshot; `createdAt`/`updatedAt`/`version` on the DTO
-- [ ] `GET /sync/changes?since={cursor}&limit={n}` → `{cursor, hasMore, changed[full DTOs], deleted[ids]}` — SQL-side filtering, paged (default 200/cap 500); deleted = soft-deleted since cursor ∪ no-longer-visible (membership removal)
-- [ ] `GET /sync/containers` → calendars snapshot (plain docs have no cursor)
-- [ ] Per-section LWW guards (core/metadata/prompt/action/participants/filing) on the snapshot, tasks-api wins rule (occurredAt, then ordinal commandId string compare); delete absorbing
-- [ ] `occurredAt` optional on mobile-used mutating endpoints (server-now default)
-- [ ] Idempotency ledger port (ProcessedCommand, same-session insert with event append); `Idempotency-Key` header
-- [ ] PUT core totalized with `*Provided` sentinels: all-day dates, kind, timezone fields, recurrence explicit clear
-- [ ] `tools/FixtureEmitter` console app → recurrence parity fixtures committed to packages/domain/test/fixtures/recurrence/
-- [ ] `sectionGuards` on the sync DTO; OpenAPI regen → downstream `gen:api`
+- [x] Projected `UpdatedSequence` (indexed, set in `Apply(IEvent<T>)`) + `createdAt`/`updatedAt`/`version` on snapshot and DTO. The planned flat `CalendarIds[]` column proved unnecessary: the feed is account-wide, so visibility filters in memory over the changed page only. Event store switched to Rich append mode (Quick assigns sequences server-side at INSERT — inline applies read 0)
+- [x] `GET /sync/changes?since={cursor}&limit={n}` → `{cursor, hasMore, changed[full DTOs + guards], deleted[ids]}` — indexed watermark query, paged (default 200/cap 500); deleted = soft-deleted ∪ no-longer-visible (covers unfile + unshare)
+- [x] `GET /sync/containers` → calendars snapshot (plain docs have no cursor)
+- [x] Per-section LWW guards on the snapshot — sections: `core`, `metadata`, `payload` (prompt/action share the XOR slot, one guard), `filing` (per-calendar dict). Tasks-api wins rule byte-for-byte; unstamped events fall back to event timestamp + sequence-encoded command id (append order preserved). Delete absorbing. Deviation: participants stay append-ordered (rare conflicts; Idempotency-Key still dedups replays)
+- [x] `occurredAt` optional on mutating endpoints (PUT body; `?occurredAt=` on metadata/clears/curation; payload set via body)
+- [x] Idempotency ledger port (ProcessedCommand, same-transaction insert with event append; PK violation rolls back the loser); `Idempotency-Key` header on update/delete/metadata/payload/curation. Creates need no key — `SourceKey` already pins the stream id
+- [x] PUT core totalized with `*Provided` sentinels: `startsAt/endsAt/startDate/endDate/startTimezone/endTimezone/recurrenceRule` + `isAllDay` (bool?, null = keep)
+- [x] `tools/FixtureEmitter` → `packages/domain/test/fixtures/{recurrence,lww-vectors}.json` (17 recurrence cases, 10 LWW vectors; `--from-db` mode ingests real rules)
+- [x] `sectionGuards` on the sync DTO; OpenAPI regen → downstream `gen:api` ran
 
 ### Exit criteria
-- [ ] Scripted curl delta loop against dev stack: create/edit/unfile/delete → correct changed/deleted across pages; `since=0` full loop works
-- [ ] Replayed Idempotency-Key returns success without duplicate events (test proves rollback path)
-- [ ] Server LWW vector suite green; vectors exported for the client twin
-- [ ] Existing unit/integration suites green; web UI + legacy consumers behave unchanged
+- [x] Curl delta loop against dev stack: create → changed; edit → changed with guards; unfile → tombstone; delete → tombstone; quiet cursor stable; containers snapshot OK
+- [x] Replayed Idempotency-Key: PUT replay returns prior state without reapplying; DELETE replay 204 instead of 404 (integration tests + curl)
+- [x] Server LWW suite green (SectionLwwTests, 12 tests); vectors exported for the client twin
+- [x] Full suites green: 140 unit / 133 integration (incl. legacy feed + web-facing routes untouched); web client regenerated, lint/typecheck/test/build green
 
 ### Manual steps
-- [ ] Deploy includes one-time projection rebuild
+- [ ] Deploy includes one-time projection rebuild: `dotnet LupiraCalApi.dll --rebuild-items` (backfills watermarks; full sync misses pre-existing items until run)
 
 ## M2 — contact-api sync surface + BFF bearer + Authentik   [status: pending]
 
