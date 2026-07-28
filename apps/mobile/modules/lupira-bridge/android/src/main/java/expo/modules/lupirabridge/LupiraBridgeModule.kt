@@ -33,12 +33,11 @@ class LupiraBridgeModule : Module() {
     AsyncFunction("ensureAccount") {
       val am = AccountManager.get(context)
       val existed = am.getAccountsByType(Bridge.ACCOUNT_TYPE).isNotEmpty()
-      if (!existed) {
-        if (!am.addAccountExplicitly(Bridge.account, null, null))
-          throw CodedException("ERR_ACCOUNT", "addAccountExplicitly returned false", null)
-        ContentResolver.setIsSyncable(Bridge.account, Bridge.CALENDAR_AUTHORITY, 1)
-        ContentResolver.setSyncAutomatically(Bridge.account, Bridge.CALENDAR_AUTHORITY, true)
-      }
+      if (!existed && !am.addAccountExplicitly(Bridge.account, null, null))
+        throw CodedException("ERR_ACCOUNT", "addAccountExplicitly returned false", null)
+      // Idempotent on purpose: a failed first run must be repairable by tapping again.
+      ContentResolver.setIsSyncable(Bridge.account, Bridge.CALENDAR_AUTHORITY, 1)
+      ContentResolver.setSyncAutomatically(Bridge.account, Bridge.CALENDAR_AUTHORITY, true)
       existed
     }
 
@@ -60,9 +59,15 @@ class LupiraBridgeModule : Module() {
     AsyncFunction("getBridgeState") {
       val am = AccountManager.get(context)
       val lastSync = Bridge.prefs(context).getLong(Bridge.PREF_LAST_SYNC, 0L)
+      // Callable before the runtime permission grant (the screen reads state on mount).
+      val calendarId = try {
+        findCalendarId()
+      } catch (_: SecurityException) {
+        null
+      }
       mapOf(
         "accountPresent" to am.getAccountsByType(Bridge.ACCOUNT_TYPE).isNotEmpty(),
-        "calendarId" to findCalendarId(),
+        "calendarId" to calendarId,
         "lastSyncAt" to if (lastSync == 0L) null else lastSync.toDouble(),
       )
     }

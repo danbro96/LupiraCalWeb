@@ -2,52 +2,64 @@
 
 Throwaway spike answering three questions before M7 commits to a design. Code lives in
 `apps/mobile/modules/lupira-bridge` (local Expo module) + the Bridge spike screen
-(Settings → Bridge spike). This doc is the deliverable; the code is disposable.
+(Settings → Bridge spike). Verdict: **GO** — all mechanics proven on the S23 (2026-07-28).
 
 ## Q1 — Native packaging: config plugin vs local Expo module
 
-**Decision: local Expo module.** `create-expo-module --local` gives a Kotlin library under
-`modules/lupira-bridge` that expo autolinking discovers automatically:
+**Answer: local Expo module, decisively.** `create-expo-module --local` under
+`modules/lupira-bridge`, discovered by expo autolinking:
 
-- Its `AndroidManifest.xml` (services, permissions, meta-data) merges via the standard
-  library manifest merger — zero config-plugin manifest surgery, survives prebuild by
-  construction.
+- Library `AndroidManifest.xml` (services, permissions, meta-data) merges via the standard
+  manifest merger — zero config-plugin surgery, survives prebuild by construction.
 - XML resources (`res/xml/lupira_authenticator.xml`, `res/xml/lupira_syncadapter_calendar.xml`)
   ride the library like any Android lib.
-- The same module exposes a typed JS API (`requireNativeModule`) — the config-plugin
-  approach would still have needed a separate native-module story for JS↔Kotlin calls.
+- The same module exposes the typed JS API (`requireNativeModule`) that a config plugin
+  would have needed separately.
 
-A `withDangerousMod` config plugin copying sources into the app template remains the
-fallback only if something requires editing the *app* module itself. Nothing so far does.
+Proven end-to-end: prebuild → Gradle → device, services registered and functional.
 
-## Q2 — Account lifecycle
+## Q2 — Account lifecycle (verified on device)
 
-- Stub `AbstractAccountAuthenticator` + service registered for account type
-  `com.lupira.calendar`; the app creates the account programmatically
-  (`addAccountExplicitly`) — Settings → "Add account" is NOT supported (stub `addAccount`
-  returns null); acceptable, the app owns the lifecycle.
-- Device findings (S23): _pending device loop_
-  - [ ] Account visible under Settings → Accounts after "Ensure account"
-  - [ ] Account survives app kill/restart; removed cleanly by "Remove account"
-  - [ ] `requestSync` → `onPerformSync` fires (state shows "last OS sync")
+- Stub `AbstractAccountAuthenticator` for type `com.lupira.calendar`; the app creates the
+  account with `addAccountExplicitly`. Settings → "Add account" entry is not offered
+  (stub returns null) — acceptable, the app owns the lifecycle.
+- Account appears under Android Settings → Accounts; survives app restart.
+- **`WRITE_SYNC_SETTINGS` (+ READ) install-time permissions are required** for
+  `setIsSyncable`/`setSyncAutomatically` — missing them throws SecurityException *after*
+  account creation, so ensure-account must be idempotent/repair-on-retap (it is now).
+- `isAlwaysSyncable` in the adapter XML alone was enough for a **manual** `requestSync`
+  to dispatch `onPerformSync` (observed via the last-sync stamp) even when the
+  sync-settings write had failed.
+- **Removing the account purges the Lupira calendar and its events automatically** —
+  provider cleanup is free; also means account removal is destructive and a later
+  ensure+publish rebuilds from the mirror (fine — the mirror is the source of truth).
 
-## Q3 — Provider mechanics
+## Q3 — Provider mechanics (verified on device)
 
-- Calendar publish goes through `CALLER_IS_SYNCADAPTER` under our account: rows belong to
-  the Lupira account, provider skips dirty-flag bookkeeping for our own writes (user edits
-  in stock apps DO set `DIRTY` — that asymmetry is M7's write-back signal).
-- Spike publish is wholesale (delete-by-calendar + insert window, `_SYNC_ID` = occurrence
-  key). M7 needs row-level upserts keyed on `_SYNC_ID` + recurring events as RRULE rows
-  rather than expanded instances (spike publishes expanded occurrences — fine for
-  visibility, wrong for edit round-trips).
-- Contacts: `readContactsSample` dumps RawContacts with ACCOUNT_TYPE / SOURCE_ID / DIRTY /
-  DELETED to map the write-back columns.
-- Device findings (S23): _pending device loop_
-  - [ ] Lupira calendar + events visible in Samsung Calendar (may need
-        "Manage calendars → show Lupira" once)
-  - [ ] All-day vs timed rendering correct; 🎂 birthday titles show
-  - [ ] RawContacts sample shows existing account types + dirty semantics
+- Calendar publish as `CALLER_IS_SYNCADAPTER` under our account: 49/49 occurrences of a
+  ±1-month window landed and render correctly in Samsung Calendar (all-day + timed,
+  🎂 birthday titles). Calendar may need enabling once under Manage calendars.
+- Provider reads before the runtime grant throw SecurityException — state reads must
+  catch it (mount-time read does).
+- Contacts recon (415 raw contacts): SIM (`vnd.sec.contact.sim`) and Telegram
+  (`org.telegram.messenger`) accounts visible. **`DIRTY=1` sits permanently on rows of
+  accounts whose adapter never clears it** — the flag is per-account bookkeeping, only
+  meaningful for rows we own; never read other accounts' dirty flags as signal.
+  `SOURCE_ID` is frequently null on other adapters — ours must always set it (aggregate id).
+- The Lupira account does NOT appear as a contacts source — a second sync adapter bound
+  to the `com.android.contacts` authority is required for that (M7).
+- Open oddity: RawContacts total differed between two consecutive reads (1019 → 415);
+  suspect profile/visibility scoping — pin down in M7 before relying on counts.
 
 ## M7 scope adjustments
 
-_Filled after the device loop._
+1. Add a contacts sync-adapter service (`syncadapter_contacts.xml`, authority
+   `com.android.contacts`) so the account owns raw contacts and shows as a contacts source.
+2. Recurring items: publish RRULE rows, not expanded instances (spike published expanded
+   occurrences — fine for visibility, wrong for edit round-trips and reminder semantics).
+3. Row-level upserts keyed on `_SYNC_ID` / `SOURCE_ID` (spike does wholesale replace).
+4. Write-back loop: user edits set DIRTY on our rows → adapter translates to outbox ops →
+   clear DIRTY (as sync adapter) after ack; echo suppression via `_SYNC_ID` + content hash.
+5. Move the publish from JS into `onPerformSync` so OS-scheduled sync works without the
+   app process; keep permissions ensured before enabling.
+6. Keep `isAlwaysSyncable`; still set sync flags explicitly now that the permission exists.

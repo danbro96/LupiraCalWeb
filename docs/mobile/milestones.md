@@ -15,7 +15,7 @@ criteria are verifiable commands/observations.
 | M3 | App skeleton + auth | LupiraCalWeb | done |
 | M4 | Sync engine | LupiraCalWeb | done |
 | M5 | Calendar + contacts UI | LupiraCalWeb | done |
-| M6 | Bridge spike (throwaway) | LupiraCalWeb | in-progress (code done; device loop pending) |
+| M6 | Bridge spike (throwaway) | LupiraCalWeb | done |
 | M7 | Bridges full two-way | LupiraCalWeb | pending |
 | M8 | Hardening + release | LupiraCalWeb | pending |
 
@@ -147,17 +147,17 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 - [x] Birthdays visible in month + week grids
 - [x] Code-level: 75 mobile + 123 domain tests green (incl. grid join, contact list, per-row retry); root lint/typecheck green; Metro bundle exports clean
 
-## M6 — Bridge spike (throwaway)   [status: in-progress — device loop pending]
+## M6 — Bridge spike (throwaway)   [status: done]
 
 ### Scope
 - [x] Kotlin AccountAuthenticator + stub sync adapter — packaged as a LOCAL EXPO MODULE (`modules/lupira-bridge`) instead of a config plugin: library manifest merges services/permissions/xml natively, survives prebuild by construction, and gives JS a typed API for free (the plugin-viability question, answered — see docs/mobile/bridge-spike.md)
 - [x] One-way CalendarContract publish (as sync adapter under account `com.lupira.calendar`, own Lupira calendar, wholesale window publish keyed on `_SYNC_ID`); ContactsContract RawContacts sample read (ACCOUNT_TYPE/SOURCE_ID/DIRTY/DELETED)
 - [x] Bridge spike screen (Settings → Bridge spike): permissions, ensure/remove account, publish ±1 month, request OS sync (onPerformSync stamps last-sync state), contacts sample
-- [ ] Written go/no-go learnings: account lifecycle, dirty-flag mechanics (docs/mobile/bridge-spike.md — device findings pending)
+- [x] Written go/no-go learnings: account lifecycle, dirty-flag mechanics (docs/mobile/bridge-spike.md — verdict GO; device-verified findings incl. WRITE_SYNC_SETTINGS requirement, isAlwaysSyncable manual-sync behavior, account-removal purge, foreign-account DIRTY noise, contacts authority needed for a contacts source)
 
 ### Exit criteria
-- [ ] Lupira account visible in Android Settings; mirror items visible in the stock calendar app (MANUAL — rebuild dev client, then Bridge spike screen)
-- [ ] Learnings doc committed; M7 scope adjusted from it
+- [x] Lupira account visible in Android Settings; 49/49 published events visible + correctly rendered in Samsung Calendar; onPerformSync observed; account removal purges the calendar (verified 2026-07-28, S23)
+- [x] Learnings doc committed; M7 scope adjusted from it (6 items in bridge-spike.md)
 
 ## M7 — Bridges full two-way   [status: pending]
 
