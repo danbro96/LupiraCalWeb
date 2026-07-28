@@ -1,0 +1,304 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+import { openNodeDb } from '../data/db/nodeDb';
+import { MIGRATIONS, migrate } from '../data/db/schema';
+import type { Db } from '../data/db/types';
+import * as mirror from '../data/mirror';
+import { ApiError } from '../domain/apiError';
+import { PARK_AFTER_ATTEMPTS } from '../domain/backoff';
+import type { ItemDoc, ItemGuards } from '../domain/docTypes';
+import { emptyItemGuards } from '../domain/docTypes';
+import type { Horizon } from '../domain/materialize';
+import type { ClientOp } from '../domain/ops';
+import { drain, enqueue } from './outbox';
+import type { ChangesPage, ContactChange, ItemChange, PullDeps } from './pull';
+import { pullCal, pullContainers, pullContacts } from './pull';
+
+/// The whole engine under node:sqlite — enqueue/drain (backoff, park, causal hold), the delta/full pull with
+/// rebase-through-pending-ops, tombstones, prune, and cursor plumbing. Every scenario here is a defect class
+/// from LupiraTasksMobile that must stay dead.
+
+const horizon: Horizon = { start: new Date('2026-01-01T00:00:00Z'), end: new Date('2027-01-01T00:00:00Z') };
+const T = (m: number) => `2026-07-01T12:${String(m).padStart(2, '0')}:00.000Z`;
+const cmd = (n: number) => `0198c0de-0000-7000-8000-${String(n).padStart(12, '0')}`;
+
+let db: Db;
+
+beforeEach(async () => {
+  db = openNodeDb();
+  await migrate(db);
+});
+
+const createOp = (itemId: string, n: number, calendarId = 'cal-1'): ClientOp => ({
+  kind: 'item.create', itemId, sourceKey: `${itemId}@key`, calendarId,
+  occurredAt: T(n), commandId: cmd(n),
+  core: { title: `Item ${itemId}`, isAllDay: false, startsAt: '2026-08-01T09:00:00Z', endsAt: '2026-08-01T10:00:00Z' },
+});
+
+const reviseOp = (itemId: string, title: string, n: number): ClientOp => ({
+  kind: 'item.revise', itemId, occurredAt: T(n), commandId: cmd(n),
+  core: { title, isAllDay: false, startsAt: '2026-08-01T09:00:00Z', endsAt: '2026-08-01T10:00:00Z' },
+});
+
+const serverItem = (id: string, over: Partial<ItemDoc> = {}): ItemDoc => ({
+  id, title: 'Server title', isAllDay: false, startsAt: '2026-08-01T09:00:00Z', endsAt: '2026-08-01T10:00:00Z',
+  calendars: [{ calendarId: 'cal-1', status: 'Accepted' }], updatedAt: T(0), ...over,
+});
+
+const serverGuards = (over: Partial<ItemGuards> = {}): ItemGuards => ({ ...emptyItemGuards(), ...over });
+
+/// Enqueue while "offline": the auto-drain hits an unreachable server, so the op STAYS pending — the state
+/// every rebase/prune/migration scenario needs (a no-op replay would ack and delete it immediately).
+async function enqueueOffline(ops: ClientOp[]): Promise<void> {
+  const deps = {
+    replay: async () => {
+      throw new ApiError(0, 'offline');
+    },
+    now: () => new Date('2026-07-01T13:00:00Z'),
+    rand: () => 0.5,
+  };
+  await enqueue(db, ops, horizon, deps);
+  await drain(db, deps);   // joins the enqueue-triggered drain so the failure is settled before asserting
+}
+
+function pagesDeps(calPages: ChangesPage<ItemChange>[], contactPages: ChangesPage<ContactChange>[] = []): PullDeps & { calCalls: (string | null)[] } {
+  const calCalls: (string | null)[] = [];
+  let calIdx = 0;
+  let contactIdx = 0;
+  return {
+    calCalls,
+    calChanges: async (since) => {
+      calCalls.push(since);
+      return calPages[Math.min(calIdx++, calPages.length - 1)];
+    },
+    contactChanges: async () =>
+      contactPages[Math.min(contactIdx++, Math.max(contactPages.length - 1, 0))]
+      ?? { cursor: '0', hasMore: false, changed: [], deleted: [] },
+    calContainers: async () => ({ calendars: [{ id: 'cal-1' }] }),
+    contactContainers: async () => ({ addressBooks: [{ id: 'book-1' }], groups: [] }),
+    now: () => new Date('2026-07-01T13:00:00Z'),
+  };
+}
+
+describe('outbox', () => {
+  it('enqueue writes the optimistic row, its occurrences, and the outbox entry atomically', async () => {
+    await enqueue(db, [createOp('item-1', 1)], horizon, { replay: async () => {} });
+    await drain(db, { replay: async () => {} });
+
+    const item = await mirror.loadItem(db, 'item-1');
+    expect(item?.doc.title).toBe('Item item-1');
+    const occ = await mirror.occurrencesBetween(db, '2026-08-01', '2026-08-01');
+    expect(occ).toHaveLength(1);
+  });
+
+  it('drains in order and deletes acked ops', async () => {
+    const replayed: string[] = [];
+    const replay = async (op: ClientOp) => {
+      replayed.push(op.commandId);
+    };
+    await enqueue(db, [createOp('item-1', 1), reviseOp('item-1', 'v2', 2)], horizon, { replay });
+    await drain(db, { replay });
+
+    expect(replayed).toEqual([cmd(1), cmd(2)]);
+    expect(await mirror.outboxCounts(db)).toEqual({ pending: 0, parked: 0 });
+  });
+
+  it('a transient failure earns backoff — not retried until due, retried after', async () => {
+    let now = new Date('2026-07-01T13:00:00Z');
+    let calls = 0;
+    const replay = async () => {
+      calls++;
+      if (calls === 1) throw new ApiError(503, 'down');
+    };
+    const deps = { replay, now: () => now, rand: () => 0.5 };
+
+    await enqueue(db, [createOp('item-1', 1)], horizon, deps);
+    await drain(db, deps);
+    expect(calls).toBe(1);
+    expect(await mirror.outboxCounts(db)).toEqual({ pending: 1, parked: 0 });
+
+    await drain(db, deps);   // still inside the backoff window
+    expect(calls).toBe(1);
+
+    now = new Date(now.getTime() + 60_000);
+    await drain(db, deps);
+    expect(calls).toBe(2);
+    expect(await mirror.outboxCounts(db)).toEqual({ pending: 0, parked: 0 });
+  });
+
+  it('parks after enough consecutive transient failures', async () => {
+    let now = new Date('2026-07-01T13:00:00Z');
+    const replay = async () => {
+      throw new ApiError(503, 'permanently flaky');
+    };
+    const deps = { replay, now: () => now, rand: () => 0.5 };
+    await enqueue(db, [createOp('item-1', 1)], horizon, deps);
+
+    for (let i = 0; i < PARK_AFTER_ATTEMPTS + 2; i++) {
+      await drain(db, deps);
+      now = new Date(now.getTime() + 60 * 60_000);
+    }
+    expect(await mirror.outboxCounts(db)).toEqual({ pending: 0, parked: 1 });
+  });
+
+  it('parks a semantic 4xx immediately and holds later ops on the SAME aggregate only', async () => {
+    const replayed: string[] = [];
+    const replay = async (op: ClientOp) => {
+      if (op.commandId === cmd(1)) throw new ApiError(404, 'no such item');
+      replayed.push(op.commandId);
+    };
+    const deps = { replay };
+    await enqueue(db, [reviseOp('item-dead', 'a', 1), reviseOp('item-dead', 'b', 2), createOp('item-live', 3)], horizon, deps);
+    await drain(db, deps);
+
+    expect(replayed).toEqual([cmd(3)]);   // the dead aggregate's follow-up is held, the other proceeds
+    expect(await mirror.outboxCounts(db)).toEqual({ pending: 1, parked: 1 });
+  });
+
+  it('pauses without touching the row when the session dies (401)', async () => {
+    const replay = async () => {
+      throw new ApiError(401, 'signed out');
+    };
+    await enqueue(db, [createOp('item-1', 1)], horizon, { replay });
+    await drain(db, { replay });
+
+    const rows = await db.all<mirror.OutboxRow>('SELECT * FROM outbox');
+    expect(rows).toHaveLength(1);
+    expect(rows[0].status).toBe('pending');
+    expect(rows[0].attempts).toBe(0);
+  });
+});
+
+describe('pull', () => {
+  it('reads the cursor, pages while hasMore, and persists per page', async () => {
+    const deps = pagesDeps([
+      { cursor: '10', hasMore: true, changed: [{ item: serverItem('a'), guards: serverGuards() }], deleted: [] },
+      { cursor: '20', hasMore: false, changed: [{ item: serverItem('b'), guards: serverGuards() }], deleted: [] },
+    ]);
+    await pullCal(db, horizon, deps);
+    expect(deps.calCalls).toEqual([null, '10']);
+    expect(await mirror.getCursor(db, 'cal')).toBe('20');
+
+    await pullCal(db, horizon, pagesDeps([{ cursor: '20', hasMore: false, changed: [], deleted: [] }]));
+    // second sync starts from the persisted cursor — the tasks app's dead getCursor stays dead
+    const again = pagesDeps([{ cursor: '20', hasMore: false, changed: [], deleted: [] }]);
+    await pullCal(db, horizon, again);
+    expect(again.calCalls).toEqual(['20']);
+  });
+
+  it('REGRESSION: a pending core edit survives a pull that brings fresher other-section state', async () => {
+    // Server state with a metadata guard NEWER than the local edit but a core guard OLDER.
+    await enqueueOffline([reviseOp('item-1', 'Local edit', 30)]);
+
+    const change: ItemChange = {
+      item: serverItem('item-1', { title: 'Server title', metadata: { source: 'web' } }),
+      guards: serverGuards({
+        core: { ts: T(10), cmd: cmd(90) },
+        metadata: { ts: T(40), cmd: cmd(91) },
+      }),
+    };
+    await pullCal(db, horizon, pagesDeps([{ cursor: '5', hasMore: false, changed: [change], deleted: [] }]));
+
+    const item = await mirror.loadItem(db, 'item-1');
+    expect(item?.doc.title).toBe('Local edit');            // pending op outranks the older server core
+    expect(item?.doc.metadata).toEqual({ source: 'web' }); // fresher server metadata intact
+  });
+
+  it('a stale local edit loses the rebase to a newer server core', async () => {
+    await enqueueOffline([reviseOp('item-1', 'Stale local', 10)]);
+
+    const change: ItemChange = {
+      item: serverItem('item-1', { title: 'Newer server' }),
+      guards: serverGuards({ core: { ts: T(20), cmd: cmd(90) } }),
+    };
+    await pullCal(db, horizon, pagesDeps([{ cursor: '5', hasMore: false, changed: [change], deleted: [] }]));
+
+    expect((await mirror.loadItem(db, 'item-1'))?.doc.title).toBe('Newer server');
+  });
+
+  it('applies tombstones: row and occurrences go, remote deletes reach the mirror', async () => {
+    await pullCal(db, horizon, pagesDeps([
+      { cursor: '5', hasMore: false, changed: [{ item: serverItem('doomed'), guards: serverGuards() }], deleted: [] },
+    ]));
+    expect(await mirror.loadItem(db, 'doomed')).not.toBeNull();
+
+    await pullCal(db, horizon, pagesDeps([{ cursor: '9', hasMore: false, changed: [], deleted: ['doomed'] }]));
+    expect(await mirror.loadItem(db, 'doomed')).toBeNull();
+    expect(await mirror.occurrencesBetween(db, '2026-01-01', '2026-12-31')).toHaveLength(0);
+  });
+
+  it('full sync prunes unmentioned rows but keeps pending local creates', async () => {
+    // Seed a stale mirror row + a local-only create, then full-sync (null cursor) that mentions neither.
+    await pullCal(db, horizon, pagesDeps([
+      { cursor: '5', hasMore: false, changed: [{ item: serverItem('stale'), guards: serverGuards() }], deleted: [] },
+    ]));
+    await enqueueOffline([createOp('local-only', 1)]);
+    await db.exclusive((tx) => tx.run("DELETE FROM sync_state WHERE scope = 'cal'"));   // force full sync
+
+    await pullCal(db, horizon, pagesDeps([
+      { cursor: '50', hasMore: false, changed: [{ item: serverItem('kept'), guards: serverGuards() }], deleted: [] },
+    ]));
+
+    expect(await mirror.loadItem(db, 'stale')).toBeNull();
+    expect(await mirror.loadItem(db, 'kept')).not.toBeNull();
+    expect(await mirror.loadItem(db, 'local-only')).not.toBeNull();
+  });
+
+  it('pulls contacts with birthday synthesis and replaces containers', async () => {
+    const deps = pagesDeps([{ cursor: '1', hasMore: false, changed: [], deleted: [] }], [{
+      cursor: '7', hasMore: false, deleted: [],
+      changed: [{
+        contact: { id: 'c1', addressBookId: 'book-1', givenName: 'Jane', birthday: { year: 1990, month: 3, day: 14 } },
+        guards: {
+          core: { ts: T(1), cmd: cmd(1) }, addresses: { ts: T(1), cmd: cmd(1) }, profiles: { ts: T(1), cmd: cmd(1) },
+          avatar: { ts: T(1), cmd: cmd(1) }, metadata: { ts: T(1), cmd: cmd(1) }, deceased: { ts: T(1), cmd: cmd(1) },
+        },
+      }],
+    }]);
+    await pullContainers(db, deps);
+    await pullContacts(db, horizon, deps);
+
+    const bdays = await mirror.occurrencesBetween(db, '2026-03-14', '2026-03-14');
+    expect(bdays).toHaveLength(1);
+    expect(bdays[0].source).toBe('birthday');
+    expect(await mirror.listContainerDocs(db, 'calendars')).toHaveLength(1);
+    expect(await mirror.listContainerDocs(db, 'address_books')).toHaveLength(1);
+  });
+});
+
+describe('migrations', () => {
+  it('a future migration runs without touching the outbox', async () => {
+    await enqueueOffline([createOp('item-1', 1)]);
+
+    const extended = [...MIGRATIONS, 'ALTER TABLE items ADD COLUMN flagged INTEGER NOT NULL DEFAULT 0;'];
+    await migrate(db, extended);
+
+    const version = await db.first<{ user_version: number }>('PRAGMA user_version');
+    expect(version?.user_version).toBe(2);
+    expect(await mirror.outboxCounts(db)).toEqual({ pending: 1, parked: 0 });
+    await db.all('SELECT flagged FROM items');   // new column exists
+  });
+
+  it('migrate is idempotent', async () => {
+    await migrate(db);
+    await migrate(db);
+    expect((await db.first<{ user_version: number }>('PRAGMA user_version'))?.user_version).toBe(1);
+  });
+});
+
+describe('discard rollback contract', () => {
+  it('reports the aggregate so the caller can restore server truth', async () => {
+    const replay = async () => {
+      throw new ApiError(404, 'gone');
+    };
+    await enqueue(db, [reviseOp('item-1', 'doomed edit', 1)], horizon, { replay });
+    await drain(db, { replay });
+
+    const parked = await mirror.listParked(db);
+    expect(parked).toHaveLength(1);
+
+    const { discardParked } = await import('./outbox');
+    const target = await discardParked(db, parked[0].seq);
+    expect(target).toEqual({ domain: 'cal', aggregateId: 'item-1' });
+    expect(await mirror.outboxCounts(db)).toEqual({ pending: 0, parked: 0 });
+  });
+});

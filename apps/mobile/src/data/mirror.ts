@@ -1,0 +1,242 @@
+import type { ContactGuards, ItemGuards } from '../domain/docTypes';
+import type { ContactDoc, ItemDoc } from '../domain/docTypes';
+import type { OccurrenceRow } from '../domain/materialize';
+import type { MirrorContact, MirrorItem } from '../domain/mirrorReducers';
+import type { ClientOp } from '../domain/ops';
+import { OP_ENVELOPE_VERSION, aggregateIdOf, domainOf } from '../domain/ops';
+import type { SqlValue, Tx } from './db/types';
+
+/// Row-level persistence for the mirror. Every function takes a Tx — writes only ever happen inside
+/// Db.exclusive, so a pull can never interleave with an enqueue (the tasks app's transaction defect).
+
+// ---- items ----
+
+type ItemRow = { id: string; doc: string; guards: string; deleted: number };
+
+export async function loadItem(tx: Tx, id: string): Promise<MirrorItem | null> {
+  const row = await tx.first<ItemRow>('SELECT id, doc, guards, deleted FROM items WHERE id = ?', [id]);
+  if (!row) return null;
+  return { doc: JSON.parse(row.doc) as ItemDoc, guards: JSON.parse(row.guards) as ItemGuards, deleted: row.deleted === 1 };
+}
+
+export async function saveItem(tx: Tx, state: MirrorItem, occurrences: OccurrenceRow[]): Promise<void> {
+  const d = state.doc;
+  await tx.run(
+    `INSERT INTO items (id, doc, guards, title, status, is_all_day, start_utc, end_utc, recurrence_rule, deleted, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET doc=excluded.doc, guards=excluded.guards, title=excluded.title,
+       status=excluded.status, is_all_day=excluded.is_all_day, start_utc=excluded.start_utc,
+       end_utc=excluded.end_utc, recurrence_rule=excluded.recurrence_rule, deleted=excluded.deleted,
+       updated_at=excluded.updated_at`,
+    [d.id, JSON.stringify(d), JSON.stringify(state.guards), d.title ?? null, d.status ?? null,
+      d.isAllDay ? 1 : 0, d.startsAt ?? null, d.endsAt ?? null, d.recurrenceRule ?? null,
+      state.deleted ? 1 : 0, d.updatedAt ?? ''],
+  );
+  await tx.run('DELETE FROM item_calendars WHERE item_id = ?', [d.id]);
+  for (const m of d.calendars)
+    await tx.run('INSERT OR REPLACE INTO item_calendars (item_id, calendar_id, status) VALUES (?, ?, ?)',
+      [d.id, m.calendarId, m.status]);
+  await replaceOccurrences(tx, 'item', d.id, occurrences);
+}
+
+export async function removeItem(tx: Tx, id: string): Promise<void> {
+  await tx.run('DELETE FROM items WHERE id = ?', [id]);
+  await tx.run('DELETE FROM item_calendars WHERE item_id = ?', [id]);
+  await tx.run("DELETE FROM occurrences WHERE source = 'item' AND source_id = ?", [id]);
+}
+
+export async function allItemIds(tx: Tx): Promise<string[]> {
+  return (await tx.all<{ id: string }>('SELECT id FROM items')).map((r) => r.id);
+}
+
+// ---- contacts ----
+
+type ContactRow = { id: string; doc: string; guards: string; deleted: number };
+
+export async function loadContact(tx: Tx, id: string): Promise<MirrorContact | null> {
+  const row = await tx.first<ContactRow>('SELECT id, doc, guards, deleted FROM contacts WHERE id = ?', [id]);
+  if (!row) return null;
+  return { doc: JSON.parse(row.doc) as ContactDoc, guards: JSON.parse(row.guards) as ContactGuards, deleted: row.deleted === 1 };
+}
+
+export async function saveContact(tx: Tx, state: MirrorContact, birthdays: OccurrenceRow[]): Promise<void> {
+  const d = state.doc;
+  const bday = d.birthday ?? null;
+  await tx.run(
+    `INSERT INTO contacts (id, doc, guards, display_name, address_book_id, bday_year, bday_month, bday_day, deleted, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET doc=excluded.doc, guards=excluded.guards, display_name=excluded.display_name,
+       address_book_id=excluded.address_book_id, bday_year=excluded.bday_year, bday_month=excluded.bday_month,
+       bday_day=excluded.bday_day, deleted=excluded.deleted, updated_at=excluded.updated_at`,
+    [d.id, JSON.stringify(d), JSON.stringify(state.guards), composeDisplayName(d), d.addressBookId,
+      bday ? toInt(bday.year) : null, bday ? toInt(bday.month) : null, bday ? toInt(bday.day) : null,
+      state.deleted ? 1 : 0, d.updatedAt ?? ''],
+  );
+  await replaceOccurrences(tx, 'birthday', d.id, birthdays);
+}
+
+export async function removeContact(tx: Tx, id: string): Promise<void> {
+  await tx.run('DELETE FROM contacts WHERE id = ?', [id]);
+  await tx.run("DELETE FROM occurrences WHERE source = 'birthday' AND source_id = ?", [id]);
+}
+
+export async function allContactIds(tx: Tx): Promise<string[]> {
+  return (await tx.all<{ id: string }>('SELECT id FROM contacts')).map((r) => r.id);
+}
+
+/// Server composition mirrored (Contact.DisplayName): format-specific label, falling back to the full
+/// composition, then nickname — never empty for a named contact.
+export function composeDisplayName(d: ContactDoc): string {
+  const parts = (xs: (string | null | undefined)[]) => xs.filter((s) => s && s.trim().length > 0).join(' ');
+  const full = parts([d.givenName, d.middleName, d.familyName]) || (d.nickname ?? '') || d.id;
+  switch (d.displayNameFormat) {
+    case 'FirstLast': return parts([d.givenName, d.familyName]) || full;
+    case 'NickName': return d.nickname || full;
+    default: return full;
+  }
+}
+
+function toInt(v: number | string | null | undefined): number | null {
+  if (v === null || v === undefined || v === '') return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+// ---- occurrences ----
+
+async function replaceOccurrences(tx: Tx, source: 'item' | 'birthday', sourceId: string, rows: OccurrenceRow[]): Promise<void> {
+  await tx.run('DELETE FROM occurrences WHERE source = ? AND source_id = ?', [source, sourceId]);
+  for (const r of rows)
+    await tx.run(
+      'INSERT OR REPLACE INTO occurrences (source, source_id, start_utc, end_utc, start_day, all_day) VALUES (?, ?, ?, ?, ?, ?)',
+      [r.source, r.sourceId, r.startUtc, r.endUtc, r.startDay, r.allDay ? 1 : 0],
+    );
+}
+
+export type OccurrenceQueryRow = {
+  source: string; source_id: string; start_utc: string; end_utc: string | null; start_day: string; all_day: number;
+};
+
+export async function occurrencesBetween(tx: Tx, fromDay: string, toDay: string): Promise<OccurrenceQueryRow[]> {
+  return tx.all<OccurrenceQueryRow>(
+    'SELECT * FROM occurrences WHERE start_day >= ? AND start_day <= ? ORDER BY start_utc',
+    [fromDay, toDay],
+  );
+}
+
+// ---- containers ----
+
+export async function replaceContainers(tx: Tx, table: 'calendars' | 'address_books' | 'contact_groups', docs: { id: string }[]): Promise<void> {
+  await tx.run(`DELETE FROM ${table}`);
+  for (const doc of docs)
+    await tx.run(`INSERT INTO ${table} (id, doc) VALUES (?, ?)`, [doc.id, JSON.stringify(doc)]);
+}
+
+// ---- outbox ----
+
+export type OutboxRow = {
+  seq: number; op_id: string; envelope_version: number; domain: string; aggregate_id: string;
+  kind: string; payload: string; occurred_at: string; status: string; attempts: number;
+  next_attempt_at: string | null; last_error: string | null;
+};
+
+export function opOfRow(row: OutboxRow): ClientOp {
+  return JSON.parse(row.payload) as ClientOp;
+}
+
+export async function insertOp(tx: Tx, op: ClientOp): Promise<void> {
+  await tx.run(
+    `INSERT INTO outbox (op_id, envelope_version, domain, aggregate_id, kind, payload, occurred_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [op.commandId, OP_ENVELOPE_VERSION, domainOf(op), aggregateIdOf(op), op.kind, JSON.stringify(op), op.occurredAt],
+  );
+}
+
+/// The next op the drain may replay: oldest pending row that is due AND has no earlier parked sibling on the
+/// same aggregate — a parked create must hold back the revisions behind it instead of guaranteeing their 404s.
+export async function nextEligibleOp(tx: Tx, nowIso: string): Promise<OutboxRow | null> {
+  return tx.first<OutboxRow>(
+    `SELECT * FROM outbox o
+     WHERE o.status = 'pending'
+       AND (o.next_attempt_at IS NULL OR o.next_attempt_at <= ?)
+       AND NOT EXISTS (
+         SELECT 1 FROM outbox p
+         WHERE p.aggregate_id = o.aggregate_id AND p.status = 'parked' AND p.seq < o.seq)
+     ORDER BY o.seq LIMIT 1`,
+    [nowIso],
+  );
+}
+
+export async function opsForAggregate(tx: Tx, aggregateId: string): Promise<OutboxRow[]> {
+  // Parked ops included: their optimistic effect must survive a rebase (they're still the user's intent
+  // until explicitly discarded) — the tasks app silently reverted them on every pull.
+  return tx.all<OutboxRow>(
+    "SELECT * FROM outbox WHERE aggregate_id = ? AND status IN ('pending', 'parked') ORDER BY seq",
+    [aggregateId],
+  );
+}
+
+export async function deleteOp(tx: Tx, seq: number): Promise<void> {
+  await tx.run('DELETE FROM outbox WHERE seq = ?', [seq]);
+}
+
+export async function markFailure(tx: Tx, seq: number, park: boolean, nextAttemptAt: string | null, error: string): Promise<void> {
+  await tx.run(
+    'UPDATE outbox SET status = ?, attempts = attempts + 1, next_attempt_at = ?, last_error = ? WHERE seq = ?',
+    [park ? 'parked' : 'pending', nextAttemptAt, error, seq],
+  );
+}
+
+export async function requeueParked(tx: Tx, seq: number): Promise<void> {
+  await tx.run("UPDATE outbox SET status = 'pending', attempts = 0, next_attempt_at = NULL, last_error = NULL WHERE seq = ?", [seq]);
+}
+
+export async function listParked(tx: Tx): Promise<OutboxRow[]> {
+  return tx.all<OutboxRow>("SELECT * FROM outbox WHERE status = 'parked' ORDER BY seq");
+}
+
+export async function outboxCounts(tx: Tx): Promise<{ pending: number; parked: number }> {
+  const rows = await tx.all<{ status: string; n: number }>('SELECT status, COUNT(*) AS n FROM outbox GROUP BY status');
+  return {
+    pending: rows.find((r) => r.status === 'pending')?.n ?? 0,
+    parked: rows.find((r) => r.status === 'parked')?.n ?? 0,
+  };
+}
+
+export async function pendingCreateAggregates(tx: Tx): Promise<Set<string>> {
+  const rows = await tx.all<{ aggregate_id: string }>(
+    "SELECT DISTINCT aggregate_id FROM outbox WHERE kind IN ('item.create', 'contact.create')");
+  return new Set(rows.map((r) => r.aggregate_id));
+}
+
+// ---- sync state + meta ----
+
+export async function getCursor(tx: Tx, scope: 'cal' | 'contact'): Promise<string | null> {
+  const row = await tx.first<{ cursor: string | null }>('SELECT cursor FROM sync_state WHERE scope = ?', [scope]);
+  return row?.cursor ?? null;
+}
+
+export async function setCursor(tx: Tx, scope: 'cal' | 'contact', cursor: string, full: boolean, nowIso: string): Promise<void> {
+  await tx.run(
+    `INSERT INTO sync_state (scope, cursor, last_full_sync_at, last_delta_at) VALUES (?, ?, ?, ?)
+     ON CONFLICT(scope) DO UPDATE SET cursor=excluded.cursor,
+       last_full_sync_at=COALESCE(excluded.last_full_sync_at, sync_state.last_full_sync_at),
+       last_delta_at=excluded.last_delta_at`,
+    [scope, cursor, full ? nowIso : null, nowIso],
+  );
+}
+
+export async function getMeta(tx: Tx, key: string): Promise<string | null> {
+  const row = await tx.first<{ value: string }>('SELECT value FROM mirror_meta WHERE key = ?', [key]);
+  return row?.value ?? null;
+}
+
+export async function setMeta(tx: Tx, key: string, value: string): Promise<void> {
+  await tx.run('INSERT OR REPLACE INTO mirror_meta (key, value) VALUES (?, ?)', [key, value]);
+}
+
+export async function listContainerDocs<T>(tx: Tx, table: 'calendars' | 'address_books' | 'contact_groups'): Promise<T[]> {
+  return (await tx.all<{ doc: string }>(`SELECT doc FROM ${table}`)).map((r) => JSON.parse(r.doc) as T);
+}
+
+export type { SqlValue };

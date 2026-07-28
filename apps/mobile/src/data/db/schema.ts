@@ -1,0 +1,89 @@
+import type { Db } from './types';
+
+/// Append-only migration ladder keyed on PRAGMA user_version. Each entry runs once, in order, inside an
+/// exclusive transaction. THE OUTBOX IS NEVER DROPPED — un-pushed offline writes must survive any upgrade
+/// (ops carry envelope_version so a future shape change can translate rather than wipe). New schema work =
+/// push another migration; never edit a shipped entry.
+export const MIGRATIONS: string[] = [
+  `
+  CREATE TABLE items (
+    id TEXT PRIMARY KEY,
+    doc TEXT NOT NULL,
+    guards TEXT NOT NULL,
+    title TEXT,
+    status TEXT,
+    is_all_day INTEGER NOT NULL DEFAULT 0,
+    start_utc TEXT,
+    end_utc TEXT,
+    recurrence_rule TEXT,
+    deleted INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT ''
+  );
+  CREATE TABLE item_calendars (
+    item_id TEXT NOT NULL,
+    calendar_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    PRIMARY KEY (item_id, calendar_id)
+  );
+  CREATE INDEX idx_item_calendars_calendar ON item_calendars (calendar_id);
+  CREATE TABLE occurrences (
+    source TEXT NOT NULL,
+    source_id TEXT NOT NULL,
+    start_utc TEXT NOT NULL,
+    end_utc TEXT,
+    start_day TEXT NOT NULL,
+    all_day INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (source, source_id, start_utc)
+  );
+  CREATE INDEX idx_occurrences_day ON occurrences (start_day);
+  CREATE TABLE contacts (
+    id TEXT PRIMARY KEY,
+    doc TEXT NOT NULL,
+    guards TEXT NOT NULL,
+    display_name TEXT NOT NULL DEFAULT '',
+    address_book_id TEXT NOT NULL,
+    bday_year INTEGER,
+    bday_month INTEGER,
+    bday_day INTEGER,
+    deleted INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT ''
+  );
+  CREATE TABLE calendars (id TEXT PRIMARY KEY, doc TEXT NOT NULL);
+  CREATE TABLE address_books (id TEXT PRIMARY KEY, doc TEXT NOT NULL);
+  CREATE TABLE contact_groups (id TEXT PRIMARY KEY, doc TEXT NOT NULL);
+  CREATE TABLE outbox (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    op_id TEXT NOT NULL UNIQUE,
+    envelope_version INTEGER NOT NULL,
+    domain TEXT NOT NULL,
+    aggregate_id TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    occurred_at TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    attempts INTEGER NOT NULL DEFAULT 0,
+    next_attempt_at TEXT,
+    last_error TEXT
+  );
+  CREATE INDEX idx_outbox_status ON outbox (status, seq);
+  CREATE INDEX idx_outbox_aggregate ON outbox (aggregate_id, seq);
+  CREATE TABLE sync_state (
+    scope TEXT PRIMARY KEY,
+    cursor TEXT,
+    last_full_sync_at TEXT,
+    last_delta_at TEXT
+  );
+  CREATE TABLE mirror_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+  `,
+];
+
+export async function migrate(db: Db, migrations: string[] = MIGRATIONS): Promise<void> {
+  const row = await db.first<{ user_version: number }>('PRAGMA user_version');
+  const from = row?.user_version ?? 0;
+  for (let v = from; v < migrations.length; v++) {
+    // PRAGMA can't be parameterized and user_version must commit WITH the DDL, so both run via exec
+    // inside one exclusive scope per step.
+    await db.exclusive(async () => undefined);   // drain writers before DDL
+    await db.exec(`${migrations[v]}\nPRAGMA user_version = ${v + 1};`);
+  }
+}

@@ -13,7 +13,7 @@ criteria are verifiable commands/observations.
 | M1 | cal-api sync surface | LupiraCalApi | done |
 | M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | done |
 | M3 | App skeleton + auth | LupiraCalWeb | in-progress (code done; device verification pending) |
-| M4 | Sync engine | LupiraCalWeb | pending |
+| M4 | Sync engine | LupiraCalWeb | in-progress (code done; device verification pending) |
 | M5 | Calendar + contacts UI | LupiraCalWeb | pending |
 | M6 | Bridge spike (throwaway) | LupiraCalWeb | pending |
 | M7 | Bridges full two-way | LupiraCalWeb | pending |
@@ -111,26 +111,25 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 ### Manual steps
 - [ ] Build + install the dev client: `cd apps/mobile && npx expo run:android` with a connected phone (local Android SDK), or `eas build -p android --profile development` if you prefer cloud builds — then verify the two device criteria and tick them here
 
-## M4 — Sync engine   [status: pending]
-
-Recurrence expander port can start right after M1, in parallel with M3.
+## M4 — Sync engine   [status: in-progress — device verification pending]
 
 ### Scope
-- [ ] Mirror schema (items + item_calendars + occurrences + contacts + containers + outbox + sync_state); migration ladder on user_version; outbox never dropped (envelope_version, drain-before-migrate attempted)
-- [ ] Exclusive transactions threaded through all db helpers
-- [ ] Outbox: per-row backoff (next_attempt_at), park-after-N, causal-chain hold (parked op blocks later ops on same aggregate), 429 = retry
-- [ ] Client LWW twin passing the M1/M2 vector suites; per-section guard seeding from sectionGuards; rebase includes parked ops
-- [ ] Paged delta pull that reads the cursor; tombstone apply + scope-matched prune; containers snapshot diff
-- [ ] TS recurrence expander + parity fixtures; occurrences materialization (−12/+24-month rolling horizon); birthday synthesis
-- [ ] monthKey-scoped invalidation (no global revision counter)
-- [ ] expo-background-task registration; foreground triggers (active/resume, debounced post-enqueue, pull-to-refresh)
-- [ ] node:sqlite in-memory harness from day one
+- [x] Mirror schema (items + item_calendars + occurrences + contacts + containers + outbox + sync_state + mirror_meta); append-only migration ladder on user_version; outbox never dropped (ops carry envelope_version)
+- [x] Exclusive transactions: every mirror helper takes a Tx; writes only inside Db.exclusive (expo `withExclusiveTransactionAsync` / node BEGIN IMMEDIATE + mutex)
+- [x] Outbox: per-row backoff (next_attempt_at, exp + jitter, 30 min cap), park after 8 attempts, causal hold (SQL NOT EXISTS earlier parked sibling), 429 = retry, 401 = pause untouched
+- [x] Client LWW twin: `@lupira/cal-domain/lww` passes the emitted vector suite (sub-ms ISO precision preserved — Date.parse would mis-tie .NET's 7-digit timestamps); reducers seed per-section guards from sync `sectionGuards`; rebase folds pending AND parked ops over the server base
+- [x] Paged delta pull that reads the cursor (persisted per page); tombstone apply; full-sync prune keeps pending local creates; containers snapshot replace
+- [x] TS recurrence expander in packages/domain — 17/17 parity fixtures (incl. Ical.Net's non-matching-DTSTART behavior); occurrence materialization over a −12/+24-month rolling horizon with drift re-materialization; birthday synthesis (year-less + Feb 29)
+- [x] monthKey-scoped react-query invalidation (no global revision counter); deterministic ids (MD5 + .NET Guid layout, pinned against real .NET output) so offline creates need no temp-id reconciliation
+- [x] expo-background-task registration (15-min floor, best-effort) + foreground triggers (app-active, connectivity, sign-in, post-enqueue)
+- [x] node:sqlite in-memory harness from day one — the entire engine (transactions included) runs under vitest
 
 ### Exit criteria
-- [ ] Engine fully covered under vitest: replay classification, backoff/park, causal hold, migration ladder incl. outbox survival, LWW vectors, expander parity, pull-with-pending-section-edit regression, deletion reconciliation
-- [ ] Device: airplane-mode edit → kill → relaunch → reconnect → server converges
-- [ ] Two-device concurrent edits converge to the vector-predicted winner
-- [ ] Full + delta sync loops green against the dev stack; background task observed firing
+- [x] Engine covered under vitest (62 mobile + 123 domain tests): replay classification, backoff/park, causal hold, migration ladder incl. outbox survival, LWW vectors, expander parity, pull-with-pending-section-edit regression, deletion reconciliation, discard-rolls-back contract
+- [x] Full + delta sync loops green against the LIVE dev stack (throwaway harness test, run then removed): offline create → drain through BFF → delta returns real section guards; cross-writer web PUT arrives on next delta; delete round-trips as tombstone; birthday synth from a created contact
+- [ ] Device: airplane-mode edit → kill → relaunch → reconnect → server converges (MANUAL — needs the M3 dev-client APK)
+- [ ] Two-device concurrent edits converge to the vector-predicted winner (MANUAL)
+- [ ] Background task observed firing on device (MANUAL)
 
 ## M5 — Calendar + contacts UI   [status: pending]
 

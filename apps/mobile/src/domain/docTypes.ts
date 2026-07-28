@@ -1,0 +1,83 @@
+/// Structural mirrors of the wire DTOs the mirror stores (domain stays generated-code-free; the shapes are
+/// asserted where data-layer code hands DTOs in). Unknown fields ride along untouched — the mirror stores the
+/// full server JSON and only reads/writes the fields the reducers know.
+
+export type SectionGuard = { ts: string; cmd: string };
+
+export type ItemGuards = {
+  core: SectionGuard;
+  metadata: SectionGuard;
+  payload: SectionGuard;
+  filing: Record<string, SectionGuard>;
+};
+
+export type ContactGuards = {
+  core: SectionGuard;
+  addresses: SectionGuard;
+  profiles: SectionGuard;
+  avatar: SectionGuard;
+  metadata: SectionGuard;
+  deceased: SectionGuard;
+};
+
+export type CalendarMembership = { calendarId: string; status: string };
+
+export type ItemDoc = {
+  id: string;
+  title?: string | null;
+  description?: string | null;
+  status?: string | null;
+  isAllDay: boolean;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  startTimezone?: string | null;
+  endTimezone?: string | null;
+  recurrenceRule?: string | null;
+  category?: string | null;
+  tags?: string[] | null;
+  parentItemId?: string | null;
+  metadata?: Record<string, unknown> | null;
+  calendars: CalendarMembership[];
+  updatedAt?: string;
+  [key: string]: unknown;
+};
+
+export type ReachChannel = { medium: string; value: string; type?: string | null; preferred: boolean };
+export type SocialProfile = { service: string; handle: string; url?: string | null; preferred: boolean };
+export type PartialDateDto = { year: number | string | null; month: number | string; day: number | string };
+
+export type ContactDoc = {
+  id: string;
+  addressBookId: string;
+  givenName?: string | null;
+  middleName?: string | null;
+  familyName?: string | null;
+  nickname?: string | null;
+  displayName?: string;
+  displayNameFormat?: string | null;
+  kind?: string | null;
+  channels?: ReachChannel[] | null;
+  birthday?: PartialDateDto | null;
+  tags?: string[] | null;
+  notes?: string | null;
+  pronouns?: string | null;
+  profiles?: SocialProfile[] | null;
+  metadata?: Record<string, unknown> | null;
+  updatedAt?: string;
+  [key: string]: unknown;
+};
+
+export const ZERO_GUARD: SectionGuard = { ts: '0001-01-01T00:00:00+00:00', cmd: '00000000-0000-0000-0000-000000000000' };
+
+export function emptyItemGuards(): ItemGuards {
+  return { core: ZERO_GUARD, metadata: ZERO_GUARD, payload: ZERO_GUARD, filing: {} };
+}
+
+export function emptyContactGuards(): ContactGuards {
+  return {
+    core: ZERO_GUARD, addresses: ZERO_GUARD, profiles: ZERO_GUARD,
+    avatar: ZERO_GUARD, metadata: ZERO_GUARD, deceased: ZERO_GUARD,
+  };
+}

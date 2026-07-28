@@ -1,0 +1,163 @@
+import NetInfo from '@react-native-community/netinfo';
+import { AppState } from 'react-native';
+import { authPort } from '../data/api/authProvider';
+import { getDb } from '../data/db/expoDb';
+import type { Db } from '../data/db/types';
+import { migrate } from '../data/db/schema';
+import * as mirror from '../data/mirror';
+import { ApiError, isNetworkError } from '../domain/apiError';
+import type { Horizon } from '../domain/materialize';
+import { birthdayRows, currentHorizon, horizonDrifted, monthKeyOf, occurrenceRowsForItem } from '../domain/materialize';
+import { logDebug } from '../debug/log';
+import { drain } from './outbox';
+import type { PullDeps } from './pull';
+import { pullCal, pullContacts, pullContainers, realPullDeps } from './pull';
+import { invalidateContacts, invalidateContainers, invalidateMonthKeys } from './reactivity';
+import { useSyncStatus } from './syncStatus';
+
+/// Orchestrator: push first (our writes carry LWW stamps, so order is about promptness, not correctness),
+/// then containers, then both delta pulls, then horizon upkeep. Coalesced — concurrent triggers share a run.
+
+let syncing: Promise<void> | null = null;
+
+export function runSync(dbOverride?: Db, deps: PullDeps = realPullDeps): Promise<void> {
+  syncing ??= run(dbOverride, deps).finally(() => {
+    syncing = null;
+  });
+  return syncing;
+}
+
+async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
+  const status = useSyncStatus.getState();
+  status.set({ syncing: true });
+  try {
+    const db = dbOverride ?? (await getDb());
+    await migrate(db);
+    await authPort().refresh();
+
+    await drain(db);
+
+    const horizon = currentHorizon(deps.now());
+    await pullContainers(db, deps);
+    invalidateContainers();
+    const calMonths = await pullCal(db, horizon, deps);
+    const contactMonths = await pullContacts(db, horizon, deps);
+    invalidateMonthKeys([...calMonths, ...contactMonths]);
+    invalidateContacts();
+
+    await maintainHorizon(db, horizon);
+
+    status.set({ serverReachable: true, lastError: null, lastSyncAt: deps.now().toISOString() });
+    logDebug('sync', 'sync complete');
+  } catch (e) {
+    logDebug('sync', `sync failed: ${String(e)}`);
+    useSyncStatus.getState().set({
+      serverReachable: !(e instanceof ApiError) || !isNetworkError(e),
+      lastError: String(e),
+    });
+  } finally {
+    useSyncStatus.getState().set({ syncing: false });
+  }
+}
+
+/// Re-materializes every aggregate when the rolling window has drifted a month past the stored one, so old
+/// occurrences age out and new months appear without any server traffic.
+async function maintainHorizon(db: Db, horizon: Horizon): Promise<void> {
+  const stored = await mirror.getMeta(db, 'horizon');
+  const parsed = stored ? (JSON.parse(stored) as { start: string; end: string }) : null;
+  if (parsed && !horizonDrifted({ start: new Date(parsed.start), end: new Date(parsed.end) }, horizon)) return;
+
+  const monthKeys = new Set<string>();
+  await db.exclusive(async (tx) => {
+    for (const id of await mirror.allItemIds(tx)) {
+      const state = await mirror.loadItem(tx, id);
+      if (!state) continue;
+      const rows = occurrenceRowsForItem(state.doc, state.deleted, horizon);
+      for (const r of rows) monthKeys.add(monthKeyOf(r.startDay));
+      await mirror.saveItem(tx, state, rows);
+    }
+    for (const id of await mirror.allContactIds(tx)) {
+      const state = await mirror.loadContact(tx, id);
+      if (!state) continue;
+      const rows = birthdayRows(state.doc, state.deleted, horizon);
+      for (const r of rows) monthKeys.add(monthKeyOf(r.startDay));
+      await mirror.saveContact(tx, state, rows);
+    }
+    await mirror.setMeta(tx, 'horizon', JSON.stringify({ start: horizon.start.toISOString(), end: horizon.end.toISOString() }));
+  });
+  invalidateMonthKeys(monthKeys);
+  logDebug('sync', 'horizon re-materialized');
+}
+
+/// Discard a parked op AND restore its aggregate to server truth — the optimistic write must not keep lying
+/// in the mirror (the tasks app left it until the next incidental pull). Guards reset to zero: the next
+/// delta pull re-seeds the real ones.
+export async function discardParkedAndRestore(seq: number, dbOverride?: Db): Promise<void> {
+  const db = dbOverride ?? (await getDb());
+  const { discardParked } = await import('./outbox');
+  const target = await discardParked(db, seq);
+  if (!target) return;
+
+  const { emptyContactGuards, emptyItemGuards } = await import('../domain/docTypes');
+  const horizon = currentHorizon();
+  const monthKeys = new Set<string>();
+  if (target.domain === 'cal') {
+    const { getItem } = await import('../data/api/generated/cal/calendar-items/calendar-items');
+    let fetched: import('../domain/docTypes').ItemDoc | null = null;
+    try {
+      const r = await getItem(target.aggregateId);
+      if (r.status === 200) fetched = r.data as unknown as import('../domain/docTypes').ItemDoc;
+    } catch (e) {
+      if (!(e instanceof ApiError) || e.status !== 404) throw e;
+    }
+    await db.exclusive(async (tx) => {
+      if (!fetched) {
+        await mirror.removeItem(tx, target.aggregateId);
+        return;
+      }
+      const state = { doc: fetched, guards: emptyItemGuards(), deleted: false };
+      const rows = occurrenceRowsForItem(state.doc, false, horizon);
+      for (const r of rows) monthKeys.add(monthKeyOf(r.startDay));
+      await mirror.saveItem(tx, state, rows);
+    });
+  } else {
+    const { getContact } = await import('../data/api/generated/contact/contacts/contacts');
+    let fetched: import('../domain/docTypes').ContactDoc | null = null;
+    try {
+      const r = await getContact(target.aggregateId);
+      if (r.status === 200) fetched = r.data as unknown as import('../domain/docTypes').ContactDoc;
+    } catch (e) {
+      if (!(e instanceof ApiError) || e.status !== 404) throw e;
+    }
+    await db.exclusive(async (tx) => {
+      if (!fetched) {
+        await mirror.removeContact(tx, target.aggregateId);
+        return;
+      }
+      const state = { doc: fetched, guards: emptyContactGuards(), deleted: false };
+      const rows = birthdayRows(state.doc, false, horizon);
+      for (const r of rows) monthKeys.add(monthKeyOf(r.startDay));
+      await mirror.saveContact(tx, state, rows);
+    });
+    invalidateContacts();
+  }
+  invalidateMonthKeys(monthKeys);
+}
+
+/// Foreground triggers: app becomes active, connectivity returns, sign-in completes. (Post-enqueue drains
+/// are wired inside enqueue; the periodic background tick lives in backgroundTask.ts.)
+export function startSync(): () => void {
+  const appState = AppState.addEventListener('change', (s) => {
+    if (s === 'active') void runSync();
+  });
+  const net = NetInfo.addEventListener((state) => {
+    if (state.isConnected) void runSync();
+  });
+  const offSignIn = authPort().onSignIn(() => void runSync());
+  void runSync();
+  return () => {
+    appState.remove();
+    net();
+    offSignIn();
+  };
+}
