@@ -1,7 +1,7 @@
 import { addDays, addMonths, fmtMonthTitle, fmtTime, parseYmd, startOfWeek, ymd } from '@lupira/cal-domain/time';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { GridRow } from '../../data/mirror';
@@ -34,10 +34,16 @@ export function CalendarScreen() {
     setAnchor(new Date());
     setSelectedDay(ymd(new Date()));
   };
-  const openOccurrence = (row: GridRow) => {
+  // Stable references — MonthView/WeekView are memoized on these.
+  const openOccurrence = useCallback((row: GridRow) => {
     if (row.source === 'birthday') navigation.navigate('ContactDetail', { contactId: row.source_id });
     else navigation.navigate('ItemDetail', { itemId: row.source_id });
-  };
+  }, [navigation]);
+  const selectDay = useCallback((day: string) => {
+    setSelectedDay(day);
+    const d = parseYmd(day);
+    setAnchor((a) => (d.getMonth() !== a.getMonth() ? d : a));
+  }, []);
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
@@ -64,15 +70,7 @@ export function CalendarScreen() {
 
       {mode === 'month' ? (
         <ScrollView>
-          <MonthView
-            anchor={anchor}
-            selectedDay={selectedDay}
-            onSelectDay={(day) => {
-              setSelectedDay(day);
-              const d = parseYmd(day);
-              if (d.getMonth() !== anchor.getMonth()) setAnchor(d);
-            }}
-          />
+          <MonthView anchor={anchor} selectedDay={selectedDay} onSelectDay={selectDay} />
           <DayAgenda day={selectedDay} onPress={openOccurrence} />
         </ScrollView>
       ) : (

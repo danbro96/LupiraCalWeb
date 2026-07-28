@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.1.0';
+export const APP_VERSION = '1.0.0';   // keep in lockstep with app.json expo.version
 
 /// 'oidc' = sign in against Authentik and send a bearer; 'none' = send nothing — the Development BFF
 /// auto-authenticates via its DevAuthHandler (the LAN dev loop).

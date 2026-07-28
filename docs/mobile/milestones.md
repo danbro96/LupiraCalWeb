@@ -17,7 +17,7 @@ criteria are verifiable commands/observations.
 | M5 | Calendar + contacts UI | LupiraCalWeb | done |
 | M6 | Bridge spike (throwaway) | LupiraCalWeb | done |
 | M7 | Bridges full two-way | LupiraCalWeb | in-progress |
-| M8 | Hardening + release | LupiraCalWeb | pending |
+| M8 | Hardening + release | LupiraCalWeb | in-progress |
 
 Fixed identity: Android package `com.lupira.calendar`, scheme `lupiracalendar`
 (redirect `lupiracalendar://oauthredirect`), Authentik public client `lupira-cal-mobile`,
@@ -179,12 +179,12 @@ stock apps (overwritten by next publish), payload/participants.
 - [ ] Two-way edit matrix passes (stock apps ↔ server, both domains, the field subset above) without duplicate creation
 - [ ] Stock-app edit round-trips to the web UI and a web edit lands in the stock app without manual sync taps
 
-## M8 — Hardening + release   [status: pending]
+## M8 — Hardening + release   [status: in-progress]
 
 ### Scope
-- [ ] Self-distributed signed APK; versioning + update path documented
+- [x] Distribution switched from the planned self-distributed APK to the LupiraTasksMobile pipeline: EAS build (managed signing, project danbro96/lupira-calendar, appVersionSource remote + autoIncrement) → Play Console internal testing. v1.0.0 production AAB building; flow documented in docs/mobile/release.md
 - [ ] Upgrade drill: previous build with queued outbox → upgrade → drain verified
-- [ ] Month-grid perf pass on target device; docs refresh (README, docs/mobile)
+- [x] Grid perf pass (memoized Month/Week views, stable callbacks — release builds also shed dev-mode overhead); http presets hidden in release builds (cleartext blocked); docs refreshed (README, docs/mobile/release.md)
 
 ### Exit criteria
 - [ ] Upgrade-in-place with pending offline edits loses nothing

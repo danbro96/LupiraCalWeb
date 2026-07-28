@@ -1,5 +1,6 @@
 import { clampToDay, layoutColumns } from '@lupira/cal-domain/occurrences';
 import { daysFrom, isToday, ymd } from '@lupira/cal-domain/time';
+import { memo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { GridRow } from '../../data/mirror';
 import { useDaysOccurrences } from '../../state/queries';
@@ -10,7 +11,7 @@ const DEFAULT_END_MIN = 30;   // open-ended timed occurrences render as a half-h
 
 /// Week grid: all-day chips on top, timed lanes below. Placement is the domain's clampToDay + layoutColumns
 /// (the same math the web grid uses); data is the mirror's occurrence rows for the 7 day buckets.
-export function WeekView({ weekStart, onPressOccurrence }: {
+export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence }: {
   weekStart: Date;
   onPressOccurrence: (row: GridRow) => void;
 }) {
@@ -108,7 +109,7 @@ export function WeekView({ weekStart, onPressOccurrence }: {
       </ScrollView>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   root: { flex: 1 },

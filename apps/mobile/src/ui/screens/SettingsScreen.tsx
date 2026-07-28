@@ -20,7 +20,8 @@ export function SettingsScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.section}>Backend</Text>
-      {API_PRESETS.map((p) => (
+      {/* http presets need cleartext networking — dev-client-only (release builds block cleartext). */}
+      {API_PRESETS.filter((p) => __DEV__ || p.url.startsWith('https')).map((p) => (
         <Pressable key={p.key} style={styles.row} onPress={() => applyBackend(p.url, p.authMode)}>
           <Text style={styles.rowLabel}>
             {activeKey === p.key ? '● ' : '○ '}{p.label}

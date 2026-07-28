@@ -1,4 +1,5 @@
 import { isToday, monthMatrix, ymd } from '@lupira/cal-domain/time';
+import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { GridRow } from '../../data/mirror';
 import { useDaysOccurrences } from '../../state/queries';
@@ -6,7 +7,7 @@ import { BIRTHDAY_COLOR, useCalendarColors } from '../components/palette';
 
 /// Month grid straight off the mirror: monthMatrix (domain) for the day layout, one occurrence query per
 /// touched month bucket, up to three title bars per cell. Day selection drives the agenda in CalendarScreen.
-export function MonthView({ anchor, selectedDay, onSelectDay }: {
+export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelectDay }: {
   anchor: Date;
   selectedDay: string;
   onSelectDay: (day: string) => void;
@@ -62,7 +63,7 @@ export function MonthView({ anchor, selectedDay, onSelectDay }: {
       ))}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   grid: { paddingHorizontal: 2 },
