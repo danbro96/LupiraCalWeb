@@ -56,7 +56,7 @@ export function LoginScreen({ navigation }: NativeStackScreenProps<RootStackPara
         </Pressable>
       )}
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Pressable onPress={() => navigation.navigate('BackendSettings')}>
+      <Pressable onPress={() => navigation.navigate('Developer')}>
         <Text style={styles.link}>Backend settings</Text>
       </Pressable>
     </View>

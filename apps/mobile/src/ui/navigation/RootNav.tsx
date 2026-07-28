@@ -2,12 +2,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text } from 'react-native';
 import { useAuth } from '../../state/auth-store';
-import { BridgeSpikeScreen } from '../screens/BridgeSpikeScreen';
+import { BridgeDiagnosticsScreen } from '../screens/BridgeDiagnosticsScreen';
 import { CalendarScreen } from '../screens/CalendarScreen';
 import { ContactDetailScreen } from '../screens/ContactDetailScreen';
 import { ContactEditScreen } from '../screens/ContactEditScreen';
 import { ContactsScreen } from '../screens/ContactsScreen';
 import { DebugLogScreen } from '../screens/DebugLogScreen';
+import { DeveloperScreen } from '../screens/DeveloperScreen';
 import { ItemDetailScreen } from '../screens/ItemDetailScreen';
 import { ItemEditScreen } from '../screens/ItemEditScreen';
 import { LoginScreen } from '../screens/LoginScreen';
@@ -41,10 +42,7 @@ export function RootNav() {
       {authed ? (
         <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
       ) : (
-        <>
-          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="BackendSettings" component={SettingsScreen} options={{ title: 'Backend' }} />
-        </>
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       )}
       <Stack.Screen name="SyncIssues" component={SyncIssuesScreen} options={{ title: 'Sync issues' }} />
       <Stack.Screen name="DebugLog" component={DebugLogScreen} options={{ title: 'Debug log' }} />
@@ -52,7 +50,8 @@ export function RootNav() {
       <Stack.Screen name="ItemEdit" component={ItemEditScreen} options={{ title: 'Edit event' }} />
       <Stack.Screen name="ContactDetail" component={ContactDetailScreen} options={{ title: 'Contact' }} />
       <Stack.Screen name="ContactEdit" component={ContactEditScreen} options={{ title: 'Edit contact' }} />
-      <Stack.Screen name="BridgeSpike" component={BridgeSpikeScreen} options={{ title: 'Bridge spike' }} />
+      <Stack.Screen name="Developer" component={DeveloperScreen} options={{ title: 'Developer' }} />
+      <Stack.Screen name="BridgeDiagnostics" component={BridgeDiagnosticsScreen} options={{ title: 'Bridge diagnostics' }} />
     </Stack.Navigator>
   );
 }

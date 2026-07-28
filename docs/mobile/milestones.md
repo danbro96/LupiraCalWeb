@@ -185,6 +185,7 @@ stock apps (overwritten by next publish), payload/participants.
 - [x] Distribution switched from the planned self-distributed APK to the LupiraTasksMobile pipeline: EAS build (managed signing, project danbro96/lupira-calendar, appVersionSource remote + autoIncrement) → Play Console internal testing. v1.0.0 production AAB building; flow documented in docs/mobile/release.md
 - [ ] Upgrade drill: previous build with queued outbox → upgrade → drain verified
 - [x] Grid perf pass (memoized Month/Week views, stable callbacks — release builds also shed dev-mode overhead); http presets hidden in release builds (cleartext blocked); docs refreshed (README, docs/mobile/release.md)
+- [x] Settings UX hardening: user-facing Settings = session / Android-integration toggle / sync surface / version; bridge setup is automatic (one-time post-sign-in prompt → permissions + account + first publish; toggle-off removes the account, purging published data; self-repair on app start); backend switching, debug log, and the bridge manual controls moved behind a Developer row (BridgeSpike → BridgeDiagnostics); preference lives in mirror_meta so the sync engine gates bridge work without crossing layer boundaries
 
 ### Exit criteria
 - [ ] Upgrade-in-place with pending offline edits loses nothing

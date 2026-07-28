@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { PermissionsAndroid, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, PermissionsAndroid, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { BridgeState, ContactsSampleRow } from '../../../modules/lupira-bridge/src';
 import { LupiraBridge } from '../../../modules/lupira-bridge/src';
 import { getDb } from '../../data/db/expoDb';
@@ -7,9 +7,9 @@ import { drainBridgeInbox } from '../../sync/bridge';
 import { runSync } from '../../sync/sync';
 import { Button, formStyles } from '../components/form';
 
-/// Bridge diagnostics (born as the M6 spike, now the M7 two-way surface): manual triggers for each half
-/// of the loop — capture/publish (Kotlin), inbox drain (JS→outbox), and the OS scheduler.
-export function BridgeSpikeScreen() {
+/// Manual halves of the automated bridge flows, for diagnosis and repair: capture/publish (Kotlin),
+/// inbox drain (JS→outbox), the OS scheduler, and account lifecycle. Reached via Settings → Developer.
+export function BridgeDiagnosticsScreen() {
   const [state, setState] = useState<BridgeState | null>(null);
   const [inboxCount, setInboxCount] = useState<number | null>(null);
   const [log, setLog] = useState<string[]>([]);
@@ -77,7 +77,16 @@ export function BridgeSpikeScreen() {
         />
         <Button title="Request OS sync" onPress={run('requestSync', () => LupiraBridge.requestSync())} />
         <Button title="Read contacts sample" onPress={() => void readContacts()} />
-        <Button title="Remove account" kind="danger" onPress={run('removeAccount', () => LupiraBridge.removeAccount())} />
+        <Button
+          title="Remove account"
+          kind="danger"
+          onPress={() =>
+            Alert.alert('Remove Lupira account', 'Also removes the published calendar and contacts from this phone. The app and server keep everything.', [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Remove', style: 'destructive', onPress: () => void run('removeAccount', () => LupiraBridge.removeAccount())() },
+            ])
+          }
+        />
       </View>
 
       {contacts && (

@@ -8,6 +8,7 @@ import type { GridRow } from '../../data/mirror';
 import { useDaysOccurrences } from '../../state/queries';
 import { MonthView } from '../calendar/MonthView';
 import { WeekView } from '../calendar/WeekView';
+import { BridgePrompt } from '../components/BridgePrompt';
 import { ACCENT, BIRTHDAY_COLOR, useCalendarColors } from '../components/palette';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
@@ -48,6 +49,7 @@ export function CalendarScreen() {
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
       <SyncBanner />
+      <BridgePrompt />
       <View style={styles.toolbar}>
         <Pressable onPress={() => step(-1)} hitSlop={8}><Text style={styles.nav}>‹</Text></Pressable>
         <Pressable onPress={goToday} style={styles.titleWrap}>

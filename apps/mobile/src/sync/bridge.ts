@@ -16,11 +16,12 @@ import { enqueue } from './outbox';
 /// path, re-point provider rows, ack. Idempotent across crashes: re-drained creates share the
 /// deterministic sourceKey and revises converge via LWW.
 export async function drainBridgeInbox(db: Db): Promise<number> {
+  if (!(await bridgeEnabled(db))) return 0;
   let rows: BridgeInboxRow[];
   try {
     rows = await LupiraBridge.drainInbox();
   } catch {
-    return 0;   // module unavailable (e.g. account features not set up) — never fatal for a sync run
+    return 0;   // module unavailable — never fatal for a sync run
   }
   if (rows.length === 0) return 0;
 
@@ -72,13 +73,19 @@ export async function drainBridgeInbox(db: Db): Promise<number> {
 }
 
 /// Mirror → provider refresh at the end of an engine sync (fresh pull state lands in the stock apps
-/// without waiting for the OS scheduler). Silently a no-op when the bridge isn't set up.
-export async function bridgePublish(): Promise<void> {
+/// without waiting for the OS scheduler). No-op unless the user enabled the integration.
+export async function bridgePublish(db: Db): Promise<void> {
+  if (!(await bridgeEnabled(db))) return;
   try {
     await LupiraBridge.bridgeSyncNow();
-  } catch {
-    // No account / permissions / module — the bridge is opt-in.
+  } catch (e) {
+    logDebug('bridge', `publish failed: ${String(e)}`);
   }
+}
+
+/// The user preference lives in mirror_meta so this layer can read it (boundaries: sync ↛ state).
+async function bridgeEnabled(db: Db): Promise<boolean> {
+  return (await mirror.getMeta(db, 'bridge.enabled')) === '1';
 }
 
 async function translateContactInboxRow(db: Db, row: BridgeInboxRow): Promise<ClientOp[]> {

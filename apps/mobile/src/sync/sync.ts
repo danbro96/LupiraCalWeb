@@ -53,7 +53,7 @@ async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
 
     // Provider round-trip: push the freshly pulled mirror into the stock apps, and pick up any
     // stock-app edits the capture just found (their push rides enqueue's auto-drain).
-    await bridgePublish();
+    await bridgePublish(db);
     await drainBridgeInbox(db);
 
     status.set({ serverReachable: true, lastError: null, lastSyncAt: deps.now().toISOString() });

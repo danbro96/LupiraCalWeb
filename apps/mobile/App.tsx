@@ -4,6 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useAuth } from './src/state/auth-store';
+import { useBridge } from './src/state/bridge-store';
 import { registerBackgroundSync } from './src/sync/backgroundTask';
 import { queryClient } from './src/sync/reactivity';
 import { startSync } from './src/sync/sync';
@@ -21,6 +22,7 @@ export default function App() {
   useEffect(() => {
     if (!loaded || !authed) return;
     void registerBackgroundSync();
+    void useBridge.getState().init();   // hydrate the integration flag + self-repair account/permissions
     return startSync();
   }, [loaded, authed]);
 
