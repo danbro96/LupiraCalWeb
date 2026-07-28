@@ -11,14 +11,21 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 
-/// Spike sync adapter: proves the OS binds and schedules us for the calendar authority. It only stamps
-/// a timestamp the app surfaces (getBridgeState) and logs — the actual publish is JS-driven for now.
-/// M7 moves the real mirror→provider work in here so OS-scheduled sync runs without the app process.
+/// The calendar-authority sync body: capture the user's stock-app edits into the bridge inbox FIRST
+/// (so publish can't clobber them), then publish the mirror. Runs without the JS engine — the inbox is
+/// drained by the app (foreground triggers + background task) into the normal outbox/LWW path.
 class CalendarSyncAdapter(context: Context) : AbstractThreadedSyncAdapter(context, true) {
   override fun onPerformSync(
     account: Account, extras: Bundle, authority: String, provider: ContentProviderClient, syncResult: SyncResult,
   ) {
-    Log.i(Bridge.TAG, "onPerformSync fired: account=${account.name} authority=$authority extras=$extras")
+    Log.i(Bridge.TAG, "onPerformSync: account=${account.name} authority=$authority")
+    try {
+      CalendarCapturer.capture(context)
+      CalendarPublisher.publish(context)
+    } catch (e: Exception) {
+      Log.e(Bridge.TAG, "onPerformSync failed", e)
+      syncResult.stats.numIoExceptions++
+    }
     Bridge.prefs(context).edit().putLong(Bridge.PREF_LAST_SYNC, System.currentTimeMillis()).apply()
   }
 }

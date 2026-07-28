@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { PermissionsAndroid, ScrollView, StyleSheet, Text, View } from 'react-native';
-import type { BridgeState, ContactsSampleRow, PublishEvent } from '../../../modules/lupira-bridge/src';
+import type { BridgeState, ContactsSampleRow } from '../../../modules/lupira-bridge/src';
 import { LupiraBridge } from '../../../modules/lupira-bridge/src';
 import { getDb } from '../../data/db/expoDb';
-import { gridRowsBetween } from '../../data/mirror';
+import { drainBridgeInbox } from '../../sync/bridge';
+import { runSync } from '../../sync/sync';
 import { Button, formStyles } from '../components/form';
 
-/// M6 spike surface (throwaway): pokes the native bridge module and shows raw results. Feeds the
-/// go/no-go learnings doc — not a shipping feature.
+/// Bridge diagnostics (born as the M6 spike, now the M7 two-way surface): manual triggers for each half
+/// of the loop — capture/publish (Kotlin), inbox drain (JS→outbox), and the OS scheduler.
 export function BridgeSpikeScreen() {
   const [state, setState] = useState<BridgeState | null>(null);
+  const [inboxCount, setInboxCount] = useState<number | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [contacts, setContacts] = useState<{ total: number; rows: ContactsSampleRow[] } | null>(null);
 
@@ -17,6 +19,7 @@ export function BridgeSpikeScreen() {
   const refresh = useCallback(async () => {
     try {
       setState(await LupiraBridge.getBridgeState());
+      setInboxCount((await LupiraBridge.drainInbox()).length);
     } catch (e) {
       append(String(e));
     }
@@ -36,33 +39,12 @@ export function BridgeSpikeScreen() {
     await refresh();
   };
 
-  const requestPermissions = run('permissions', async () => {
-    const res = await PermissionsAndroid.requestMultiple([
+  const requestPermissions = run('permissions', () =>
+    PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.READ_CALENDAR,
       PermissionsAndroid.PERMISSIONS.WRITE_CALENDAR,
       PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-    ]);
-    return res;
-  });
-
-  const publishWindow = run('publish', async () => {
-    const db = await getDb();
-    const now = new Date();
-    const from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const to = new Date(now.getFullYear(), now.getMonth() + 2, 0);
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const key = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-    const rows = await gridRowsBetween(db, key(from), key(to));
-    const events: PublishEvent[] = rows.map((r) => ({
-      key: `${r.source}-${r.source_id}-${r.start_utc}`,
-      title: r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)'),
-      startMs: Date.parse(r.start_utc),
-      endMs: r.end_utc ? Date.parse(r.end_utc) : null,
-      allDay: r.all_day === 1,
-    }));
-    const inserted = await LupiraBridge.publishEvents(events);
-    return `${inserted}/${events.length} events into the stock calendar`;
-  });
+    ]));
 
   const readContacts = run('contacts', async () => {
     const sample = await LupiraBridge.readContactsSample(10);
@@ -75,14 +57,23 @@ export function BridgeSpikeScreen() {
       <Text style={formStyles.section}>State</Text>
       <Text style={styles.mono}>
         account: {state ? String(state.accountPresent) : '…'}   calendarId: {state?.calendarId ?? '—'}{'\n'}
-        last OS sync: {state?.lastSyncAt ? new Date(state.lastSyncAt).toLocaleString() : 'never'}
+        last OS sync: {state?.lastSyncAt ? new Date(state.lastSyncAt).toLocaleString() : 'never'}{'\n'}
+        inbox rows: {inboxCount ?? '…'}
       </Text>
 
       <Text style={formStyles.section}>Actions</Text>
       <View style={styles.buttons}>
         <Button title="Request permissions" onPress={() => void requestPermissions()} />
         <Button title="Ensure account" onPress={run('ensureAccount', () => LupiraBridge.ensureAccount())} />
-        <Button title="Publish ±1 month to stock calendar" onPress={() => void publishWindow()} />
+        <Button title="Bridge sync now (capture + publish)" onPress={run('bridgeSyncNow', () => LupiraBridge.bridgeSyncNow())} />
+        <Button
+          title="Drain inbox → outbox + full sync"
+          onPress={run('drain', async () => {
+            const ops = await drainBridgeInbox(await getDb());
+            void runSync();
+            return `${ops} ops enqueued`;
+          })}
+        />
         <Button title="Request OS sync" onPress={run('requestSync', () => LupiraBridge.requestSync())} />
         <Button title="Read contacts sample" onPress={() => void readContacts()} />
         <Button title="Remove account" kind="danger" onPress={run('removeAccount', () => LupiraBridge.removeAccount())} />

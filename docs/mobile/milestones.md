@@ -16,7 +16,7 @@ criteria are verifiable commands/observations.
 | M4 | Sync engine | LupiraCalWeb | done |
 | M5 | Calendar + contacts UI | LupiraCalWeb | done |
 | M6 | Bridge spike (throwaway) | LupiraCalWeb | done |
-| M7 | Bridges full two-way | LupiraCalWeb | pending |
+| M7 | Bridges full two-way | LupiraCalWeb | in-progress |
 | M8 | Hardening + release | LupiraCalWeb | pending |
 
 Fixed identity: Android package `com.lupira.calendar`, scheme `lupiracalendar`
@@ -159,14 +159,25 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 - [x] Lupira account visible in Android Settings; 49/49 published events visible + correctly rendered in Samsung Calendar; onPerformSync observed; account removal purges the calendar (verified 2026-07-28, S23)
 - [x] Learnings doc committed; M7 scope adjusted from it (6 items in bridge-spike.md)
 
-## M7 — Bridges full two-way   [status: pending]
+## M7 — Bridges full two-way   [status: in-progress]
+
+Staged per the spike findings (docs/mobile/bridge-spike.md). Kotlin = provider I/O only;
+inbox-row → op translation is pure TS under vitest. Write-back field subset — events:
+title, description, schedule (timed + all-day), recurrence rule, delete, create;
+contacts: structured name, phones, emails, birthday, delete, create. Out of scope:
+location write-back (ItemCore has no location field — publish-only), calendar moves in
+stock apps (overwritten by next publish), payload/participants.
 
 ### Scope
-- [ ] CalendarContract + ContactsContract two-way; dirty-flag write-back translated into outbox ops (same LWW path) with echo suppression
-- [ ] "Open in Lupira" MIME rows; OS-scheduled sync driving the engine
+- [x] S1 Calendar publish v2 inside onPerformSync: mirror `items` → one provider calendar per mirror calendar (name/color), events upserted by `_SYNC_ID` = item id, RRULE rows for recurring items (not expanded instances), all-day/timed mapping, content-hash skip via SYNC_DATA1, stale-row/calendar deletion; birthdays left to the contacts bridge
+- [x] S2 Calendar write-back (code; device matrix pending): dirty/deleted/created rows captured to a Kotlin-owned bridge inbox db (capture-then-clear DIRTY as sync adapter), JS drain translates inbox → item.create/revise/delete through the normal outbox/LWW path; stock-created events get `_SYNC_ID` assigned post-create (no duplicate creation); echo suppression = value-hash comparison on publish
+- [ ] S3 Contacts adapter + publish: second sync service on the contacts authority (account becomes a contacts source), raw-contact upsert by `SOURCE_ID` (StructuredName/Phone/Email/Birthday event row), "Open in Lupira" MIME row
+- [ ] S4 Contacts write-back: dirty raw contacts → inbox → contact.create/revise/channels/delete ops; default address book for stock-created contacts
+- [ ] S5 OS-scheduled drive: auto-sync + periodic sync on both authorities; provider-change upload syncs; inbox drained on app-active + background task (headless-JS drain documented as latency limit)
 
 ### Exit criteria
-- [ ] Two-way edit matrix passes (stock apps ↔ server, both domains, defined field subset) without duplicate creation
+- [ ] Two-way edit matrix passes (stock apps ↔ server, both domains, the field subset above) without duplicate creation
+- [ ] Stock-app edit round-trips to the web UI and a web edit lands in the stock app without manual sync taps
 
 ## M8 — Hardening + release   [status: pending]
 

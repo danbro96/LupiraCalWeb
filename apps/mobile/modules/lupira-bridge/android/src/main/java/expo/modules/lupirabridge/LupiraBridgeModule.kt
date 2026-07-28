@@ -9,16 +9,6 @@ import android.provider.ContactsContract
 import expo.modules.kotlin.exception.CodedException
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
-import expo.modules.kotlin.records.Field
-import expo.modules.kotlin.records.Record
-
-class PublishEvent : Record {
-  @Field var key: String = ""
-  @Field var title: String = ""
-  @Field var startMs: Double = 0.0
-  @Field var endMs: Double? = null
-  @Field var allDay: Boolean = false
-}
 
 /// JS-facing spike API. Everything runs in the app process; provider writes go through the
 /// CALLER_IS_SYNCADAPTER door so the rows belong to the Lupira account (that is also what exempts
@@ -72,30 +62,46 @@ class LupiraBridgeModule : Module() {
       )
     }
 
-    /// Wholesale publish: drop our calendar's events and re-insert the given window. Fine for a spike;
-    /// M7 does row-level upserts keyed on _SYNC_ID.
-    AsyncFunction("publishEvents") { events: List<PublishEvent> ->
-      val calendarId = findCalendarId() ?: createCalendar()
-      resolver.delete(
-        asSyncAdapter(CalendarContract.Events.CONTENT_URI),
-        "${CalendarContract.Events.CALENDAR_ID} = ?", arrayOf(calendarId.toString()),
-      )
-      var inserted = 0
-      for (e in events) {
-        val end = e.endMs ?: (e.startMs + if (e.allDay) 86_400_000.0 else 1_800_000.0)
-        val values = ContentValues().apply {
-          put(CalendarContract.Events.CALENDAR_ID, calendarId)
-          put(CalendarContract.Events.TITLE, e.title)
-          put(CalendarContract.Events.DTSTART, e.startMs.toLong())
-          put(CalendarContract.Events.DTEND, end.toLong())
-          put(CalendarContract.Events.ALL_DAY, if (e.allDay) 1 else 0)
-          put(CalendarContract.Events.EVENT_TIMEZONE, "UTC")
-          put(CalendarContract.Events._SYNC_ID, e.key)
+    /// Runs the sync body in-process, immediately — the deterministic path for tests and the spike
+    /// screen. requestSync stays for verifying OS scheduling.
+    AsyncFunction("bridgeSyncNow") {
+      CalendarCapturer.capture(context)
+      CalendarPublisher.publish(context)
+      Bridge.prefs(context).edit().putLong(Bridge.PREF_LAST_SYNC, System.currentTimeMillis()).apply()
+    }
+
+    AsyncFunction("drainInbox") {
+      BridgeDb.open(context).use { db ->
+        db.rawQuery("SELECT id, domain, kind, sync_id, provider_id, payload, captured_at FROM bridge_inbox ORDER BY id", null).use { c ->
+          val rows = mutableListOf<Map<String, Any?>>()
+          while (c.moveToNext()) {
+            rows.add(
+              mapOf(
+                "id" to c.getLong(0), "domain" to c.getString(1), "kind" to c.getString(2),
+                "syncId" to c.getString(3), "providerId" to c.getLong(4),
+                "payload" to c.getString(5), "capturedAt" to c.getLong(6).toDouble(),
+              ),
+            )
+          }
+          rows
         }
-        resolver.insert(asSyncAdapter(CalendarContract.Events.CONTENT_URI), values) ?: continue
-        inserted++
       }
-      inserted
+    }
+
+    AsyncFunction("ackInbox") { ids: List<Double> ->
+      BridgeDb.open(context).use { db ->
+        for (id in ids) db.execSQL("DELETE FROM bridge_inbox WHERE id = ?", arrayOf(id.toLong()))
+      }
+    }
+
+    /// After the JS drain creates the aggregate for a stock-created event, the provider row's pending
+    /// marker is replaced with the real item id so future publishes upsert instead of duplicating.
+    AsyncFunction("assignEventSyncId") { pendingMarker: String, syncId: String ->
+      val values = ContentValues().apply { put(CalendarContract.Events._SYNC_ID, syncId) }
+      resolver.update(
+        asSyncAdapter(CalendarContract.Events.CONTENT_URI), values,
+        "${CalendarContract.Events._SYNC_ID} = ?", arrayOf(pendingMarker),
+      )
     }
 
     /// Recon for M7's write-back design: raw-contact rows with the columns the dirty-flag flow
@@ -132,32 +138,11 @@ class LupiraBridgeModule : Module() {
     }
   }
 
-  private fun asSyncAdapter(uri: Uri): Uri = uri.buildUpon()
-    .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
-    .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, Bridge.ACCOUNT_NAME)
-    .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, Bridge.ACCOUNT_TYPE)
-    .build()
+  private fun asSyncAdapter(uri: Uri): Uri = CalendarPublisher.asSyncAdapter(uri)
 
   private fun findCalendarId(): Long? =
     resolver.query(
       CalendarContract.Calendars.CONTENT_URI, arrayOf(CalendarContract.Calendars._ID),
       "${CalendarContract.Calendars.ACCOUNT_TYPE} = ?", arrayOf(Bridge.ACCOUNT_TYPE), null,
     )?.use { if (it.moveToFirst()) it.getLong(0) else null }
-
-  private fun createCalendar(): Long {
-    val values = ContentValues().apply {
-      put(CalendarContract.Calendars.ACCOUNT_NAME, Bridge.ACCOUNT_NAME)
-      put(CalendarContract.Calendars.ACCOUNT_TYPE, Bridge.ACCOUNT_TYPE)
-      put(CalendarContract.Calendars.NAME, "Lupira")
-      put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, "Lupira")
-      put(CalendarContract.Calendars.CALENDAR_COLOR, 0xFF4457C2.toInt())
-      put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_OWNER)
-      put(CalendarContract.Calendars.OWNER_ACCOUNT, Bridge.ACCOUNT_NAME)
-      put(CalendarContract.Calendars.SYNC_EVENTS, 1)
-      put(CalendarContract.Calendars.VISIBLE, 1)
-    }
-    val uri = resolver.insert(asSyncAdapter(CalendarContract.Calendars.CONTENT_URI), values)
-      ?: throw CodedException("ERR_CALENDAR", "calendar insert returned null", null)
-    return uri.lastPathSegment!!.toLong()
-  }
 }

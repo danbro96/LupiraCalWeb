@@ -9,6 +9,7 @@ import { ApiError, isNetworkError } from '../domain/apiError';
 import type { Horizon } from '../domain/materialize';
 import { birthdayRows, currentHorizon, horizonDrifted, monthKeyOf, occurrenceRowsForItem } from '../domain/materialize';
 import { logDebug } from '../debug/log';
+import { drainBridgeInbox } from './bridge';
 import { drain } from './outbox';
 import type { PullDeps } from './pull';
 import { pullCal, pullContacts, pullContainers, realPullDeps } from './pull';
@@ -35,6 +36,8 @@ async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
     await migrate(db);
     await authPort().refresh();
 
+    // Stock-app edits captured by the bridge ride the same push as the app's own queued writes.
+    await drainBridgeInbox(db);
     await drain(db);
 
     const horizon = currentHorizon(deps.now());
