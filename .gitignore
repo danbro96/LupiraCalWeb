@@ -19,6 +19,11 @@ obj/
 # Generated SPA output (client build → BFF wwwroot)
 src/LupiraCalWeb/wwwroot/
 
+# Expo (apps/mobile): CNG native projects + local state — EAS/prebuild regenerate them
+.expo/
+apps/mobile/android/
+apps/mobile/ios/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

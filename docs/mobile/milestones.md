@@ -12,7 +12,7 @@ criteria are verifiable commands/observations.
 | M0 | Monorepo restructure | LupiraCalWeb | done |
 | M1 | cal-api sync surface | LupiraCalApi | done |
 | M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | done |
-| M3 | App skeleton + auth | LupiraCalWeb | pending |
+| M3 | App skeleton + auth | LupiraCalWeb | in-progress (code done; device verification pending) |
 | M4 | Sync engine | LupiraCalWeb | pending |
 | M5 | Calendar + contacts UI | LupiraCalWeb | pending |
 | M6 | Bridge spike (throwaway) | LupiraCalWeb | pending |
@@ -92,23 +92,24 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 - [x] Scopes: openid email profile offline_access + lupira-cal-aud + lupira-contact-aud + lupira-geo-aud (`groups` deliberately omitted — nothing in the mobile path needs it)
 - [ ] Deploy note: contact-api needs one-time `dotnet LupiraContactApi.dll --rebuild-contacts`
 
-## M3 — App skeleton + auth   [status: pending]
+## M3 — App skeleton + auth   [status: in-progress — device verification pending]
 
 ### Scope
-- [ ] apps/mobile: Expo SDK 57 + dev client, React Navigation 7 shell (Calendar / Contacts / Settings / Sync issues stubs), package `com.lupira.calendar`
-- [ ] Orval per-app generation + mutator (bearer via AuthPort, timeout, Retry-After-aware retry, per-status unions)
-- [ ] Native OIDC: expo-auth-session system browser + PKCE against `lupira-cal-mobile`; tokens in expo-secure-store
-- [ ] AuthPort inversion; coalesced single-flight refresh with definitive-vs-transient classification
-- [ ] Settings screen: API URL presets (LAN dev :5181 / prod / custom; emulator 10.0.2.2), default from EXPO_PUBLIC_API_URL, persisted override
-- [ ] Debug ring buffer (on-device log screen); uuid v7 + crypto polyfill as first import
+- [x] apps/mobile: Expo SDK 57 + dev client (RN 0.86.0 — 0.86.2 sits inside the npm release cooldown), React Navigation 7 shell (Calendar / Contacts / Settings tabs + Sync issues / Debug log stack), package `com.lupira.calendar`, scheme `lupiracalendar`
+- [x] Orval per-app generation (cal `/api`, contact `/contact-api`, geo `/geo-api` — one BFF origin, prefix picks the upstream; raw fetchers with per-status envelope unions) + mutator (bearer via AuthPort, 10s timeout, Retry-After-aware retry, one forced re-auth per call)
+- [x] Native OIDC: expo-auth-session system browser + PKCE against `lupira-cal-mobile` (hand-rolled code exchange for visible errors; `createTask:false`; non-empty redirect path); tokens in expo-secure-store
+- [x] AuthPort inversion; coalesced single-flight refresh, rotation-safe (`sentToken` guard), definitive (400/401 → sign out) vs transient (keep session) classification
+- [x] Settings screen: presets Production (oidc) / LAN dev `192.168.14.108:5181` (dev auto-auth) / Emulator `10.0.2.2:5181` / custom URL+mode; default from `EXPO_PUBLIC_API_URL`; persisted; reachable from the login screen too
+- [x] Debug ring buffer + on-device log screen; uuid v7 + expo-crypto polyfill as first import
+- [x] Calendar tab carries the `/api/me` connection smoke (proves token/dev-header → BFF → cal-api)
 
 ### Exit criteria
-- [ ] Dev-client APK on a physical device signs in against prod BFF and completes an authenticated call
-- [ ] LAN preset works unauthenticated against the Development BFF
-- [ ] Token survives app restart; refresh is rotation-safe under concurrent calls (vitest on the state machine)
+- [ ] Dev-client APK on a physical device signs in against prod BFF and Calendar shows "Connected as …" (MANUAL — see below)
+- [ ] LAN preset works unauthenticated against the Development BFF on `0.0.0.0:5181` (MANUAL, same session)
+- [x] Refresh rotation-safe under concurrent calls + token persistence round-trip (vitest: 24 tests — refresh machine, mutator 401/retry paths, retry policy); Metro bundle exports clean; all root gates + docker build green (Docker installs web workspaces only)
 
 ### Manual steps
-- [ ] Local APK build + device install
+- [ ] Build + install the dev client: `cd apps/mobile && npx expo run:android` with a connected phone (local Android SDK), or `eas build -p android --profile development` if you prefer cloud builds — then verify the two device criteria and tick them here
 
 ## M4 — Sync engine   [status: pending]
 

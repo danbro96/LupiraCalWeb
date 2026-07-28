@@ -1,0 +1,47 @@
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Text } from 'react-native';
+import { useAuth } from '../../state/auth-store';
+import { CalendarScreen } from '../screens/CalendarScreen';
+import { ContactsScreen } from '../screens/ContactsScreen';
+import { DebugLogScreen } from '../screens/DebugLogScreen';
+import { LoginScreen } from '../screens/LoginScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
+import { SyncIssuesScreen } from '../screens/SyncIssuesScreen';
+import type { RootStackParamList, TabParamList } from './types';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<TabParamList>();
+
+const tabIcon = (glyph: string) =>
+  function TabIcon({ color }: { color: string }) {
+    return <Text style={{ color, fontSize: 18 }}>{glyph}</Text>;
+  };
+
+function Tabs() {
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: true }}>
+      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon('📅') }} />
+      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon('👥') }} />
+      <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: tabIcon('⚙️') }} />
+    </Tab.Navigator>
+  );
+}
+
+export function RootNav() {
+  const authed = useAuth((s) => s.authMode === 'none' || s.token !== null);
+  return (
+    <Stack.Navigator>
+      {authed ? (
+        <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+      ) : (
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="BackendSettings" component={SettingsScreen} options={{ title: 'Backend' }} />
+        </>
+      )}
+      <Stack.Screen name="SyncIssues" component={SyncIssuesScreen} options={{ title: 'Sync issues' }} />
+      <Stack.Screen name="DebugLog" component={DebugLogScreen} options={{ title: 'Debug log' }} />
+    </Stack.Navigator>
+  );
+}
