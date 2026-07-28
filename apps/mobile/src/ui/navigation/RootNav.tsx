@@ -3,8 +3,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text } from 'react-native';
 import { useAuth } from '../../state/auth-store';
 import { CalendarScreen } from '../screens/CalendarScreen';
+import { ContactDetailScreen } from '../screens/ContactDetailScreen';
+import { ContactEditScreen } from '../screens/ContactEditScreen';
 import { ContactsScreen } from '../screens/ContactsScreen';
 import { DebugLogScreen } from '../screens/DebugLogScreen';
+import { ItemDetailScreen } from '../screens/ItemDetailScreen';
+import { ItemEditScreen } from '../screens/ItemEditScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { SyncIssuesScreen } from '../screens/SyncIssuesScreen';
@@ -21,8 +25,9 @@ const tabIcon = (glyph: string) =>
 function Tabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: true }}>
-      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon('📅') }} />
-      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon('👥') }} />
+      {/* Calendar + Contacts carry their own toolbars — the native header would just double them. */}
+      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon('📅'), headerShown: false }} />
+      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon('👥'), headerShown: false }} />
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: tabIcon('⚙️') }} />
     </Tab.Navigator>
   );
@@ -42,6 +47,10 @@ export function RootNav() {
       )}
       <Stack.Screen name="SyncIssues" component={SyncIssuesScreen} options={{ title: 'Sync issues' }} />
       <Stack.Screen name="DebugLog" component={DebugLogScreen} options={{ title: 'Debug log' }} />
+      <Stack.Screen name="ItemDetail" component={ItemDetailScreen} options={{ title: 'Event' }} />
+      <Stack.Screen name="ItemEdit" component={ItemEditScreen} options={{ title: 'Edit event' }} />
+      <Stack.Screen name="ContactDetail" component={ContactDetailScreen} options={{ title: 'Contact' }} />
+      <Stack.Screen name="ContactEdit" component={ContactEditScreen} options={{ title: 'Edit contact' }} />
     </Stack.Navigator>
   );
 }

@@ -5,6 +5,11 @@ export type RootStackParamList = {
   BackendSettings: undefined;
   SyncIssues: undefined;
   DebugLog: undefined;
+  ItemDetail: { itemId: string };
+  /// No itemId = create; `day` pre-fills the start date from the grid selection.
+  ItemEdit: { itemId?: string; day?: string } | undefined;
+  ContactDetail: { contactId: string };
+  ContactEdit: { contactId?: string } | undefined;
 };
 
 export type TabParamList = {

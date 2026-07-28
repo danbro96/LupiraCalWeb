@@ -7,7 +7,7 @@ import { applyContactOp, applyItemOp } from '../domain/mirrorReducers';
 import type { ClientOp } from '../domain/ops';
 import { aggregateIdOf, domainOf } from '../domain/ops';
 import { classifyReplayError } from '../domain/replayError';
-import { invalidateContacts, invalidateMonthKeys } from './reactivity';
+import { invalidateContacts, invalidateItems, invalidateMonthKeys, invalidateOutbox } from './reactivity';
 import { replayOp } from './replayOp';
 import { useSyncStatus } from './syncStatus';
 
@@ -28,6 +28,7 @@ const realDeps: OutboxDeps = { replay: replayOp, now: () => new Date(), rand: Ma
 export async function enqueue(db: Db, ops: ClientOp[], horizon: Horizon, deps: Partial<OutboxDeps> = {}): Promise<void> {
   const monthKeys = new Set<string>();
   let contactsTouched = false;
+  let itemsTouched = false;
 
   await db.exclusive(async (tx) => {
     for (const op of ops) {
@@ -40,6 +41,7 @@ export async function enqueue(db: Db, ops: ClientOp[], horizon: Horizon, deps: P
           for (const r of [...rows, ...(before ? occurrenceRowsForItem(before.doc, before.deleted, horizon) : [])])
             monthKeys.add(monthKeyOf(r.startDay));
           await mirror.saveItem(tx, after, rows);
+          itemsTouched = true;
         }
       } else {
         const before = await mirror.loadContact(tx, id);
@@ -55,6 +57,7 @@ export async function enqueue(db: Db, ops: ClientOp[], horizon: Horizon, deps: P
 
   invalidateMonthKeys(monthKeys);
   if (contactsTouched) invalidateContacts();
+  if (itemsTouched) invalidateItems();
   await refreshCounts(db);
   void drain(db, deps);
 }
@@ -114,18 +117,27 @@ export async function retryParked(db: Db, deps: Partial<OutboxDeps> = {}): Promi
   void drain(db, deps);
 }
 
+export async function retryOne(db: Db, seq: number, deps: Partial<OutboxDeps> = {}): Promise<void> {
+  await db.exclusive((tx) => mirror.requeueParked(tx, seq));
+  await refreshCounts(db);
+  void drain(db, deps);
+}
+
 /// Discard = drop the op AND roll its optimistic effect back to server truth (the tasks app left the mirror
 /// lying until the next pull). The caller re-fetches the aggregate; here we just remove the row.
 export async function discardParked(db: Db, seq: number): Promise<{ domain: 'cal' | 'contact'; aggregateId: string } | null> {
-  return db.exclusive(async (tx) => {
+  const target = await db.exclusive(async (tx) => {
     const row = await tx.first<mirror.OutboxRow>('SELECT * FROM outbox WHERE seq = ?', [seq]);
     if (!row) return null;
     await mirror.deleteOp(tx, seq);
     return { domain: row.domain as 'cal' | 'contact', aggregateId: row.aggregate_id };
   });
+  await refreshCounts(db);
+  return target;
 }
 
 async function refreshCounts(db: Db): Promise<void> {
   const counts = await mirror.outboxCounts(db);
   useSyncStatus.getState().set(counts);
+  invalidateOutbox();
 }

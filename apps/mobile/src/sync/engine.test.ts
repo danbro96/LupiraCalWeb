@@ -302,3 +302,48 @@ describe('discard rollback contract', () => {
     expect(await mirror.outboxCounts(db)).toEqual({ pending: 0, parked: 0 });
   });
 });
+
+describe('grid read surface (M5)', () => {
+  const contactOp = (n: number): ClientOp => ({
+    kind: 'contact.create', contactId: 'contact-1', sourceKey: 'contact-1@key', addressBookId: 'book-1',
+    occurredAt: T(n), commandId: cmd(n),
+    core: { givenName: 'Alva', familyName: 'B', birthday: { year: 2019, month: 8, day: 5 } },
+  });
+
+  it('joins occurrence rows with item titles, calendar ids, and birthday names', async () => {
+    await enqueueOffline([createOp('item-1', 1), contactOp(2)]);
+
+    const rows = await mirror.gridRowsBetween(db, '2026-08-01', '2026-08-31');
+    expect(rows).toHaveLength(2);
+    const item = rows.find((r) => r.source === 'item')!;
+    expect(item).toMatchObject({ source_id: 'item-1', title: 'Item item-1', calendar_id: 'cal-1', all_day: 0 });
+    const bday = rows.find((r) => r.source === 'birthday')!;
+    expect(bday).toMatchObject({ source_id: 'contact-1', title: 'Alva B', all_day: 1, start_day: '2026-08-05' });
+  });
+
+  it('lists live contacts by display name and hides deleted ones', async () => {
+    await enqueueOffline([contactOp(1)]);
+    expect((await mirror.listContacts(db)).map((c) => c.displayName)).toEqual(['Alva B']);
+
+    await enqueueOffline([{ kind: 'contact.delete', contactId: 'contact-1', occurredAt: T(2), commandId: cmd(2) }]);
+    expect(await mirror.listContacts(db)).toHaveLength(0);
+  });
+
+  it('retryOne requeues a single parked op without touching its parked siblings', async () => {
+    const reject = async () => {
+      throw new ApiError(422, 'rejected');
+    };
+    await enqueue(db, [reviseOp('item-1', 'a', 1), reviseOp('item-2', 'b', 2)], horizon, { replay: reject });
+    await drain(db, { replay: reject });
+    expect((await mirror.listParked(db)).map((r) => r.aggregate_id)).toEqual(['item-1', 'item-2']);
+
+    const { retryOne } = await import('./outbox');
+    const ok = async () => undefined;
+    const first = (await mirror.listParked(db))[0];
+    await retryOne(db, first.seq, { replay: ok });
+    await drain(db, { replay: ok });
+
+    expect((await mirror.listParked(db)).map((r) => r.aggregate_id)).toEqual(['item-2']);
+    expect(await mirror.listPendingOps(db)).toHaveLength(0);
+  });
+});

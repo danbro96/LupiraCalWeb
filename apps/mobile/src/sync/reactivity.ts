@@ -18,6 +18,14 @@ export function invalidateContacts(): void {
   void queryClient.invalidateQueries({ queryKey: ['contacts'] });
 }
 
+export function invalidateItems(): void {
+  void queryClient.invalidateQueries({ queryKey: ['items'] });
+}
+
+export function invalidateOutbox(): void {
+  void queryClient.invalidateQueries({ queryKey: ['outbox'] });
+}
+
 export function invalidateContainers(): void {
   void queryClient.invalidateQueries({ queryKey: ['containers'] });
 }

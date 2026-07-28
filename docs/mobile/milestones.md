@@ -14,7 +14,7 @@ criteria are verifiable commands/observations.
 | M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | done |
 | M3 | App skeleton + auth | LupiraCalWeb | in-progress (code done; device verification pending) |
 | M4 | Sync engine | LupiraCalWeb | in-progress (code done; device verification pending) |
-| M5 | Calendar + contacts UI | LupiraCalWeb | pending |
+| M5 | Calendar + contacts UI | LupiraCalWeb | in-progress (code done; device verification pending) |
 | M6 | Bridge spike (throwaway) | LupiraCalWeb | pending |
 | M7 | Bridges full two-way | LupiraCalWeb | pending |
 | M8 | Hardening + release | LupiraCalWeb | pending |
@@ -131,18 +131,21 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 - [ ] Two-device concurrent edits converge to the vector-predicted winner (MANUAL)
 - [ ] Background task observed firing on device (MANUAL)
 
-## M5 — Calendar + contacts UI   [status: pending]
+## M5 — Calendar + contacts UI   [status: in-progress — device verification pending]
 
 ### Scope
-- [ ] Week/month grids on packages/domain grid math; grids read only from `occurrences`
-- [ ] Item detail + per-section editing → outbox ops; offline-editable matrix enforced (place attach / avatar / sharing / group membership gated online)
-- [ ] Contacts list + detail; birthdays in both grids
-- [ ] Sync issues screen: per-row retry, op detail, discard rolls back the mirror write
+- [x] Week/month grids on packages/domain grid math (`monthMatrix`, `clampToDay` + `layoutColumns`); grids read only the `occurrences` table via one joined range query (`gridRowsBetween`: title/status/calendar color join — no per-item fan-out, no render-time expansion). Month view + selected-day agenda; week view with all-day chips + timed lanes
+- [x] Item detail + per-section editing → outbox ops: core (whole-section form → totalized revise), metadata merge editor, filing toggles (file/unfile per mirror calendar), delete. Editing lives in pure `domain/editors.ts` (form ⇄ core, keep-vs-clear warts, timed/all-day duality) — vitest-covered
+- [x] Offline-editable matrix enforced by construction: place attach, avatar, sharing, and group membership have no mobile write UI (web covers them). Deviation from plan: contact addresses joined the online-only set — an address is `{placeId, type}`, composing one requires geo place search, so detail shows a read-only summary
+- [x] Contacts list (search, birthday badges) + detail (channels/tags/profiles wholesale editors → their ops, birthday with next-age, notes) + create/edit core forms; birthdays render in month cells, week all-day row, and the agenda
+- [x] Sync issues screen: parked cards with op label/attempts/last error, expandable op JSON, per-row Retry (`retryOne`) and Discard (confirm → `discardParkedAndRestore` rolls the mirror back to server truth); waiting-to-sync list with backoff times; Sync now
+- [x] Reactivity closure: `['items']`/`['outbox']` invalidation on enqueue/pull/drain/discard; `@react-native-community/datetimepicker` 9.1.0 added (native module — rides the still-pending first dev-client build)
 
 ### Exit criteria
-- [ ] Month/week render full family data offline from the mirror
-- [ ] Every editable section edited offline round-trips to the server and shows in web UI
-- [ ] Birthdays visible in month + week grids
+- [ ] Month/week render full family data offline from the mirror (MANUAL — needs the M3 dev-client APK)
+- [ ] Every editable section edited offline round-trips to the server and shows in web UI (MANUAL)
+- [ ] Birthdays visible in month + week grids (MANUAL)
+- [x] Code-level: 75 mobile + 123 domain tests green (incl. grid join, contact list, per-row retry); root lint/typecheck green; Metro bundle exports clean
 
 ## M6 — Bridge spike (throwaway)   [status: pending]
 

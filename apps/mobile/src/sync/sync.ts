@@ -12,7 +12,7 @@ import { logDebug } from '../debug/log';
 import { drain } from './outbox';
 import type { PullDeps } from './pull';
 import { pullCal, pullContacts, pullContainers, realPullDeps } from './pull';
-import { invalidateContacts, invalidateContainers, invalidateMonthKeys } from './reactivity';
+import { invalidateContacts, invalidateContainers, invalidateItems, invalidateMonthKeys } from './reactivity';
 import { useSyncStatus } from './syncStatus';
 
 /// Orchestrator: push first (our writes carry LWW stamps, so order is about promptness, not correctness),
@@ -44,6 +44,7 @@ async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
     const contactMonths = await pullContacts(db, horizon, deps);
     invalidateMonthKeys([...calMonths, ...contactMonths]);
     invalidateContacts();
+    invalidateItems();
 
     await maintainHorizon(db, horizon);
 
@@ -120,6 +121,7 @@ export async function discardParkedAndRestore(seq: number, dbOverride?: Db): Pro
       for (const r of rows) monthKeys.add(monthKeyOf(r.startDay));
       await mirror.saveItem(tx, state, rows);
     });
+    invalidateItems();
   } else {
     const { getContact } = await import('../data/api/generated/contact/contacts/contacts');
     let fetched: import('../domain/docTypes').ContactDoc | null = null;

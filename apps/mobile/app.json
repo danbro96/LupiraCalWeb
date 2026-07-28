@@ -6,14 +6,17 @@
     "scheme": "lupiracalendar",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
-    "platforms": ["android"],
+    "platforms": [
+      "android"
+    ],
     "android": {
       "package": "com.lupira.calendar",
       "predictiveBackGestureEnabled": false
     },
     "plugins": [
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      "@react-native-community/datetimepicker"
     ]
   }
 }

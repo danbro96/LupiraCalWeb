@@ -124,6 +124,38 @@ export async function occurrencesBetween(tx: Tx, fromDay: string, toDay: string)
   );
 }
 
+export type GridRow = OccurrenceQueryRow & {
+  title: string | null;
+  status: string | null;
+  calendar_id: string | null;
+};
+
+/// The grids' one read: occurrences joined with just enough display data (title, status, a calendar for the
+/// color). Still a single indexed start_day range — no per-item fan-out, no render-time expansion.
+export async function gridRowsBetween(tx: Tx, fromDay: string, toDay: string): Promise<GridRow[]> {
+  return tx.all<GridRow>(
+    `SELECT o.source, o.source_id, o.start_utc, o.end_utc, o.start_day, o.all_day,
+            COALESCE(i.title, c.display_name) AS title,
+            i.status AS status,
+            (SELECT ic.calendar_id FROM item_calendars ic WHERE ic.item_id = o.source_id
+             ORDER BY CASE ic.status WHEN 'Accepted' THEN 0 ELSE 1 END, ic.calendar_id LIMIT 1) AS calendar_id
+     FROM occurrences o
+     LEFT JOIN items i ON o.source = 'item' AND i.id = o.source_id
+     LEFT JOIN contacts c ON o.source = 'birthday' AND c.id = o.source_id
+     WHERE o.start_day >= ? AND o.start_day <= ?
+     ORDER BY o.start_utc`,
+    [fromDay, toDay],
+  );
+}
+
+export type ContactListRow = { id: string; displayName: string; doc: ContactDoc };
+
+export async function listContacts(tx: Tx): Promise<ContactListRow[]> {
+  const rows = await tx.all<{ id: string; display_name: string; doc: string }>(
+    'SELECT id, display_name, doc FROM contacts WHERE deleted = 0 ORDER BY display_name COLLATE NOCASE');
+  return rows.map((r) => ({ id: r.id, displayName: r.display_name, doc: JSON.parse(r.doc) as ContactDoc }));
+}
+
 // ---- containers ----
 
 export async function replaceContainers(tx: Tx, table: 'calendars' | 'address_books' | 'contact_groups', docs: { id: string }[]): Promise<void> {
@@ -193,6 +225,10 @@ export async function requeueParked(tx: Tx, seq: number): Promise<void> {
 
 export async function listParked(tx: Tx): Promise<OutboxRow[]> {
   return tx.all<OutboxRow>("SELECT * FROM outbox WHERE status = 'parked' ORDER BY seq");
+}
+
+export async function listPendingOps(tx: Tx): Promise<OutboxRow[]> {
+  return tx.all<OutboxRow>("SELECT * FROM outbox WHERE status = 'pending' ORDER BY seq");
 }
 
 export async function outboxCounts(tx: Tx): Promise<{ pending: number; parked: number }> {
