@@ -9,4 +9,6 @@
 export interface SetContactAvatarRequest {
   /** @nullable */
   avatarRef?: string | null;
+  /** @nullable */
+  occurredAt?: string | null;
 }

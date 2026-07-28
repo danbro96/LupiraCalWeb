@@ -12,6 +12,8 @@ import type { PartialDate } from './partialDate';
 
 export interface CreateContactRequest {
   addressBookId: string;
+  /** @nullable */
+  sourceKey?: string | null;
   kind?: null | ContactKind;
   /** @nullable */
   givenName?: string | null;

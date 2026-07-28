@@ -9,4 +9,6 @@ import type { ContactSocialProfile } from './contactSocialProfile';
 
 export interface SetContactProfilesRequest {
   profiles: ContactSocialProfile[];
+  /** @nullable */
+  occurredAt?: string | null;
 }

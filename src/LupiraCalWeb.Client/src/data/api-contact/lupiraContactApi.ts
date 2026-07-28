@@ -28,6 +28,7 @@ import type {
   AddContactGroupMemberParams,
   AddContactRelationRequest,
   AddressBookDto,
+  ClearContactDeceasedParams,
   ContactCirclesDto,
   ContactDto,
   ContactGroupDto,
@@ -38,12 +39,14 @@ import type {
   CreateContactRequest,
   CreateContactsBatchRequest,
   EndContactRelationRequest,
+  GetChangesParams,
   GetContactCirclesParams,
   GetThinContactsParams,
   GrantOwnerRequest,
   JsonNode,
   ListContactRelationsParams,
   MeDto,
+  MergeContactMetadataParams,
   OwnerGrantDto,
   ProblemDetails,
   RemoveContactRelationParams,
@@ -60,6 +63,8 @@ import type {
   SetDeceasedRequest,
   SetEmergencyContactsRequest,
   SetMyContactRequest,
+  SyncChangesResponse,
+  SyncContainersResponse,
   UpdateAddressBookRequest
 } from './models';
 
@@ -1572,21 +1577,30 @@ export const useDeleteContact = <TError = void,
       return useMutation(getDeleteContactMutationOptions(options), queryClient);
     }
 
-export const getMergeContactMetadataUrl = (id: string,) => {
+export const getMergeContactMetadataUrl = (id: string,
+    params?: MergeContactMetadataParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/contacts/${id}/metadata`
+  return stringifiedParams.length > 0 ? `/contacts/${id}/metadata?${stringifiedParams}` : `/contacts/${id}/metadata`
 }
 
 /**
  * @summary Merge arbitrary JSON metadata into a contact (top-level keys overwrite). Also the channel for completeness N/A acknowledgments: {"completeness":{"na":["organisation"]}}.
  */
 export const mergeContactMetadata = async (id: string,
-    jsonNode: JsonNode, options?: Parameters<typeof customFetchContact>[1]): Promise<ContactDto> => {
+    jsonNode: JsonNode,
+    params?: MergeContactMetadataParams, options?: Parameters<typeof customFetchContact>[1]): Promise<ContactDto> => {
 
-  return customFetchContact<ContactDto>(getMergeContactMetadataUrl(id),
+  return customFetchContact<ContactDto>(getMergeContactMetadataUrl(id,params),
   {
     ...options,
     method: 'POST',
@@ -1600,8 +1614,8 @@ export const mergeContactMetadata = async (id: string,
 
 
 export const getMergeContactMetadataMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode}, TContext>, request?: SecondParameter<typeof customFetchContact>}
-): UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode;params?: MergeContactMetadataParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode;params?: MergeContactMetadataParams}, TContext> => {
 
 const mutationKey = ['mergeContactMetadata'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1613,10 +1627,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof mergeContactMetadata>>, {id: string;data: JsonNode}> = (props) => {
-          const {id,data} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof mergeContactMetadata>>, {id: string;data: JsonNode;params?: MergeContactMetadataParams}> = (props) => {
+          const {id,data,params} = props ?? {};
 
-          return  mergeContactMetadata(id,data,requestOptions)
+          return  mergeContactMetadata(id,data,params,requestOptions)
         }
 
 
@@ -1634,11 +1648,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Merge arbitrary JSON metadata into a contact (top-level keys overwrite). Also the channel for completeness N/A acknowledgments: {"completeness":{"na":["organisation"]}}.
  */
 export const useMergeContactMetadata = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode;params?: MergeContactMetadataParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof mergeContactMetadata>>,
         TError,
-        {id: string;data: JsonNode},
+        {id: string;data: JsonNode;params?: MergeContactMetadataParams},
         TContext
       > => {
       return useMutation(getMergeContactMetadataMutationOptions(options), queryClient);
@@ -1824,20 +1838,29 @@ export const useMarkContactDeceased = <TError = void | ProblemDetails,
       return useMutation(getMarkContactDeceasedMutationOptions(options), queryClient);
     }
 
-export const getClearContactDeceasedUrl = (id: string,) => {
+export const getClearContactDeceasedUrl = (id: string,
+    params?: ClearContactDeceasedParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/contacts/${id}/deceased`
+  return stringifiedParams.length > 0 ? `/contacts/${id}/deceased?${stringifiedParams}` : `/contacts/${id}/deceased`
 }
 
 /**
  * @summary Undo a deceased marking recorded in error. (CardDAV can set but never clear deceased — clearing is API-only.)
  */
-export const clearContactDeceased = async (id: string, options?: Parameters<typeof customFetchContact>[1]): Promise<ContactDto> => {
+export const clearContactDeceased = async (id: string,
+    params?: ClearContactDeceasedParams, options?: Parameters<typeof customFetchContact>[1]): Promise<ContactDto> => {
 
-  return customFetchContact<ContactDto>(getClearContactDeceasedUrl(id),
+  return customFetchContact<ContactDto>(getClearContactDeceasedUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -1851,8 +1874,8 @@ export const clearContactDeceased = async (id: string, options?: Parameters<type
 
 
 export const getClearContactDeceasedMutationOptions = <TError = void | ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
-): UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string;params?: ClearContactDeceasedParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+): UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string;params?: ClearContactDeceasedParams}, TContext> => {
 
 const mutationKey = ['clearContactDeceased'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1864,10 +1887,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof clearContactDeceased>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof clearContactDeceased>>, {id: string;params?: ClearContactDeceasedParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  clearContactDeceased(id,requestOptions)
+          return  clearContactDeceased(id,params,requestOptions)
         }
 
 
@@ -1885,11 +1908,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Undo a deceased marking recorded in error. (CardDAV can set but never clear deceased — clearing is API-only.)
  */
 export const useClearContactDeceased = <TError = void | ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string;params?: ClearContactDeceasedParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof clearContactDeceased>>,
         TError,
-        {id: string},
+        {id: string;params?: ClearContactDeceasedParams},
         TContext
       > => {
       return useMutation(getClearContactDeceasedMutationOptions(options), queryClient);
@@ -3155,3 +3178,206 @@ export const useRemoveContactGroupMember = <TError = void,
       > => {
       return useMutation(getRemoveContactGroupMemberMutationOptions(options), queryClient);
     }
+
+export const getGetChangesUrl = (params?: GetChangesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/sync/changes?${stringifiedParams}` : `/sync/changes`
+}
+
+/**
+ * @summary Delta feed for offline mirrors: every contact the caller can read that changed past the cursor, plus tombstone ids for contacts deleted or no longer visible (incl. moved to an unreadable address book). Omit since for a full sync; loop while hasMore, persisting cursor between calls.
+ */
+export const getChanges = async (params?: GetChangesParams, options?: Parameters<typeof customFetchContact>[1]): Promise<SyncChangesResponse> => {
+
+  return customFetchContact<SyncChangesResponse>(getGetChangesUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetChangesQueryKey = (params?: GetChangesParams,) => {
+    return [
+    `/sync/changes`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetChangesQueryOptions = <TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetChangesQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getChanges>>> = ({ signal }) => getChanges(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetChangesQueryResult = NonNullable<Awaited<ReturnType<typeof getChanges>>>
+export type GetChangesQueryError = ProblemDetails | void
+
+
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+ params: undefined |  GetChangesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getChanges>>,
+          TError,
+          Awaited<ReturnType<typeof getChanges>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+ params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getChanges>>,
+          TError,
+          Awaited<ReturnType<typeof getChanges>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+ params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Delta feed for offline mirrors: every contact the caller can read that changed past the cursor, plus tombstone ids for contacts deleted or no longer visible (incl. moved to an unreadable address book). Omit since for a full sync; loop while hasMore, persisting cursor between calls.
+ */
+
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+ params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetChangesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetSyncContainersUrl = () => {
+
+
+
+
+  return `/sync/containers`
+}
+
+/**
+ * @summary Snapshot of the caller's address books + contact groups for mirror reconciliation (no cursor — fetch once per sync cycle and diff locally).
+ */
+export const getSyncContainers = async ( options?: Parameters<typeof customFetchContact>[1]): Promise<SyncContainersResponse> => {
+
+  return customFetchContact<SyncContainersResponse>(getGetSyncContainersUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetSyncContainersQueryKey = () => {
+    return [
+    `/sync/containers`
+    ] as const;
+    }
+
+
+export const getGetSyncContainersQueryOptions = <TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSyncContainersQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSyncContainers>>> = ({ signal }) => getSyncContainers({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetSyncContainersQueryResult = NonNullable<Awaited<ReturnType<typeof getSyncContainers>>>
+export type GetSyncContainersQueryError = void
+
+
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSyncContainers>>,
+          TError,
+          Awaited<ReturnType<typeof getSyncContainers>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSyncContainers>>,
+          TError,
+          Awaited<ReturnType<typeof getSyncContainers>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Snapshot of the caller's address books + contact groups for mirror reconciliation (no cursor — fetch once per sync cycle and diff locally).
+ */
+
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetSyncContainersQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}

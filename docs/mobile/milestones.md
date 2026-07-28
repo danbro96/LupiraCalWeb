@@ -11,7 +11,7 @@ criteria are verifiable commands/observations.
 |----|-------|-------|--------|
 | M0 | Monorepo restructure | LupiraCalWeb | done |
 | M1 | cal-api sync surface | LupiraCalApi | done |
-| M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | pending |
+| M2 | contact-api sync surface + BFF bearer + Authentik | LupiraContactApi, LupiraCalWeb | done (Authentik manual steps open) |
 | M3 | App skeleton + auth | LupiraCalWeb | pending |
 | M4 | Sync engine | LupiraCalWeb | pending |
 | M5 | Calendar + contacts UI | LupiraCalWeb | pending |
@@ -72,24 +72,25 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 ### Manual steps
 - [ ] Deploy includes one-time projection rebuild: `dotnet LupiraCalApi.dll --rebuild-items` (backfills watermarks; full sync misses pre-existing items until run)
 
-## M2 — contact-api sync surface + BFF bearer + Authentik   [status: pending]
+## M2 — contact-api sync surface + BFF bearer + Authentik   [status: done — Authentik manual steps open]
 
 ### Scope
-- [ ] contact-api `/sync/changes` (SQL AddressBookId filter; book-move tombstone branch) + `/sync/containers` (books + groups — closes the group feed gap)
-- [ ] Per-section guards (core/channels/addresses/tags/profiles/avatar) + occurredAt + idempotency ledger (same port as M1)
-- [ ] BFF: JwtBearer second scheme (validate issuer + aud `lupira-cal`); Default policy = cookie OR bearer; YARP forwards caller bearer verbatim, else Duende cookie exchange
-- [ ] Fix 302-vs-401 guard to cover `/geo-api` + `/contact-api`
-- [ ] BFF launchSettings binds 0.0.0.0:5181 (physical-device dev)
+- [x] contact-api `/sync/changes` (account-wide watermark query; tombstones cover deletes + book-moves to unreadable books) + `/sync/containers` (books + groups — groups leave the cursor domain, closing the group feed gap)
+- [x] Per-section guards + occurredAt + idempotency ledger (same port as M1). Deviation: channel and tag writes ride the `ContactRevised` event server-side, so they share the `core` guard — sections are core/addresses/profiles/avatar/metadata/deceased (mark/clear share one). Relations + emergency contacts stay append-ordered. Bonus: `CreateContactRequest.SourceKey` added — offline creates are replay-safe (cal already had it)
+- [x] BFF: JwtBearer second scheme (`Auth:Bearer:Authority` ?? OIDC authority; aud `lupira-cal`); Default policy = interactive scheme OR bearer; YARP forwards a caller-presented bearer verbatim (transform stands aside), else Duende cookie exchange
+- [x] 302-vs-401 guard covers `/api` + `/geo-api` + `/contact-api` (cookie login/denied + OIDC challenge)
+- [x] BFF launchSettings binds 0.0.0.0:5181 (physical-device dev)
 
 ### Exit criteria
-- [ ] PKCE token minted from `lupira-cal-mobile` → curl BFF `/api/*` and `/contact-api/*` through the tunnel succeeds
-- [ ] Browser cookie flow unchanged (web login/logout/refresh works)
-- [ ] BFF integration tests cover both auth paths
+- [ ] PKCE token minted from `lupira-cal-mobile` → curl BFF `/api/*` and `/contact-api/*` through the tunnel succeeds (blocked on the Authentik manual steps below; the same path is proven in-process by the integration tests)
+- [x] Browser cookie flow unchanged (OIDC/cookie wiring untouched apart from the challenge guard; non-API challenge still redirects — covered by test)
+- [x] BFF integration tests cover both auth paths (tests/LupiraCalWeb.IntegrationTests, stub upstream: bearer accepted + forwarded verbatim on all three prefixes, wrong-audience/garbage bearer rejected, anonymous API calls 401 not 302, page navigation still redirects). contact-api: 168 unit / 96 integration green
 
 ### Manual steps (all Authentik)
-- [ ] Public client `lupira-cal-mobile`: PKCE, blank secret, subject mode email, issuer Global
-- [ ] Redirect regex `^lupiracalendar://.*$`
+- [ ] Public client `lupira-cal-mobile`: PKCE, blank secret, subject mode email, issuer Global (same signing key as the other providers so cross-provider validation holds)
+- [ ] Redirect regex `^lupiracalendar://.*$` (app will use `lupiracalendar://oauthredirect`)
 - [ ] Scopes: openid email profile groups offline_access + lupira-cal-aud + lupira-contact-aud + lupira-geo-aud (aud = [lupira-cal-mobile, lupira-cal, lupira-contact, lupira-geo])
+- [ ] Deploy note: contact-api needs one-time `dotnet LupiraContactApi.dll --rebuild-contacts`
 
 ## M3 — App skeleton + auth   [status: pending]
 

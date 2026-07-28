@@ -9,4 +9,6 @@ import type { ContactReachChannel } from './contactReachChannel';
 
 export interface SetContactChannelsRequest {
   channels: ContactReachChannel[];
+  /** @nullable */
+  occurredAt?: string | null;
 }

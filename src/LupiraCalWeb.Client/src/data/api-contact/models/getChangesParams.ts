@@ -6,8 +6,10 @@
  * OpenAPI spec version: v1
  */
 
-export interface SetContactTagsRequest {
-  tags: string[];
-  /** @nullable */
-  occurredAt?: string | null;
-}
+export type GetChangesParams = {
+since?: string;
+/**
+ * @pattern ^-?(?:0|[1-9]\d*)$
+ */
+limit?: number | string;
+};

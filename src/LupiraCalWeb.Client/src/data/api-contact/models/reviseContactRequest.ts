@@ -30,4 +30,6 @@ export interface ReviseContactRequest {
   notes?: string | null;
   /** @nullable */
   pronouns?: string | null;
+  /** @nullable */
+  occurredAt?: string | null;
 }

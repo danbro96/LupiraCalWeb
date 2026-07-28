@@ -9,4 +9,6 @@
 export interface SetDeceasedRequest {
   /** @nullable */
   deathDate?: string | null;
+  /** @nullable */
+  occurredAt?: string | null;
 }

@@ -9,4 +9,6 @@ import type { ContactPostalAddress } from './contactPostalAddress';
 
 export interface SetContactAddressesRequest {
   addresses: ContactPostalAddress[];
+  /** @nullable */
+  occurredAt?: string | null;
 }

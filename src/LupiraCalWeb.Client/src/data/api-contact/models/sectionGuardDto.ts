@@ -6,8 +6,7 @@
  * OpenAPI spec version: v1
  */
 
-export interface SetContactTagsRequest {
-  tags: string[];
-  /** @nullable */
-  occurredAt?: string | null;
+export interface SectionGuardDto {
+  ts: string;
+  cmd: string;
 }

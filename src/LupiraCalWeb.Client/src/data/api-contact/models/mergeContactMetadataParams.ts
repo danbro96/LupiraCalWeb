@@ -6,8 +6,6 @@
  * OpenAPI spec version: v1
  */
 
-export interface SetContactTagsRequest {
-  tags: string[];
-  /** @nullable */
-  occurredAt?: string | null;
-}
+export type MergeContactMetadataParams = {
+occurredAt?: string;
+};

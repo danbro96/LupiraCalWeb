@@ -5,9 +5,10 @@
  * Contacts, address books, and kinship backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
+import type { AddressBookDto } from './addressBookDto';
+import type { ContactGroupDto } from './contactGroupDto';
 
-export interface SetContactTagsRequest {
-  tags: string[];
-  /** @nullable */
-  occurredAt?: string | null;
+export interface SyncContainersResponse {
+  addressBooks: AddressBookDto[];
+  groups: ContactGroupDto[];
 }

@@ -27,15 +27,21 @@ if (!string.IsNullOrWhiteSpace(keyPath))
 
 builder.Services.AddAppHealthChecks();
 
-// Reverse proxy to LupiraCalApi (REST at the upstream root, so /api is stripped). The single member
-// route (default policy) carries the signed-in user's access token. Dev forwards X-Dev-User instead
-// of a token so the stack runs without Authentik.
+// Reverse proxy to the upstream APIs (REST at the upstream root, so the prefix is stripped). The member
+// routes (default policy) carry the signed-in user's access token. A caller-presented bearer (the mobile
+// app) is forwarded verbatim — YARP copies the Authorization header, so the transform stands aside; the
+// upstreams validate the token themselves (its audience covers cal/contact/geo). Dev forwards X-Dev-User
+// instead of a token so the stack runs without Authentik.
 var isDev = builder.Environment.IsDevelopment();
 var devUser = builder.Configuration["Dev:User"] ?? "dev@localhost";
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
     .AddTransforms(ctx => ctx.AddRequestTransform(async transform =>
     {
+        var incoming = transform.HttpContext.Request.Headers.Authorization.ToString();
+        if (incoming.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            return;   // native caller — its own token flows through untouched
+
         if (isDev)
         {
             transform.ProxyRequest.Headers.TryAddWithoutValidation("X-Dev-User", devUser);
@@ -108,3 +114,6 @@ app.MapReverseProxy();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+// Exposes the implicit Program entry point to the integration test assembly (WebApplicationFactory<Program>).
+public partial class Program;
