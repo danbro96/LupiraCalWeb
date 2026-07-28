@@ -42,7 +42,7 @@ npm workspaces; extract `@lupira/cal-domain` (packages/domain, consumed as sourc
 - [x] Root `npm run build` emits to src/LupiraCalWeb/wwwroot; `docker build .` succeeds
 - [x] `npm run gen:api` still resolves sibling repo specs (client cwd unchanged)
 - [x] Vite dev serves workspace domain source (smoke: `/@fs/**/packages/domain/src/time.ts` transpiled)
-- [ ] CI green on main (pending push)
+- [x] CI green on main (release run 2026-07-28 on sha-c4c4de0)
 
 ### Non-goals
 No Expo app yet; no backend/.NET/slnx/deploy changes; no entries.ts split; no path
@@ -70,7 +70,7 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 - [x] Full suites green: 140 unit / 133 integration (incl. legacy feed + web-facing routes untouched); web client regenerated, lint/typecheck/test/build green
 
 ### Manual steps
-- [ ] Deploy includes one-time projection rebuild: `dotnet LupiraCalApi.dll --rebuild-items` (backfills watermarks; full sync misses pre-existing items until run)
+- [x] Deploy includes one-time projection rebuild: `dotnet LupiraCalApi.dll --rebuild-items` (run 2026-07-28 — cal-api sha-8cf1b83 deployed, schema applied, projection rebuilt)
 
 ## M2 — contact-api sync surface + BFF bearer + Authentik   [status: done]
 
@@ -90,7 +90,7 @@ Additive only — existing routes and the legacy feed untouched; web unaffected.
 - [x] Public client `lupira-cal-mobile`: PKCE, blank secret, subject mode email, issuer Global (verified via discovery)
 - [x] Redirect regex `^lupiracalendar://.*$` (verified: authorize accepts `lupiracalendar://oauthredirect`)
 - [x] Scopes: openid email profile offline_access + lupira-cal-aud + lupira-contact-aud + lupira-geo-aud (`groups` deliberately omitted — nothing in the mobile path needs it)
-- [ ] Deploy note: contact-api needs one-time `dotnet LupiraContactApi.dll --rebuild-contacts`
+- [x] Deploy note: contact-api needs one-time `dotnet LupiraContactApi.dll --rebuild-contacts` (run 2026-07-28 — contact-api sha-d874085 deployed, schema applied, projection rebuilt; cal-web BFF sha-c4c4de0 live with the bearer front door)
 
 ## M3 — App skeleton + auth   [status: in-progress — device verification pending]
 
