@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
@@ -9,9 +9,11 @@ import type { ContactForm } from '../../domain/editors';
 import { contactCoreFromForm, contactFormFromDoc, emptyContactForm, parseCsv } from '../../domain/editors';
 import { createContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../../state/actions';
 import { useAddressBooks, useContactState } from '../../state/queries';
-import { Button, ChoiceChips, DateField, Field, formStyles } from '../components/form';
+import { ChoiceChips, DateField, Field, formStyles } from '../components/form';
+import { ACCENT } from '../components/palette';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
+import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
 
 const KIND_OPTIONS = [{ value: 'Individual', label: 'Person' }, { value: 'Organization', label: 'Organization' }];
 const NAME_FORMAT_OPTIONS = [
@@ -35,19 +37,33 @@ export function ContactEditScreen() {
   const [bookId, setBookId] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [seeded, setSeeded] = useState(!contactId);
+  /// Snapshot of the pristine form; anything different means unsaved work worth guarding.
+  const baseline = useRef(snapshot(emptyContactForm(), [], [], ''));
+  const saving = useRef(false);
 
   useEffect(() => {
     if (!seeded && contactId && state) {
-      setForm(contactFormFromDoc(state.doc));
-      setChannels((state.doc.channels ?? []).map((c) => ({ ...c })));
-      setProfiles((state.doc.profiles ?? []).map((p) => ({ ...p })));
-      setTagsCsv((state.doc.tags ?? []).join(', '));
+      const seededForm = contactFormFromDoc(state.doc);
+      const seededChannels = (state.doc.channels ?? []).map((c) => ({ ...c }));
+      const seededProfiles = (state.doc.profiles ?? []).map((p) => ({ ...p }));
+      const seededTags = (state.doc.tags ?? []).join(', ');
+      setForm(seededForm);
+      setChannels(seededChannels);
+      setProfiles(seededProfiles);
+      setTagsCsv(seededTags);
+      baseline.current = snapshot(seededForm, seededChannels, seededProfiles, seededTags);
       setSeeded(true);
     }
   }, [seeded, contactId, state]);
   useEffect(() => {
     if (!contactId && !bookId && books?.length) setBookId(books[0].id);
   }, [contactId, bookId, books]);
+
+  const dirty = useMemo(
+    () => snapshot(form, channels, profiles, tagsCsv) !== baseline.current,
+    [form, channels, profiles, tagsCsv],
+  );
+  useUnsavedGuard(dirty && !saving.current, 'Discard this contact edit?');
 
   const set = <K extends keyof ContactForm>(key: K, value: ContactForm[K]) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -68,6 +84,7 @@ export function ContactEditScreen() {
     const cleanProfiles = profiles.filter((p) => p.service.trim() && p.handle.trim());
     const tags = parseCsv(tagsCsv);
 
+    saving.current = true;
     void (async () => {
       if (!contactId) {
         const id = await createContact(bookId, { ...r.value, channels: cleanChannels, tags });
@@ -80,8 +97,23 @@ export function ContactEditScreen() {
         if (JSON.stringify(cleanProfiles) !== JSON.stringify(doc?.profiles ?? [])) await setContactProfiles(contactId, cleanProfiles);
       }
       navigation.goBack();
-    })();
+    })().catch(() => {
+      saving.current = false;
+    });
   };
+
+  // Save lives in the header; leaving without saving is guarded instead of needing a Cancel button.
+  // Intentionally dependency-free: `save` closes over the live form state, so it must be re-bound
+  // on every render.
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={save} hitSlop={8}>
+          <Text style={[styles.headerSave, !dirty && styles.headerSaveIdle]}>Save</Text>
+        </Pressable>
+      ),
+    });
+  });
 
   if (contactId && !seeded) {
     return (
@@ -220,10 +252,6 @@ export function ContactEditScreen() {
       </Field>
 
       {error && <Text style={formStyles.error}>{error}</Text>}
-      <View style={styles.buttons}>
-        <Button title={contactId ? 'Save' : 'Create'} onPress={save} />
-        <Button title="Cancel" kind="plain" onPress={() => navigation.goBack()} />
-      </View>
     </ScrollView>
   );
 }
@@ -247,5 +275,10 @@ const styles = StyleSheet.create({
   addRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 },
   addChip: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderColor: '#bbb', borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 },
   addChipText: { fontSize: 13, color: '#444' },
-  buttons: { flexDirection: 'row', gap: 10, marginTop: 20 },
+  headerSave: { color: ACCENT, fontSize: 16, fontWeight: '600', paddingRight: 4 },
+  headerSaveIdle: { opacity: 0.45 },
 });
+
+function snapshot(form: ContactForm, channels: ReachChannel[], profiles: SocialProfile[], tagsCsv: string): string {
+  return JSON.stringify([form, channels, profiles, tagsCsv.trim()]);
+}
