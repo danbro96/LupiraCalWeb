@@ -6,6 +6,7 @@ import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View }
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { GridRow } from '../../data/mirror';
 import { useDaysOccurrences } from '../../state/queries';
+import { SwipeHint } from '../calendar/SwipeHint';
 import { useHorizontalSwipe } from '../calendar/useHorizontalSwipe';
 import { MonthView } from '../calendar/MonthView';
 import { WeekView } from '../calendar/WeekView';
@@ -78,6 +79,11 @@ export function CalendarScreen() {
   };
   // Swipe left/right = next/previous month or week (handlers stay fresh inside the hook).
   const swipe = useHorizontalSwipe(() => step(1), () => step(-1));
+  const periodLabel = (dir: 1 | -1) => {
+    if (mode === 'month') return fmtMonthTitle(addMonths(anchor, dir));
+    const start = startOfWeek(addDays(anchor, dir * 7));
+    return `${start.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}–${addDays(start, 6).getDate()}`;
+  };
   const openOccurrence = useCallback((row: GridRow) => {
     if (row.source === 'birthday') navigation.navigate('ContactDetail', { contactId: row.source_id });
     else navigation.navigate('ItemDetail', { itemId: row.source_id });
@@ -111,6 +117,7 @@ export function CalendarScreen() {
           {...swipe.panHandlers}
         >
           <MonthView anchor={anchor} selectedDay={selectedDay} onSelectDay={selectDay} />
+          <SwipeHint hint={swipe.hint} prevLabel={periodLabel(-1)} nextLabel={periodLabel(1)} />
           {selectedDay && (
             <Animated.View style={[styles.sheet, { height: sheetH }]}>
               <View style={styles.sheetHeader} {...pan.panHandlers}>
@@ -138,6 +145,7 @@ export function CalendarScreen() {
       ) : (
         <View style={styles.monthArea} {...swipe.panHandlers}>
           <WeekView weekStart={weekStart} onPressOccurrence={openOccurrence} onCreateSlot={createSlot} />
+          <SwipeHint hint={swipe.hint} prevLabel={periodLabel(-1)} nextLabel={periodLabel(1)} />
         </View>
       )}
     </SafeAreaView>
