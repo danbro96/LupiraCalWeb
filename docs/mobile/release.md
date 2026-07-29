@@ -32,6 +32,15 @@ Subsequent releases: `npx eas-cli submit -p android --profile production` (uses 
 internal track from `eas.json`; needs the Play service-account key linked once), or upload
 the AAB manually.
 
+## Subsequent releases (same signing key)
+
+Play accepts a build when its `versionCode` is higher — EAS increments that remotely, so a
+rebuild is enough even if `expo.version` is unchanged (Play then shows e.g. `1.0.0 (4)`).
+Bump `expo.version` + `APP_VERSION` when the family should see a new number.
+
+Updating over a previous Play install keeps the mirror and any queued outbox ops (same key,
+no uninstall) — that is exactly the upgrade drill below.
+
 ## Dev client vs release install
 
 Same package id, different signing keys — they can never be installed over each other.
