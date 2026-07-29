@@ -4,12 +4,13 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
-import { REACH_KINDS, reachIcon } from '../../domain/reach';
+import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
 import { contactCoreFromForm, contactFormFromDoc, emptyContactForm, parseCsv } from '../../domain/editors';
 import { createContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../../state/actions';
 import { useAddressBooks, useContactState } from '../../state/queries';
 import { Button, ChoiceChips, DateField, Field, formStyles } from '../components/form';
+import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 
 const KIND_OPTIONS = [{ value: 'Individual', label: 'Person' }, { value: 'Organization', label: 'Organization' }];
@@ -160,7 +161,7 @@ export function ContactEditScreen() {
       <Text style={formStyles.section}>Reach</Text>
       {channels.map((c, i) => (
         <View key={`ch-${i}`} style={styles.reachRow}>
-          <Text style={styles.reachKind}>{reachIcon(c.medium)}</Text>
+          <ReachIcon kind={c.medium} />
           <TextInput
             style={[formStyles.input, styles.reachValue]}
             placeholder={c.medium === 'Phone' ? '+46…' : 'name@example.com'}
@@ -187,7 +188,7 @@ export function ContactEditScreen() {
       ))}
       {profiles.map((p, i) => (
         <View key={`pr-${i}`} style={styles.reachRow}>
-          <Text style={styles.reachKind}>{reachIcon(p.service)}</Text>
+          <ReachIcon kind={p.service} />
           <Text style={styles.reachService} numberOfLines={1}>{p.service}</Text>
           <TextInput
             style={[formStyles.input, styles.reachValue]}
@@ -204,7 +205,8 @@ export function ContactEditScreen() {
       <View style={styles.addRow}>
         {REACH_KINDS.map((k) => (
           <Pressable key={k.key} style={styles.addChip} onPress={() => addReach(k.key)}>
-            <Text style={styles.addChipText}>＋ {k.icon} {k.key}</Text>
+            <ReachIcon kind={k.key} size={13} />
+            <Text style={styles.addChipText}>{k.key}</Text>
           </Pressable>
         ))}
       </View>
@@ -243,7 +245,7 @@ const styles = StyleSheet.create({
   starOn: { color: '#d97706' },
   remove: { fontSize: 14, color: '#999', paddingHorizontal: 4 },
   addRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 },
-  addChip: { borderWidth: 1, borderColor: '#bbb', borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
+  addChip: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderColor: '#bbb', borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 },
   addChipText: { fontSize: 13, color: '#444' },
   buttons: { flexDirection: 'row', gap: 10, marginTop: 20 },
 });

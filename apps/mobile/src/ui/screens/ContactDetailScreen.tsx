@@ -3,17 +3,18 @@ import { coercePartialDate, fmtPartialDate } from '@lupira/cal-domain/partialDat
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
 import type { PartialDateDto } from '../../domain/docTypes';
-import { reachIcon, reachLink } from '../../domain/reach';
+import { reachLink } from '../../domain/reach';
 import { deleteContact } from '../../state/actions';
 import { useContactState } from '../../state/queries';
-import { Button, formStyles } from '../components/form';
-import { hashColor } from '../components/palette';
+import { formStyles } from '../components/form';
+import { ACCENT, hashColor } from '../components/palette';
+import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { initialsOf } from './ContactsScreen';
 
@@ -26,6 +27,36 @@ export function ContactDetailScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { contactId } = route.params;
   const { data: state, isLoading } = useContactState(contactId);
+  const [relationsOpen, setRelationsOpen] = useState(false);
+  const name = state ? composeDisplayName(state.doc) : '';
+
+  // Edit/Delete live in the native header; delete always confirms (it syncs to the whole family).
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={styles.headerActions}>
+          <Pressable onPress={() => navigation.navigate('ContactEdit', { contactId })} hitSlop={8}>
+            <Text style={styles.headerAction}>Edit</Text>
+          </Pressable>
+          <Pressable
+            hitSlop={8}
+            onPress={() =>
+              Alert.alert('Delete contact', `Delete ${name || 'this contact'}? It syncs to everyone.`, [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Delete',
+                  style: 'destructive',
+                  onPress: () => void deleteContact(contactId).then(() => navigation.goBack()),
+                },
+              ])
+            }
+          >
+            <Text style={styles.headerDanger}>Delete</Text>
+          </Pressable>
+        </View>
+      ),
+    });
+  }, [navigation, contactId, name]);
 
   if (isLoading) return <Centered text="Loading…" />;
   if (!state) return <Centered text="This contact is not in the offline mirror." />;
@@ -36,18 +67,6 @@ export function ContactDetailScreen() {
   const addresses = (doc.addresses as { placeId?: string | null; type?: string }[] | undefined) ?? [];
   const metadata = Object.entries(doc.metadata ?? {});
   const deceased = doc.deceased === true;
-
-  const confirmDelete = () =>
-    Alert.alert('Delete contact', `Delete ${displayName}? It syncs to everyone.`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          void deleteContact(contactId).then(() => navigation.goBack());
-        },
-      },
-    ]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -76,18 +95,24 @@ export function ContactDetailScreen() {
       {(doc.channels ?? []).length === 0 && (doc.profiles ?? []).length === 0 && <Text style={styles.muted}>Nothing yet</Text>}
       {(doc.channels ?? []).map((c, i) => (
         <Pressable key={`ch-${i}`} onPress={() => openReach(c.medium, c.value)}>
-          <Text style={styles.row}>
-            <Text style={styles.rowKind}>{reachIcon(c.medium)} {c.medium}{c.type ? ` (${c.type})` : ''}  </Text>
-            {c.value}{c.preferred ? '  ★' : ''}
-          </Text>
+          <View style={styles.reachRow}>
+            <ReachIcon kind={c.medium} />
+            <Text style={styles.reachText}>
+              <Text style={styles.rowKind}>{c.medium}{c.type ? ` (${c.type})` : ''}  </Text>
+              {c.value}{c.preferred ? '  ★' : ''}
+            </Text>
+          </View>
         </Pressable>
       ))}
       {(doc.profiles ?? []).map((p, i) => (
         <Pressable key={`pr-${i}`} onPress={() => openReach(p.service, p.handle)}>
-          <Text style={styles.row}>
-            <Text style={styles.rowKind}>{reachIcon(p.service)} {p.service}  </Text>
-            {p.handle}{p.preferred ? '  ★' : ''}
-          </Text>
+          <View style={styles.reachRow}>
+            <ReachIcon kind={p.service} />
+            <Text style={styles.reachText}>
+              <Text style={styles.rowKind}>{p.service}  </Text>
+              {p.handle}{p.preferred ? '  ★' : ''}
+            </Text>
+          </View>
         </Pressable>
       ))}
 
@@ -121,8 +146,13 @@ export function ContactDetailScreen() {
 
       {relations.filter((r) => !r.ended).length > 0 && (
         <>
-          <Text style={formStyles.section}>Relations</Text>
-          {relations.filter((r) => !r.ended).map((r, i) => (
+          <Pressable style={styles.sectionToggle} onPress={() => setRelationsOpen((o) => !o)}>
+            <Text style={formStyles.section}>
+              Relations ({relations.filter((r) => !r.ended).length})
+            </Text>
+            <Text style={styles.chevron}>{relationsOpen ? '▾' : '▸'}</Text>
+          </Pressable>
+          {relationsOpen && relations.filter((r) => !r.ended).map((r, i) => (
             <ResolvedName
               key={`${r.toContactId}-${i}`}
               contactId={r.toContactId ?? ''}
@@ -149,10 +179,6 @@ export function ContactDetailScreen() {
         <Text style={styles.footer}>Updated {new Date(doc.updatedAt).toLocaleString()}</Text>
       )}
 
-      <View style={styles.buttons}>
-        <Button title="Edit" onPress={() => navigation.navigate('ContactEdit', { contactId })} />
-        <Button title="Delete" kind="danger" onPress={confirmDelete} />
-      </View>
     </ScrollView>
   );
 }
@@ -263,6 +289,13 @@ const styles = StyleSheet.create({
   notes: { fontSize: 14, color: '#333' },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   tagChip: { fontSize: 12, color: '#4457c2', backgroundColor: '#eef0fb', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
-  footer: { color: '#aaa', fontSize: 11, marginTop: 12 },
+  footer: { color: '#aaa', fontSize: 11, marginTop: 12, marginBottom: 16 },
+  headerActions: { flexDirection: 'row', gap: 16, paddingRight: 4 },
+  headerAction: { color: ACCENT, fontSize: 15 },
+  headerDanger: { color: '#b91c1c', fontSize: 15 },
+  reachRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4 },
+  reachText: { flex: 1, fontSize: 14 },
+  sectionToggle: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
+  chevron: { color: '#888', fontSize: 13 },
   buttons: { flexDirection: 'row', gap: 10, marginTop: 16 },
 });
