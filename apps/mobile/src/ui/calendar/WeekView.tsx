@@ -4,9 +4,11 @@ import { memo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { GridRow } from '../../data/mirror';
 import { useDaysOccurrences } from '../../state/queries';
-import { BIRTHDAY_COLOR, useCalendarColors } from '../components/palette';
+import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 
 const HOUR_H = 44;
+
+const slotTime = (slot: number) => `${String(Math.floor(slot / 2)).padStart(2, '0')}:${slot % 2 ? '30' : '00'}`;
 const DEFAULT_END_MIN = 30;   // open-ended timed occurrences render as a half-hour block
 
 /// Week grid: all-day chips on top, timed lanes below. Placement is the domain's clampToDay + layoutColumns
@@ -17,7 +19,8 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
   onCreateSlot: (day: string, time: string) => void;
 }) {
   // First tap on an empty lane drops a ＋ chip on that hour; tapping the chip opens the prefilled editor.
-  const [pendingSlot, setPendingSlot] = useState<{ day: string; hour: number } | null>(null);
+  // Slot granularity is 30 min; the ＋ chip covers the tapped half hour (prefill length stays 1h).
+  const [pendingSlot, setPendingSlot] = useState<{ day: string; slot: number } | null>(null);
   const days = daysFrom(weekStart, 7);
   const dayKeys = days.map(ymd);
   const { rows } = useDaysOccurrences(dayKeys);
@@ -25,7 +28,12 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
 
   const allDayByDay = new Map<string, GridRow[]>();
   const timedByDay = new Map<string, GridRow[]>();
+  const availByDay = new Map<string, string | null>();
   for (const r of rows) {
+    if (r.is_availability === 1) {
+      availByDay.set(r.start_day, r.avail_status);   // renders as the column tint, never a chip
+      continue;
+    }
     const map = r.all_day === 1 ? allDayByDay : timedByDay;
     const list = map.get(r.start_day) ?? [];
     list.push(r);
@@ -89,24 +97,24 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
             return (
               <Pressable
                 key={dayKey}
-                style={styles.dayColumn}
+                style={[styles.dayColumn, availByDay.has(dayKey) && { backgroundColor: `${availabilityColor(availByDay.get(dayKey) ?? null)}14` }]}
                 onPress={(e) => {
-                  const hour = Math.max(0, Math.min(23, Math.floor(e.nativeEvent.locationY / HOUR_H)));
-                  setPendingSlot((cur) => (cur && cur.day === dayKey && cur.hour === hour ? null : { day: dayKey, hour }));
+                  const slot = Math.max(0, Math.min(47, Math.floor(e.nativeEvent.locationY / (HOUR_H / 2))));
+                  setPendingSlot((cur) => (cur && cur.day === dayKey && cur.slot === slot ? null : { day: dayKey, slot }));
                 }}
               >
-                {Array.from({ length: 24 }, (_, h) => (
-                  <View key={h} style={[styles.hourLine, { top: h * HOUR_H }]} />
+                {Array.from({ length: 48 }, (_, i) => (
+                  <View key={i} style={[i % 2 ? styles.halfLine : styles.hourLine, { top: (i * HOUR_H) / 2 }]} />
                 ))}
                 {pendingSlot?.day === dayKey && (
                   <Pressable
-                    style={[styles.slotChip, { top: pendingSlot.hour * HOUR_H + 2 }]}
+                    style={[styles.slotChip, { top: pendingSlot.slot * (HOUR_H / 2) + 1 }]}
                     onPress={() => {
-                      onCreateSlot(dayKey, `${String(pendingSlot.hour).padStart(2, '0')}:00`);
+                      onCreateSlot(dayKey, slotTime(pendingSlot.slot));
                       setPendingSlot(null);
                     }}
                   >
-                    <Text style={styles.slotChipText}>＋ {String(pendingSlot.hour).padStart(2, '0')}:00</Text>
+                    <Text style={styles.slotChipText}>＋ {slotTime(pendingSlot.slot)}</Text>
                   </Pressable>
                 )}
                 {placed.map((p) => (
@@ -148,7 +156,8 @@ const styles = StyleSheet.create({
   hourLabel: { position: 'absolute', right: 4, fontSize: 9, color: '#999' },
   dayColumn: { flex: 1, borderLeftWidth: 0.5, borderColor: '#ececf0' },
   hourLine: { position: 'absolute', left: 0, right: 0, height: 0.5, backgroundColor: '#ececf0' },
+  halfLine: { position: 'absolute', left: 0, right: 0, height: 0.5, backgroundColor: '#f5f5f8' },
   event: { position: 'absolute', borderRadius: 4, padding: 2, borderWidth: 0.5, borderColor: '#ffffff88' },
-  slotChip: { position: 'absolute', left: 2, right: 2, height: HOUR_H - 4, borderRadius: 6, borderWidth: 1.5, borderColor: '#4457c2', borderStyle: 'dashed', backgroundColor: '#eef0fbee', alignItems: 'center', justifyContent: 'center' },
+  slotChip: { position: 'absolute', left: 2, right: 2, height: HOUR_H / 2 - 2, borderRadius: 6, borderWidth: 1.5, borderColor: '#4457c2', borderStyle: 'dashed', backgroundColor: '#eef0fbee', alignItems: 'center', justifyContent: 'center' },
   slotChipText: { color: '#4457c2', fontWeight: '600', fontSize: 13 },
 });

@@ -4,6 +4,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
+import { REACH_KINDS, reachIcon } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
 import { contactCoreFromForm, contactFormFromDoc, emptyContactForm, parseCsv } from '../../domain/editors';
 import { createContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../../state/actions';
@@ -17,9 +18,6 @@ const NAME_FORMAT_OPTIONS = [
   { value: 'FirstLast', label: 'First + last' },
   { value: 'NickName', label: 'Nickname' },
 ];
-/// One add-menu for every way to reach someone. Email/Phone are channels; the rest are social profiles
-/// (the API models IM handles as profiles by design — see docs/mobile notes on the vCard hazard).
-const REACH_OPTIONS = ['Email', 'Phone', 'Telegram', 'Signal', 'WhatsApp', 'Web', 'Other'] as const;
 const CHANNEL_TYPES = [null, 'Home', 'Work', 'Mobile'] as const;
 
 export function ContactEditScreen() {
@@ -52,9 +50,11 @@ export function ContactEditScreen() {
 
   const set = <K extends keyof ContactForm>(key: K, value: ContactForm[K]) => setForm((f) => ({ ...f, [key]: value }));
 
-  const addReach = (kind: (typeof REACH_OPTIONS)[number]) => {
-    if (kind === 'Email' || kind === 'Phone') setChannels((c) => [...c, { medium: kind, value: '', preferred: false }]);
-    else setProfiles((p) => [...p, { service: kind === 'Other' ? '' : kind, handle: '', preferred: false }]);
+  // The kind is chosen once, when the row is added — rows render it as a fixed icon+label afterwards.
+  const addReach = (key: string) => {
+    const kind = REACH_KINDS.find((k) => k.key === key);
+    if (kind?.channelMedium) setChannels((c) => [...c, { medium: kind.channelMedium!, value: '', preferred: false }]);
+    else setProfiles((p) => [...p, { service: key, handle: '', preferred: false }]);
   };
 
   const save = () => {
@@ -160,7 +160,7 @@ export function ContactEditScreen() {
       <Text style={formStyles.section}>Reach</Text>
       {channels.map((c, i) => (
         <View key={`ch-${i}`} style={styles.reachRow}>
-          <Text style={styles.reachKind}>{c.medium === 'Phone' ? '☎' : '✉'}</Text>
+          <Text style={styles.reachKind}>{reachIcon(c.medium)}</Text>
           <TextInput
             style={[formStyles.input, styles.reachValue]}
             placeholder={c.medium === 'Phone' ? '+46…' : 'name@example.com'}
@@ -187,13 +187,8 @@ export function ContactEditScreen() {
       ))}
       {profiles.map((p, i) => (
         <View key={`pr-${i}`} style={styles.reachRow}>
-          <TextInput
-            style={[formStyles.input, styles.reachService]}
-            placeholder="service"
-            autoCapitalize="none"
-            value={p.service}
-            onChangeText={(v) => setProfiles((d) => d.map((x, j) => (j === i ? { ...x, service: v } : x)))}
-          />
+          <Text style={styles.reachKind}>{reachIcon(p.service)}</Text>
+          <Text style={styles.reachService} numberOfLines={1}>{p.service}</Text>
           <TextInput
             style={[formStyles.input, styles.reachValue]}
             placeholder="@handle or URL"
@@ -207,9 +202,9 @@ export function ContactEditScreen() {
         </View>
       ))}
       <View style={styles.addRow}>
-        {REACH_OPTIONS.map((o) => (
-          <Pressable key={o} style={styles.addChip} onPress={() => addReach(o)}>
-            <Text style={styles.addChipText}>＋ {o}</Text>
+        {REACH_KINDS.map((k) => (
+          <Pressable key={k.key} style={styles.addChip} onPress={() => addReach(k.key)}>
+            <Text style={styles.addChipText}>＋ {k.icon} {k.key}</Text>
           </Pressable>
         ))}
       </View>
@@ -241,7 +236,7 @@ const styles = StyleSheet.create({
   pairItem: { flex: 1 },
   reachRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
   reachKind: { fontSize: 18, width: 24, textAlign: 'center' },
-  reachService: { flex: 2 },
+  reachService: { flex: 2, fontSize: 13, color: '#555' },
   reachValue: { flex: 3 },
   typeChip: { fontSize: 11, color: '#4457c2', borderWidth: 1, borderColor: '#c6cbe8', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3 },
   star: { fontSize: 18, color: '#ccc' },

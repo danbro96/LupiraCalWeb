@@ -7,6 +7,7 @@ import { CalendarVisibilityProvider } from './components/CalendarVisibility';
 import { Sidebar } from './components/Sidebar';
 import { ItemDrawer } from './components/drawer/ItemDrawer';
 import { BirthdayCard } from './components/drawer/BirthdayCard';
+import { AvailabilityModal } from './components/AvailabilityModal';
 import { NewItemModal } from './components/NewItemModal';
 
 /** Full-width app frame: section nav, calendar sidebar, routed content, and the ?item= drawer host. */
@@ -15,6 +16,7 @@ export function AppShell() {
   useEnsureContactBootstrap();
   const [searchParams, setSearchParams] = useSearchParams();
   const [creating, setCreating] = useState(false);
+  const [settingAvailability, setSettingAvailability] = useState(false);
   const itemId = searchParams.get('item');
   const birthdayContactId = searchParams.get('birthday');
   const birthdayYear = searchParams.get('year');
@@ -50,6 +52,9 @@ export function AppShell() {
             <Outlet />
           </main>
         </div>
+        <button className="fab fab-secondary" onClick={() => setSettingAvailability(true)} aria-label="Set availability" title="Set availability">
+          ▤
+        </button>
         <button className="fab" onClick={() => setCreating(true)} aria-label="New item" title="New item">
           +
         </button>
@@ -60,6 +65,7 @@ export function AppShell() {
         <BirthdayCard contactId={birthdayContactId} year={birthdayYear} onClose={() => dropParams('birthday', 'year')} />
       )}
       {creating && <NewItemModal onClose={() => setCreating(false)} />}
+      {settingAvailability && <AvailabilityModal onClose={() => setSettingAvailability(false)} />}
     </CalendarVisibilityProvider>
   );
 }

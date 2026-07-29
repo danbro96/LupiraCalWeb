@@ -16,11 +16,13 @@ export function applyItemOp(state: MirrorItem | null, op: ClientOp): MirrorItem 
   switch (op.kind) {
     case 'item.create': {
       if (state && !state.deleted) return state;   // idempotent hit, like the server's SourceKey dedup
+      const { availability, ...core } = op.core;
       const doc: ItemDoc = {
-        ...op.core,
+        ...core,
         id: op.itemId,
         isAllDay: op.core.isAllDay ?? false,
         calendars: [{ calendarId: op.calendarId, status: 'Accepted' }],
+        ...(availability ? { details: { presence: { status: availability } } } : {}),
       };
       const guards = emptyItemGuards();
       guards.core = { ts: op.occurredAt, cmd: op.commandId };

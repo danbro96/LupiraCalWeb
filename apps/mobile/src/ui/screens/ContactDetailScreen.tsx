@@ -9,6 +9,7 @@ import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
 import type { PartialDateDto } from '../../domain/docTypes';
+import { reachIcon, reachLink } from '../../domain/reach';
 import { deleteContact } from '../../state/actions';
 import { useContactState } from '../../state/queries';
 import { Button, formStyles } from '../components/form';
@@ -74,18 +75,20 @@ export function ContactDetailScreen() {
       <Text style={formStyles.section}>Reach</Text>
       {(doc.channels ?? []).length === 0 && (doc.profiles ?? []).length === 0 && <Text style={styles.muted}>Nothing yet</Text>}
       {(doc.channels ?? []).map((c, i) => (
-        <Pressable key={`ch-${i}`} onPress={() => void Linking.openURL(`${c.medium === 'Phone' ? 'tel' : 'mailto'}:${c.value}`)}>
+        <Pressable key={`ch-${i}`} onPress={() => openReach(c.medium, c.value)}>
           <Text style={styles.row}>
-            <Text style={styles.rowKind}>{c.medium}{c.type ? ` (${c.type})` : ''}  </Text>
+            <Text style={styles.rowKind}>{reachIcon(c.medium)} {c.medium}{c.type ? ` (${c.type})` : ''}  </Text>
             {c.value}{c.preferred ? '  ★' : ''}
           </Text>
         </Pressable>
       ))}
       {(doc.profiles ?? []).map((p, i) => (
-        <Text key={`pr-${i}`} style={styles.row}>
-          <Text style={styles.rowKind}>{p.service}  </Text>
-          {p.handle}{p.preferred ? '  ★' : ''}
-        </Text>
+        <Pressable key={`pr-${i}`} onPress={() => openReach(p.service, p.handle)}>
+          <Text style={styles.row}>
+            <Text style={styles.rowKind}>{reachIcon(p.service)} {p.service}  </Text>
+            {p.handle}{p.preferred ? '  ★' : ''}
+          </Text>
+        </Pressable>
       ))}
 
       {(doc.tags ?? []).length > 0 && (
@@ -152,6 +155,11 @@ export function ContactDetailScreen() {
       </View>
     </ScrollView>
   );
+}
+
+function openReach(kind: string, value: string): void {
+  const url = reachLink(kind, value);
+  if (url) void Linking.openURL(url).catch(() => undefined);
 }
 
 function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; deceased: boolean }) {

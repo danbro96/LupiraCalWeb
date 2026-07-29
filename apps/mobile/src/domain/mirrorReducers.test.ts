@@ -121,3 +121,18 @@ describe('applyContactOp', () => {
     expect(after.doc.profiles).toHaveLength(1);
   });
 });
+
+describe('availability creates', () => {
+  it('materializes presence status onto the doc and keeps it off the core fields', () => {
+    const state = applyItemOp(null, {
+      kind: 'item.create', itemId: 'a1', sourceKey: 'k', calendarId: 'avail-cal',
+      commandId: '0198c0de-0000-7000-8000-000000000001', occurredAt: '2026-08-01T00:00:00.000Z',
+      core: {
+        title: 'Vacation', isAllDay: true, startDate: '2026-08-01', endDate: '2026-08-15',
+        availability: 'Vacation',
+      },
+    });
+    expect(state?.doc.details).toEqual({ presence: { status: 'Vacation' } });
+    expect(state?.doc).not.toHaveProperty('availability');
+  });
+});

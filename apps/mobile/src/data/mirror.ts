@@ -137,6 +137,10 @@ export type GridRow = OccurrenceQueryRow & {
   title: string | null;
   status: string | null;
   calendar_id: string | null;
+  /// 1 when the item lives in the Availability-kind calendar — grids render these as the background
+  /// band (status in avail_status), never as chips.
+  is_availability: number | null;
+  avail_status: string | null;
 };
 
 /// The grids' one read: occurrences joined with just enough display data (title, status, a calendar for the
@@ -154,7 +158,10 @@ export async function gridRowsBetween(tx: Tx, fromDay: string, toDay: string, in
             COALESCE(i.title, c.display_name) AS title,
             i.status AS status,
             (SELECT ic.calendar_id FROM item_calendars ic WHERE ic.item_id = o.source_id
-             ORDER BY CASE ic.status WHEN 'Accepted' THEN 0 ELSE 1 END, ic.calendar_id LIMIT 1) AS calendar_id
+             ORDER BY CASE ic.status WHEN 'Accepted' THEN 0 ELSE 1 END, ic.calendar_id LIMIT 1) AS calendar_id,
+            (SELECT 1 FROM item_calendars ia JOIN calendars ca ON ca.id = ia.calendar_id
+             WHERE ia.item_id = o.source_id AND json_extract(ca.doc, '$.kind') = 'Availability' LIMIT 1) AS is_availability,
+            json_extract(i.doc, '$.details.presence.status') AS avail_status
      FROM occurrences o
      LEFT JOIN items i ON o.source = 'item' AND i.id = o.source_id
      LEFT JOIN contacts c ON o.source = 'birthday' AND c.id = o.source_id

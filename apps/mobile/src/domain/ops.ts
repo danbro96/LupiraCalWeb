@@ -14,7 +14,11 @@ type Base = { commandId: string; occurredAt: string };
 /// null on title/description/status/category/tags means "keep" (the REST contract has no clear for those).
 export type ItemCore = Pick<ItemDoc,
   'title' | 'description' | 'status' | 'isAllDay' | 'startsAt' | 'endsAt' | 'startDate' | 'endDate'
-  | 'startTimezone' | 'endTimezone' | 'recurrenceRule' | 'category' | 'tags' | 'parentItemId'>;
+  | 'startTimezone' | 'endTimezone' | 'recurrenceRule' | 'category' | 'tags' | 'parentItemId'> & {
+  /// Create-only: availability-calendar entries carry their presence status (details.presence.status
+  /// server-side). Ignored by revise — details have their own endpoints.
+  availability?: string | null;
+};
 
 /// Contact fields as ReviseContact interprets them: name/notes/etc null = keep; channels and tags UNION-merge
 /// (the wholesale ops below are the removing counterparts, mirroring the REST surface).

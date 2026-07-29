@@ -27,6 +27,7 @@ export async function replayOp(op: ClientOp): Promise<void> {
         recurrenceRule: op.core.recurrenceRule ?? undefined,
         tags: op.core.tags ?? undefined,
         parentItemId: op.core.parentItemId ?? undefined,
+        availability: (op.core.availability ?? undefined) as never,
       }, idem);
       return;
     case 'item.revise':

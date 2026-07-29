@@ -55,9 +55,10 @@ export type CalendarContainer = {
 };
 
 /// Calendars a user may deliberately put items into: never System-class scaffolding, never the
-/// synthesized Birthdays calendar (the API 400s on it as of the same change).
+/// synthesized Birthdays calendar (the API 400s on it), never Availability (its entries go through
+/// the dedicated quick-add, not the event editor).
 export function selectableCalendars(calendars: CalendarContainer[] | undefined): CalendarContainer[] {
-  return (calendars ?? []).filter((c) => c.class !== 'System' && c.kind !== 'Birthdays');
+  return (calendars ?? []).filter((c) => c.class !== 'System' && c.kind !== 'Birthdays' && c.kind !== 'Availability');
 }
 export type AddressBookContainer = { id: string; displayName?: string | null; access?: string };
 

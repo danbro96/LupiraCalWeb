@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { GridRow } from '../../data/mirror';
 import { useDaysOccurrences } from '../../state/queries';
-import { BIRTHDAY_COLOR, useCalendarColors } from '../components/palette';
+import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 
 /// Month grid straight off the mirror: monthMatrix (domain) for the day layout, one occurrence query per
 /// touched month bucket, up to three title bars per cell. Day selection drives the agenda in CalendarScreen.
@@ -18,7 +18,12 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
   const colorOf = useCalendarColors();
 
   const byDay = new Map<string, GridRow[]>();
+  const availByDay = new Map<string, string | null>();
   for (const r of rows) {
+    if (r.is_availability === 1) {
+      availByDay.set(r.start_day, r.avail_status);   // the band, never a chip
+      continue;
+    }
     const list = byDay.get(r.start_day) ?? [];
     list.push(r);
     byDay.set(r.start_day, list);
@@ -42,6 +47,9 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
             const selected = key === selectedDay;
             return (
               <Pressable key={key} style={[styles.cell, selected && styles.cellSelected]} onPress={() => onSelectDay(key)}>
+                {availByDay.has(key) && (
+                  <View style={[styles.availStrip, { backgroundColor: availabilityColor(availByDay.get(key) ?? null) }]} />
+                )}
                 <Text style={[styles.dayNum, !inMonth && styles.dayNumDim, isToday(d) && styles.dayNumToday]}>
                   {d.getDate()}
                 </Text>
@@ -74,6 +82,7 @@ const styles = StyleSheet.create({
   weekday: { flex: 1, textAlign: 'center', fontSize: 11, color: '#888', paddingVertical: 2 },
   cell: { flex: 1, minHeight: 56, borderWidth: 0.5, borderColor: '#e4e4e8', padding: 1, gap: 1, overflow: 'hidden' },
   cellSelected: { borderColor: '#4457c2', borderWidth: 1.5 },
+  availStrip: { height: 3, borderRadius: 2, marginBottom: 1 },
   dayNum: { fontSize: 11, color: '#333', paddingLeft: 2 },
   dayNumDim: { color: '#bbb' },
   dayNumToday: { color: '#4457c2', fontWeight: '700' },

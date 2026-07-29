@@ -1,4 +1,4 @@
-import { addDays, addMonths, fmtMonthTitle, fmtTime, parseYmd, startOfWeek, ymd } from '@lupira/cal-domain/time';
+import { addDays, addMonths, fmtMonthTitle, fmtTime, parseYmd, startOfWeek } from '@lupira/cal-domain/time';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
@@ -6,10 +6,11 @@ import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View }
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { GridRow } from '../../data/mirror';
 import { useDaysOccurrences } from '../../state/queries';
+import { useHorizontalSwipe } from '../calendar/useHorizontalSwipe';
 import { MonthView } from '../calendar/MonthView';
 import { WeekView } from '../calendar/WeekView';
 import { BridgePrompt } from '../components/BridgePrompt';
-import { ACCENT, BIRTHDAY_COLOR, useCalendarColors } from '../components/palette';
+import { ACCENT, BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -75,6 +76,8 @@ export function CalendarScreen() {
     setAnchor(new Date());
     deselect();
   };
+  // Swipe left/right = next/previous month or week (handlers stay fresh inside the hook).
+  const swipe = useHorizontalSwipe(() => step(1), () => step(-1));
   const openOccurrence = useCallback((row: GridRow) => {
     if (row.source === 'birthday') navigation.navigate('ContactDetail', { contactId: row.source_id });
     else navigation.navigate('ItemDetail', { itemId: row.source_id });
@@ -97,11 +100,6 @@ export function CalendarScreen() {
         <Pressable style={styles.toolButton} onPress={() => setMode(mode === 'month' ? 'week' : 'month')}>
           <Text style={styles.toolButtonText}>{mode === 'month' ? 'Week' : 'Month'}</Text>
         </Pressable>
-        {mode === 'week' && (
-          <Pressable style={styles.add} onPress={() => navigation.navigate('ItemEdit', { day: ymd(anchor) })}>
-            <Text style={styles.addText}>＋</Text>
-          </Pressable>
-        )}
       </View>
 
       {mode === 'month' ? (
@@ -110,6 +108,7 @@ export function CalendarScreen() {
           onLayout={(e) => {
             containerH.current = e.nativeEvent.layout.height;
           }}
+          {...swipe.panHandlers}
         >
           <MonthView anchor={anchor} selectedDay={selectedDay} onSelectDay={selectDay} />
           {selectedDay && (
@@ -120,9 +119,14 @@ export function CalendarScreen() {
                   <Text style={styles.sheetTitle}>
                     {parseYmd(selectedDay).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
                   </Text>
-                  <Pressable style={styles.add} onPress={() => navigation.navigate('ItemEdit', { day: selectedDay })}>
-                    <Text style={styles.addText}>＋</Text>
-                  </Pressable>
+                  <View style={styles.sheetActions}>
+                    <Pressable onPress={() => navigation.navigate('AvailabilityEdit', { day: selectedDay })} hitSlop={6}>
+                      <Text style={styles.sheetLink}>Availability</Text>
+                    </Pressable>
+                    <Pressable style={styles.add} onPress={() => navigation.navigate('ItemEdit', { day: selectedDay })}>
+                      <Text style={styles.addText}>＋</Text>
+                    </Pressable>
+                  </View>
                 </View>
               </View>
               <ScrollView>
@@ -132,7 +136,9 @@ export function CalendarScreen() {
           )}
         </View>
       ) : (
-        <WeekView weekStart={weekStart} onPressOccurrence={openOccurrence} onCreateSlot={createSlot} />
+        <View style={styles.monthArea} {...swipe.panHandlers}>
+          <WeekView weekStart={weekStart} onPressOccurrence={openOccurrence} onCreateSlot={createSlot} />
+        </View>
       )}
     </SafeAreaView>
   );
@@ -147,6 +153,13 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: GridRow) 
     <View style={styles.agenda}>
       {sorted.length === 0 && <Text style={styles.agendaEmpty}>Nothing scheduled</Text>}
       {sorted.map((r) => (
+        r.is_availability === 1 ? (
+          <Pressable key={`${r.source}-${r.source_id}-${r.start_utc}`} style={styles.agendaRow} onPress={() => onPress(r)}>
+            <View style={[styles.availPill, { backgroundColor: availabilityColor(r.avail_status) }]}>
+              <Text style={styles.availPillText}>{r.avail_status ?? 'Availability'}</Text>
+            </View>
+          </Pressable>
+        ) : (
         <Pressable key={`${r.source}-${r.source_id}-${r.start_utc}`} style={styles.agendaRow} onPress={() => onPress(r)}>
           <View style={[styles.dot, { backgroundColor: r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) }]} />
           <Text style={styles.agendaTime}>
@@ -155,6 +168,7 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: GridRow) 
           <Text style={styles.agendaText} numberOfLines={1}>{r.title ?? '(untitled)'}</Text>
           {r.status === 'Cancelled' && <Text style={styles.cancelled}>cancelled</Text>}
         </Pressable>
+        )
       ))}
     </View>
   );
@@ -179,6 +193,10 @@ const styles = StyleSheet.create({
   handle: { alignSelf: 'center', width: 40, height: 4, borderRadius: 2, backgroundColor: '#ccc', marginBottom: 6 },
   sheetHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sheetTitle: { fontSize: 14, fontWeight: '700', color: '#444' },
+  sheetActions: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  sheetLink: { color: ACCENT, fontSize: 13, fontWeight: '600' },
+  availPill: { borderRadius: 10, paddingHorizontal: 10, paddingVertical: 3 },
+  availPillText: { color: '#fff', fontSize: 12, fontWeight: '600' },
   agenda: { paddingHorizontal: 14, paddingBottom: 24, gap: 2 },
   agendaEmpty: { color: '#999', fontSize: 13, paddingVertical: 8 },
   agendaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 },

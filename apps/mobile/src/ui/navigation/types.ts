@@ -11,6 +11,8 @@ export type RootStackParamList = {
   ContactDetail: { contactId: string };
   ContactEdit: { contactId?: string } | undefined;
   BridgeDiagnostics: undefined;
+  /// Availability quick-add: status + date range, prefilled from the tapped day.
+  AvailabilityEdit: { day?: string } | undefined;
 };
 
 export type TabParamList = {
