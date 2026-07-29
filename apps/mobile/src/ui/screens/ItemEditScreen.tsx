@@ -2,14 +2,16 @@ import { RRULE_PRESETS, describeRrule } from '@lupira/cal-domain/rrule';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import type { ItemForm } from '../../domain/editors';
 import { categoryAllDayDefault, emptyItemForm, itemCoreFromForm, itemFormFromDoc } from '../../domain/editors';
 import { createItem, reviseItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
-import { Button, ChoiceChips, DateField, Field, TimeField, formStyles } from '../components/form';
+import { ChoiceChips, DateField, Field, TimeField, formStyles } from '../components/form';
+import { ACCENT } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
+import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
 
 const STATUS_OPTIONS = ['Tentative', 'Confirmed', 'Cancelled'].map((s) => ({ value: s, label: s }));
 const CATEGORY_OPTIONS = ['General', 'Meeting', 'Appointment', 'Meal', 'Occasion', 'Outing', 'Trip', 'Stay', 'Activity', 'Focus', 'Chore']
@@ -28,9 +30,14 @@ export function ItemEditScreen() {
   const [error, setError] = useState<string | null>(null);
   const [seeded, setSeeded] = useState(!itemId);
 
+  /// Pristine snapshot; the exit guard and the header's Save state key off differences from it.
+  const baseline = useRef(JSON.stringify(emptyItemForm(route.params?.day, route.params?.time)));
+
   useEffect(() => {
     if (!seeded && itemId && state) {
-      setForm(itemFormFromDoc(state.doc));
+      const seededForm = itemFormFromDoc(state.doc);
+      setForm(seededForm);
+      baseline.current = JSON.stringify(seededForm);
       setSeeded(true);
     }
   }, [seeded, itemId, state]);
@@ -38,6 +45,14 @@ export function ItemEditScreen() {
     const pickable = selectableCalendars(calendars);
     if (!itemId && !calendarId && pickable.length) setCalendarId(pickable[0].id);
   }, [itemId, calendarId, calendars]);
+
+  const dirty = useMemo(() => JSON.stringify(form) !== baseline.current, [form]);
+  /// Bridges the guard to the submit closure (assigned below) without re-subscribing every render.
+  const submitRef = useRef<() => Promise<boolean>>(() => Promise.resolve(false));
+  const guard = useUnsavedGuard(dirty, {
+    message: 'Save this event before leaving?',
+    onSave: () => submitRef.current(),
+  });
 
   const set = <K extends keyof ItemForm>(key: K, value: ItemForm[K]) => setForm((f) => ({ ...f, [key]: value }));
   const setSchedule = <K extends keyof ItemForm>(key: K, value: ItemForm[K]) => {
@@ -52,14 +67,52 @@ export function ItemEditScreen() {
     if (allDay !== null) set('isAllDay', allDay);
   };
 
-  const save = () => {
+  /// Persists without navigating; false = validation failed, so the guard keeps the user here.
+  const submit = async (): Promise<boolean> => {
     const r = itemCoreFromForm(form, state?.doc);
-    if (!r.ok) return setError(r.error);
-    if (!itemId && !form.title.trim()) return setError('A new event needs a title');
-    if (!itemId && !calendarId) return setError('Pick a calendar');
+    if (!r.ok) {
+      setError(r.error);
+      return false;
+    }
+    if (!itemId && !form.title.trim()) {
+      setError('A new event needs a title');
+      return false;
+    }
+    if (!itemId && !calendarId) {
+      setError('Pick a calendar');
+      return false;
+    }
     setError(null);
-    void (itemId ? reviseItem(itemId, r.value) : createItem(calendarId, r.value)).then(() => navigation.goBack());
+    try {
+      if (itemId) await reviseItem(itemId, r.value);
+      else await createItem(calendarId, r.value);
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
   };
+  submitRef.current = submit;
+
+  const saveAndLeave = () => {
+    void submit().then((saved) => {
+      if (!saved) return;
+      guard.leave();
+      navigation.goBack();
+    });
+  };
+
+  // Save lives in the header (dimmed until something changes); leaving unsaved is guarded, so there
+  // is no Cancel button. Dependency-free on purpose: saveAndLeave closes over live form state.
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={saveAndLeave} hitSlop={8}>
+          <Text style={[styles.headerSave, !dirty && styles.headerSaveIdle]}>Save</Text>
+        </Pressable>
+      ),
+    });
+  });
 
   if (itemId && !seeded) {
     return (
@@ -148,10 +201,6 @@ export function ItemEditScreen() {
       </Field>
 
       {error && <Text style={formStyles.error}>{error}</Text>}
-      <View style={styles.buttons}>
-        <Button title={itemId ? 'Save' : 'Create'} onPress={save} />
-        <Button title="Cancel" kind="plain" onPress={() => navigation.goBack()} />
-      </View>
     </ScrollView>
   );
 }
@@ -164,5 +213,6 @@ const styles = StyleSheet.create({
   switchLabel: { fontSize: 15 },
   pair: { flexDirection: 'row', gap: 8 },
   pairItem: { flex: 1 },
-  buttons: { flexDirection: 'row', gap: 10, marginTop: 20 },
+  headerSave: { color: ACCENT, fontSize: 16, fontWeight: '600', paddingRight: 4 },
+  headerSaveIdle: { opacity: 0.45 },
 });

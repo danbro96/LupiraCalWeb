@@ -39,7 +39,6 @@ export function ContactEditScreen() {
   const [seeded, setSeeded] = useState(!contactId);
   /// Snapshot of the pristine form; anything different means unsaved work worth guarding.
   const baseline = useRef(snapshot(emptyContactForm(), [], [], ''));
-  const saving = useRef(false);
 
   useEffect(() => {
     if (!seeded && contactId && state) {
@@ -63,7 +62,12 @@ export function ContactEditScreen() {
     () => snapshot(form, channels, profiles, tagsCsv) !== baseline.current,
     [form, channels, profiles, tagsCsv],
   );
-  useUnsavedGuard(dirty && !saving.current, 'Discard this contact edit?');
+  /// Bridges the guard to the submit closure (assigned below) without re-subscribing every render.
+  const submitRef = useRef<() => Promise<boolean>>(() => Promise.resolve(false));
+  const guard = useUnsavedGuard(dirty, {
+    message: 'Save this contact edit before leaving?',
+    onSave: () => submitRef.current(),
+  });
 
   const set = <K extends keyof ContactForm>(key: K, value: ContactForm[K]) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -74,18 +78,25 @@ export function ContactEditScreen() {
     else setProfiles((p) => [...p, { service: key, handle: '', preferred: false }]);
   };
 
-  const save = () => {
+  /// Persists without navigating — the caller (header button or the exit guard) decides what happens
+  /// next. Returns false when validation failed so the guard keeps the user on the form.
+  const submit = async (): Promise<boolean> => {
     const r = contactCoreFromForm(form);
-    if (!r.ok) return setError(r.error);
-    if (!contactId && !bookId) return setError('Pick an address book');
+    if (!r.ok) {
+      setError(r.error);
+      return false;
+    }
+    if (!contactId && !bookId) {
+      setError('Pick an address book');
+      return false;
+    }
     setError(null);
 
     const cleanChannels = channels.filter((c) => c.value.trim());
     const cleanProfiles = profiles.filter((p) => p.service.trim() && p.handle.trim());
     const tags = parseCsv(tagsCsv);
 
-    saving.current = true;
-    void (async () => {
+    try {
       if (!contactId) {
         const id = await createContact(bookId, { ...r.value, channels: cleanChannels, tags });
         if (cleanProfiles.length > 0) await setContactProfiles(id, cleanProfiles);
@@ -96,19 +107,30 @@ export function ContactEditScreen() {
         if (JSON.stringify(tags) !== JSON.stringify(doc?.tags ?? [])) await setContactTags(contactId, tags);
         if (JSON.stringify(cleanProfiles) !== JSON.stringify(doc?.profiles ?? [])) await setContactProfiles(contactId, cleanProfiles);
       }
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  };
+
+  const saveAndLeave = () => {
+    void submit().then((saved) => {
+      if (!saved) return;
+      guard.leave();
       navigation.goBack();
-    })().catch(() => {
-      saving.current = false;
     });
   };
 
   // Save lives in the header; leaving without saving is guarded instead of needing a Cancel button.
   // Intentionally dependency-free: `save` closes over the live form state, so it must be re-bound
   // on every render.
+  submitRef.current = submit;
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable onPress={save} hitSlop={8}>
+        <Pressable onPress={saveAndLeave} hitSlop={8}>
           <Text style={[styles.headerSave, !dirty && styles.headerSaveIdle]}>Save</Text>
         </Pressable>
       ),
