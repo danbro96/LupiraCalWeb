@@ -56,8 +56,13 @@ object MirrorReader {
     db.rawQuery("SELECT id, doc FROM items WHERE deleted = 0", null).use { c ->
       val out = mutableListOf<MirrorItem>()
       while (c.moveToNext()) {
-        val doc = JSONObject(c.getString(1))
-        val item = fromDoc(c.getString(0), doc) ?: continue
+        // One malformed doc must never kill the whole publish.
+        val item = try {
+          fromDoc(c.getString(0), JSONObject(c.getString(1)))
+        } catch (e: Exception) {
+          android.util.Log.w(Bridge.TAG, "skipping item ${c.getString(0)}: ${e.message}")
+          null
+        } ?: continue
         out.add(item)
       }
       out
@@ -115,8 +120,8 @@ object MirrorReader {
       endMs = doc.optStringOrNull("endDate")?.let { dayUtcMs(it) }
     } else {
       val startsAt = doc.optStringOrNull("startsAt") ?: return null
-      startMs = java.time.Instant.parse(startsAt).toEpochMilli()
-      endMs = doc.optStringOrNull("endsAt")?.let { java.time.Instant.parse(it).toEpochMilli() }
+      startMs = isoMs(startsAt)
+      endMs = doc.optStringOrNull("endsAt")?.let { isoMs(it) }
     }
     if (endMs != null && endMs <= startMs) endMs = null
     return MirrorItem(
@@ -144,6 +149,11 @@ object MirrorReader {
 
   private fun dayUtcMs(day: String): Long = java.time.LocalDate.parse(day.take(10))
     .atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
+
+  /// Server timestamps are DateTimeOffset — 'Z' or '±hh:mm' (older imported items carry local
+  /// offsets). Instant.parse only accepts 'Z'; OffsetDateTime handles both.
+  private fun isoMs(value: String): Long =
+    java.time.OffsetDateTime.parse(value).toInstant().toEpochMilli()
 
   private fun parseColor(hex: String?): Int {
     if (hex.isNullOrBlank()) return 0xFF4457C2.toInt()
