@@ -77,7 +77,20 @@ export const MIGRATIONS: string[] = [
   `,
 ];
 
-export async function migrate(db: Db, migrations: string[] = MIGRATIONS): Promise<void> {
+// Single-flight per db handle: bridge-store init and the first runSync both migrate on app start —
+// on a virgin database both read user_version 0 and the loser hits "table items already exists".
+const migrating = new WeakMap<Db, Promise<void>>();
+
+export function migrate(db: Db, migrations: string[] = MIGRATIONS): Promise<void> {
+  let inFlight = migrating.get(db);
+  if (!inFlight) {
+    inFlight = runMigrate(db, migrations).finally(() => migrating.delete(db));
+    migrating.set(db, inFlight);
+  }
+  return inFlight;
+}
+
+async function runMigrate(db: Db, migrations: string[]): Promise<void> {
   const row = await db.first<{ user_version: number }>('PRAGMA user_version');
   const from = row?.user_version ?? 0;
   for (let v = from; v < migrations.length; v++) {

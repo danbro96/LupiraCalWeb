@@ -347,3 +347,12 @@ describe('grid read surface (M5)', () => {
     expect(await mirror.listPendingOps(db)).toHaveLength(0);
   });
 });
+
+describe('migration ladder concurrency', () => {
+  it('concurrent migrate calls on a virgin db do not race the ladder', async () => {
+    const fresh = openNodeDb();
+    await Promise.all([migrate(fresh), migrate(fresh), migrate(fresh)]);
+    expect(await fresh.first('SELECT 1 AS ok FROM mirror_meta')).toBeNull();   // table exists, empty
+    await migrate(fresh);   // and stays idempotent afterwards
+  });
+});

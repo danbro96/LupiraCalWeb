@@ -13,7 +13,7 @@ object BridgeDb {
   fun open(context: Context): SQLiteDatabase {
     val dir = File(context.filesDir, "SQLite").apply { mkdirs() }
     val db = SQLiteDatabase.openOrCreateDatabase(File(dir, NAME), null)
-    db.execSQL("PRAGMA busy_timeout = 30000")
+    setBusyTimeout(db)
     db.execSQL(
       """CREATE TABLE IF NOT EXISTS bridge_inbox (
            id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,8 +35,14 @@ object BridgeDb {
     val file = File(context.filesDir, "SQLite/lupira-calendar-mirror.db")
     if (!file.exists()) return null
     val db = SQLiteDatabase.openDatabase(file.path, null, SQLiteDatabase.OPEN_READWRITE)
-    db.execSQL("PRAGMA busy_timeout = 30000")
+    setBusyTimeout(db)
     return db
+  }
+
+  /// PRAGMA busy_timeout returns a row — Android's execSQL rejects result-bearing statements
+  /// ("Queries can be performed using query or rawQuery methods only"), so it must go through rawQuery.
+  private fun setBusyTimeout(db: SQLiteDatabase) {
+    db.rawQuery("PRAGMA busy_timeout = 30000", null).use { it.moveToFirst() }
   }
 
   fun pendingSyncIds(context: Context): Set<String> =
