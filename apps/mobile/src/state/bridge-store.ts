@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import type { BridgeState } from '../../modules/lupira-bridge/src';
 import { LupiraBridge } from '../../modules/lupira-bridge/src';
 import { getDb } from '../data/db/expoDb';
+import { migrate } from '../data/db/schema';
 import { getMeta, setMeta } from '../data/mirror';
 import { logDebug } from '../debug/log';
 
@@ -48,22 +49,30 @@ export const useBridge = create<BridgePref & BridgeActions>((set, get) => ({
   status: null,
 
   init: async () => {
-    const db = await getDb();
-    const enabled = (await getMeta(db, ENABLED_KEY)) === '1';
-    const prompted = (await getMeta(db, PROMPTED_KEY)) === '1';
-    set({ enabled, prompted, loaded: true });
-    if (enabled) {
-      const granted = await checkPermissions();
-      set({ permissionsOk: granted });
-      if (granted) {
-        try {
-          await LupiraBridge.ensureAccount();
-        } catch (e) {
-          logDebug('bridge', `account repair failed: ${String(e)}`);
+    try {
+      const db = await getDb();
+      // Fresh installs: init races the first runSync, and the schema (incl. mirror_meta) is
+      // migration-created — run the idempotent ladder ourselves before reading flags.
+      await migrate(db);
+      const enabled = (await getMeta(db, ENABLED_KEY)) === '1';
+      const prompted = (await getMeta(db, PROMPTED_KEY)) === '1';
+      set({ enabled, prompted, loaded: true });
+      if (enabled) {
+        const granted = await checkPermissions();
+        set({ permissionsOk: granted });
+        if (granted) {
+          try {
+            await LupiraBridge.ensureAccount();
+          } catch (e) {
+            logDebug('bridge', `account repair failed: ${String(e)}`);
+          }
         }
       }
+      await get().refreshStatus();
+    } catch (e) {
+      logDebug('bridge', `init failed: ${String(e)}`);
+      set({ loaded: true });   // never leave the store un-hydrated — the prompt logic keys off it
     }
-    await get().refreshStatus();
   },
 
   refreshStatus: async () => {
