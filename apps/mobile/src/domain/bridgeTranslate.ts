@@ -80,8 +80,6 @@ export function parseRfc2445Duration(value: string): number | null {
   return sign === '-' ? -ms : ms;
 }
 
-// ---- contacts ----
-
 /// What ContactsCapturer emits for a dirty raw contact. Channel `type` is the provider's raw int
 /// (Phone.TYPE_* / Email.TYPE_*); translation maps it back onto the app's loose type strings.
 export type ContactCapturePayload = {

@@ -9,8 +9,6 @@ import type { SqlValue, Tx } from './db/types';
 /// Row-level persistence for the mirror. Every function takes a Tx — writes only ever happen inside
 /// Db.exclusive, so a pull can never interleave with an enqueue (the tasks app's transaction defect).
 
-// ---- items ----
-
 type ItemRow = { id: string; doc: string; guards: string; deleted: number };
 
 export async function loadItem(tx: Tx, id: string): Promise<MirrorItem | null> {
@@ -47,8 +45,6 @@ export async function removeItem(tx: Tx, id: string): Promise<void> {
 export async function allItemIds(tx: Tx): Promise<string[]> {
   return (await tx.all<{ id: string }>('SELECT id FROM items')).map((r) => r.id);
 }
-
-// ---- contacts ----
 
 type ContactRow = { id: string; doc: string; guards: string; deleted: number };
 
@@ -100,8 +96,6 @@ function toInt(v: number | string | null | undefined): number | null {
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
 }
-
-// ---- occurrences ----
 
 async function replaceOccurrences(tx: Tx, source: 'item' | 'birthday', sourceId: string, rows: OccurrenceRow[]): Promise<void> {
   await tx.run('DELETE FROM occurrences WHERE source = ? AND source_id = ?', [source, sourceId]);
@@ -179,15 +173,11 @@ export async function listContacts(tx: Tx): Promise<ContactListRow[]> {
   return rows.map((r) => ({ id: r.id, displayName: r.display_name, doc: JSON.parse(r.doc) as ContactDoc }));
 }
 
-// ---- containers ----
-
 export async function replaceContainers(tx: Tx, table: 'calendars' | 'address_books' | 'contact_groups', docs: { id: string }[]): Promise<void> {
   await tx.run(`DELETE FROM ${table}`);
   for (const doc of docs)
     await tx.run(`INSERT INTO ${table} (id, doc) VALUES (?, ?)`, [doc.id, JSON.stringify(doc)]);
 }
-
-// ---- outbox ----
 
 export type OutboxRow = {
   seq: number; op_id: string; envelope_version: number; domain: string; aggregate_id: string;
@@ -267,8 +257,6 @@ export async function pendingCreateAggregates(tx: Tx): Promise<Set<string>> {
     "SELECT DISTINCT aggregate_id FROM outbox WHERE kind IN ('item.create', 'contact.create')");
   return new Set(rows.map((r) => r.aggregate_id));
 }
-
-// ---- sync state + meta ----
 
 export async function getCursor(tx: Tx, scope: 'cal' | 'contact'): Promise<string | null> {
   const row = await tx.first<{ cursor: string | null }>('SELECT cursor FROM sync_state WHERE scope = ?', [scope]);
