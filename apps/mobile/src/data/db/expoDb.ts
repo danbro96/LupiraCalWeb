@@ -12,7 +12,9 @@ export function getDb(): Promise<Db> {
 
 async function open(): Promise<Db> {
   const raw = await SQLite.openDatabaseAsync(DB_NAME);
-  await raw.execAsync('PRAGMA journal_mode = WAL;');
+  // busy_timeout: exclusive transactions ride a second connection (expo-sqlite), and the Kotlin bridge
+  // reads this file too — waiting beats an instant "database is locked" during the first big pull.
+  await raw.execAsync('PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 30000;');
   return wrap(raw);
 }
 
