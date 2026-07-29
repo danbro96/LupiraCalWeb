@@ -4,6 +4,7 @@ import { Alert, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View }
 import { APP_VERSION } from '../../config';
 import { useAuth } from '../../state/auth-store';
 import { useBridge } from '../../state/bridge-store';
+import { usePrefs } from '../../state/prefs-store';
 import { runSync } from '../../sync/sync';
 import { useSyncStatus } from '../../sync/syncStatus';
 import { Button, formStyles } from '../components/form';
@@ -16,6 +17,7 @@ export function SettingsScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { authMode, user, token } = useAuth();
   const bridge = useBridge();
+  const prefs = usePrefs();
   const { syncing, pending, parked, lastSyncAt } = useSyncStatus();
 
   const toggleBridge = (value: boolean) => {
@@ -62,6 +64,17 @@ export function SettingsScreen() {
           <Text style={styles.warning}>Calendar/contacts permissions missing — tap to open app settings</Text>
         </Pressable>
       )}
+
+      <Text style={formStyles.section}>Calendars</Text>
+      <View style={styles.switchRow}>
+        <Text style={styles.switchLabel}>Show system calendars</Text>
+        <Switch
+          value={prefs.showSystemCalendars}
+          onValueChange={(v) => void usePrefs.getState().setShowSystemCalendars(v)}
+          disabled={!prefs.loaded}
+        />
+      </View>
+      <Text style={styles.detail}>Agent-managed calendars (inbox, availability …) and their events stay hidden unless enabled.</Text>
 
       <Text style={formStyles.section}>Sync</Text>
       <Text style={styles.detail}>

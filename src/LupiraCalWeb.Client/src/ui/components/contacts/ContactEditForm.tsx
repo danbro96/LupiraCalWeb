@@ -103,8 +103,11 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   const [familyName, setFamilyName] = useState(contact.familyName ?? '');
   const [nickname, setNickname] = useState(contact.nickname ?? '');
   const [displayNameFormat, setDisplayNameFormat] = useState(contact.displayNameFormat ?? DisplayNameFormat.Full);
-  const [birthday, setBirthday] = useState(partialDateToInput(contact.birthday));
-  const [birthdayYearKnown, setBirthdayYearKnown] = useState(contact.birthday?.year != null);
+  const yearKnownInitial = contact.birthday == null || (contact.birthday.year != null && contact.birthday.year !== '');
+  const [birthday, setBirthday] = useState(yearKnownInitial ? partialDateToInput(contact.birthday) : '');
+  const [birthdayYearKnown, setBirthdayYearKnown] = useState(yearKnownInitial);
+  const [birthdayMonth, setBirthdayMonth] = useState(!yearKnownInitial && contact.birthday ? String(Number(contact.birthday.month)) : '');
+  const [birthdayDay, setBirthdayDay] = useState(!yearKnownInitial && contact.birthday ? String(Number(contact.birthday.day)) : '');
   const [channels, setChannelsState] = useState<ContactReachChannel[]>(contact.channels.map((c) => ({ ...c })));
   const [tags, setTagsState] = useState<string[]>((contact.tags ?? []).filter((t) => t !== PINNED_TAG));
   const [addresses, setAddressesState] = useState<ContactPostalAddress[]>(contact.addresses.map((a) => ({ ...a })));
@@ -129,7 +132,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       if (norm(familyName) !== norm(contact.familyName)) rev.familyName = familyName;
       if (norm(nickname) !== norm(contact.nickname)) rev.nickname = nickname;
       if (displayNameFormat !== (contact.displayNameFormat ?? DisplayNameFormat.Full)) rev.displayNameFormat = displayNameFormat;
-      const nextBirthday = inputToPartialDate(birthday, birthdayYearKnown);
+      const nextBirthday = birthdayYearKnown
+        ? inputToPartialDate(birthday, true)
+        : (birthdayMonth && birthdayDay ? { year: null, month: Number(birthdayMonth), day: Number(birthdayDay) } : null);
       if (partialDateKey(nextBirthday) !== partialDateKey(contact.birthday)) rev.birthday = nextBirthday;
       if (Object.keys(rev).length > 0) await revise.mutateAsync({ id, data: rev });
 
@@ -200,10 +205,27 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       </div>
       <div className="edit-field">
         <label>Birthday</label>
-        <input className="text-input" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
         <label className="meta">
-          <input type="checkbox" checked={!birthdayYearKnown} onChange={(e) => setBirthdayYearKnown(!e.target.checked)} disabled={!birthday} /> Year unknown
+          <input
+            type="checkbox"
+            checked={birthdayYearKnown}
+            onChange={(e) => {
+              setBirthdayYearKnown(e.target.checked);
+              setBirthday('');
+              setBirthdayMonth('');
+              setBirthdayDay('');
+            }}
+          />{' '}
+          Enter year
         </label>
+        {birthdayYearKnown ? (
+          <input className="text-input" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
+        ) : (
+          <div className="form-row">
+            <input className="text-input" type="number" min={1} max={12} placeholder="Month" value={birthdayMonth} onChange={(e) => setBirthdayMonth(e.target.value)} />
+            <input className="text-input" type="number" min={1} max={31} placeholder="Day" value={birthdayDay} onChange={(e) => setBirthdayDay(e.target.value)} />
+          </div>
+        )}
       </div>
 
       <div className="edit-field">

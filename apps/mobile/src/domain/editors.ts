@@ -20,11 +20,29 @@ export type ItemForm = {
   recurrenceRule: string;  // '' = none
 };
 
-export function emptyItemForm(day?: string): ItemForm {
+export function emptyItemForm(day?: string, time?: string): ItemForm {
+  let endDay = '';
+  let endTime = '';
+  if (day && time) {
+    // Slot-created events default to one hour; the end may roll past midnight.
+    const [y, m, d] = day.split('-').map(Number);
+    const [hh, mm] = time.split(':').map(Number);
+    const end = new Date(y, m - 1, d, hh + 1, mm);
+    endDay = localDay(end);
+    endTime = localTime(end);
+  }
   return {
     title: '', description: '', status: '', category: '', tagsCsv: '', isAllDay: false,
-    startDay: day ?? '', startTime: '', endDay: '', endTime: '', recurrenceRule: '',
+    startDay: day ?? '', startTime: time ?? '', endDay, endTime, recurrenceRule: '',
   };
+}
+
+/// Smart default when picking a category on a NEW event with an untouched schedule: some categories are
+/// obviously day-scoped, some obviously timed. null = no opinion, leave the form alone.
+export function categoryAllDayDefault(category: string): boolean | null {
+  if (category === 'Occasion' || category === 'Trip' || category === 'Stay') return true;
+  if (category === 'Meeting' || category === 'Appointment' || category === 'Focus') return false;
+  return null;
 }
 
 export function itemFormFromDoc(doc: ItemDoc): ItemForm {
@@ -96,8 +114,12 @@ export type ContactForm = {
   nickname: string;
   displayNameFormat: string;   // '' = keep unset
   kind: string;
-  birthday: string;            // 'yyyy-MM-dd', '' = none
+  /// Two input shapes: with a known year, `birthday` holds 'yyyy-MM-dd' (date picker); without one,
+  /// month/day live in their own fields and no fake year ever exists anywhere.
+  birthday: string;
   birthdayYearKnown: boolean;
+  birthdayMonth: string;       // '1'..'12' when the year is unknown
+  birthdayDay: string;         // '1'..'31'
   notes: string;
   pronouns: string;
 };
@@ -105,11 +127,12 @@ export type ContactForm = {
 export function emptyContactForm(): ContactForm {
   return {
     givenName: '', middleName: '', familyName: '', nickname: '', displayNameFormat: '', kind: '',
-    birthday: '', birthdayYearKnown: true, notes: '', pronouns: '',
+    birthday: '', birthdayYearKnown: true, birthdayMonth: '', birthdayDay: '', notes: '', pronouns: '',
   };
 }
 
 export function contactFormFromDoc(doc: ContactDoc): ContactForm {
+  const yearKnown = doc.birthday ? doc.birthday.year != null && doc.birthday.year !== '' : true;
   return {
     givenName: doc.givenName ?? '',
     middleName: doc.middleName ?? '',
@@ -117,8 +140,10 @@ export function contactFormFromDoc(doc: ContactDoc): ContactForm {
     nickname: doc.nickname ?? '',
     displayNameFormat: doc.displayNameFormat ?? '',
     kind: doc.kind ?? '',
-    birthday: partialDateToInput(doc.birthday),
-    birthdayYearKnown: doc.birthday ? doc.birthday.year != null && doc.birthday.year !== '' : true,
+    birthday: yearKnown ? partialDateToInput(doc.birthday) : '',
+    birthdayYearKnown: yearKnown,
+    birthdayMonth: !yearKnown && doc.birthday ? String(Number(doc.birthday.month)) : '',
+    birthdayDay: !yearKnown && doc.birthday ? String(Number(doc.birthday.day)) : '',
     notes: doc.notes ?? '',
     pronouns: doc.pronouns ?? '',
   };
@@ -138,7 +163,12 @@ export function contactCoreFromForm(form: ContactForm): EditResult<ContactCore> 
       nickname: form.nickname.trim() || null,
       displayNameFormat: form.displayNameFormat || null,
       kind: form.kind || null,
-      birthday: inputToPartialDate(form.birthday, form.birthdayYearKnown),   // null = keep (no REST clear)
+      // null = keep (no REST clear). Year-unknown birthdays come from the month/day fields directly.
+      birthday: form.birthdayYearKnown
+        ? inputToPartialDate(form.birthday, true)
+        : (form.birthdayMonth && form.birthdayDay
+          ? { year: null, month: Number(form.birthdayMonth), day: Number(form.birthdayDay) }
+          : null),
       notes: form.notes.trim() || null,
       pronouns: form.pronouns.trim() || null,
       channels: null,

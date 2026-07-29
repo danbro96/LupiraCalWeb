@@ -9,7 +9,7 @@ import { BIRTHDAY_COLOR, useCalendarColors } from '../components/palette';
 /// touched month bucket, up to three title bars per cell. Day selection drives the agenda in CalendarScreen.
 export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelectDay }: {
   anchor: Date;
-  selectedDay: string;
+  selectedDay: string | null;
   onSelectDay: (day: string) => void;
 }) {
   const weeks = monthMatrix(anchor);
@@ -26,7 +26,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
 
   return (
     <View style={styles.grid}>
-      <View style={styles.weekRow}>
+      <View style={styles.weekdayRow}>
         {weeks[0].map((d) => (
           <Text key={ymd(d)} style={styles.weekday}>
             {d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)}
@@ -66,10 +66,13 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
 });
 
 const styles = StyleSheet.create({
-  grid: { paddingHorizontal: 2 },
-  weekRow: { flexDirection: 'row' },
+  // Fills whatever height the parent gives: weeks flex-share it, so collapsing the day sheet
+  // stretches the grid to the whole screen.
+  grid: { paddingHorizontal: 2, flex: 1 },
+  weekRow: { flexDirection: 'row', flex: 1 },
+  weekdayRow: { flexDirection: 'row' },
   weekday: { flex: 1, textAlign: 'center', fontSize: 11, color: '#888', paddingVertical: 2 },
-  cell: { flex: 1, minHeight: 74, borderWidth: 0.5, borderColor: '#e4e4e8', padding: 1, gap: 1 },
+  cell: { flex: 1, minHeight: 56, borderWidth: 0.5, borderColor: '#e4e4e8', padding: 1, gap: 1, overflow: 'hidden' },
   cellSelected: { borderColor: '#4457c2', borderWidth: 1.5 },
   dayNum: { fontSize: 11, color: '#333', paddingLeft: 2 },
   dayNumDim: { color: '#bbb' },

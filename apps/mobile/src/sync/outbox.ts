@@ -91,6 +91,7 @@ async function runDrain(db: Db, deps: OutboxDeps): Promise<void> {
       await deps.replay(op);
       await db.exclusive((tx) => mirror.deleteOp(tx, row.seq));
       useSyncStatus.getState().set({ serverReachable: true, lastError: null });
+      useSyncStatus.getState().bumpProgress('push', 1);
     } catch (e) {
       const decision = classifyReplayError(e);
       const park = decision.outcome === 'park' || row.attempts + 1 >= PARK_AFTER_ATTEMPTS;

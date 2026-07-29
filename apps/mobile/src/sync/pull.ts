@@ -9,6 +9,7 @@ import { birthdayRows, monthKeyOf, occurrenceRowsForItem } from '../domain/mater
 import type { MirrorContact, MirrorItem } from '../domain/mirrorReducers';
 import { applyContactOp, applyItemOp } from '../domain/mirrorReducers';
 import { ApiError } from '../domain/apiError';
+import { useSyncStatus } from './syncStatus';
 
 /// Pull side of the engine: a paged delta loop that actually READS the cursor (the tasks app wrote and
 /// ignored it), applies tombstones, and — the critical part — rebases every changed aggregate through the
@@ -77,6 +78,7 @@ export async function pullCal(db: Db, horizon: Horizon, deps: PullDeps): Promise
       for (const id of page.deleted) await tombstoneItem(tx, id, horizon, monthKeys);
       await mirror.setCursor(tx, 'cal', page.cursor, full, deps.now().toISOString());
     });
+    useSyncStatus.getState().bumpProgress('items', page.changed.length + page.deleted.length);
     cursor = page.cursor;
     if (!page.hasMore) break;
   }
@@ -115,6 +117,7 @@ export async function pullContacts(db: Db, horizon: Horizon, deps: PullDeps): Pr
       }
       await mirror.setCursor(tx, 'contact', page.cursor, full, deps.now().toISOString());
     });
+    useSyncStatus.getState().bumpProgress('contacts', page.changed.length + page.deleted.length);
     cursor = page.cursor;
     if (!page.hasMore) break;
   }

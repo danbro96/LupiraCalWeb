@@ -6,15 +6,16 @@ import { opOfRow } from '../../data/mirror';
 import { OP_LABELS, type OpKind } from '../../domain/ops';
 import { retryOne } from '../../sync/outbox';
 import { discardParkedAndRestore, runSync } from '../../sync/sync';
-import { useSyncStatus } from '../../sync/syncStatus';
+import { PHASE_LABELS, useSyncStatus } from '../../sync/syncStatus';
 import { useOutboxRows } from '../../state/queries';
 import { Button, formStyles } from '../components/form';
+import { IndeterminateBar } from '../components/IndeterminateBar';
 
 /// The review surface for offline writes: parked ops (gave up after backoff or hit a definitive rejection)
 /// get per-row retry / discard — discard also rolls the optimistic mirror write back to server truth.
 export function SyncIssuesScreen() {
   const { data } = useOutboxRows();
-  const { syncing, serverReachable, lastSyncAt, lastError } = useSyncStatus();
+  const { syncing, serverReachable, lastSyncAt, lastError, progress } = useSyncStatus();
 
   const parked = data?.parked ?? [];
   const pending = data?.pending ?? [];
@@ -30,7 +31,16 @@ export function SyncIssuesScreen() {
       </View>
       {lastError && <Text style={styles.lastError}>{lastError}</Text>}
 
-      {parked.length === 0 && pending.length === 0 && (
+      {syncing && (
+        <View style={styles.progressBlock}>
+          <IndeterminateBar />
+          <Text style={styles.progressText}>
+            {progress ? `${progress.count} ${PHASE_LABELS[progress.phase]}…` : 'Starting…'}
+          </Text>
+        </View>
+      )}
+
+      {!syncing && parked.length === 0 && pending.length === 0 && (
         <Text style={styles.empty}>All changes are synced.</Text>
       )}
 
@@ -102,6 +112,8 @@ const styles = StyleSheet.create({
   statusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   statusText: { fontSize: 13, color: '#555' },
   lastError: { fontSize: 12, color: '#b45309' },
+  progressBlock: { gap: 6, marginTop: 8 },
+  progressText: { fontSize: 13, color: '#555', textAlign: 'center' },
   empty: { textAlign: 'center', color: '#999', marginTop: 32 },
   card: { borderWidth: 1, borderColor: '#e8c9a8', backgroundColor: '#fdf8f1', borderRadius: 8, padding: 10, gap: 6 },
   opLabel: { fontSize: 15, fontWeight: '600' },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ContactDoc, ItemDoc } from './docTypes';
-import { contactCoreFromForm, contactFormFromDoc, emptyContactForm, emptyItemForm, itemCoreFromForm, itemFormFromDoc, parseCsv } from './editors';
+import { categoryAllDayDefault, contactCoreFromForm, contactFormFromDoc, emptyContactForm, emptyItemForm, itemCoreFromForm, itemFormFromDoc, parseCsv } from './editors';
 
 const timedDoc: ItemDoc = {
   id: 'i1',
@@ -96,15 +96,47 @@ describe('contact editor', () => {
     expect(r.value.tags).toBeNull();
   });
 
-  it('drops the year for year-unknown birthdays', () => {
-    const form = { ...emptyContactForm(), givenName: 'X', birthday: '2000-06-15', birthdayYearKnown: false };
+  it('year-unknown birthdays come from month/day fields — no fake year anywhere', () => {
+    const form = { ...emptyContactForm(), givenName: 'X', birthdayYearKnown: false, birthdayMonth: '6', birthdayDay: '15' };
     const r = contactCoreFromForm(form);
     if (!r.ok) throw new Error(r.error);
     expect(r.value.birthday).toEqual({ year: null, month: 6, day: 15 });
+
+    const incomplete = contactCoreFromForm({ ...form, birthdayDay: '' });
+    if (!incomplete.ok) throw new Error(incomplete.error);
+    expect(incomplete.value.birthday).toBeNull();   // half-filled = keep
+  });
+
+  it('year-unknown docs round-trip into month/day fields, never the date input', () => {
+    const yearless: ContactDoc = { id: 'c2', addressBookId: 'b1', givenName: 'Y', birthday: { year: null, month: '3', day: '7' } };
+    const form = contactFormFromDoc(yearless);
+    expect(form).toMatchObject({ birthday: '', birthdayYearKnown: false, birthdayMonth: '3', birthdayDay: '7' });
   });
 
   it('requires some name', () => {
     expect(contactCoreFromForm(emptyContactForm()).ok).toBe(false);
+  });
+});
+
+describe('slot-created form', () => {
+  it('prefills a one-hour window from day + time', () => {
+    const form = emptyItemForm('2026-08-03', '14:00');
+    expect(form).toMatchObject({ startDay: '2026-08-03', startTime: '14:00', endDay: '2026-08-03', endTime: '15:00' });
+  });
+
+  it('rolls the end past midnight', () => {
+    const form = emptyItemForm('2026-08-03', '23:30');
+    expect(form).toMatchObject({ endDay: '2026-08-04', endTime: '00:30' });
+  });
+});
+
+describe('categoryAllDayDefault', () => {
+  it('day-scoped and timed categories have opinions; others do not', () => {
+    expect(categoryAllDayDefault('Occasion')).toBe(true);
+    expect(categoryAllDayDefault('Trip')).toBe(true);
+    expect(categoryAllDayDefault('Meeting')).toBe(false);
+    expect(categoryAllDayDefault('General')).toBeNull();
+    expect(categoryAllDayDefault('')).toBeNull();
   });
 });
 

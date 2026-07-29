@@ -33,9 +33,8 @@ export async function saveItem(tx: Tx, state: MirrorItem, occurrences: Occurrenc
       state.deleted ? 1 : 0, d.updatedAt ?? ''],
   );
   await tx.run('DELETE FROM item_calendars WHERE item_id = ?', [d.id]);
-  for (const m of d.calendars)
-    await tx.run('INSERT OR REPLACE INTO item_calendars (item_id, calendar_id, status) VALUES (?, ?, ?)',
-      [d.id, m.calendarId, m.status]);
+  await insertChunked(tx, 'INSERT OR REPLACE INTO item_calendars (item_id, calendar_id, status)', 3,
+    d.calendars.map((m) => [d.id, m.calendarId, m.status]));
   await replaceOccurrences(tx, 'item', d.id, occurrences);
 }
 
@@ -106,11 +105,21 @@ function toInt(v: number | string | null | undefined): number | null {
 
 async function replaceOccurrences(tx: Tx, source: 'item' | 'birthday', sourceId: string, rows: OccurrenceRow[]): Promise<void> {
   await tx.run('DELETE FROM occurrences WHERE source = ? AND source_id = ?', [source, sourceId]);
-  for (const r of rows)
-    await tx.run(
-      'INSERT OR REPLACE INTO occurrences (source, source_id, start_utc, end_utc, start_day, all_day) VALUES (?, ?, ?, ?, ?, ?)',
-      [r.source, r.sourceId, r.startUtc, r.endUtc, r.startDay, r.allDay ? 1 : 0],
-    );
+  await insertChunked(tx, 'INSERT OR REPLACE INTO occurrences (source, source_id, start_utc, end_utc, start_day, all_day)', 6,
+    rows.map((r) => [r.source, r.sourceId, r.startUtc, r.endUtc, r.startDay, r.allDay ? 1 : 0]));
+}
+
+/// Multi-row VALUES batches: the first full sync writes tens of thousands of occurrence rows, and one
+/// awaited bridge round-trip per row is what made it take minutes. ~40 rows/statement keeps parameter
+/// counts well under SQLite's limit.
+const INSERT_CHUNK = 40;
+
+async function insertChunked(tx: Tx, insertPrefix: string, columns: number, rows: SqlValue[][]): Promise<void> {
+  const tuple = `(${Array(columns).fill('?').join(', ')})`;
+  for (let i = 0; i < rows.length; i += INSERT_CHUNK) {
+    const slice = rows.slice(i, i + INSERT_CHUNK);
+    await tx.run(`${insertPrefix} VALUES ${Array(slice.length).fill(tuple).join(', ')}`, slice.flat());
+  }
 }
 
 export type OccurrenceQueryRow = {
@@ -132,7 +141,14 @@ export type GridRow = OccurrenceQueryRow & {
 
 /// The grids' one read: occurrences joined with just enough display data (title, status, a calendar for the
 /// color). Still a single indexed start_day range — no per-item fan-out, no render-time expansion.
-export async function gridRowsBetween(tx: Tx, fromDay: string, toDay: string): Promise<GridRow[]> {
+/// With includeSystem=false, items whose only Accepted homes are System-class calendars stay out of the
+/// grids (birthday rows always pass — locally synthesized, and the Birthdays calendar is Agenda-class).
+export async function gridRowsBetween(tx: Tx, fromDay: string, toDay: string, includeSystem = true): Promise<GridRow[]> {
+  const systemFilter = includeSystem ? '' : `
+       AND (o.source != 'item' OR EXISTS (
+         SELECT 1 FROM item_calendars icf JOIN calendars cf ON cf.id = icf.calendar_id
+         WHERE icf.item_id = o.source_id AND icf.status = 'Accepted'
+           AND COALESCE(json_extract(cf.doc, '$.class'), '') != 'System'))`;
   return tx.all<GridRow>(
     `SELECT o.source, o.source_id, o.start_utc, o.end_utc, o.start_day, o.all_day,
             COALESCE(i.title, c.display_name) AS title,
@@ -142,7 +158,7 @@ export async function gridRowsBetween(tx: Tx, fromDay: string, toDay: string): P
      FROM occurrences o
      LEFT JOIN items i ON o.source = 'item' AND i.id = o.source_id
      LEFT JOIN contacts c ON o.source = 'birthday' AND c.id = o.source_id
-     WHERE o.start_day >= ? AND o.start_day <= ?
+     WHERE o.start_day >= ? AND o.start_day <= ?${systemFilter}
      ORDER BY o.start_utc`,
     [fromDay, toDay],
   );

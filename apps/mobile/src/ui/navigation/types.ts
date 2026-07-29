@@ -6,8 +6,8 @@ export type RootStackParamList = {
   SyncIssues: undefined;
   DebugLog: undefined;
   ItemDetail: { itemId: string };
-  /// No itemId = create; `day` pre-fills the start date from the grid selection.
-  ItemEdit: { itemId?: string; day?: string } | undefined;
+  /// No itemId = create; `day`/`time` pre-fill the start from the grid selection (slot taps send both).
+  ItemEdit: { itemId?: string; day?: string; time?: string } | undefined;
   ContactDetail: { contactId: string };
   ContactEdit: { contactId?: string } | undefined;
   BridgeDiagnostics: undefined;

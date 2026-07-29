@@ -1,21 +1,25 @@
-import { turningAge } from '@lupira/cal-domain/birthday';
-import { nextBirthday } from '@lupira/cal-domain/birthday';
+import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
 import { coercePartialDate, fmtPartialDate } from '@lupira/cal-domain/partialDate';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { composeDisplayName } from '../../data/mirror';
-import type { PartialDateDto, ReachChannel, SocialProfile } from '../../domain/docTypes';
-import { parseCsv } from '../../domain/editors';
-import { deleteContact, setContactChannels, setContactProfiles, setContactTags } from '../../state/actions';
+import { useEffect, useState } from 'react';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { getPlace } from '../../data/api/generated/geo/places/places';
+import { getDb } from '../../data/db/expoDb';
+import { composeDisplayName, loadContact } from '../../data/mirror';
+import type { PartialDateDto } from '../../domain/docTypes';
+import { deleteContact } from '../../state/actions';
 import { useContactState } from '../../state/queries';
 import { Button, formStyles } from '../components/form';
 import { hashColor } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
 import { initialsOf } from './ContactsScreen';
 
+/// Read-only overview — ALL editing lives on the edit screen. Shows everything the mirror doc carries:
+/// names, kind, pronouns, birthday+age, deceased, unified reach (channels + profiles), tags, addresses
+/// (tap → Google Maps via a geo place lookup), notes, metadata, emergency contacts and relations with
+/// names resolved from the mirror.
 export function ContactDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'ContactDetail'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -26,6 +30,11 @@ export function ContactDetailScreen() {
   if (!state) return <Centered text="This contact is not in the offline mirror." />;
   const doc = state.doc;
   const displayName = composeDisplayName(doc);
+  const relations = (doc.relations as { toContactId?: string; kind?: string; label?: string | null; ended?: boolean }[] | undefined) ?? [];
+  const emergency = (doc.emergencyContactIds as string[] | undefined) ?? [];
+  const addresses = (doc.addresses as { placeId?: string | null; type?: string }[] | undefined) ?? [];
+  const metadata = Object.entries(doc.metadata ?? {});
+  const deceased = doc.deceased === true;
 
   const confirmDelete = () =>
     Alert.alert('Delete contact', `Delete ${displayName}? It syncs to everyone.`, [
@@ -47,25 +56,49 @@ export function ContactDetailScreen() {
           <Text style={styles.avatarText}>{initialsOf(displayName)}</Text>
         </View>
         <View style={styles.headerBody}>
-          <Text style={styles.h1}>{displayName}</Text>
+          <Text style={styles.h1}>{displayName}{deceased ? ' ✝' : ''}</Text>
           <Text style={styles.sub}>
-            {[doc.pronouns, doc.kind === 'Organization' ? 'Organization' : null].filter(Boolean).join(' · ')}
+            {[doc.pronouns, doc.kind === 'Organization' ? 'Organization' : null, doc.nickname ? `“${doc.nickname}”` : null]
+              .filter(Boolean).join(' · ')}
           </Text>
         </View>
       </View>
 
-      {doc.birthday && <BirthdayRow birthday={doc.birthday} />}
+      {doc.birthday != null && <BirthdayRow birthday={doc.birthday} deceased={deceased} />}
+      {deceased && (
+        <Text style={styles.deceased}>
+          Deceased{typeof doc.deathDate === 'string' ? ` — ${doc.deathDate}` : ''}
+        </Text>
+      )}
 
-      <ChannelsPanel contactId={contactId} channels={doc.channels ?? []} />
-      <TagsPanel contactId={contactId} tags={doc.tags ?? []} />
-      <ProfilesPanel contactId={contactId} profiles={doc.profiles ?? []} />
+      <Text style={formStyles.section}>Reach</Text>
+      {(doc.channels ?? []).length === 0 && (doc.profiles ?? []).length === 0 && <Text style={styles.muted}>Nothing yet</Text>}
+      {(doc.channels ?? []).map((c, i) => (
+        <Pressable key={`ch-${i}`} onPress={() => void Linking.openURL(`${c.medium === 'Phone' ? 'tel' : 'mailto'}:${c.value}`)}>
+          <Text style={styles.row}>
+            <Text style={styles.rowKind}>{c.medium}{c.type ? ` (${c.type})` : ''}  </Text>
+            {c.value}{c.preferred ? '  ★' : ''}
+          </Text>
+        </Pressable>
+      ))}
+      {(doc.profiles ?? []).map((p, i) => (
+        <Text key={`pr-${i}`} style={styles.row}>
+          <Text style={styles.rowKind}>{p.service}  </Text>
+          {p.handle}{p.preferred ? '  ★' : ''}
+        </Text>
+      ))}
 
-      {Array.isArray(doc.addresses) && doc.addresses.length > 0 && (
+      {(doc.tags ?? []).length > 0 && (
+        <>
+          <Text style={formStyles.section}>Tags</Text>
+          <View style={styles.chipRow}>{(doc.tags ?? []).map((t) => <Text key={t} style={styles.tagChip}>#{t}</Text>)}</View>
+        </>
+      )}
+
+      {addresses.length > 0 && (
         <>
           <Text style={formStyles.section}>Addresses</Text>
-          <Text style={styles.muted}>
-            {doc.addresses.length} linked place{doc.addresses.length === 1 ? '' : 's'} — places are managed on the web (needs place search)
-          </Text>
+          {addresses.map((a, i) => <AddressRow key={i} placeId={a.placeId ?? null} type={a.type ?? 'Home'} />)}
         </>
       )}
 
@@ -76,6 +109,43 @@ export function ContactDetailScreen() {
         </>
       ) : null}
 
+      {emergency.length > 0 && (
+        <>
+          <Text style={formStyles.section}>Emergency contacts</Text>
+          {emergency.map((id, i) => <ResolvedName key={id} contactId={id} prefix={`${i + 1}. `} navigation={navigation} />)}
+        </>
+      )}
+
+      {relations.filter((r) => !r.ended).length > 0 && (
+        <>
+          <Text style={formStyles.section}>Relations</Text>
+          {relations.filter((r) => !r.ended).map((r, i) => (
+            <ResolvedName
+              key={`${r.toContactId}-${i}`}
+              contactId={r.toContactId ?? ''}
+              prefix={`${r.label ?? r.kind ?? 'Related'} — `}
+              navigation={navigation}
+            />
+          ))}
+        </>
+      )}
+
+      {metadata.length > 0 && (
+        <>
+          <Text style={formStyles.section}>Metadata</Text>
+          {metadata.map(([k, v]) => (
+            <Text key={k} style={styles.row}>
+              <Text style={styles.rowKind}>{k}  </Text>
+              {typeof v === 'string' ? v : JSON.stringify(v)}
+            </Text>
+          ))}
+        </>
+      )}
+
+      {typeof doc.updatedAt === 'string' && (
+        <Text style={styles.footer}>Updated {new Date(doc.updatedAt).toLocaleString()}</Text>
+      )}
+
       <View style={styles.buttons}>
         <Button title="Edit" onPress={() => navigation.navigate('ContactEdit', { contactId })} />
         <Button title="Delete" kind="danger" onPress={confirmDelete} />
@@ -84,10 +154,10 @@ export function ContactDetailScreen() {
   );
 }
 
-function BirthdayRow({ birthday }: { birthday: PartialDateDto }) {
+function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; deceased: boolean }) {
   const { year, month, day } = coercePartialDate(birthday);
   const next = nextBirthday(month, day, new Date());
-  const age = turningAge(year, next);
+  const age = deceased ? null : turningAge(year, next);
   return (
     <Text style={styles.birthday}>
       🎂 {fmtPartialDate(birthday)}
@@ -96,154 +166,66 @@ function BirthdayRow({ birthday }: { birthday: PartialDateDto }) {
   );
 }
 
-/// Wholesale channel editor → one contact.channels op (the removing counterpart to revise's UNION-merge).
-function ChannelsPanel({ contactId, channels }: { contactId: string; channels: ReachChannel[] }) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState<ReachChannel[]>([]);
+/// Address rows are place refs — resolving to something mappable needs the geo API (online). Tap-to-open
+/// keeps the offline path clean: nothing is fetched until asked.
+function AddressRow({ placeId, type }: { placeId: string | null; type: string }) {
+  const [busy, setBusy] = useState(false);
 
-  const begin = () => {
-    setDraft(channels.map((c) => ({ ...c })));
-    setEditing(true);
-  };
-  const save = () => {
-    void setContactChannels(contactId, draft.filter((c) => c.value.trim()));
-    setEditing(false);
-  };
-  const patch = (i: number, p: Partial<ReachChannel>) =>
-    setDraft((d) => d.map((c, j) => (j === i ? { ...c, ...p } : c)));
-
-  return (
-    <View>
-      <SectionHeader title="Channels" editing={editing} onEdit={begin} onSave={save} onCancel={() => setEditing(false)} />
-      {!editing && channels.length === 0 && <Text style={styles.muted}>No channels</Text>}
-      {!editing && channels.map((c, i) => (
-        <Text key={i} style={styles.row}>
-          {c.medium === 'Phone' ? '☎' : '✉'} {c.value}{c.type ? `  (${c.type})` : ''}{c.preferred ? '  ★' : ''}
-        </Text>
-      ))}
-      {editing && (
-        <View style={styles.editBlock}>
-          {draft.map((c, i) => (
-            <View key={i} style={styles.editRow}>
-              <Pressable onPress={() => patch(i, { medium: c.medium === 'Phone' ? 'Email' : 'Phone' })}>
-                <Text style={styles.mediumToggle}>{c.medium === 'Phone' ? '☎' : '✉'}</Text>
-              </Pressable>
-              <TextInput
-                style={[formStyles.input, styles.editValue]}
-                autoCapitalize="none"
-                value={c.value}
-                onChangeText={(v) => patch(i, { value: v })}
-              />
-              <Pressable onPress={() => patch(i, { preferred: !c.preferred })} hitSlop={6}>
-                <Text style={[styles.star, c.preferred && styles.starOn]}>★</Text>
-              </Pressable>
-              <Pressable onPress={() => setDraft((d) => d.filter((_, j) => j !== i))} hitSlop={6}>
-                <Text style={styles.remove}>✕</Text>
-              </Pressable>
-            </View>
-          ))}
-          <Button title="Add channel" kind="plain" onPress={() => setDraft((d) => [...d, { medium: 'Phone', value: '', preferred: false }])} />
-        </View>
-      )}
-    </View>
-  );
-}
-
-function TagsPanel({ contactId, tags }: { contactId: string; tags: string[] }) {
-  const [editing, setEditing] = useState(false);
-  const [csv, setCsv] = useState('');
-
-  const begin = () => {
-    setCsv(tags.join(', '));
-    setEditing(true);
-  };
-  const save = () => {
-    void setContactTags(contactId, parseCsv(csv));
-    setEditing(false);
+  const open = async () => {
+    if (!placeId || busy) return;
+    setBusy(true);
+    try {
+      const r = await getPlace(placeId);
+      if (r.status !== 200) throw new Error(`HTTP ${r.status}`);
+      const place = r.data as { lat?: number | string; lon?: number | string; displayName?: string | null; name?: string | null };
+      const lat = Number(place.lat);
+      const lon = Number(place.lon);
+      const query = Number.isFinite(lat) && Number.isFinite(lon)
+        ? `${lat},${lon}`
+        : (place.displayName ?? place.name ?? '');
+      if (!query) throw new Error('place has no location');
+      await Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);
+    } catch {
+      Alert.alert('Cannot open map', 'Resolving the address needs a connection to the server.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
-    <View>
-      <SectionHeader title="Tags" editing={editing} onEdit={begin} onSave={save} onCancel={() => setEditing(false)} />
-      {!editing && (
-        tags.length === 0
-          ? <Text style={styles.muted}>No tags</Text>
-          : <View style={styles.chipRow}>{tags.map((t) => <Text key={t} style={styles.tagChip}>#{t}</Text>)}</View>
-      )}
-      {editing && (
-        <TextInput style={formStyles.input} autoCapitalize="none" placeholder="family, school" value={csv} onChangeText={setCsv} />
-      )}
-    </View>
+    <Pressable onPress={() => void open()} disabled={!placeId}>
+      <Text style={styles.row}>
+        <Text style={styles.rowKind}>{type}  </Text>
+        {placeId ? (busy ? 'Opening map…' : 'Open in Google Maps ↗') : '(no place linked)'}
+      </Text>
+    </Pressable>
   );
 }
 
-function ProfilesPanel({ contactId, profiles }: { contactId: string; profiles: SocialProfile[] }) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState<SocialProfile[]>([]);
-
-  const begin = () => {
-    setDraft(profiles.map((p) => ({ ...p })));
-    setEditing(true);
-  };
-  const save = () => {
-    void setContactProfiles(contactId, draft.filter((p) => p.service.trim() && p.handle.trim()));
-    setEditing(false);
-  };
-  const patch = (i: number, p: Partial<SocialProfile>) =>
-    setDraft((d) => d.map((x, j) => (j === i ? { ...x, ...p } : x)));
-
-  return (
-    <View>
-      <SectionHeader title="Profiles" editing={editing} onEdit={begin} onSave={save} onCancel={() => setEditing(false)} />
-      {!editing && profiles.length === 0 && <Text style={styles.muted}>No profiles</Text>}
-      {!editing && profiles.map((p, i) => (
-        <Text key={i} style={styles.row}>{p.service}: {p.handle}{p.preferred ? '  ★' : ''}</Text>
-      ))}
-      {editing && (
-        <View style={styles.editBlock}>
-          {draft.map((p, i) => (
-            <View key={i} style={styles.editRow}>
-              <TextInput
-                style={[formStyles.input, styles.editService]}
-                placeholder="service"
-                autoCapitalize="none"
-                value={p.service}
-                onChangeText={(v) => patch(i, { service: v })}
-              />
-              <TextInput
-                style={[formStyles.input, styles.editValue]}
-                placeholder="handle"
-                autoCapitalize="none"
-                value={p.handle}
-                onChangeText={(v) => patch(i, { handle: v })}
-              />
-              <Pressable onPress={() => setDraft((d) => d.filter((_, j) => j !== i))} hitSlop={6}>
-                <Text style={styles.remove}>✕</Text>
-              </Pressable>
-            </View>
-          ))}
-          <Button title="Add profile" kind="plain" onPress={() => setDraft((d) => [...d, { service: '', handle: '', preferred: false }])} />
-        </View>
-      )}
-    </View>
-  );
-}
-
-function SectionHeader({ title, editing, onEdit, onSave, onCancel }: {
-  title: string; editing: boolean; onEdit: () => void; onSave: () => void; onCancel: () => void;
+function ResolvedName({ contactId, prefix, navigation }: {
+  contactId: string;
+  prefix: string;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 }) {
+  const [name, setName] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const state = await loadContact(await getDb(), contactId);
+      if (!cancelled) setName(state ? composeDisplayName(state.doc) : null);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [contactId]);
+
   return (
-    <View style={styles.sectionHeader}>
-      <Text style={formStyles.section}>{title}</Text>
-      {editing ? (
-        <View style={styles.sectionActions}>
-          <Pressable onPress={onSave}><Text style={styles.link}>Save</Text></Pressable>
-          <Pressable onPress={onCancel}><Text style={styles.mutedLink}>Cancel</Text></Pressable>
-        </View>
-      ) : (
-        <Pressable onPress={onEdit}><Text style={styles.link}>Edit</Text></Pressable>
-      )}
-    </View>
+    <Pressable onPress={() => name && navigation.push('ContactDetail', { contactId })}>
+      <Text style={styles.row}>
+        <Text style={styles.rowKind}>{prefix}</Text>
+        {name ?? '(not in mirror)'}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -266,22 +248,13 @@ const styles = StyleSheet.create({
   h1: { fontSize: 20, fontWeight: '600' },
   sub: { color: '#888', fontSize: 13 },
   birthday: { fontSize: 14, color: '#b45309', marginTop: 6 },
-  row: { fontSize: 14, paddingVertical: 3 },
+  deceased: { fontSize: 13, color: '#666', fontStyle: 'italic' },
+  row: { fontSize: 14, paddingVertical: 4 },
+  rowKind: { color: '#888', fontSize: 13 },
   muted: { color: '#999', fontSize: 13 },
   notes: { fontSize: 14, color: '#333' },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   tagChip: { fontSize: 12, color: '#4457c2', backgroundColor: '#eef0fb', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
-  sectionHeader: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  sectionActions: { flexDirection: 'row', gap: 14 },
-  link: { color: '#4457c2', fontSize: 13 },
-  mutedLink: { color: '#999', fontSize: 13 },
-  editBlock: { gap: 6 },
-  editRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  mediumToggle: { fontSize: 18, width: 26, textAlign: 'center' },
-  editValue: { flex: 1 },
-  editService: { flex: 1 },
-  star: { fontSize: 18, color: '#ccc' },
-  starOn: { color: '#d97706' },
-  remove: { fontSize: 14, color: '#999', paddingHorizontal: 4 },
-  buttons: { flexDirection: 'row', gap: 10, marginTop: 20 },
+  footer: { color: '#aaa', fontSize: 11, marginTop: 12 },
+  buttons: { flexDirection: 'row', gap: 10, marginTop: 16 },
 });

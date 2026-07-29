@@ -5,9 +5,9 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import type { ItemForm } from '../../domain/editors';
-import { emptyItemForm, itemCoreFromForm, itemFormFromDoc } from '../../domain/editors';
+import { categoryAllDayDefault, emptyItemForm, itemCoreFromForm, itemFormFromDoc } from '../../domain/editors';
 import { createItem, reviseItem } from '../../state/actions';
-import { useCalendars, useItemState } from '../../state/queries';
+import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { Button, ChoiceChips, DateField, Field, TimeField, formStyles } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -22,7 +22,8 @@ export function ItemEditScreen() {
   const { data: state } = useItemState(itemId ?? '');
   const { data: calendars } = useCalendars();
 
-  const [form, setForm] = useState<ItemForm>(() => emptyItemForm(route.params?.day));
+  const [form, setForm] = useState<ItemForm>(() => emptyItemForm(route.params?.day, route.params?.time));
+  const [scheduleTouched, setScheduleTouched] = useState(false);
   const [calendarId, setCalendarId] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [seeded, setSeeded] = useState(!itemId);
@@ -34,10 +35,22 @@ export function ItemEditScreen() {
     }
   }, [seeded, itemId, state]);
   useEffect(() => {
-    if (!itemId && !calendarId && calendars?.length) setCalendarId(calendars[0].id);
+    const pickable = selectableCalendars(calendars);
+    if (!itemId && !calendarId && pickable.length) setCalendarId(pickable[0].id);
   }, [itemId, calendarId, calendars]);
 
   const set = <K extends keyof ItemForm>(key: K, value: ItemForm[K]) => setForm((f) => ({ ...f, [key]: value }));
+  const setSchedule = <K extends keyof ItemForm>(key: K, value: ItemForm[K]) => {
+    setScheduleTouched(true);
+    set(key, value);
+  };
+  // Category picked first on a NEW event steers the schedule shape — but never overrides user input.
+  const pickCategory = (v: string) => {
+    set('category', v);
+    if (itemId || scheduleTouched) return;
+    const allDay = categoryAllDayDefault(v);
+    if (allDay !== null) set('isAllDay', allDay);
+  };
 
   const save = () => {
     const r = itemCoreFromForm(form, state?.doc);
@@ -62,12 +75,15 @@ export function ItemEditScreen() {
         <Field label="Calendar">
           <ChoiceChips
             required
-            options={(calendars ?? []).map((c) => ({ value: c.id, label: c.displayName ?? c.id }))}
+            options={selectableCalendars(calendars).map((c) => ({ value: c.id, label: c.displayName ?? c.id }))}
             value={calendarId}
             onChange={setCalendarId}
           />
         </Field>
       )}
+      <Field label="Category">
+        <ChoiceChips options={CATEGORY_OPTIONS} value={form.category} onChange={pickCategory} />
+      </Field>
       <Field label="Title">
         <TextInput style={formStyles.input} value={form.title} onChangeText={(v) => set('title', v)} />
       </Field>
@@ -77,30 +93,30 @@ export function ItemEditScreen() {
 
       <View style={styles.switchRow}>
         <Text style={styles.switchLabel}>All-day</Text>
-        <Switch value={form.isAllDay} onValueChange={(v) => set('isAllDay', v)} />
+        <Switch value={form.isAllDay} onValueChange={(v) => setSchedule('isAllDay', v)} />
       </View>
 
       {form.isAllDay ? (
         <>
           <Field label="Start date">
-            <DateField value={form.startDay} onChange={(v) => set('startDay', v)} />
+            <DateField value={form.startDay} onChange={(v) => setSchedule('startDay', v)} />
           </Field>
           <Field label="End date (exclusive, optional)">
-            <DateField value={form.endDay} onChange={(v) => set('endDay', v)} />
+            <DateField value={form.endDay} onChange={(v) => setSchedule('endDay', v)} />
           </Field>
         </>
       ) : (
         <>
           <Field label="Starts">
             <View style={styles.pair}>
-              <View style={styles.pairItem}><DateField value={form.startDay} onChange={(v) => set('startDay', v)} /></View>
-              <View style={styles.pairItem}><TimeField value={form.startTime} onChange={(v) => set('startTime', v)} /></View>
+              <View style={styles.pairItem}><DateField value={form.startDay} onChange={(v) => setSchedule('startDay', v)} /></View>
+              <View style={styles.pairItem}><TimeField value={form.startTime} onChange={(v) => setSchedule('startTime', v)} /></View>
             </View>
           </Field>
           <Field label="Ends (optional)">
             <View style={styles.pair}>
-              <View style={styles.pairItem}><DateField value={form.endDay} onChange={(v) => set('endDay', v)} /></View>
-              <View style={styles.pairItem}><TimeField value={form.endTime} onChange={(v) => set('endTime', v)} /></View>
+              <View style={styles.pairItem}><DateField value={form.endDay} onChange={(v) => setSchedule('endDay', v)} /></View>
+              <View style={styles.pairItem}><TimeField value={form.endTime} onChange={(v) => setSchedule('endTime', v)} /></View>
             </View>
           </Field>
         </>
@@ -126,9 +142,6 @@ export function ItemEditScreen() {
 
       <Field label="Status">
         <ChoiceChips options={STATUS_OPTIONS} value={form.status} onChange={(v) => set('status', v)} />
-      </Field>
-      <Field label="Category">
-        <ChoiceChips options={CATEGORY_OPTIONS} value={form.category} onChange={(v) => set('category', v)} />
       </Field>
       <Field label="Tags (comma-separated)">
         <TextInput style={formStyles.input} autoCapitalize="none" value={form.tagsCsv} onChangeText={(v) => set('tagsCsv', v)} />

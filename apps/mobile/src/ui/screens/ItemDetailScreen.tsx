@@ -6,7 +6,7 @@ import type { RouteProp } from '@react-navigation/native';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state/actions';
-import { useCalendars, useItemState } from '../../state/queries';
+import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { Button, formStyles } from '../components/form';
 import { useCalendarColors } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
@@ -81,7 +81,7 @@ function CalendarsPanel({ itemId, memberships }: {
   return (
     <View>
       <Text style={formStyles.section}>Calendars</Text>
-      {(calendars ?? []).map((c) => {
+      {selectableCalendars(calendars).map((c) => {
         const status = statusOf(c.id);
         const member = status === 'Accepted' || status === 'Proposed';
         return (

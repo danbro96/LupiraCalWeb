@@ -38,12 +38,16 @@ async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
 
     // Stock-app edits captured by the bridge ride the same push as the app's own queued writes.
     await drainBridgeInbox(db);
+    status.setPhase('push');
     await drain(db);
 
     const horizon = currentHorizon(deps.now());
+    status.setPhase('containers');
     await pullContainers(db, deps);
     invalidateContainers();
+    status.setPhase('items');
     const calMonths = await pullCal(db, horizon, deps);
+    status.setPhase('contacts');
     const contactMonths = await pullContacts(db, horizon, deps);
     invalidateMonthKeys([...calMonths, ...contactMonths]);
     invalidateContacts();
@@ -53,6 +57,7 @@ async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
 
     // Provider round-trip: push the freshly pulled mirror into the stock apps, and pick up any
     // stock-app edits the capture just found (their push rides enqueue's auto-drain).
+    status.setPhase('bridge');
     await bridgePublish(db);
     await drainBridgeInbox(db);
 
@@ -66,6 +71,7 @@ async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
     });
   } finally {
     useSyncStatus.getState().set({ syncing: false });
+    useSyncStatus.getState().setPhase(null);
   }
 }
 

@@ -1,5 +1,6 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { getDb } from '../data/db/expoDb';
+import { usePrefs } from './prefs-store';
 import type { ContactListRow, GridRow, OutboxRow } from '../data/mirror';
 import { gridRowsBetween, listContacts, listContainerDocs, listParked, listPendingOps, loadContact, loadItem } from '../data/mirror';
 
@@ -7,20 +8,23 @@ import { gridRowsBetween, listContacts, listContainerDocs, listParked, listPendi
 /// item docs under ['items']; contacts (list + docs) under ['contacts']; containers under ['containers'];
 /// outbox rows under ['outbox'].
 
-const monthQuery = (monthKey: string) => ({
-  queryKey: ['occurrences', monthKey] as const,
-  queryFn: async () => gridRowsBetween(await getDb(), `${monthKey}-01`, `${monthKey}-31`),
+const monthQuery = (monthKey: string, includeSystem: boolean) => ({
+  // includeSystem rides the key AFTER the monthKey so per-month invalidation (prefix match) still works.
+  queryKey: ['occurrences', monthKey, includeSystem] as const,
+  queryFn: async () => gridRowsBetween(await getDb(), `${monthKey}-01`, `${monthKey}-31`, includeSystem),
 });
 
 export function useMonthOccurrences(monthKey: string) {
-  return useQuery<GridRow[]>(monthQuery(monthKey));
+  const includeSystem = usePrefs((p) => p.showSystemCalendars);
+  return useQuery<GridRow[]>(monthQuery(monthKey, includeSystem));
 }
 
 /// A run of days can straddle a month boundary (grid weeks do) — one query per touched month bucket keeps
 /// the monthKey invalidation contract intact.
 export function useDaysOccurrences(dayKeys: string[]): { rows: GridRow[]; loading: boolean } {
+  const includeSystem = usePrefs((p) => p.showSystemCalendars);
   const monthKeys = [...new Set(dayKeys.map((d) => d.slice(0, 7)))];
-  const results = useQueries({ queries: monthKeys.map(monthQuery) });
+  const results = useQueries({ queries: monthKeys.map((k) => monthQuery(k, includeSystem)) });
   const daySet = new Set(dayKeys);
   const rows = results
     .flatMap((r) => r.data ?? [])
@@ -41,7 +45,20 @@ export function useContactList() {
   return useQuery<ContactListRow[]>({ queryKey: ['contacts', 'list'], queryFn: async () => listContacts(await getDb()) });
 }
 
-export type CalendarContainer = { id: string; displayName?: string | null; color?: string | null; access?: string };
+export type CalendarContainer = {
+  id: string;
+  displayName?: string | null;
+  color?: string | null;
+  access?: string;
+  class?: string | null;
+  kind?: string | null;
+};
+
+/// Calendars a user may deliberately put items into: never System-class scaffolding, never the
+/// synthesized Birthdays calendar (the API 400s on it as of the same change).
+export function selectableCalendars(calendars: CalendarContainer[] | undefined): CalendarContainer[] {
+  return (calendars ?? []).filter((c) => c.class !== 'System' && c.kind !== 'Birthdays');
+}
 export type AddressBookContainer = { id: string; displayName?: string | null; access?: string };
 
 export function useCalendars() {

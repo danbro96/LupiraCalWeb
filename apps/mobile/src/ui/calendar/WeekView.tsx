@@ -1,6 +1,6 @@
 import { clampToDay, layoutColumns } from '@lupira/cal-domain/occurrences';
 import { daysFrom, isToday, ymd } from '@lupira/cal-domain/time';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { GridRow } from '../../data/mirror';
 import { useDaysOccurrences } from '../../state/queries';
@@ -11,10 +11,13 @@ const DEFAULT_END_MIN = 30;   // open-ended timed occurrences render as a half-h
 
 /// Week grid: all-day chips on top, timed lanes below. Placement is the domain's clampToDay + layoutColumns
 /// (the same math the web grid uses); data is the mirror's occurrence rows for the 7 day buckets.
-export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence }: {
+export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, onCreateSlot }: {
   weekStart: Date;
   onPressOccurrence: (row: GridRow) => void;
+  onCreateSlot: (day: string, time: string) => void;
 }) {
+  // First tap on an empty lane drops a ＋ chip on that hour; tapping the chip opens the prefilled editor.
+  const [pendingSlot, setPendingSlot] = useState<{ day: string; hour: number } | null>(null);
   const days = daysFrom(weekStart, 7);
   const dayKeys = days.map(ymd);
   const { rows } = useDaysOccurrences(dayKeys);
@@ -82,11 +85,30 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence }:
               return span ? [{ ...span, item: r }] : [];
             });
             const placed = layoutColumns(spans, 30);
+            const dayKey = ymd(day);
             return (
-              <View key={ymd(day)} style={styles.dayColumn}>
+              <Pressable
+                key={dayKey}
+                style={styles.dayColumn}
+                onPress={(e) => {
+                  const hour = Math.max(0, Math.min(23, Math.floor(e.nativeEvent.locationY / HOUR_H)));
+                  setPendingSlot((cur) => (cur && cur.day === dayKey && cur.hour === hour ? null : { day: dayKey, hour }));
+                }}
+              >
                 {Array.from({ length: 24 }, (_, h) => (
                   <View key={h} style={[styles.hourLine, { top: h * HOUR_H }]} />
                 ))}
+                {pendingSlot?.day === dayKey && (
+                  <Pressable
+                    style={[styles.slotChip, { top: pendingSlot.hour * HOUR_H + 2 }]}
+                    onPress={() => {
+                      onCreateSlot(dayKey, `${String(pendingSlot.hour).padStart(2, '0')}:00`);
+                      setPendingSlot(null);
+                    }}
+                  >
+                    <Text style={styles.slotChipText}>＋ {String(pendingSlot.hour).padStart(2, '0')}:00</Text>
+                  </Pressable>
+                )}
                 {placed.map((p) => (
                   <Pressable
                     key={`${p.item.source_id}-${p.item.start_utc}`}
@@ -102,7 +124,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence }:
                     <Text style={styles.chipText} numberOfLines={2}>{p.item.title ?? '(untitled)'}</Text>
                   </Pressable>
                 ))}
-              </View>
+              </Pressable>
             );
           })}
         </View>
@@ -127,4 +149,6 @@ const styles = StyleSheet.create({
   dayColumn: { flex: 1, borderLeftWidth: 0.5, borderColor: '#ececf0' },
   hourLine: { position: 'absolute', left: 0, right: 0, height: 0.5, backgroundColor: '#ececf0' },
   event: { position: 'absolute', borderRadius: 4, padding: 2, borderWidth: 0.5, borderColor: '#ffffff88' },
+  slotChip: { position: 'absolute', left: 2, right: 2, height: HOUR_H - 4, borderRadius: 6, borderWidth: 1.5, borderColor: '#4457c2', borderStyle: 'dashed', backgroundColor: '#eef0fbee', alignItems: 'center', justifyContent: 'center' },
+  slotChipText: { color: '#4457c2', fontWeight: '600', fontSize: 13 },
 });

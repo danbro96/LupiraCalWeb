@@ -141,6 +141,9 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
     emails: '',
     phones: '',
     birthday: '',
+    birthdayYearKnown: true,
+    birthdayMonth: '',
+    birthdayDay: '',
   });
 
   return (
@@ -156,7 +159,11 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
             familyName: form.familyName || null,
             nickname: form.nickname || null,
             channels: channels.length ? channels : null,
-            birthday: inputToPartialDate(form.birthday, true),
+            birthday: form.birthdayYearKnown
+              ? inputToPartialDate(form.birthday, true)
+              : (form.birthdayMonth && form.birthdayDay
+                ? { year: null, month: Number(form.birthdayMonth), day: Number(form.birthdayDay) }
+                : null),
           },
         });
       }}
@@ -177,7 +184,22 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
       </div>
       <div className="form-row">
         <input className="text-input" placeholder="Nickname" value={form.nickname} onChange={(e) => setForm({ ...form, nickname: e.target.value })} />
-        <input type="date" className="text-input" value={form.birthday} onChange={(e) => setForm({ ...form, birthday: e.target.value })} title="Birthday" />
+        <label className="meta">
+          <input
+            type="checkbox"
+            checked={form.birthdayYearKnown}
+            onChange={(e) => setForm({ ...form, birthdayYearKnown: e.target.checked, birthday: '', birthdayMonth: '', birthdayDay: '' })}
+          />{' '}
+          Enter year
+        </label>
+        {form.birthdayYearKnown ? (
+          <input type="date" className="text-input" value={form.birthday} onChange={(e) => setForm({ ...form, birthday: e.target.value })} title="Birthday" />
+        ) : (
+          <>
+            <input type="number" min={1} max={12} className="text-input" placeholder="Birth month" value={form.birthdayMonth} onChange={(e) => setForm({ ...form, birthdayMonth: e.target.value })} />
+            <input type="number" min={1} max={31} className="text-input" placeholder="Birth day" value={form.birthdayDay} onChange={(e) => setForm({ ...form, birthdayDay: e.target.value })} />
+          </>
+        )}
       </div>
       <div className="form-row">
         <input className="text-input" placeholder="Emails (comma-separated)" value={form.emails} onChange={(e) => setForm({ ...form, emails: e.target.value })} />

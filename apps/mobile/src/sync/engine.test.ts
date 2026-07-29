@@ -356,3 +356,21 @@ describe('migration ladder concurrency', () => {
     await migrate(fresh);   // and stays idempotent afterwards
   });
 });
+
+describe('system-calendar grid filter', () => {
+  it('hides items homed only in System-class calendars when asked', async () => {
+    await db.exclusive(async (tx) => {
+      await mirror.replaceContainers(tx, 'calendars', [
+        { id: 'cal-1' },
+        { id: 'sys-1', class: 'System' } as { id: string },
+      ]);
+    });
+    await enqueueOffline([createOp('item-1', 1), createOp('item-2', 2, 'sys-1')]);
+
+    const all = await mirror.gridRowsBetween(db, '2026-08-01', '2026-08-31');
+    expect(all.map((r) => r.source_id).sort()).toEqual(['item-1', 'item-2']);
+
+    const visible = await mirror.gridRowsBetween(db, '2026-08-01', '2026-08-31', false);
+    expect(visible.map((r) => r.source_id)).toEqual(['item-1']);
+  });
+});
