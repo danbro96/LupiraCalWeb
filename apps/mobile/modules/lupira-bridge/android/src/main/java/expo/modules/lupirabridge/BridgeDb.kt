@@ -27,14 +27,18 @@ object BridgeDb {
     return db
   }
 
-  /// The mirror database the RN app maintains (expo-sqlite). This connection never writes, but it must
-  /// open READWRITE: Android's read-only open cannot recover a live WAL index ("database is locked"
-  /// while the engine's first big pull is mid-flight — observed on a fresh install). WAL + busy_timeout
-  /// make the cross-connection read safe. Null when the app has never synced.
+  /// The mirror database the RN app maintains (expo-sqlite, WAL). This connection never writes, but it
+  /// must open READWRITE (read-only can't recover a live WAL index) and MUST pass
+  /// ENABLE_WRITE_AHEAD_LOGGING: without it, Android's framework rewrites the journal mode to its
+  /// non-WAL default on open, silently downgrading the app's own connections to rollback-journal
+  /// locking ("database is locked" all over the engine — observed on a fresh install mid-first-sync).
   fun openMirror(context: Context): SQLiteDatabase? {
     val file = File(context.filesDir, "SQLite/lupira-calendar-mirror.db")
     if (!file.exists()) return null
-    val db = SQLiteDatabase.openDatabase(file.path, null, SQLiteDatabase.OPEN_READWRITE)
+    val db = SQLiteDatabase.openDatabase(
+      file.path, null,
+      SQLiteDatabase.OPEN_READWRITE or SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING,
+    )
     setBusyTimeout(db)
     return db
   }

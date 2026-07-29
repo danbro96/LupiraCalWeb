@@ -37,7 +37,11 @@ function wrap(raw: SQLite.SQLiteDatabase): Db {
     async exclusive<T>(fn: (tx: Tx) => Promise<T>): Promise<T> {
       let result!: T;
       await raw.withExclusiveTransactionAsync(async (txn) => {
-        result = await fn(wrapTx(txn as unknown as SQLite.SQLiteDatabase));
+        const tx = wrapTx(txn as unknown as SQLite.SQLiteDatabase);
+        // busy_timeout is per-connection and this txn rides its own — cover commits/escalations
+        // against the Kotlin bridge connection instead of failing instantly.
+        await tx.first('PRAGMA busy_timeout = 30000');
+        result = await fn(tx);
       });
       return result;
     },
