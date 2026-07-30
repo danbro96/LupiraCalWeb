@@ -7,13 +7,8 @@
  */
 
 export interface PartialDate {
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)$
-     */
-  year: number | string | null;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  month: number | string;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  day: number | string;
+  /** @nullable */
+  year: number | null;
+  month: number;
+  day: number;
 }

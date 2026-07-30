@@ -8,8 +8,7 @@
 
 export interface ParticipationSummaryEntry {
   contactId: string;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  count: number | string;
+  count: number;
   /** @nullable */
   lastAt: string | null;
 }

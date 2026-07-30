@@ -7,12 +7,6 @@
  */
 
 export type ReverseGeocodeParams = {
-/**
- * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
- */
-lat: number | string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
- */
-lon: number | string;
+lat: number;
+lon: number;
 };

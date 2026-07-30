@@ -108,7 +108,7 @@ describe('contact editor', () => {
   });
 
   it('year-unknown docs round-trip into month/day fields, never the date input', () => {
-    const yearless: ContactDoc = { id: 'c2', addressBookId: 'b1', givenName: 'Y', birthday: { year: null, month: '3', day: '7' } };
+    const yearless: ContactDoc = { id: 'c2', addressBookId: 'b1', givenName: 'Y', birthday: { year: null, month: 3, day: 7 } };
     const form = contactFormFromDoc(yearless);
     expect(form).toMatchObject({ birthday: '', birthdayYearKnown: false, birthdayMonth: '3', birthdayDay: '7' });
   });

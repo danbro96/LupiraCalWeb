@@ -169,8 +169,7 @@ export function contactReviseIsEcho(core: ContactCore, channels: ReachChannel[],
 
 function partialKey(b: PartialDateDto | null | undefined): string {
   if (!b) return '';
-  const n = (v: number | string | null) => (v == null || v === '' ? '' : Number(v));
-  return `${n(b.year)}-${n(b.month)}-${n(b.day)}`;
+  return `${b.year ?? ''}-${b.month}-${b.day}`;
 }
 
 function canonChannels(channels: ReachChannel[]): string {

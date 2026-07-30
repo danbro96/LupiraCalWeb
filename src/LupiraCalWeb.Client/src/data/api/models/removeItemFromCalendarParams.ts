@@ -7,5 +7,8 @@
  */
 
 export type RemoveItemFromCalendarParams = {
-occurredAt?: string;
+/**
+ * @nullable
+ */
+occurredAt?: string | null;
 };

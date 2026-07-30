@@ -9,7 +9,6 @@ import type { GapSeverity } from './gapSeverity';
 
 export interface CompletenessGap {
   field: string;
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
-  weight: number | string;
+  weight: number;
   severity: GapSeverity;
 }

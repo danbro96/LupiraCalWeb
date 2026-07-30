@@ -10,16 +10,10 @@ export interface SavedPlaceDto {
   id: string;
   /** @nullable */
   placeId?: string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  latitude?: number | string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  longitude?: number | string | null;
+  /** @nullable */
+  latitude?: number | null;
+  /** @nullable */
+  longitude?: number | null;
   label: string;
   /** @nullable */
   icon?: string | null;

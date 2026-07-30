@@ -11,8 +11,5 @@ export type ListAdminAreasParams = {
 level?: AdminLevel;
 withinAreaId?: string;
 q?: string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)$
- */
-limit?: number | string;
+limit?: number;
 };

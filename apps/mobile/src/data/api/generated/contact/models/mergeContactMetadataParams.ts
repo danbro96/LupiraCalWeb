@@ -7,5 +7,8 @@
  */
 
 export type MergeContactMetadataParams = {
-occurredAt?: string;
+/**
+ * @nullable
+ */
+occurredAt?: string | null;
 };

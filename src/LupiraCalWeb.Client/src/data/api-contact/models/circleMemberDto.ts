@@ -12,7 +12,6 @@ export interface CircleMemberDto {
   contactId: string;
   displayName: string;
   kind?: null | ContactRelationKind;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  degree: number | string;
+  degree: number;
   provenance: RelationProvenance;
 }

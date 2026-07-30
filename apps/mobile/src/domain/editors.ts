@@ -132,7 +132,7 @@ export function emptyContactForm(): ContactForm {
 }
 
 export function contactFormFromDoc(doc: ContactDoc): ContactForm {
-  const yearKnown = doc.birthday ? doc.birthday.year != null && doc.birthday.year !== '' : true;
+  const yearKnown = doc.birthday ? doc.birthday.year != null : true;
   return {
     givenName: doc.givenName ?? '',
     middleName: doc.middleName ?? '',

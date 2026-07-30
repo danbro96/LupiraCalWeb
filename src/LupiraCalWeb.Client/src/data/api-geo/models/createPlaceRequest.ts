@@ -12,16 +12,10 @@ export interface CreatePlaceRequest {
   name: string;
   kind?: PlaceKind;
   category?: PlaceCategory;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  latitude?: number | string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  longitude?: number | string | null;
+  /** @nullable */
+  latitude?: number | null;
+  /** @nullable */
+  longitude?: number | null;
   /** @nullable */
   formattedAddress?: string | null;
   /** @nullable */

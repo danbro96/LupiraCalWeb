@@ -10,6 +10,5 @@ import type { ParticipationRef } from './participationRef';
 export interface SetParticipantsResult {
   itemId: string;
   added: ParticipationRef[];
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  alreadyPresent: number | string;
+  alreadyPresent: number;
 }

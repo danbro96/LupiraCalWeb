@@ -8,21 +8,21 @@
 
 export type SearchItemsParams = {
 query?: string;
-from?: string;
-to?: string;
+/**
+ * @nullable
+ */
+from?: string | null;
+/**
+ * @nullable
+ */
+to?: string | null;
 calendarId?: string;
 tag?: string;
 parentId?: string;
 contactId?: string;
 category?: string;
 status?: string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)$
- */
-skip?: number | string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)$
- */
-take?: number | string;
+skip?: number;
+take?: number;
 desc?: boolean;
 };

@@ -64,7 +64,7 @@ export async function saveContact(tx: Tx, state: MirrorContact, birthdays: Occur
        address_book_id=excluded.address_book_id, bday_year=excluded.bday_year, bday_month=excluded.bday_month,
        bday_day=excluded.bday_day, deleted=excluded.deleted, updated_at=excluded.updated_at`,
     [d.id, JSON.stringify(d), JSON.stringify(state.guards), composeDisplayName(d), d.addressBookId,
-      bday ? toInt(bday.year) : null, bday ? toInt(bday.month) : null, bday ? toInt(bday.day) : null,
+      bday?.year ?? null, bday?.month ?? null, bday?.day ?? null,
       state.deleted ? 1 : 0, d.updatedAt ?? ''],
   );
   await replaceOccurrences(tx, 'birthday', d.id, birthdays);
@@ -91,11 +91,6 @@ export function composeDisplayName(d: ContactDoc): string {
   }
 }
 
-function toInt(v: number | string | null | undefined): number | null {
-  if (v === null || v === undefined || v === '') return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-}
 
 async function replaceOccurrences(tx: Tx, source: 'item' | 'birthday', sourceId: string, rows: OccurrenceRow[]): Promise<void> {
   await tx.run('DELETE FROM occurrences WHERE source = ? AND source_id = ?', [source, sourceId]);

@@ -39,7 +39,7 @@ export function partitionByActivity<T extends TierableContact>(
   const now = opts.now ?? Date.now();
   const graceMs = (opts.graceDays ?? 30) * 86_400_000;
   const interacted = new Set(
-    (summary ?? []).filter((e) => (Number(e.count) || 0) > 0).map((e) => e.contactId ?? ''),
+    (summary ?? []).filter((e) => (e.count ?? 0) > 0).map((e) => e.contactId ?? ''),
   );
 
   const isActive = (c: T): boolean =>

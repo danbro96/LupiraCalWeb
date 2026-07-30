@@ -15,14 +15,8 @@ export interface AdminAreaDto {
   isoCode?: string | null;
   /** @nullable */
   withinAreaId?: string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  latitude?: number | string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  longitude?: number | string | null;
+  /** @nullable */
+  latitude?: number | null;
+  /** @nullable */
+  longitude?: number | null;
 }

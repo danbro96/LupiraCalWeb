@@ -121,8 +121,8 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
       </span>
       {c.birthday && <span className="badge">🎂 {partialDateBadge(c.birthday)}</span>}
       {c.completeness && (
-        <span className="completeness-bar" title={`Completeness ${Math.round(Number(c.completeness.score) * 100)}%`}>
-          <span style={{ width: `${Math.round(Number(c.completeness.score) * 100)}%` }} />
+        <span className="completeness-bar" title={`Completeness ${Math.round(c.completeness.score * 100)}%`}>
+          <span style={{ width: `${Math.round(c.completeness.score * 100)}%` }} />
         </span>
       )}
     </NavLink>

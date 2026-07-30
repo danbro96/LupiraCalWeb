@@ -56,6 +56,5 @@ export interface CalendarItemDto {
   etag: string;
   createdAt: string;
   updatedAt: string;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  version: number | string;
+  version: number;
 }

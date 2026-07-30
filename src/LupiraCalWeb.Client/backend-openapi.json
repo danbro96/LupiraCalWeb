@@ -79,7 +79,10 @@
             "name": "from",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -87,7 +90,10 @@
             "name": "to",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           }
@@ -334,7 +340,10 @@
             "name": "from",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -342,7 +351,10 @@
             "name": "to",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -395,11 +407,7 @@
             "name": "skip",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -407,11 +415,7 @@
             "name": "take",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -749,11 +753,7 @@
             "name": "maxScore",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
-              "type": [
-                "number",
-                "string"
-              ],
+              "type": "number",
               "format": "double"
             }
           },
@@ -761,11 +761,7 @@
             "name": "take",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -879,7 +875,10 @@
             "name": "occurredAt",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -1017,7 +1016,10 @@
             "name": "occurredAt",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -1138,7 +1140,10 @@
             "name": "occurredAt",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -1396,7 +1401,10 @@
             "name": "occurredAt",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -1468,7 +1476,10 @@
             "name": "occurredAt",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -1531,7 +1542,10 @@
             "name": "occurredAt",
             "in": "query",
             "schema": {
-              "type": "string",
+              "type": [
+                "null",
+                "string"
+              ],
               "format": "date-time"
             }
           },
@@ -1902,11 +1916,7 @@
             "name": "limit",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -2040,11 +2050,9 @@
             ]
           },
           "amount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
               "null",
-              "number",
-              "string"
+              "number"
             ],
             "format": "double"
           },
@@ -2055,11 +2063,9 @@
             ]
           },
           "partySize": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
-              "integer",
-              "string"
+              "integer"
             ],
             "format": "int32"
           }
@@ -2292,11 +2298,7 @@
             "format": "date-time"
           },
           "version": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           }
         }
@@ -2399,11 +2401,7 @@
             ]
           },
           "childCount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "completeness": {
@@ -2474,11 +2472,7 @@
             "type": "string"
           },
           "weight": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "severity": {
@@ -2495,19 +2489,11 @@
         "type": "object",
         "properties": {
           "score": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "rubricVersion": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "gaps": {
@@ -3296,11 +3282,7 @@
             "format": "uuid"
           },
           "count": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "lastAt": {
@@ -3339,11 +3321,9 @@
             ]
           },
           "status": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
-              "integer",
-              "string"
+              "integer"
             ],
             "format": "int32"
           },
@@ -3373,11 +3353,9 @@
             "$ref": "#/components/schemas/PromptFireKind"
           },
           "offsetMinutes": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
-              "integer",
-              "string"
+              "integer"
             ],
             "format": "int32"
           },
@@ -3669,11 +3647,7 @@
             }
           },
           "alreadyPresent": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           }
         }

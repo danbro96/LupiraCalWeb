@@ -1,14 +1,14 @@
 // Human-readable summary of a payload's PromptFire timing (kind + primitives; domain stays
 // independent of the generated API models).
 
-export function describeFire(kind: string, offsetMinutes?: number | string | null, allDayAt?: string | null): string {
+export function describeFire(kind: string, offsetMinutes?: number | null, allDayAt?: string | null): string {
   switch (kind) {
     case 'OnStart':
       return 'at start';
     case 'OnEnd':
       return 'at end';
     case 'Offset': {
-      const m = offsetMinutes == null ? 0 : Number(offsetMinutes);
+      const m = offsetMinutes ?? 0;
       if (m === 0) return 'at start';
       const abs = Math.abs(m);
       const span = abs % 60 === 0 ? `${abs / 60} h` : `${abs} min`;

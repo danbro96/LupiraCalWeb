@@ -1,5 +1,4 @@
 import { expandRecurrence } from '@lupira/cal-domain/recurrence';
-import { coercePartialDate } from '@lupira/cal-domain/partialDate';
 import type { ContactDoc, ItemDoc } from './docTypes';
 
 /// The single grid read path: every visible instant becomes one row in the `occurrences` table, recomputed
@@ -71,7 +70,7 @@ export function occurrenceRowsForItem(doc: ItemDoc, deleted: boolean, horizon: H
 /// read-time projection). Year-less birthdays still recur; Feb 29 lands only in leap years.
 export function birthdayRows(contact: ContactDoc, deleted: boolean, horizon: Horizon): OccurrenceRow[] {
   if (deleted || !contact.birthday) return [];
-  const { month, day } = coercePartialDate(contact.birthday);
+  const { month, day } = contact.birthday;
   if (month < 1 || month > 12 || day < 1) return [];
 
   const rows: OccurrenceRow[] = [];

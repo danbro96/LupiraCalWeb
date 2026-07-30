@@ -31,10 +31,10 @@ export function fromOccurrence(o: CalendarItemOccurrenceDto, calendar: Container
     isAllDay: o.isAllDay,
     color: calendarColor(calendar),
     icon: calendar.class === 'System' && calendar.kind ? CALENDAR_KIND_ICONS[calendar.kind] : undefined,
-    completeness: o.completeness ? Number(o.completeness.score) : null,
+    completeness: o.completeness ? o.completeness.score : null,
     parentItemId: o.parentItemId ?? null,
     parentTitle: o.parentTitle,
-    childCount: Number(o.childCount),
+    childCount: o.childCount,
     origin: o.origin,
   };
 }

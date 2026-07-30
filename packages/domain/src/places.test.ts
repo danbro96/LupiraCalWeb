@@ -6,14 +6,10 @@ describe('osmUrl', () => {
     expect(osmUrl(59.3293, 18.0686)).toBe('https://www.openstreetmap.org/?mlat=59.3293&mlon=18.0686#map=16/59.3293/18.0686');
   });
 
-  it('coerces string coords (.NET numeric-as-string)', () => {
-    expect(osmUrl('59.3293', '18.0686')).toContain('mlat=59.3293&mlon=18.0686');
-  });
-
-  it('is null when a component is missing or unparseable', () => {
+  it('is null when a component is missing or NaN', () => {
     expect(osmUrl(null, 18)).toBeNull();
     expect(osmUrl(59, undefined)).toBeNull();
-    expect(osmUrl('abc', 18)).toBeNull();
+    expect(osmUrl(Number.NaN, 18)).toBeNull();
   });
 });
 

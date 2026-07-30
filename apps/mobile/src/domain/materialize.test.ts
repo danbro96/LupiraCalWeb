@@ -43,8 +43,8 @@ describe('occurrenceRowsForItem', () => {
 describe('birthdayRows', () => {
   const contact = (birthday: ContactDoc['birthday']): ContactDoc => ({ id: 'c1', addressBookId: 'b1', birthday });
 
-  it('synthesizes yearly all-day rows, tolerating string-typed numerics', () => {
-    const rows = birthdayRows(contact({ year: '1990', month: '2', day: 14 }), false, horizon);
+  it('synthesizes yearly all-day rows', () => {
+    const rows = birthdayRows(contact({ year: 1990, month: 2, day: 14 }), false, horizon);
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ source: 'birthday', startDay: '2026-02-14', allDay: true });
   });

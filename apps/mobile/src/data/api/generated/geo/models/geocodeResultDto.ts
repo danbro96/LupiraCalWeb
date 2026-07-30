@@ -9,10 +9,8 @@ import type { PlaceCategory } from './placeCategory';
 
 export interface GeocodeResultDto {
   displayName: string;
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
-  latitude: number | string;
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
-  longitude: number | string;
+  latitude: number;
+  longitude: number;
   category: PlaceCategory;
   /** @nullable */
   countryCode?: string | null;

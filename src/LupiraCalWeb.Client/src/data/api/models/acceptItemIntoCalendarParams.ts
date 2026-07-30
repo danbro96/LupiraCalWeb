@@ -7,5 +7,8 @@
  */
 
 export type AcceptItemIntoCalendarParams = {
-occurredAt?: string;
+/**
+ * @nullable
+ */
+occurredAt?: string | null;
 };

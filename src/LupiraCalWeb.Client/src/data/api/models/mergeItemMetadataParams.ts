@@ -7,5 +7,8 @@
  */
 
 export type MergeItemMetadataParams = {
-occurredAt?: string;
+/**
+ * @nullable
+ */
+occurredAt?: string | null;
 };

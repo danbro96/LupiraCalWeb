@@ -13,24 +13,9 @@ q?: string;
 category?: PlaceCategory;
 kind?: PlaceKind;
 withinAreaId?: string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
- */
-nearLat?: number | string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
- */
-nearLon?: number | string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
- */
-radiusM?: number | string;
-/**
- * @items.pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
- */
-bbox?: (number | string)[];
-/**
- * @pattern ^-?(?:0|[1-9]\d*)$
- */
-limit?: number | string;
+nearLat?: number;
+nearLon?: number;
+radiusM?: number;
+bbox?: number[];
+limit?: number;
 };

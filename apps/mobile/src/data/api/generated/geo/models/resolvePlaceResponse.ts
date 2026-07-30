@@ -12,14 +12,8 @@ export interface ResolvePlaceResponse {
   /** @nullable */
   placeId?: string | null;
   name: string;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  latitude?: number | string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  longitude?: number | string | null;
+  /** @nullable */
+  latitude?: number | null;
+  /** @nullable */
+  longitude?: number | null;
 }

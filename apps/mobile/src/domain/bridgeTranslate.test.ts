@@ -112,7 +112,7 @@ describe('translateContactRow', () => {
 describe('write-back echo guard + type preservation', () => {
   const doc: ContactDoc = {
     id: 'c-1', addressBookId: 'b1', givenName: 'Alva', familyName: 'B',
-    birthday: { year: '2019', month: '3', day: '7' },   // wire form: numbers-as-strings
+    birthday: { year: 2019, month: 3, day: 7 },
     channels: [
       { medium: 'Phone', value: '070', type: 'Mobile', preferred: true },
       { medium: 'Email', value: 'a@b.se', type: 'Work', preferred: false },

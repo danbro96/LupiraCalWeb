@@ -46,7 +46,7 @@ export type ItemDoc = {
 
 export type ReachChannel = { medium: string; value: string; type?: string | null; preferred: boolean };
 export type SocialProfile = { service: string; handle: string; url?: string | null; preferred: boolean };
-export type PartialDateDto = { year: number | string | null; month: number | string; day: number | string };
+export type PartialDateDto = { year: number | null; month: number; day: number };
 
 export type ContactDoc = {
   id: string;

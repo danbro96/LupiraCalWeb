@@ -3,7 +3,7 @@
 
 export interface InteractionLike {
   contactId?: string;
-  count?: number | string;
+  count?: number;
   lastAt?: string | null;
 }
 
@@ -13,7 +13,7 @@ export function rankByInteraction<T extends { id?: string }>(
 ): T[] {
   if (!summary?.length) return [...contacts];
   const byContact = new Map(summary.map((e) => [e.contactId ?? '', e]));
-  const count = (c: T) => Number(byContact.get(c.id ?? '')?.count ?? 0) || 0;
+  const count = (c: T) => byContact.get(c.id ?? '')?.count ?? 0;
   const lastAt = (c: T) => {
     const at = byContact.get(c.id ?? '')?.lastAt;
     return (at && Date.parse(at)) || 0;

@@ -1,5 +1,5 @@
 import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
-import { coercePartialDate, fmtPartialDate } from '@lupira/cal-domain/partialDate';
+import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -189,7 +189,7 @@ function openReach(kind: string, value: string): void {
 }
 
 function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; deceased: boolean }) {
-  const { year, month, day } = coercePartialDate(birthday);
+  const { year, month, day } = birthday;
   const next = nextBirthday(month, day, new Date());
   const age = deceased ? null : turningAge(year, next);
   return (
@@ -211,9 +211,8 @@ function AddressRow({ placeId, type }: { placeId: string | null; type: string })
     try {
       const r = await getPlace(placeId);
       if (r.status !== 200) throw new Error(`HTTP ${r.status}`);
-      const place = r.data as { lat?: number | string; lon?: number | string; displayName?: string | null; name?: string | null };
-      const lat = Number(place.lat);
-      const lon = Number(place.lon);
+      const place = r.data as { lat?: number; lon?: number; displayName?: string | null; name?: string | null };
+      const { lat, lon } = place;
       const query = Number.isFinite(lat) && Number.isFinite(lon)
         ? `${lat},${lon}`
         : (place.displayName ?? place.name ?? '');

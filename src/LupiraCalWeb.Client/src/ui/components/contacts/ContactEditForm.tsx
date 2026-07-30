@@ -103,7 +103,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   const [familyName, setFamilyName] = useState(contact.familyName ?? '');
   const [nickname, setNickname] = useState(contact.nickname ?? '');
   const [displayNameFormat, setDisplayNameFormat] = useState(contact.displayNameFormat ?? DisplayNameFormat.Full);
-  const yearKnownInitial = contact.birthday == null || (contact.birthday.year != null && contact.birthday.year !== '');
+  const yearKnownInitial = contact.birthday == null || contact.birthday.year != null;
   const [birthday, setBirthday] = useState(yearKnownInitial ? partialDateToInput(contact.birthday) : '');
   const [birthdayYearKnown, setBirthdayYearKnown] = useState(yearKnownInitial);
   const [birthdayMonth, setBirthdayMonth] = useState(!yearKnownInitial && contact.birthday ? String(Number(contact.birthday.month)) : '');

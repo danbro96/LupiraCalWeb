@@ -28,12 +28,12 @@ describe('rankByInteraction', () => {
     ).toEqual(['anna', 'bo']);
   });
 
-  it('coerces string counts and tolerates bad dates', () => {
+  it('ranks by count and tolerates bad dates', () => {
     const ranked = rankByInteraction(
       [c('anna'), c('bo')],
       [
-        { contactId: 'anna', count: '2', lastAt: 'not-a-date' },
-        { contactId: 'bo', count: '10' },
+        { contactId: 'anna', count: 2, lastAt: 'not-a-date' },
+        { contactId: 'bo', count: 10 },
       ],
     );
     expect(ranked.map((x) => x.id)).toEqual(['bo', 'anna']);

@@ -55,7 +55,6 @@ export interface ContactDto {
   updatedAt?: string;
   /** @nullable */
   updatedBy?: string | null;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  version: number | string;
+  version: number;
   etag: string;
 }

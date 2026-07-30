@@ -8,5 +8,8 @@
 
 export type FileItemToCalendarParams = {
 status?: string;
-occurredAt?: string;
+/**
+ * @nullable
+ */
+occurredAt?: string | null;
 };

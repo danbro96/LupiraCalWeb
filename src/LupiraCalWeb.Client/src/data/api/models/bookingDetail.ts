@@ -15,16 +15,10 @@ export interface BookingDetail {
   reference: string | null;
   /** @nullable */
   url: string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
-     */
-  amount: number | string | null;
+  /** @nullable */
+  amount: number | null;
   /** @nullable */
   currency: string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)$
-     */
-  partySize: number | string | null;
+  /** @nullable */
+  partySize: number | null;
 }

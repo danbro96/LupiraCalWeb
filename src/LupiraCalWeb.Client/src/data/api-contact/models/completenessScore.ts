@@ -8,9 +8,7 @@
 import type { CompletenessGap } from './completenessGap';
 
 export interface CompletenessScore {
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
-  score: number | string;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  rubricVersion: number | string;
+  score: number;
+  rubricVersion: number;
   gaps: CompletenessGap[];
 }

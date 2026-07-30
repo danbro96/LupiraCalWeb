@@ -8,12 +8,6 @@
 
 export type GetThinContactsParams = {
 addressBookId?: string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
- */
-maxScore?: number | string;
-/**
- * @pattern ^-?(?:0|[1-9]\d*)$
- */
-take?: number | string;
+maxScore?: number;
+take?: number;
 };

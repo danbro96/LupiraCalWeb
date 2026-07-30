@@ -17,27 +17,18 @@ export interface PlaceDto {
   name: string;
   kind: PlaceKind;
   category: PlaceCategory;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  latitude?: number | string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  longitude?: number | string | null;
+  /** @nullable */
+  latitude?: number | null;
+  /** @nullable */
+  longitude?: number | null;
   /** @nullable */
   formattedAddress?: string | null;
   source: PlaceSource;
   verified: boolean;
   /** @nullable */
   withinAreaId?: string | null;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
-     */
-  distanceM?: number | string | null;
+  /** @nullable */
+  distanceM?: number | null;
   aliases?: PlaceAliasDto[];
   containment?: AdminAreaDto[];
   externalIds?: PlaceExternalIdDto[];

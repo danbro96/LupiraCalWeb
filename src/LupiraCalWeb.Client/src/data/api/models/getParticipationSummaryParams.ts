@@ -7,6 +7,12 @@
  */
 
 export type GetParticipationSummaryParams = {
-from?: string;
-to?: string;
+/**
+ * @nullable
+ */
+from?: string | null;
+/**
+ * @nullable
+ */
+to?: string | null;
 };

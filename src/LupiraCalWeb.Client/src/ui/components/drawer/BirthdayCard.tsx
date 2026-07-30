@@ -3,7 +3,7 @@ import { useGetContact } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto } from '../../../data/api-contact/models';
 import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
 import { fmtDate } from '@lupira/cal-domain/time';
-import { coercePartialDate, fmtPartialDate } from '@lupira/cal-domain/partialDate';
+import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
 
 /** Read-only view for a birthday occurrence (a contact projection, not a stored item): the birthday date,
  *  the age the contact is turning when known, and a link to the contact. `year` is the clicked occurrence's year. */
@@ -28,7 +28,7 @@ export function BirthdayCard({ contactId, year, onClose }: { contactId: string; 
 
 function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | null }) {
   const b = contact.birthday ?? null;
-  const { year: birthYear, month, day } = b ? coercePartialDate(b) : { year: null, month: 0, day: 0 };
+  const { year: birthYear, month, day } = b ?? { year: null, month: 0, day: 0 };
   // Reconstruct the occurrence from the contact's authoritative month/day; a deep link without a year
   // falls back to the next upcoming birthday.
   const clickedYear = year ? Number(year) : null;

@@ -31,8 +31,7 @@ export interface CalendarItemOccurrenceDto {
   parentItemId?: string | null;
   /** @nullable */
   parentTitle?: string | null;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  childCount: number | string;
+  childCount: number;
   completeness?: null | CompletenessScore;
   origin?: null | OccurrenceOrigin;
   etag: string;

@@ -9,11 +9,8 @@ import type { PromptFireKind } from './promptFireKind';
 
 export interface PromptFire {
   kind: PromptFireKind;
-  /**
-     * @nullable
-     * @pattern ^-?(?:0|[1-9]\d*)$
-     */
-  offsetMinutes: number | string | null;
+  /** @nullable */
+  offsetMinutes: number | null;
   /** @nullable */
   allDayAt: string | null;
 }

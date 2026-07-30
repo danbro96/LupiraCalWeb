@@ -7,5 +7,8 @@
  */
 
 export type ClearItemActionParams = {
-occurredAt?: string;
+/**
+ * @nullable
+ */
+occurredAt?: string | null;
 };

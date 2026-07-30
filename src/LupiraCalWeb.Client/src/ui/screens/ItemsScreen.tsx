@@ -262,7 +262,7 @@ function ItemRow({
 }) {
   const containers = o.calendarIds.map((id) => byId.get(id)).filter((c): c is ContainerDto => !!c);
   const first = containers[0];
-  const childCount = Number(o.childCount);
+  const childCount = o.childCount;
   // The row itself is a Link — embedded buttons must not trigger the navigation.
   const stop = (e: React.MouseEvent, fn: () => void) => {
     e.preventDefault();

@@ -5,7 +5,7 @@ import type { CompletenessScore } from '../../../data/api/models';
 export function CompletenessBadge({ score }: { score?: CompletenessScore | null }) {
   const [open, setOpen] = useState(false);
   if (!score) return null;
-  const value = Number(score.score);
+  const value = score.score;
   const pct = Math.round(value * 100);
   const hue = Math.round(value * 120); // red → green
 
