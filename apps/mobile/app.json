@@ -6,6 +6,8 @@
     "scheme": "lupiracalendar",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "runtimeVersion": { "policy": "fingerprint" },
+    "updates": { "url": "https://u.expo.dev/0ba754c0-d8ce-42b5-a6b0-d0e7dd20c710" },
     "platforms": [
       "android"
     ],
