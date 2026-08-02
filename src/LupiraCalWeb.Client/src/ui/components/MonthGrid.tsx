@@ -45,7 +45,7 @@ export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem,
               <span className={`day-number ${isToday(day) ? 'today' : ''}`}>{day.getDate()}</span>
               <span className="dot-row">
                 {shown.map((e) => (
-                  <span key={e.key} className={`chip-dot ${e.ghost ? 'ghost' : ''}`} style={{ background: e.color }} />
+                  <span key={e.key} className={`chip-dot ${e.ghost ? 'ghost' : ''} ${e.task ? 'task-deadline' : ''}`} style={{ background: e.color }} />
                 ))}
                 {dayEntries.length > shown.length && <span className="dot-more">+{dayEntries.length - shown.length}</span>}
               </span>
@@ -75,12 +75,12 @@ export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem,
               return (
                 <button
                   key={e.key}
-                  className={`month-chip ${e.ghost ? 'ghost' : ''} ${famClass(fk)}`}
+                  className={`month-chip ${e.ghost ? 'ghost' : ''} ${e.task ? 'task-deadline' : ''} ${e.task?.overdue ? 'overdue' : ''} ${famClass(fk)}`}
                   style={{ borderColor: e.color, ['--family-accent' as string]: fk ? familyAccent(fk) : undefined }}
                   onClick={() => onOpenItem(e.itemId)}
                   onMouseEnter={fk ? () => setHoverFamily(fk) : undefined}
                   onMouseLeave={fk ? () => setHoverFamily(null) : undefined}
-                  title={e.ghost ? `${e.title} (proposed)` : e.title}
+                  title={e.ghost ? `${e.title} (proposed)` : e.task ? `${e.title} — due ${fmtTime(e.task.dueAt)}` : e.title}
                 >
                   <span className="chip-dot" style={{ background: e.color }} />
                   {!e.isAllDay && <span className="chip-time">{fmtTime(e.start)}</span>}

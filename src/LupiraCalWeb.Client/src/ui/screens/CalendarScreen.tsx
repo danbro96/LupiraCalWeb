@@ -5,9 +5,10 @@ import { useContainers } from '../../state/useContainers';
 import { useRangeOccurrences } from '../../state/useRangeOccurrences';
 import { useProposedByCalendar } from '../../state/useProposed';
 import { useAvailabilitySegments } from '../../state/useAvailability';
+import { useTaskDeadlines } from '../../state/useTaskDeadlines';
 import { useCalendarVisibility } from '../components/CalendarVisibility';
 import { OriginKind } from '../../data/api/models';
-import { fromOccurrence, fromProposed, type GridEntry } from '../components/entries';
+import { fromOccurrence, fromProposed, fromTask, type GridEntry } from '../components/entries';
 import { MiniMonthPicker } from '../components/MiniMonthPicker';
 import { MonthGrid } from '../components/MonthGrid';
 import { WeekGrid } from '../components/WeekGrid';
@@ -44,7 +45,7 @@ export function CalendarScreen() {
   const todayVisible = now >= range.start && now < range.end;
 
   const { calendars } = useContainers();
-  const { isVisible } = useCalendarVisibility();
+  const { isVisible, tasksVisible } = useCalendarVisibility();
   const visible = calendars.filter(isVisible);
 
   const { byCalendar, isLoading } = useRangeOccurrences(visible, from, to, {
@@ -52,6 +53,7 @@ export function CalendarScreen() {
     tag: tag || undefined,
   });
   const proposed = useProposedByCalendar(visible);
+  const tasks = useTaskDeadlines(from, to, tasksVisible);
   const availabilityCalendar = calendars.find((c) => c.kind === 'Availability' && isVisible(c));
   const segments = useAvailabilitySegments(availabilityCalendar, from, to);
 
@@ -66,14 +68,28 @@ export function CalendarScreen() {
         return g && g.start < range.end && (g.end ?? g.start) >= range.start ? [g] : [];
       }),
     );
-    return [...accepted, ...ghosts];
-  }, [byCalendar, proposed, range]);
+    // Server range-filters on dueAt; overdue is judged at render time, not clock-tick-live.
+    const rightNow = new Date();
+    const deadlines = tasks.flatMap((t) => fromTask(t, rightNow) ?? []);
+    return [...accepted, ...ghosts, ...deadlines];
+  }, [byCalendar, proposed, tasks, range]);
 
   // Birthdays are read-time contact projections, not stored items — route them to the read-only card
   // (the ?item= drawer would 404 on their synthetic id) instead of the editable item drawer.
+  // Task deadlines likewise live in LupiraTasks, so they route to the TaskCard.
   const openItem = (id: string) => {
     const e = entries.find((x) => x.itemId === id);
-    if (e?.origin?.kind === OriginKind.Birthday) {
+    if (e?.task) {
+      const { listId, itemId } = e.task;
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('task', `${listId}:${itemId}`);
+        next.delete('item');
+        next.delete('birthday');
+        next.delete('year');
+        return next;
+      });
+    } else if (e?.origin?.kind === OriginKind.Birthday) {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
         next.set('birthday', e.origin!.sourceId);

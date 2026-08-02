@@ -13,3 +13,7 @@ export const GEO_API_BASE_URL = (rawGeo ?? '/geo-api').replace(/\/$/, '');
 /** LupiraContactApi (contacts, address books, groups, relations), proxied same-origin at `/contact-api/*`. */
 const rawContact = import.meta.env.VITE_CONTACT_API_BASE_URL as string | undefined;
 export const CONTACT_API_BASE_URL = (rawContact ?? '/contact-api').replace(/\/$/, '');
+
+/** LupiraTasksApi (task deadlines on the calendar), proxied same-origin at `/tasks-api/*`. */
+const rawTasks = import.meta.env.VITE_TASKS_API_BASE_URL as string | undefined;
+export const TASKS_API_BASE_URL = (rawTasks ?? '/tasks-api').replace(/\/$/, '');

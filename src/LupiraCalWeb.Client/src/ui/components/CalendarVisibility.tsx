@@ -4,15 +4,19 @@ import type { ContainerDto } from '../../data/api/models';
 interface Visibility {
   isVisible: (c: ContainerDto) => boolean;
   toggle: (c: ContainerDto) => void;
+  tasksVisible: boolean;
+  toggleTasks: () => void;
 }
 
 const VisibilityContext = createContext<Visibility | null>(null);
 
 const defaultVisible = (c: ContainerDto) => c.class !== 'System';
 
-/** Per-session calendar visibility. Agenda calendars start visible; System calendars start hidden. */
+/** Per-session calendar visibility. Agenda calendars start visible; System calendars start hidden.
+ *  `tasksVisible` gates the task-deadline pseudo-source (LupiraTasksApi), visible by default. */
 export function CalendarVisibilityProvider({ children }: { children: ReactNode }) {
   const [overrides, setOverrides] = useState<Map<string, boolean>>(new Map());
+  const [tasksVisible, setTasksVisible] = useState(true);
 
   const isVisible = useCallback((c: ContainerDto) => overrides.get(c.id) ?? defaultVisible(c), [overrides]);
 
@@ -24,7 +28,12 @@ export function CalendarVisibilityProvider({ children }: { children: ReactNode }
     });
   }, []);
 
-  const value = useMemo(() => ({ isVisible, toggle }), [isVisible, toggle]);
+  const toggleTasks = useCallback(() => setTasksVisible((v) => !v), []);
+
+  const value = useMemo(
+    () => ({ isVisible, toggle, tasksVisible, toggleTasks }),
+    [isVisible, toggle, tasksVisible, toggleTasks],
+  );
   return <VisibilityContext.Provider value={value}>{children}</VisibilityContext.Provider>;
 }
 

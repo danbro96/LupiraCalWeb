@@ -1,8 +1,9 @@
 import type { CalendarItemDto, CalendarItemOccurrenceDto, ContainerDto, OccurrenceOrigin } from '../../data/api/models';
+import type { ItemResponse as TaskDto } from '../../data/api-tasks/models';
 import { parseYmd } from '@lupira/cal-domain/time';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 
-/** One renderable occurrence on a grid — accepted occurrences and ghosted proposed items. */
+/** One renderable occurrence on a grid — accepted occurrences, ghosted proposed items, task deadlines. */
 export interface GridEntry {
   key: string;
   itemId: string;
@@ -19,6 +20,8 @@ export interface GridEntry {
   childCount: number;
   /** Provenance for read-time projections (birthdays → a contact); routes the click to a read-only view. */
   origin?: OccurrenceOrigin | null;
+  /** LupiraTasks provenance (not a cal item; generated OriginKind can't carry it) — routes the click to the TaskCard. */
+  task?: { listId: string; itemId: string; dueAt: Date; overdue: boolean };
 }
 
 export function fromOccurrence(o: CalendarItemOccurrenceDto, calendar: ContainerDto): GridEntry {
@@ -36,6 +39,27 @@ export function fromOccurrence(o: CalendarItemOccurrenceDto, calendar: Container
     parentTitle: o.parentTitle,
     childCount: o.childCount,
     origin: o.origin,
+  };
+}
+
+/** A task deadline pinned to its due day's all-day strip — `dueAt` means "done by", not "occurs at",
+ *  so a timed block at the due instant would mislead; the exact time lives in the TaskCard. */
+export function fromTask(t: TaskDto, now: Date): GridEntry | null {
+  if (!t.dueAt) return null;
+  const due = new Date(t.dueAt);
+  const overdue = due < now;
+  return {
+    key: `task:${t.id}`,
+    itemId: t.id,
+    title: t.title || '(untitled)',
+    start: new Date(due.getFullYear(), due.getMonth(), due.getDate()),
+    end: null,
+    isAllDay: true,
+    color: overdue ? 'var(--danger)' : 'var(--text-muted)',
+    icon: '⏰',
+    parentItemId: null,
+    childCount: 0,
+    task: { listId: t.listId, itemId: t.id, dueAt: due, overdue },
   };
 }
 

@@ -59,7 +59,7 @@ export function WeekGrid({ days, entries, segments, onOpenItem, selectedFamilyKe
                 return (
                   <button
                     key={e.key}
-                    className={`allday-chip ${e.ghost ? 'ghost' : ''} ${e.childCount > 0 ? 'family-parent' : ''} ${e.parentItemId ? 'family-child' : ''} ${famClass(fk)}`}
+                    className={`allday-chip ${e.ghost ? 'ghost' : ''} ${e.task ? 'task-deadline' : ''} ${e.task?.overdue ? 'overdue' : ''} ${e.childCount > 0 ? 'family-parent' : ''} ${e.parentItemId ? 'family-child' : ''} ${famClass(fk)}`}
                     style={{ background: e.color, ['--family-accent' as string]: fk ? familyAccent(fk) : undefined }}
                     onClick={() => onOpenItem(e.itemId)}
                     onMouseEnter={fk ? () => setHoverFamily(fk) : undefined}

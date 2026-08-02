@@ -53,4 +53,20 @@ export default defineConfig({
       },
     },
   },
+  // LupiraTasksApi (task deadlines on the calendar). Proxied same-origin by the BFF at /tasks-api;
+  // requests go through customFetchTasks (TASKS_API_BASE_URL).
+  lupiraTasksApi: {
+    input: { target: './backend-tasks-openapi.json' },
+    output: {
+      target: './src/data/api-tasks/lupiraTasksApi.ts',
+      schemas: './src/data/api-tasks/models',
+      client: 'react-query',
+      httpClient: 'fetch',
+      clean: true,
+      override: {
+        mutator: { path: './src/data/fetcher.ts', name: 'customFetchTasks' },
+        fetch: { includeHttpResponseReturnType: false },
+      },
+    },
+  },
 });

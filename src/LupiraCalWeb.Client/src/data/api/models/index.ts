@@ -57,6 +57,7 @@ export * from './participationRef';
 export * from './participationRole';
 export * from './participationStatus';
 export * from './participationSummaryEntry';
+export * from './pingDto';
 export * from './presenceDetail';
 export * from './problemDetails';
 export * from './promptFire';

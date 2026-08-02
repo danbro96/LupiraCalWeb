@@ -7,6 +7,7 @@ import { CalendarVisibilityProvider } from './components/CalendarVisibility';
 import { Sidebar } from './components/Sidebar';
 import { ItemDrawer } from './components/drawer/ItemDrawer';
 import { BirthdayCard } from './components/drawer/BirthdayCard';
+import { TaskCard } from './components/drawer/TaskCard';
 import { AvailabilityModal } from './components/AvailabilityModal';
 import { NewItemModal } from './components/NewItemModal';
 
@@ -20,6 +21,8 @@ export function AppShell() {
   const itemId = searchParams.get('item');
   const birthdayContactId = searchParams.get('birthday');
   const birthdayYear = searchParams.get('year');
+  // ?task=<listId>:<itemId> — the tasks API addresses items list-scoped, so the ref carries both GUIDs.
+  const [taskListId, taskItemId] = (searchParams.get('task') ?? '').split(':');
   // Contacts and Locations own their own layout, so the calendar sidebar is hidden there.
   const path = useLocation().pathname;
   const showSidebar = !path.startsWith('/contacts') && !path.startsWith('/locations');
@@ -64,6 +67,7 @@ export function AppShell() {
       {birthdayContactId && (
         <BirthdayCard contactId={birthdayContactId} year={birthdayYear} onClose={() => dropParams('birthday', 'year')} />
       )}
+      {taskListId && taskItemId && <TaskCard listId={taskListId} itemId={taskItemId} onClose={() => dropParams('task')} />}
       {creating && <NewItemModal onClose={() => setCreating(false)} />}
       {settingAvailability && <AvailabilityModal onClose={() => setSettingAvailability(false)} />}
     </CalendarVisibilityProvider>

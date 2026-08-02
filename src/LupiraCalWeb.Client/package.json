@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "gen:api": "cp ../../../LupiraCalApi/openapi/LupiraCalApi.json backend-openapi.json && cp ../../../LupiraGeoApi/openapi/LupiraGeoApi.json backend-geo-openapi.json && cp ../../../LupiraContactApi/openapi/LupiraContactApi.json backend-contact-openapi.json && orval"
+    "gen:api": "cp ../../../LupiraCalApi/openapi/LupiraCalApi.json backend-openapi.json && cp ../../../LupiraGeoApi/openapi/LupiraGeoApi.json backend-geo-openapi.json && cp ../../../LupiraContactApi/openapi/LupiraContactApi.json backend-contact-openapi.json && cp ../../../LupiraTasksApi/openapi/LupiraTasksApi.json backend-tasks-openapi.json && orval"
   },
   "dependencies": {
     "@lupira/cal-domain": "*",

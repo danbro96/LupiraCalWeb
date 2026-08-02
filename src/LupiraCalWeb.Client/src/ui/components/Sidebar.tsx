@@ -6,6 +6,7 @@ import { useCalendarVisibility } from './CalendarVisibility';
 /** Calendar toggles grouped by class — System calendars are the agent-facing set no DAV client sees. */
 export function Sidebar() {
   const { calendars } = useContainers();
+  const { tasksVisible, toggleTasks } = useCalendarVisibility();
   const agenda = calendars.filter((c) => c.class !== 'System');
   const system = calendars.filter((c) => c.class === 'System');
 
@@ -13,6 +14,14 @@ export function Sidebar() {
     <aside className="sidebar">
       <CalendarGroup title="Agenda" calendars={agenda} />
       <CalendarGroup title="System" calendars={system} />
+      <div className="cal-group">
+        <div className="section-label">Tasks</div>
+        <label className="cal-toggle" title="Deadlines from Lupira Tasks">
+          <input type="checkbox" checked={tasksVisible} onChange={toggleTasks} />
+          <span className="color-dot" style={{ background: 'var(--text-muted)' }} />
+          <span className="cal-toggle-name">⏰ Deadlines</span>
+        </label>
+      </div>
     </aside>
   );
 }

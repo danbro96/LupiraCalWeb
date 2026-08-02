@@ -6,8 +6,8 @@ using Xunit;
 namespace LupiraCalWeb.IntegrationTests;
 
 /// <summary>The two front doors of the member proxy: a caller-presented bearer authenticates and is forwarded
-/// verbatim to every upstream; anonymous API calls get status codes (never Authentik redirects) on all three
-/// proxied prefixes; garbage bearers are rejected at the BFF.</summary>
+/// verbatim to every upstream; anonymous API calls get status codes (never Authentik redirects) on every
+/// proxied prefix; garbage bearers are rejected at the BFF.</summary>
 public class BearerPassThroughTests(BffTestFactory factory) : IClassFixture<BffTestFactory>
 {
     private readonly BffTestFactory _factory = factory;
@@ -22,6 +22,7 @@ public class BearerPassThroughTests(BffTestFactory factory) : IClassFixture<BffT
     [InlineData("/api/items", "/items")]
     [InlineData("/geo-api/places", "/places")]
     [InlineData("/contact-api/contacts", "/contacts")]
+    [InlineData("/tasks-api/items", "/items")]
     public async Task Valid_bearer_is_accepted_and_forwarded_verbatim(string path, string upstreamPath)
     {
         var client = Client();
@@ -41,6 +42,7 @@ public class BearerPassThroughTests(BffTestFactory factory) : IClassFixture<BffT
     [InlineData("/api/items")]
     [InlineData("/geo-api/places")]
     [InlineData("/contact-api/contacts")]
+    [InlineData("/tasks-api/items")]
     public async Task Anonymous_api_calls_get_401_not_a_redirect(string path)
     {
         var resp = await Client().GetAsync(path);

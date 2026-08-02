@@ -48,6 +48,7 @@ import type {
   MergeItemMetadataParams,
   OwnerGrantDto,
   ParticipationSummaryEntry,
+  PingDto,
   ProblemDetails,
   RelationDto,
   RemoveItemFromCalendarParams,
@@ -87,6 +88,107 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getPingUrl = () => {
+
+
+
+
+  return `/pingz`
+}
+
+/**
+ * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
+ */
+export const ping = async ( options?: Parameters<typeof customFetch>[1]): Promise<PingDto> => {
+
+  return customFetch<PingDto>(getPingUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPingQueryKey = () => {
+    return [
+    `/pingz`
+    ] as const;
+    }
+
+
+export const getPingQueryOptions = <TData = Awaited<ReturnType<typeof ping>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPingQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof ping>>> = ({ signal }) => ping({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PingQueryResult = NonNullable<Awaited<ReturnType<typeof ping>>>
+export type PingQueryError = void
+
+
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof ping>>,
+          TError,
+          Awaited<ReturnType<typeof ping>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof ping>>,
+          TError,
+          Awaited<ReturnType<typeof ping>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
+ */
+
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPingQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getGetMeUrl = () => {
 

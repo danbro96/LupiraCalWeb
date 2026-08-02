@@ -21,7 +21,7 @@ internal static class AuthExtensions
     public static readonly string[] AdminGroups = ["cal-admins", "platform-admins"];
 
     /// <summary>Proxied API prefixes — XHR/native surfaces that want status codes, never browser redirects.</summary>
-    private static readonly string[] ApiPrefixes = ["/api", "/geo-api", "/contact-api"];
+    private static readonly string[] ApiPrefixes = ["/api", "/geo-api", "/contact-api", "/tasks-api"];
 
     private static readonly string[] DefaultScopes =
         ["openid", "profile", "email", "groups", "offline_access"];

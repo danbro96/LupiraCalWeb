@@ -441,6 +441,28 @@ select {
   opacity: 0.55;
   border-style: dashed !important;
 }
+/* Task deadlines: thin solid outline in the entry color (muted, danger when overdue) — deliberately
+   not the dashed ghost look. Background overrides need !important over the chips' inline styles. */
+.month-chip.task-deadline {
+  border-width: 1px;
+  border-style: solid;
+  border-left-width: 3px;
+}
+.month-chip.task-deadline.overdue .chip-title {
+  color: var(--danger);
+}
+.allday-chip.task-deadline {
+  background: var(--surface) !important;
+  color: var(--text);
+  border: 1px solid var(--text-muted);
+}
+.allday-chip.task-deadline.overdue {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.chip-dot.task-deadline {
+  border-radius: 2px; /* square dot = deadline in the compact month cells */
+}
 
 /* ---- Week/day grid. ---- */
 .week-grid {

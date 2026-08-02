@@ -50,6 +50,7 @@ export * from './mergeContactMetadataParams';
 export * from './nameMatchOutcome';
 export * from './ownerGrantDto';
 export * from './partialDate';
+export * from './pingDto';
 export * from './problemDetails';
 export * from './reachMedium';
 export * from './relationProvenance';
