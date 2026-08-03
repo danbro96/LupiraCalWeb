@@ -75,6 +75,15 @@ export function SettingsScreen() {
         />
       </View>
       <Text style={styles.detail}>Agent-managed calendars (inbox, availability …) and their events stay hidden unless enabled.</Text>
+      <View style={styles.switchRow}>
+        <Text style={styles.switchLabel}>Show task deadlines</Text>
+        <Switch
+          value={prefs.showTaskDeadlines}
+          onValueChange={(v) => void usePrefs.getState().setShowTaskDeadlines(v)}
+          disabled={!prefs.loaded}
+        />
+      </View>
+      <Text style={styles.detail}>Deadlines from Lupira Tasks appear on their due day. Needs a connection.</Text>
 
       <Text style={formStyles.section}>Sync</Text>
       <Text style={styles.detail}>

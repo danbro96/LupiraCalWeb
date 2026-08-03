@@ -3,7 +3,8 @@ import { daysFrom, isToday, ymd } from '@lupira/cal-domain/time';
 import { memo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { GridRow } from '../../data/mirror';
-import { useDaysOccurrences } from '../../state/queries';
+import { isTaskRow } from '../../domain/taskRows';
+import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 
 const HOUR_H = 44;
@@ -15,7 +16,7 @@ const DEFAULT_END_MIN = 30;   // open-ended timed occurrences render as a half-h
 /// (the same math the web grid uses); data is the mirror's occurrence rows for the 7 day buckets.
 export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, onCreateSlot }: {
   weekStart: Date;
-  onPressOccurrence: (row: GridRow) => void;
+  onPressOccurrence: (row: CalRow) => void;
   onCreateSlot: (day: string, time: string) => void;
 }) {
   // First tap on an empty lane drops a ＋ chip on that hour; tapping the chip opens the prefilled editor.
@@ -24,22 +25,29 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
   const days = daysFrom(weekStart, 7);
   const dayKeys = days.map(ymd);
   const { rows } = useDaysOccurrences(dayKeys);
+  const taskRows = useTaskDeadlines(dayKeys);
   const colorOf = useCalendarColors();
 
-  const allDayByDay = new Map<string, GridRow[]>();
+  // Task rows are always all_day, so they land in the all-day strip; timed lanes stay mirror-only.
+  const allDayByDay = new Map<string, CalRow[]>();
   const timedByDay = new Map<string, GridRow[]>();
   const availByDay = new Map<string, string | null>();
-  for (const r of rows) {
+  for (const r of [...rows, ...taskRows]) {
     if (r.is_availability === 1) {
       availByDay.set(r.start_day, r.avail_status);   // renders as the column tint, never a chip
       continue;
     }
-    const map = r.all_day === 1 ? allDayByDay : timedByDay;
-    const list = map.get(r.start_day) ?? [];
-    list.push(r);
-    map.set(r.start_day, list);
+    if (r.all_day === 1) {
+      const list = allDayByDay.get(r.start_day) ?? [];
+      list.push(r);
+      allDayByDay.set(r.start_day, list);
+    } else {
+      const list = timedByDay.get(r.start_day) ?? [];
+      list.push(r as GridRow);
+      timedByDay.set(r.start_day, list);
+    }
   }
-  const rowColor = (r: GridRow) => (r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id));
+  const rowColor = (r: CalRow) => (r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id));
   const hasAllDay = allDayByDay.size > 0;
 
   return (
@@ -63,11 +71,19 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
               {(allDayByDay.get(ymd(d)) ?? []).map((r) => (
                 <Pressable
                   key={`${r.source}-${r.source_id}-${r.start_utc}`}
-                  style={[styles.allDayChip, { backgroundColor: rowColor(r) }]}
+                  style={[
+                    styles.allDayChip,
+                    isTaskRow(r)
+                      ? [styles.taskChip, r.task.overdue && styles.taskChipOverdue]
+                      : { backgroundColor: rowColor(r) },
+                  ]}
                   onPress={() => onPressOccurrence(r)}
                 >
-                  <Text style={styles.chipText} numberOfLines={1}>
-                    {r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)')}
+                  <Text
+                    style={[styles.chipText, isTaskRow(r) && (r.task.overdue ? styles.taskChipTextOverdue : styles.taskChipText)]}
+                    numberOfLines={1}
+                  >
+                    {isTaskRow(r) ? `⏰ ${r.title ?? ''}` : r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)')}
                   </Text>
                 </Pressable>
               ))}
@@ -152,6 +168,11 @@ const styles = StyleSheet.create({
   allDayCell: { flex: 1, gap: 1, paddingHorizontal: 0.5 },
   allDayChip: { borderRadius: 3, paddingHorizontal: 2, paddingVertical: 1 },
   chipText: { fontSize: 9, color: '#fff' },
+  // Deadlines read as outlines with dark text, distinct from the white-on-color calendar chips.
+  taskChip: { backgroundColor: '#f1f1f4', borderWidth: 0.5, borderColor: '#c8c8d0' },
+  taskChipOverdue: { borderColor: '#dc2626', backgroundColor: '#fdf0ef' },
+  taskChipText: { color: '#555' },
+  taskChipTextOverdue: { color: '#dc2626' },
   lanes: { flexDirection: 'row', height: 24 * HOUR_H },
   hourLabel: { position: 'absolute', right: 4, fontSize: 9, color: '#999' },
   dayColumn: { flex: 1, borderLeftWidth: 0.5, borderColor: '#ececf0' },

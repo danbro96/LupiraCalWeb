@@ -18,6 +18,7 @@ criteria are verifiable commands/observations.
 | M6 | Bridge spike (throwaway) | LupiraCalWeb | done |
 | M7 | Bridges full two-way | LupiraCalWeb | in-progress |
 | M8 | Hardening + release | LupiraCalWeb | in-progress |
+| M9 | Task deadlines on the calendar | LupiraCalWeb | in-progress |
 
 Fixed identity: Android package `com.lupira.calendar`, scheme `lupiracalendar`
 (redirect `lupiracalendar://oauthredirect`), Authentik public client `lupira-cal-mobile`,
@@ -192,3 +193,32 @@ stock apps (overwritten by next publish), payload/participants.
 ### Exit criteria
 - [ ] Upgrade-in-place with pending offline edits loses nothing
 - [ ] Month swipe jank-free on the target device; docs current; tracker closed out
+
+## M9 — Task deadlines on the calendar   [status: in-progress]
+
+Read-only, **online-only** third grid source (after items and birthdays), mirroring the web
+feature shipped 2026-08-02. The SQLite mirror and sync engine are untouched by design —
+tasks-api has no global changes cursor (only per-list `/sync`), so offline the grids simply
+lack deadlines while everything else stays.
+
+### Scope
+- [x] orval `lupiraTasksApi` block (Items tag only, baseUrl `/tasks-api`) → `generated/tasks/`; BFF route + `dueFrom/dueTo` search shipped server-side 2026-08-02
+- [x] `lupira-tasks-aud` added to `OIDC_SCOPES` (refresh grants never widen scopes — see Manual steps)
+- [x] `domain/taskRows.ts` + tests: GridRow-shaped `source:'task'` rows (all-day pin on the local due day — dueAt is "done by"), `isTaskRow` guard, half-open `monthUtcRange`, `taskDeepLink`
+- [x] `useTaskDeadlines(dayKeys)` in state/queries: key `['tasks', monthKey]` (outside every sync-invalidation prefix), `staleTime 60s` + `retry 1` (mirror defaults Infinity/false would freeze it), gated on the pref + `serverReachable` (onlineManager isn't NetInfo-wired; the reachable flip is the reconnect trigger); Cancelled dropped client-side
+- [x] Render merges: MonthView bars, WeekView all-day strip, day-sheet agenda — muted outline chips, ⏰ prefix, danger when overdue; `CalRow = GridRow | TaskDeadlineRow` union at the seams
+- [x] Tap → in-app read-only `TaskDetailScreen` (`{listId, itemId}`): due/status/priority/notes/assignee + "Open in Lupira Tasks ↗" deep link (`lupiratasks://task/<listId>/<itemId>`, fire-and-catch — no canOpenURL, keeps the `<queries>` manifest out)
+- [x] `showTaskDeadlines` pref (mirror_meta, default on) + Settings switch under Calendars
+
+### Exit criteria
+- [x] Root `npm run typecheck` / `lint` / `test` green (taskRows tests ride the mobile vitest gate)
+- [ ] Device: task due this month shows in month bar + week all-day chip + day agenda on its local due day; past-due renders danger + `overdue` tag
+- [ ] Device: Settings toggle removes/restores chips without restart; airplane mode → calendar renders normally, deadlines absent, no error surface
+- [ ] Device: tap → TaskDetail shows the task; "Open in Lupira Tasks" lands on the task in LupiraTasksMobile
+
+### Manual steps
+- [ ] Authentik: map the `lupira-tasks-aud` scope onto the `lupira-cal-mobile` provider and select it in Scopes (the web `lupira-cal` provider got it 2026-08-02)
+- [ ] Device: sign out/in after the Authentik step — refresh grants re-mint the old audience set, so until then every `/tasks-api` call 401s and chips stay silently absent
+
+### Non-goals
+- No task create/edit/complete from the calendar; no offline cache or sync-engine integration (no migration, no `gridRowsBetween` change, no per-list polling); no `<queries>` manifest / `canOpenURL`

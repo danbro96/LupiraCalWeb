@@ -3,6 +3,9 @@ import { getDb } from '../data/db/expoDb';
 import { usePrefs } from './prefs-store';
 import type { ContactListRow, GridRow, OutboxRow } from '../data/mirror';
 import { gridRowsBetween, listContacts, listContainerDocs, listParked, listPendingOps, loadContact, loadItem } from '../data/mirror';
+import { getItems } from '../data/api/generated/tasks/items/items';
+import { monthUtcRange, taskDeadlineRows, type TaskDeadlineRow } from '../domain/taskRows';
+import { useSyncStatus } from '../sync/syncStatus';
 
 /// Read hooks over the mirror. Invalidation contract (sync/reactivity.ts): grids per ['occurrences', monthKey];
 /// item docs under ['items']; contacts (list + docs) under ['contacts']; containers under ['containers'];
@@ -31,6 +34,37 @@ export function useDaysOccurrences(dayKeys: string[]): { rows: GridRow[]; loadin
     .filter((r) => daySet.has(r.start_day))
     .sort((a, b) => (a.start_utc < b.start_utc ? -1 : a.start_utc > b.start_utc ? 1 : 0));
   return { rows, loading: results.some((r) => r.isLoading) };
+}
+
+/// The grids' union row type: mirror rows plus the online-only task-deadline source.
+export type CalRow = GridRow | TaskDeadlineRow;
+
+/// Task deadlines for the visible days — the only network-backed grid query. Keyed ['tasks', monthKey]:
+/// outside every sync-invalidation prefix (['items']/['occurrences'] are blanket-nuked by pulls). The
+/// pref rides `enabled`, not the key (off means "don't fetch", not "different result set"). staleTime and
+/// retry MUST override the mirror-tuned defaults (Infinity/false) or deadlines freeze forever. Offline or
+/// toggled off the queries idle and grids simply lack deadlines — never an error surface, never a loading
+/// gate on grid paint. serverReachable flipping back on is the de-facto reconnect refetch trigger
+/// (onlineManager isn't wired to NetInfo in this app).
+export function useTaskDeadlines(dayKeys: string[]): TaskDeadlineRow[] {
+  const showTasks = usePrefs((p) => p.showTaskDeadlines);
+  const reachable = useSyncStatus((s) => s.serverReachable);
+  const monthKeys = [...new Set(dayKeys.map((d) => d.slice(0, 7)))];
+  const results = useQueries({
+    queries: monthKeys.map((monthKey) => ({
+      queryKey: ['tasks', monthKey] as const,
+      enabled: showTasks && reachable,
+      staleTime: 60_000,
+      retry: 1,
+      queryFn: async () => {
+        const r = await getItems({ ...monthUtcRange(monthKey), completed: false });
+        if (r.status !== 200) throw new Error(`tasks fetch ${r.status}`);
+        return taskDeadlineRows(r.data.items, new Date());
+      },
+    })),
+  });
+  const daySet = new Set(dayKeys);
+  return results.flatMap((r) => r.data ?? []).filter((r) => daySet.has(r.start_day));
 }
 
 export function useItemState(id: string) {

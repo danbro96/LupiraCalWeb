@@ -1,8 +1,8 @@
 import { isToday, monthMatrix, ymd } from '@lupira/cal-domain/time';
 import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import type { GridRow } from '../../data/mirror';
-import { useDaysOccurrences } from '../../state/queries';
+import { isTaskRow } from '../../domain/taskRows';
+import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 
 /// Month grid straight off the mirror: monthMatrix (domain) for the day layout, one occurrence query per
@@ -15,11 +15,13 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
   const weeks = monthMatrix(anchor);
   const dayKeys = weeks.flat().map(ymd);
   const { rows } = useDaysOccurrences(dayKeys);
+  const taskRows = useTaskDeadlines(dayKeys);
   const colorOf = useCalendarColors();
 
-  const byDay = new Map<string, GridRow[]>();
+  const byDay = new Map<string, CalRow[]>();
   const availByDay = new Map<string, string | null>();
-  for (const r of rows) {
+  const merged: CalRow[] = [...rows, ...taskRows].sort((a, b) => (a.start_utc < b.start_utc ? -1 : a.start_utc > b.start_utc ? 1 : 0));
+  for (const r of merged) {
     if (r.is_availability === 1) {
       availByDay.set(r.start_day, r.avail_status);   // the band, never a chip
       continue;
@@ -53,16 +55,27 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
                 <Text style={[styles.dayNum, !inMonth && styles.dayNumDim, isToday(d) && styles.dayNumToday]}>
                   {d.getDate()}
                 </Text>
-                {dayRows.slice(0, 3).map((r) => (
-                  <View
-                    key={`${r.source}-${r.source_id}-${r.start_utc}`}
-                    style={[styles.bar, { backgroundColor: r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) }]}
-                  >
-                    <Text style={styles.barText} numberOfLines={1}>
-                      {r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)')}
-                    </Text>
-                  </View>
-                ))}
+                {dayRows.slice(0, 3).map((r) =>
+                  isTaskRow(r) ? (
+                    <View
+                      key={`${r.source}-${r.source_id}-${r.start_utc}`}
+                      style={[styles.taskBar, r.task.overdue && styles.taskBarOverdue]}
+                    >
+                      <Text style={[styles.taskBarText, r.task.overdue && styles.taskBarTextOverdue]} numberOfLines={1}>
+                        ⏰ {r.title ?? '(untitled)'}
+                      </Text>
+                    </View>
+                  ) : (
+                    <View
+                      key={`${r.source}-${r.source_id}-${r.start_utc}`}
+                      style={[styles.bar, { backgroundColor: r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) }]}
+                    >
+                      <Text style={styles.barText} numberOfLines={1}>
+                        {r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)')}
+                      </Text>
+                    </View>
+                  ),
+                )}
                 {dayRows.length > 3 && <Text style={styles.more}>+{dayRows.length - 3}</Text>}
               </Pressable>
             );
@@ -88,5 +101,10 @@ const styles = StyleSheet.create({
   dayNumToday: { color: '#4457c2', fontWeight: '700' },
   bar: { borderRadius: 3, paddingHorizontal: 2, paddingVertical: 0.5 },
   barText: { fontSize: 8.5, color: '#fff' },
+  // Deadlines read as outlines, not filled calendar bars (web parity: muted, danger when overdue).
+  taskBar: { borderRadius: 3, paddingHorizontal: 2, paddingVertical: 0.5, backgroundColor: '#f1f1f4', borderWidth: 0.5, borderColor: '#c8c8d0' },
+  taskBarOverdue: { borderColor: '#dc2626', backgroundColor: '#fdf0ef' },
+  taskBarText: { fontSize: 8.5, color: '#555' },
+  taskBarTextOverdue: { color: '#dc2626' },
   more: { fontSize: 9, color: '#888', paddingLeft: 2 },
 });

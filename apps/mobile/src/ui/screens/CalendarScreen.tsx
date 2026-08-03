@@ -4,8 +4,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { GridRow } from '../../data/mirror';
-import { useDaysOccurrences } from '../../state/queries';
+import { isTaskRow } from '../../domain/taskRows';
+import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { SwipeHint } from '../calendar/SwipeHint';
 import { useHorizontalSwipe } from '../calendar/useHorizontalSwipe';
 import { MonthView } from '../calendar/MonthView';
@@ -84,8 +84,10 @@ export function CalendarScreen() {
     const start = startOfWeek(addDays(anchor, dir * 7));
     return `${start.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}–${addDays(start, 6).getDate()}`;
   };
-  const openOccurrence = useCallback((row: GridRow) => {
-    if (row.source === 'birthday') navigation.navigate('ContactDetail', { contactId: row.source_id });
+  const openOccurrence = useCallback((row: CalRow) => {
+    // Tasks live in LupiraTasks, not the mirror — route to the read-only TaskDetail screen.
+    if (isTaskRow(row)) navigation.navigate('TaskDetail', { listId: row.task.listId, itemId: row.task.itemId });
+    else if (row.source === 'birthday') navigation.navigate('ContactDetail', { contactId: row.source_id });
     else navigation.navigate('ItemDetail', { itemId: row.source_id });
   }, [navigation]);
   const createSlot = useCallback((day: string, time: string) => {
@@ -152,10 +154,11 @@ export function CalendarScreen() {
   );
 }
 
-function DayAgendaList({ day, onPress }: { day: string; onPress: (row: GridRow) => void }) {
+function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) => void }) {
   const { rows } = useDaysOccurrences([day]);
+  const taskRows = useTaskDeadlines([day]);
   const colorOf = useCalendarColors();
-  const sorted = [...rows].sort((a, b) => b.all_day - a.all_day || (a.start_utc < b.start_utc ? -1 : 1));
+  const sorted: CalRow[] = [...rows, ...taskRows].sort((a, b) => b.all_day - a.all_day || (a.start_utc < b.start_utc ? -1 : 1));
 
   return (
     <View style={styles.agenda}>
@@ -169,11 +172,17 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: GridRow) 
           </Pressable>
         ) : (
         <Pressable key={`${r.source}-${r.source_id}-${r.start_utc}`} style={styles.agendaRow} onPress={() => onPress(r)}>
-          <View style={[styles.dot, { backgroundColor: r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) }]} />
+          <View
+            style={[
+              styles.dot,
+              { backgroundColor: isTaskRow(r) ? (r.task.overdue ? '#dc2626' : '#64748b') : r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) },
+            ]}
+          />
           <Text style={styles.agendaTime}>
-            {r.source === 'birthday' ? '🎂' : r.all_day === 1 ? 'all day' : fmtTime(new Date(r.start_utc))}
+            {isTaskRow(r) ? '⏰' : r.source === 'birthday' ? '🎂' : r.all_day === 1 ? 'all day' : fmtTime(new Date(r.start_utc))}
           </Text>
           <Text style={styles.agendaText} numberOfLines={1}>{r.title ?? '(untitled)'}</Text>
+          {isTaskRow(r) && r.task.overdue && <Text style={styles.cancelled}>overdue</Text>}
           {r.status === 'Cancelled' && <Text style={styles.cancelled}>cancelled</Text>}
         </Pressable>
         )

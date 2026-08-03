@@ -40,4 +40,17 @@ export default defineConfig({
       override: { mutator: { path: './src/data/api/mutator.ts', name: 'apiFetch' } },
     },
   },
+  // Task deadlines (read-only, online-only): only the Items surface is consumed.
+  lupiraTasksApi: {
+    input: { target: '../../src/LupiraCalWeb.Client/backend-tasks-openapi.json', filters: { mode: 'include', tags: ['Items'] } },
+    output: {
+      target: './src/data/api/generated/tasks/lupiraTasksApi.ts',
+      schemas: './src/data/api/generated/tasks/models',
+      client: 'fetch',
+      mode: 'tags-split',
+      clean: true,
+      baseUrl: '/tasks-api',
+      override: { mutator: { path: './src/data/api/mutator.ts', name: 'apiFetch' } },
+    },
+  },
 });

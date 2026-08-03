@@ -18,6 +18,7 @@ export * from './geocodeResultDto';
 export * from './listAdminAreasParams';
 export * from './meDto';
 export * from './mergePlaceRequest';
+export * from './pingDto';
 export * from './placeAliasDto';
 export * from './placeCategory';
 export * from './placeDto';

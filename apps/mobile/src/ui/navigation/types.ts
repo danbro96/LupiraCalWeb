@@ -6,6 +6,8 @@ export type RootStackParamList = {
   SyncIssues: undefined;
   DebugLog: undefined;
   ItemDetail: { itemId: string };
+  /// Read-only view of a LupiraTasks deadline (online-only; the tasks API addresses items list-scoped).
+  TaskDetail: { listId: string; itemId: string };
   /// No itemId = create; `day`/`time` pre-fill the start from the grid selection (slot taps send both).
   ItemEdit: { itemId?: string; day?: string; time?: string } | undefined;
   ContactDetail: { contactId: string };
