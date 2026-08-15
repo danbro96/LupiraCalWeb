@@ -114,6 +114,20 @@ export function ContactsLayer({ theme, features, onSelect }: CommonLayerProps & 
         'circle-stroke-color': colors.ring,
       },
     },
+    {
+      id: 'contacts-labels', type: 'symbol', filter: ['!', ['has', 'point_count']],
+      layout: {
+        'text-field': ['get', 'label'],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': 11.5,
+        'text-anchor': 'top',
+        'text-offset': [0, 0.8],
+        'text-max-width': 14,
+        'text-optional': true,
+      },
+      // Text wears ink, never the series color; the halo is the surface ring.
+      paint: { 'text-color': colors.ink, 'text-halo-color': colors.ring, 'text-halo-width': 1.2 },
+    },
   ], [colors]);
 
   useGeoJsonLayer(map, 'contacts', features, layers, {

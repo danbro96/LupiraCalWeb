@@ -17,6 +17,7 @@ import {
   type DateRange,
   type LayerKey,
 } from '../components/map/MapControls';
+import { MapIndexPanel, type IndexGroup } from '../components/map/MapIndexPanel';
 import { MapPopover } from '../components/map/MapPopover';
 import { MapSearch, type SearchTarget } from '../components/map/MapSearch';
 import { PlaceDetailPanel } from '../components/map/PlaceDetailPanel';
@@ -92,6 +93,58 @@ export default function MapScreen() {
   );
   const anyLoading = events.isLoading || movement.isLoading || contacts.isLoading || saved.isLoading;
 
+  const showIndex = params.get('index') === '1';
+  const indexGroups = useMemo<IndexGroup[]>(() => {
+    const flyTo = (feature: GeoJSON.Feature, placeId?: unknown) => () => {
+      const [lon, lat] = (feature.geometry as GeoJSON.Point).coordinates;
+      setFlyTarget([lon, lat]);
+      if (typeof placeId === 'string' && placeId) setParam('place', placeId);
+    };
+
+    // Contacts grouped per (deduped) address kind — mixed-kind households land under the joined kind.
+    const byKind = new Map<string, IndexGroup['rows']>();
+    for (const f of contacts.features.features) {
+      const p = f.properties!;
+      const kind = [...new Set((p.addressTypes as string[]) ?? [])].join('/') || 'Other';
+      const rows = byKind.get(kind) ?? [];
+      rows.push({
+        key: `c:${p.placeId}`,
+        primary: ((p.names as string[]) ?? []).join(', '),
+        secondary: p.placeName as string,
+        onClick: flyTo(f, p.placeId),
+      });
+      byKind.set(kind, rows);
+    }
+    const contactGroups = [...byKind.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([kind, rows]) => ({ title: `Contacts · ${kind}`, rows: rows.sort((a, b) => a.primary.localeCompare(b.primary)) }));
+
+    const savedRows = saved.features.features.map((f) => {
+      const p = f.properties!;
+      return {
+        key: `s:${p.savedPlaceId}`,
+        primary: `${p.icon ?? '⭐'} ${p.label}`,
+        onClick: flyTo(f, p.placeId),
+      };
+    });
+
+    const eventRows = events.features.features.map((f) => {
+      const p = f.properties!;
+      return {
+        key: `e:${p.itemId}:${p.start}`,
+        primary: p.title as string,
+        secondary: p.placeName as string,
+        onClick: () => {
+          const [lon, lat] = (f.geometry as GeoJSON.Point).coordinates;
+          setFlyTarget([lon, lat]);
+          setParam('item', p.itemId as string);
+        },
+      };
+    });
+
+    return [...contactGroups, { title: 'Saved places', rows: savedRows }, { title: 'Events in range', rows: eventRows }];
+  }, [contacts.features, saved.features, events.features, setParam]);
+
   return (
     <div className="map-page">
       <MapCanvas>
@@ -121,8 +174,13 @@ export default function MapScreen() {
         <MapSearch onPick={onSearchPick} />
         <TimeRangeBar range={range} onChange={setRange} />
         <LayerToggles active={activeLayers} onToggle={toggleLayer} theme={theme} unmappableCount={events.unmappableCount} />
+        <button className={`chip${showIndex ? ' active' : ''}`} onClick={() => setParam('index', showIndex ? undefined : '1')}>
+          ☰ List
+        </button>
         {anyLoading && <span className="meta">Loading…</span>}
       </div>
+
+      {showIndex && <MapIndexPanel groups={indexGroups} onClose={() => setParam('index', undefined)} />}
 
       {selectedPlaceId && (
         <PlaceDetailPanel placeId={selectedPlaceId} onClose={() => setParam('place', undefined)} />

@@ -2278,6 +2278,30 @@ select {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   padding: var(--sp-md);
 }
+.map-index {
+  position: absolute;
+  z-index: 6;
+  top: 96px;
+  left: var(--sp-md);
+  bottom: var(--sp-md);
+  width: min(280px, calc(100vw - 2 * var(--sp-md)));
+  overflow-y: auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: var(--sp-sm) var(--sp-md) var(--sp-md);
+}
+.map-index h4 {
+  margin: var(--sp-md) 0 var(--sp-xs);
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.map-index .location-row {
+  width: 100%;
+}
 @media (max-width: 700px) {
   .map-topbar {
     right: var(--sp-md);
@@ -2297,6 +2321,7 @@ select {
   .map-toggles,
   .map-popover,
   .map-detail,
+  .map-index,
   .map-error {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   }

@@ -2,7 +2,7 @@ import { addDays, startOfDay, ymd } from '@lupira/cal-domain/time';
 import { ACTIVITY_COLORS, type MapTheme } from './mapTokens';
 
 export type LayerKey = 'events' | 'movement' | 'contacts' | 'saved';
-export const DEFAULT_LAYERS: LayerKey[] = ['events', 'movement'];
+export const DEFAULT_LAYERS: LayerKey[] = ['events', 'movement', 'contacts'];
 
 const PRESETS = [
   { key: 'today', label: 'Today', days: 1 },

@@ -17,6 +17,7 @@ export const MAP_COLORS = {
     eventFallback: '#2a78d6',
     currentFill: '#0b0b0b',
     ring: '#fcfcfb',
+    ink: '#0b0b0b',
   },
   dark: {
     visitFill: '#9085e9',
@@ -25,6 +26,7 @@ export const MAP_COLORS = {
     eventFallback: '#3987e5',
     currentFill: '#ffffff',
     ring: '#1a1a19',
+    ink: '#ffffff',
   },
 } as const;
 

@@ -18,6 +18,13 @@ function point(lon: number, lat: number, properties: Record<string, unknown>): F
   return { type: 'Feature', geometry: { type: 'Point', coordinates: [lon, lat] }, properties };
 }
 
+/** "Astrid Park, Erik Park · Home" — households share a pin; the kind list dedupes (usually to one). */
+export function contactPinLabel(names: readonly string[], types: readonly string[]): string {
+  const shown = names.length > 3 ? [...names.slice(0, 2), `+${names.length - 2}`] : [...names];
+  const kinds = [...new Set(types)];
+  return `${shown.join(', ')} · ${kinds.join('/')}`;
+}
+
 export interface EventFeaturesResult {
   features: FeatureCollection;
   /** Occurrences in range whose item has only a free-text label (CalDAV imports) — unmappable. */
@@ -102,6 +109,7 @@ export function useContactFeatures(enabled: boolean): { features: FeatureCollect
         names: entry.names,
         contactIds: entry.contactIds,
         addressTypes: entry.types,
+        label: contactPinLabel(entry.names, entry.types),
       });
     });
     return {
