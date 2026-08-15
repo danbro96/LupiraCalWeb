@@ -9,7 +9,7 @@ const PRIMARY = [
 ];
 
 const MORE = [
-  { to: '/locations', icon: '📍', label: 'Locations' },
+  { to: '/locations', icon: '🗺️', label: 'Map' },
   { to: '/calendars', icon: '⚙️', label: 'Manage' },
 ];
 

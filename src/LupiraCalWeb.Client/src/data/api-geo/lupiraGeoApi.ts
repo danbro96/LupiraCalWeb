@@ -34,10 +34,12 @@ import type {
   ForwardGeocodeParams,
   GeocodeResultDto,
   ListAdminAreasParams,
+  LookupPlacesRequest,
   MeDto,
   MergePlaceRequest,
   PingDto,
   PlaceDto,
+  PlaceLookupItemDto,
   PlaceSuggestionDto,
   ProblemDetails,
   ResolvePlaceRequest,
@@ -1359,6 +1361,77 @@ export const useRegeocodePlace = <TError = ProblemDetails | void,
         TContext
       > => {
       return useMutation(getRegeocodePlaceMutationOptions(options), queryClient);
+    }
+
+export const getLookupPlacesUrl = () => {
+
+
+
+
+  return `/places/lookup`
+}
+
+/**
+ * @summary Bulk get-by-ids (max 200) — hydrate stored place ids into coordinates in one call. Responses align index-for-index; a null place means unknown or deleted, a merged id returns the survivor. Containment is omitted (use GET /places/{id} for detail).
+ */
+export const lookupPlaces = async (lookupPlacesRequest: LookupPlacesRequest, options?: Parameters<typeof customFetchGeo>[1]): Promise<PlaceLookupItemDto[]> => {
+
+  return customFetchGeo<PlaceLookupItemDto[]>(getLookupPlacesUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(lookupPlacesRequest)
+  }
+);}
+
+
+
+
+
+export const getLookupPlacesMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupPlaces>>, TError,{data: LookupPlacesRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+): UseMutationOptions<Awaited<ReturnType<typeof lookupPlaces>>, TError,{data: LookupPlacesRequest}, TContext> => {
+
+const mutationKey = ['lookupPlaces'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof lookupPlaces>>, {data: LookupPlacesRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  lookupPlaces(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LookupPlacesMutationResult = NonNullable<Awaited<ReturnType<typeof lookupPlaces>>>
+    export type LookupPlacesMutationBody = LookupPlacesRequest
+    export type LookupPlacesMutationError = ProblemDetails | void
+
+    /**
+ * @summary Bulk get-by-ids (max 200) — hydrate stored place ids into coordinates in one call. Responses align index-for-index; a null place means unknown or deleted, a merged id returns the survivor. Containment is omitted (use GET /places/{id} for detail).
+ */
+export const useLookupPlaces = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupPlaces>>, TError,{data: LookupPlacesRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof lookupPlaces>>,
+        TError,
+        {data: LookupPlacesRequest},
+        TContext
+      > => {
+      return useMutation(getLookupPlacesMutationOptions(options), queryClient);
     }
 
 export const getResolvePlaceUrl = () => {

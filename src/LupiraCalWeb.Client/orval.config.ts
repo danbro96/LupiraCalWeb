@@ -53,6 +53,22 @@ export default defineConfig({
       },
     },
   },
+  // LupiraLocationApi (GPS visits/trips/tracks for the map). Proxied same-origin by the BFF at
+  // /location-api; requests go through customFetchLocation (LOCATION_API_BASE_URL).
+  lupiraLocationApi: {
+    input: { target: './backend-location-openapi.json' },
+    output: {
+      target: './src/data/api-location/lupiraLocationApi.ts',
+      schemas: './src/data/api-location/models',
+      client: 'react-query',
+      httpClient: 'fetch',
+      clean: true,
+      override: {
+        mutator: { path: './src/data/fetcher.ts', name: 'customFetchLocation' },
+        fetch: { includeHttpResponseReturnType: false },
+      },
+    },
+  },
   // LupiraTasksApi (task deadlines on the calendar). Proxied same-origin by the BFF at /tasks-api;
   // requests go through customFetchTasks (TASKS_API_BASE_URL).
   lupiraTasksApi: {

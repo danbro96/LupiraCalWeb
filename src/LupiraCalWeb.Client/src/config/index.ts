@@ -17,3 +17,7 @@ export const CONTACT_API_BASE_URL = (rawContact ?? '/contact-api').replace(/\/$/
 /** LupiraTasksApi (task deadlines on the calendar), proxied same-origin at `/tasks-api/*`. */
 const rawTasks = import.meta.env.VITE_TASKS_API_BASE_URL as string | undefined;
 export const TASKS_API_BASE_URL = (rawTasks ?? '/tasks-api').replace(/\/$/, '');
+
+/** LupiraLocationApi (GPS visits/trips/tracks on the map), proxied same-origin at `/location-api/*`. */
+const rawLocation = import.meta.env.VITE_LOCATION_API_BASE_URL as string | undefined;
+export const LOCATION_API_BASE_URL = (rawLocation ?? '/location-api').replace(/\/$/, '');

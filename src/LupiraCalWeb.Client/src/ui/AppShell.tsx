@@ -23,7 +23,7 @@ export function AppShell() {
   const birthdayYear = searchParams.get('year');
   // ?task=<listId>:<itemId> — the tasks API addresses items list-scoped, so the ref carries both GUIDs.
   const [taskListId, taskItemId] = (searchParams.get('task') ?? '').split(':');
-  // Contacts and Locations own their own layout, so the calendar sidebar is hidden there.
+  // Contacts and the Map own their own layout, so the calendar sidebar is hidden there.
   const path = useLocation().pathname;
   const showSidebar = !path.startsWith('/contacts') && !path.startsWith('/locations');
 
@@ -45,7 +45,7 @@ export function AppShell() {
             <NavLink to="/items">Items</NavLink>
             <NavLink to="/inbox">Inbox</NavLink>
             <NavLink to="/contacts">Contacts</NavLink>
-            <NavLink to="/locations">Locations</NavLink>
+            <NavLink to="/locations">Map</NavLink>
             <NavLink to="/calendars">Manage</NavLink>
           </nav>
         </header>

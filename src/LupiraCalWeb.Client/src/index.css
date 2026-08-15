@@ -2136,3 +2136,172 @@ select {
   font: inherit;
   padding: 0 0 0 2px;
 }
+
+/* ── Map screen (/locations) ─────────────────────────────────────────────── */
+.map-page {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+}
+/* maplibre-gl.css (loaded with the lazy chunk) forces .maplibregl-map to position:relative,
+   so the canvas host must size as a flex child, not via absolute inset. */
+.map-canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.map-canvas .maplibregl-map {
+  width: 100%;
+  height: 100%;
+}
+.map-error {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 4px 12px;
+}
+.map-overlay {
+  position: absolute;
+  z-index: 6;
+}
+.map-topbar {
+  top: var(--sp-md);
+  left: var(--sp-md);
+  right: 56px; /* clear the zoom control */
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-sm);
+  align-items: flex-start;
+  pointer-events: none;
+}
+.map-topbar > * {
+  pointer-events: auto;
+}
+.map-search {
+  position: relative;
+  min-width: 220px;
+}
+.map-search .text-input {
+  width: 100%;
+  background: var(--bg);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+.map-search-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+.map-timebar,
+.map-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-xs);
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: var(--sp-xs) var(--sp-sm);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+.map-date {
+  width: 8.5em;
+  padding: 2px 6px;
+}
+.map-legend {
+  display: inline-flex;
+  gap: var(--sp-sm);
+  margin-left: var(--sp-xs);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.map-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.map-legend-swatch {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.map-popover {
+  position: absolute;
+  z-index: 7;
+  transform: translate(-50%, calc(-100% - 12px));
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: var(--sp-sm) var(--sp-md);
+  min-width: 180px;
+  max-width: 280px;
+}
+.map-popover h4 {
+  margin: 0 0 4px;
+  padding-right: 16px;
+}
+.map-popover-close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px;
+}
+.map-detail {
+  position: absolute;
+  z-index: 6;
+  top: var(--sp-md);
+  right: var(--sp-md);
+  bottom: var(--sp-md);
+  width: min(360px, calc(100vw - 2 * var(--sp-md)));
+  overflow-y: auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: var(--sp-md);
+}
+@media (max-width: 700px) {
+  .map-topbar {
+    right: var(--sp-md);
+  }
+  .map-detail {
+    top: auto;
+    left: var(--sp-md);
+    right: var(--sp-md);
+    bottom: calc(64px + var(--sp-md)); /* clear the bottom nav */
+    max-height: 45vh;
+    width: auto;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .map-search .text-input,
+  .map-timebar,
+  .map-toggles,
+  .map-popover,
+  .map-detail,
+  .map-error {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+  .maplibregl-ctrl-attrib {
+    background: rgba(26, 26, 25, 0.7) !important;
+    color: var(--text-muted);
+  }
+}

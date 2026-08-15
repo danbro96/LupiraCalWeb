@@ -49,6 +49,7 @@ public sealed class BffTestFactory : WebApplicationFactory<Program>, IAsyncLifet
         builder.UseSetting("ReverseProxy:Clusters:geo-api:Destinations:primary:Address", Upstream.Address);
         builder.UseSetting("ReverseProxy:Clusters:contact-api:Destinations:primary:Address", Upstream.Address);
         builder.UseSetting("ReverseProxy:Clusters:tasks-api:Destinations:primary:Address", Upstream.Address);
+        builder.UseSetting("ReverseProxy:Clusters:location-api:Destinations:primary:Address", Upstream.Address);
         builder.UseSetting("Auth:Oidc:Authority", Issuer);
         builder.UseSetting("Auth:Oidc:ClientId", "lupira-cal");
         builder.UseSetting("DataProtection:KeyPath", "");

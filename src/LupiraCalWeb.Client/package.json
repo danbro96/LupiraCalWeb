@@ -11,12 +11,14 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "gen:api": "cp ../../../LupiraCalApi/openapi/LupiraCalApi.json backend-openapi.json && cp ../../../LupiraGeoApi/openapi/LupiraGeoApi.json backend-geo-openapi.json && cp ../../../LupiraContactApi/openapi/LupiraContactApi.json backend-contact-openapi.json && cp ../../../LupiraTasksApi/openapi/LupiraTasksApi.json backend-tasks-openapi.json && orval"
+    "gen:api": "cp ../../../LupiraCalApi/openapi/LupiraCalApi.json backend-openapi.json && cp ../../../LupiraGeoApi/openapi/LupiraGeoApi.json backend-geo-openapi.json && cp ../../../LupiraContactApi/openapi/LupiraContactApi.json backend-contact-openapi.json && cp ../../../LupiraTasksApi/openapi/LupiraTasksApi.json backend-tasks-openapi.json && cp ../../../LupiraLocationApi/openapi/LupiraLocationApi.json backend-location-openapi.json && orval"
   },
   "dependencies": {
     "@lupira/cal-domain": "*",
     "@tanstack/react-query": "^5.62.0",
     "@xyflow/react": "^12.11.2",
+    "maplibre-gl": "^6.1.0",
+    "pmtiles": "^4.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.0"

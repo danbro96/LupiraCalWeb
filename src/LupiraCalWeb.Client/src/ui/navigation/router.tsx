@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../../App';
 import { RequireAuth } from './RequireAuth';
@@ -10,7 +11,9 @@ import { EmptyDetail } from '../components/contacts/EmptyDetail';
 import { ContactDetailPane } from '../components/contacts/ContactDetailPane';
 import { GroupDetailPane } from '../components/contacts/GroupDetailPane';
 import { CalendarsScreen } from '../screens/CalendarsScreen';
-import { LocationsScreen } from '../screens/LocationsScreen';
+
+// Lazy: MapScreen pulls in maplibre-gl (+ CSS), which stays out of the main bundle.
+const MapScreen = lazy(() => import('../screens/MapScreen'));
 
 // Everything requires the SSO session — LupiraCalApi has no anonymous surface. The drawer rides
 // the ?item= search param on any route, so occurrences deep-link from every screen.
@@ -36,7 +39,14 @@ export const router = createBrowserRouter([
                   { path: ':contactId', element: <ContactDetailPane /> },
                 ],
               },
-              { path: 'locations', element: <LocationsScreen /> },
+              {
+                path: 'locations',
+                element: (
+                  <Suspense fallback={<div className="page"><p className="meta">Loading map…</p></div>}>
+                    <MapScreen />
+                  </Suspense>
+                ),
+              },
               { path: 'calendars', element: <CalendarsScreen /> },
               { path: '*', element: <CalendarScreen /> },
             ],

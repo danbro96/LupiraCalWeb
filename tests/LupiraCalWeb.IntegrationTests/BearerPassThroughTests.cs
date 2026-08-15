@@ -23,6 +23,7 @@ public class BearerPassThroughTests(BffTestFactory factory) : IClassFixture<BffT
     [InlineData("/geo-api/places", "/places")]
     [InlineData("/contact-api/contacts", "/contacts")]
     [InlineData("/tasks-api/items", "/items")]
+    [InlineData("/location-api/location/visits", "/location/visits")]
     public async Task Valid_bearer_is_accepted_and_forwarded_verbatim(string path, string upstreamPath)
     {
         var client = Client();
@@ -43,6 +44,7 @@ public class BearerPassThroughTests(BffTestFactory factory) : IClassFixture<BffT
     [InlineData("/geo-api/places")]
     [InlineData("/contact-api/contacts")]
     [InlineData("/tasks-api/items")]
+    [InlineData("/location-api/location/visits")]
     public async Task Anonymous_api_calls_get_401_not_a_redirect(string path)
     {
         var resp = await Client().GetAsync(path);

@@ -1,0 +1,257 @@
+import type { FeatureCollection } from 'geojson';
+import type { GeoJSONSource, MapGeoJSONFeature } from 'maplibre-gl';
+import { useMemo } from 'react';
+import type { LocationTripDto } from '../../../data/api-location/models';
+import { useMap } from './MapCanvas';
+import { activityColorExpression, MAP_COLORS, type MapTheme } from './mapTokens';
+import { featureProp, useGeoJsonLayer, type LayerSpecSansSource } from './useGeoJsonLayer';
+
+/** What a pin click surfaces — MapScreen renders the popover / navigates. */
+export interface PinSelection {
+  lngLat: [number, number];
+  kind: 'contact' | 'visit' | 'saved' | 'current';
+  props: Record<string, unknown>;
+}
+
+interface CommonLayerProps {
+  theme: MapTheme;
+  onSelect: (selection: PinSelection) => void;
+}
+
+const CLUSTER_TEXT: LayerSpecSansSource['layout'] = {
+  'text-field': ['get', 'point_count_abbreviated'],
+  'text-font': ['Noto Sans Medium'],
+  'text-size': 12,
+};
+
+function expandCluster(map: ReturnType<typeof useMap>, sourceId: string) {
+  return (feature: MapGeoJSONFeature) => {
+    const clusterId = feature.properties?.cluster_id as number;
+    const source = map.getSource(sourceId) as GeoJSONSource;
+    void source.getClusterExpansionZoom(clusterId).then((zoom) => {
+      const [lon, lat] = (feature.geometry as GeoJSON.Point).coordinates;
+      map.easeTo({ center: [lon, lat], zoom });
+    });
+  };
+}
+
+/** Event pins colored by source calendar; click opens the shared ?item= drawer. */
+export function EventsLayer({ theme, features, onOpenItem }: {
+  theme: MapTheme;
+  features: FeatureCollection;
+  onOpenItem: (itemId: string) => void;
+}) {
+  const map = useMap();
+  const colors = MAP_COLORS[theme];
+
+  const layers = useMemo<LayerSpecSansSource[]>(() => [
+    {
+      id: 'events-clusters', type: 'circle', filter: ['has', 'point_count'],
+      paint: {
+        'circle-radius': ['step', ['get', 'point_count'], 12, 10, 16, 50, 22],
+        'circle-color': colors.eventFallback,
+        'circle-opacity': 0.85,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.ring,
+      },
+    },
+    {
+      id: 'events-cluster-count', type: 'symbol', filter: ['has', 'point_count'],
+      layout: CLUSTER_TEXT,
+      paint: { 'text-color': colors.ring },
+    },
+    {
+      id: 'events-pins', type: 'circle', filter: ['!', ['has', 'point_count']],
+      paint: {
+        'circle-radius': 7,
+        'circle-color': ['coalesce', ['get', 'color'], colors.eventFallback],
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.ring,
+      },
+    },
+  ], [colors]);
+
+  useGeoJsonLayer(map, 'events', features, layers, {
+    cluster: true,
+    onClick: useMemo(() => ({
+      'events-pins': (f: MapGeoJSONFeature) => {
+        const itemId = featureProp<string>(f, 'itemId');
+        if (itemId) onOpenItem(itemId);
+      },
+      'events-clusters': expandCluster(map, 'events'),
+    }), [map, onOpenItem]),
+  });
+  return null;
+}
+
+/** Contact pins (household-deduped); click → popover with per-contact links. */
+export function ContactsLayer({ theme, features, onSelect }: CommonLayerProps & { features: FeatureCollection }) {
+  const map = useMap();
+  const colors = MAP_COLORS[theme];
+
+  const layers = useMemo<LayerSpecSansSource[]>(() => [
+    {
+      id: 'contacts-clusters', type: 'circle', filter: ['has', 'point_count'],
+      paint: {
+        'circle-radius': ['step', ['get', 'point_count'], 11, 10, 15],
+        'circle-color': colors.contact,
+        'circle-opacity': 0.85,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.ring,
+      },
+    },
+    {
+      id: 'contacts-cluster-count', type: 'symbol', filter: ['has', 'point_count'],
+      layout: CLUSTER_TEXT,
+      paint: { 'text-color': colors.ring },
+    },
+    {
+      id: 'contacts-pins', type: 'circle', filter: ['!', ['has', 'point_count']],
+      paint: {
+        'circle-radius': 6,
+        'circle-color': colors.contact,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.ring,
+      },
+    },
+  ], [colors]);
+
+  useGeoJsonLayer(map, 'contacts', features, layers, {
+    cluster: true,
+    onClick: useMemo(() => ({
+      'contacts-pins': (f: MapGeoJSONFeature, e) => onSelect({
+        lngLat: [e.lngLat.lng, e.lngLat.lat],
+        kind: 'contact',
+        props: {
+          names: featureProp<string[]>(f, 'names') ?? [],
+          contactIds: featureProp<string[]>(f, 'contactIds') ?? [],
+          placeId: featureProp<string>(f, 'placeId'),
+          placeName: featureProp<string>(f, 'placeName'),
+        },
+      }),
+      'contacts-clusters': expandCluster(map, 'contacts'),
+    }), [map, onSelect]),
+  });
+  return null;
+}
+
+/** Visits (dwell-sized circles), activity-colored track lines with a surface casing, live position. */
+export function MovementLayer({ theme, visits, track, current, onSelect }: CommonLayerProps & {
+  visits: FeatureCollection;
+  track: FeatureCollection;
+  current: FeatureCollection;
+}) {
+  const map = useMap();
+  const colors = MAP_COLORS[theme];
+
+  const trackLayers = useMemo<LayerSpecSansSource[]>(() => [
+    {
+      id: 'track-casing', type: 'line',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': colors.ring, 'line-width': 6, 'line-opacity': 0.9 },
+    },
+    {
+      id: 'track-line', type: 'line',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: {
+        'line-color': activityColorExpression(theme) as never,
+        'line-width': 3,
+        // The neutral non-category draws dashed, never as a fifth hue.
+        'line-dasharray': ['match', ['get', 'activity'], 'Unknown', ['literal', [2, 2]], ['literal', [1, 0]]] as never,
+      },
+    },
+  ], [theme, colors]);
+  useGeoJsonLayer(map, 'track', track, trackLayers);
+
+  const visitLayers = useMemo<LayerSpecSansSource[]>(() => [
+    {
+      id: 'visits-circles', type: 'circle',
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['get', 'durationMin'], 5, 5, 480, 16],
+        'circle-color': colors.visitFill,
+        'circle-opacity': 0.35,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.visitFill,
+      },
+    },
+  ], [colors]);
+  useGeoJsonLayer(map, 'visits', visits, visitLayers, {
+    onClick: useMemo(() => ({
+      'visits-circles': (f: MapGeoJSONFeature, e) => onSelect({
+        lngLat: [e.lngLat.lng, e.lngLat.lat],
+        kind: 'visit',
+        props: {
+          placeLabel: featureProp<string>(f, 'placeLabel'),
+          arriveTs: featureProp<string>(f, 'arriveTs'),
+          departTs: featureProp<string>(f, 'departTs'),
+          durationMin: featureProp<number>(f, 'durationMin'),
+        },
+      }),
+    }), [onSelect]),
+  });
+
+  const currentLayers = useMemo<LayerSpecSansSource[]>(() => [
+    {
+      id: 'current-halo', type: 'circle',
+      paint: { 'circle-radius': 14, 'circle-color': colors.currentFill, 'circle-opacity': 0.2 },
+    },
+    {
+      id: 'current-dot', type: 'circle',
+      paint: {
+        'circle-radius': 6,
+        'circle-color': colors.currentFill,
+        'circle-stroke-width': 2.5,
+        'circle-stroke-color': colors.ring,
+      },
+    },
+  ], [colors]);
+  useGeoJsonLayer(map, 'current', current, currentLayers, {
+    onClick: useMemo(() => ({
+      'current-dot': (f: MapGeoJSONFeature, e) => onSelect({
+        lngLat: [e.lngLat.lng, e.lngLat.lat],
+        kind: 'current',
+        props: { ts: featureProp<string>(f, 'ts'), batteryPct: featureProp<number>(f, 'batteryPct') },
+      }),
+    }), [onSelect]),
+  });
+  return null;
+}
+
+/** Saved-place pins; a gazetteer-linked one opens the place panel, a raw pin gets a popover. */
+export function SavedPlacesLayer({ theme, features, onSelect, onOpenPlace }: CommonLayerProps & {
+  features: FeatureCollection;
+  onOpenPlace: (placeId: string) => void;
+}) {
+  const map = useMap();
+  const colors = MAP_COLORS[theme];
+
+  const layers = useMemo<LayerSpecSansSource[]>(() => [
+    {
+      id: 'saved-pins', type: 'circle',
+      paint: {
+        'circle-radius': ['case', ['get', 'isFavorite'], 8, 6],
+        'circle-color': colors.saved,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.ring,
+      },
+    },
+  ], [colors]);
+
+  useGeoJsonLayer(map, 'saved', features, layers, {
+    onClick: useMemo(() => ({
+      'saved-pins': (f: MapGeoJSONFeature, e) => {
+        const placeId = featureProp<string>(f, 'placeId');
+        if (placeId) onOpenPlace(placeId);
+        else onSelect({
+          lngLat: [e.lngLat.lng, e.lngLat.lat],
+          kind: 'saved',
+          props: { label: featureProp<string>(f, 'label'), icon: featureProp<string>(f, 'icon') },
+        });
+      },
+    }), [onSelect, onOpenPlace]),
+  });
+  return null;
+}
+
+/** Trips exist in state (list + endpoint visit ids) but draw as the track itself in v1. */
+export type { LocationTripDto };
