@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "predev": "npm run sync:maplibre",
     "build": "tsc -b && vite build",
+    "prebuild": "npm run sync:maplibre",
+    "sync:maplibre": "node -e \"const fs=require('fs'),p=require('path');const d=p.join(p.dirname(require.resolve('maplibre-gl/package.json')),'dist');fs.mkdirSync('public/maplibre',{recursive:true});for(const f of['maplibre-gl-worker.mjs','maplibre-gl-shared.mjs'])fs.copyFileSync(p.join(d,f),p.join('public/maplibre',f))\"",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "lint": "eslint .",

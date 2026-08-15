@@ -1,11 +1,13 @@
 import { addProtocol, Map as MapLibreMap, NavigationControl, ScaleControl, setWorkerUrl } from 'maplibre-gl';
 import { Protocol } from 'pmtiles';
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import maplibreWorkerUrl from './maplibreWorker?worker&url';
 import { fallbackStyle, loadMapStyle } from './mapStyle';
 import type { MapTheme } from './mapTokens';
 
-setWorkerUrl(maplibreWorkerUrl); // see maplibreWorker.ts — the sibling-file default 404s under bundlers
+// MapLibre's default worker URL (a sibling of the entry module) 404s under bundlers, and bundling the
+// worker ourselves gets tree-shaken to an empty file (maplibre's sideEffects allowlist). The worker +
+// its shared-module import are served verbatim from public/maplibre/ instead (sync:maplibre script).
+setWorkerUrl('/maplibre/maplibre-gl-worker.mjs');
 addProtocol('pmtiles', new Protocol().tile);
 
 const MapContext = createContext<MapLibreMap | null>(null);
