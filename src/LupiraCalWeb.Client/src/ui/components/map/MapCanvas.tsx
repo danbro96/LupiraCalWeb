@@ -35,12 +35,14 @@ export function useMapTheme(): MapTheme {
 const DEFAULT_CENTER: [number, number] = [18.07, 59.33];
 const DEFAULT_ZOOM = 9;
 
-export function MapCanvas({ children }: { children?: ReactNode }) {
+export function MapCanvas({ children, center, zoom }: { children?: ReactNode; center?: [number, number]; zoom?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<MapLibreMap | null>(null);
   const [basemapMissing, setBasemapMissing] = useState(false);
   const theme = useMapTheme();
   const themeRef = useRef(theme);
+  // Initial view only — the map owns the camera after construction.
+  const initialView = useRef({ center: center ?? DEFAULT_CENTER, zoom: zoom ?? DEFAULT_ZOOM });
 
   useEffect(() => {
     const container = containerRef.current;
@@ -59,8 +61,8 @@ export function MapCanvas({ children }: { children?: ReactNode }) {
       created = new MapLibreMap({
         container,
         style,
-        center: DEFAULT_CENTER,
-        zoom: DEFAULT_ZOOM,
+        center: initialView.current.center,
+        zoom: initialView.current.zoom,
         attributionControl: { compact: true },
       });
       created.addControl(new NavigationControl({ showCompass: false }), 'top-right');

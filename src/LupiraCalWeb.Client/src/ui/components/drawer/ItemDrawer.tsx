@@ -23,6 +23,7 @@ import { isoToLocalInput, localInputToIso } from './inputs';
 import { KindDetailsCard } from './KindDetailsCard';
 import { MetadataPanel } from './MetadataPanel';
 import { PayloadPanel } from './PayloadPanel';
+import { PlacePicker } from '../places/PlacePicker';
 import { RelationsPanel } from './RelationsPanel';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
@@ -58,7 +59,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
 
   const [title, setTitle] = useState(item.title ?? '');
   const [description, setDescription] = useState(item.description ?? '');
-  const [location, setLocation] = useState('');
   const [rrule, setRrule] = useState(item.recurrenceRule ?? '');
   const [newTag, setNewTag] = useState('');
 
@@ -180,14 +180,15 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
 
       <section className="drawer-section">
         <h3>Where</h3>
-        {item.locationLabel && <p className="field-value">📍 {item.locationLabel}</p>}
-        <TextField
-          size="small"
-          placeholder={item.locationLabel ? 'Change location…' : 'Add location…'}
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          onBlur={() => location && patch({ location })}
+        <PlacePicker
+          placeId={item.placeId ?? null}
+          initialText={!item.placeId ? (item.locationLabel ?? '') : ''}
+          placeholder="Search or type an address…"
+          onChange={(placeId) => (placeId ? patch({ placeId, placeIdProvided: true }) : patch({ placeId: null, placeIdProvided: true }))}
         />
+        {!item.placeId && item.locationLabel && (
+          <p className="meta">“{item.locationLabel}” from calendar text</p>
+        )}
       </section>
 
       <section className="drawer-section">

@@ -14,6 +14,7 @@ import { CalendarsScreen } from '../screens/CalendarsScreen';
 
 // Lazy: MapScreen pulls in maplibre-gl (+ CSS), which stays out of the main bundle.
 const MapScreen = lazy(() => import('../screens/MapScreen'));
+const PlacesScreen = lazy(() => import('../screens/PlacesScreen'));
 
 // Everything requires the SSO session — LupiraCalApi has no anonymous surface. The drawer rides
 // the ?item= search param on any route, so occurrences deep-link from every screen.
@@ -48,6 +49,14 @@ export const router = createBrowserRouter([
                 ),
               },
               { path: 'calendars', element: <CalendarsScreen /> },
+              {
+                path: 'places',
+                element: (
+                  <Suspense fallback={<div className="page"><p className="meta">Loading…</p></div>}>
+                    <PlacesScreen />
+                  </Suspense>
+                ),
+              },
               { path: '*', element: <CalendarScreen /> },
             ],
           },

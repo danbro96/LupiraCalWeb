@@ -1,6 +1,14 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useGetItemsByPlace } from '../data/api/lupiraCalApi';
-import { useGetPlace, useSearchPlaces as useSearchGeoPlaces } from '../data/api-geo/lupiraGeoApi';
-import type { SearchPlacesParams } from '../data/api-geo/models';
+import {
+  createPlace,
+  createPlaceFromGeocode,
+  getGetPlaceQueryKey,
+  getPlace,
+  useGetPlace,
+  useSearchPlaces as useSearchGeoPlaces,
+} from '../data/api-geo/lupiraGeoApi';
+import { PlaceCategory, type PlaceDto, type SearchPlacesParams } from '../data/api-geo/models';
 
 /** Browse/search the LupiraGeoApi gazetteer (text `q`, category, spatial `near`/`bbox`). */
 export function useSearchPlaces(params: SearchPlacesParams) {
@@ -15,4 +23,57 @@ export function useGeoPlace(placeId: string | undefined) {
 /** Calendar items anchored to a geo place (its location, or a travel endpoint). */
 export function usePlaceItems(placeId: string | undefined) {
   return useGetItemsByPlace(placeId ?? '', { query: { enabled: !!placeId } });
+}
+
+/** Structural mirror of a forward-geocode hit's create-relevant fields (the picker machine's
+ *  PickerHit passes through unchanged; state can't import ui types). */
+export type GeocodeHit = {
+  displayName: string;
+  latitude: number;
+  longitude: number;
+  category?: string | null;
+  osmType?: string | null;
+  osmId?: number | null;
+};
+
+const isCategory = (v: string | null | undefined): v is PlaceCategory =>
+  !!v && Object.values(PlaceCategory).includes(v as PlaceCategory);
+
+function seedGetPlace(queryClient: ReturnType<typeof useQueryClient>, place: PlaceDto) {
+  queryClient.setQueryData(getGetPlaceQueryKey(place.id), place);
+}
+
+/** Create/dedupe a place from a picked geocode hit. `typedName` must be the exact query the hits
+ *  came from — from-geocode validates the hit against that query's frozen geocode cache. Hits
+ *  without OSM identity fall back to a plain create with the hit's coordinates. */
+export function useCreatePlaceFromHit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ hit, typedName }: { hit: GeocodeHit; typedName: string }): Promise<PlaceDto> => {
+      if (hit.osmType && hit.osmId != null) {
+        const res = await createPlaceFromGeocode({ query: typedName, osmType: hit.osmType, osmId: hit.osmId });
+        if (!res.placeId) throw new Error('Geocoder unavailable — place not created.');
+        // from-geocode returns a thin resolution; fetch the full DTO once to seed the cache.
+        return getPlace(res.placeId);
+      }
+      return createPlace({
+        name: typedName || hit.displayName,
+        latitude: hit.latitude,
+        longitude: hit.longitude,
+        formattedAddress: hit.displayName,
+        category: isCategory(hit.category) ? hit.category : undefined,
+      });
+    },
+    onSuccess: (place) => seedGetPlace(queryClient, place),
+  });
+}
+
+/** Create a place at manually pinned coordinates. */
+export function useCreatePlaceAtPin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ name, lat, lon }: { name: string; lat: number; lon: number }) =>
+      createPlace({ name, latitude: lat, longitude: lon }),
+    onSuccess: (place) => seedGetPlace(queryClient, place),
+  });
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
@@ -41,6 +42,9 @@ export function CalendarsScreen() {
         <h2>Calendars & address books</h2>
         <Button variant="contained" size="small" onClick={() => setCreating((c) => !c)}>
           + New
+        </Button>
+        <Button size="small" component={NavLink} to="/places">
+          Places…
         </Button>
       </div>
       {creating && <NewContainerForm onDone={() => setCreating(false)} />}

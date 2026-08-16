@@ -36,3 +36,16 @@ export function useInvalidateAddressBooks() {
   const queryClient = useQueryClient();
   return () => queryClient.invalidateQueries({ predicate: (q) => String(q.queryKey[0] ?? '').startsWith('/address-books') });
 }
+
+/** Geo place mutations: generated '/places' keys, the hand-prefixed '/geo-api/places' batch-lookup
+ *  key (usePlaceCoords), and the '/curation' lists that mirror place state. */
+export function useInvalidatePlaces() {
+  const queryClient = useQueryClient();
+  return () =>
+    queryClient.invalidateQueries({
+      predicate: (q) => {
+        const key = String(q.queryKey[0] ?? '');
+        return key.startsWith('/places') || key.startsWith('/geo-api/places') || key.startsWith('/curation');
+      },
+    });
+}

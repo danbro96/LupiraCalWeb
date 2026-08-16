@@ -1,53 +1,85 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
-import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
-import { useResolvePlace, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
+import { forwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
+import { useCreatePlaceAtPin, useCreatePlaceFromHit } from '../../../state/usePlaces';
 import { errText } from '../errText';
+import { GeocodePreview } from './GeocodePreview';
+import {
+  initialPickerState,
+  transition,
+  type PickerCommand,
+  type PickerEvent,
+  type PickerState,
+} from './placePickerMachine';
 import { PlaceLabel } from './PlaceLabel';
 
-/** Turn user input into a LupiraGeoApi placeId: typeahead over existing places; committing unmatched
- *  free text falls back to POST /places/resolve, which matches or geocodes-and-persists a place. */
-export function PlacePicker({ placeId, onChange, placeholder }: {
+const MapPinDialog = lazy(() => import('../map/MapPinDialog'));
+
+/** Turn user input into a LupiraGeoApi placeId: typeahead over existing places; committing
+ *  unmatched free text runs the picker machine — forward geocode → hit preview → pick, or drop a
+ *  pin on the map. Nothing is ever created on cancel/dismiss. */
+export function PlacePicker({ placeId, onChange, placeholder, initialText, autoFocus }: {
   placeId: string | null;
   onChange: (placeId: string | null) => void;
   placeholder?: string;
+  initialText?: string;
+  autoFocus?: boolean;
 }) {
-  const [text, setText] = useState('');
+  const [state, setState] = useState<PickerState>(() => initialPickerState(initialText ?? ''));
+  const stateRef = useRef(state);
+  const createFromHit = useCreatePlaceFromHit();
+  const createAtPin = useCreatePlaceAtPin();
+
   const [q, setQ] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const resolve = useResolvePlace();
-
   useEffect(() => {
-    const t = setTimeout(() => setQ(text.trim()), 250);
+    const t = setTimeout(() => setQ(state.text.trim()), 250);
     return () => clearTimeout(t);
-  }, [text]);
-
+  }, [state.text]);
   const { data: suggestions, isLoading } = useSuggestPlaces({ q, limit: 8 }, { query: { enabled: q.length >= 2 } });
-  // Locality suggestions are admin areas, not places — their ids aren't valid placeIds.
-  const places = q.length >= 2 ? (suggestions ?? []).filter((s) => s.type === SuggestionType.Place) : [];
+  const options = q.length >= 2 ? (suggestions ?? []) : [];
 
-  const pick = (id: string) => {
-    onChange(id);
-    setText('');
-    setError(null);
+  const dispatch = (event: PickerEvent) => {
+    const { state: next, commands } = transition(stateRef.current, event);
+    stateRef.current = next;
+    setState(next);
+    for (const cmd of commands) run(cmd);
   };
 
-  async function commit(raw: string) {
-    const t = raw.trim();
-    if (!t) return;
-    setError(null);
-    try {
-      const res = await resolve.mutateAsync({ data: { text: t } });
-      if (res.placeId) pick(res.placeId);
-      else setError('Couldn’t resolve — geocoder unavailable.');
-    } catch (e) {
-      setError(errText(e) ?? 'Resolve failed.');
+  const run = (cmd: PickerCommand) => {
+    switch (cmd.kind) {
+      case 'geocode':
+        forwardGeocode({ q: cmd.q, limit: 5 })
+          .then((hits) => dispatch({ type: 'GEOCODE_OK', token: cmd.token, hits }))
+          .catch((e: unknown) => dispatch({ type: 'GEOCODE_ERROR', token: cmd.token, message: errText(e) ?? undefined }));
+        return;
+      case 'createFromHit':
+        createFromHit.mutate(
+          { hit: cmd.hit, typedName: cmd.typedName },
+          {
+            onSuccess: (place) => dispatch({ type: 'CREATE_OK', token: cmd.token, placeId: place.id }),
+            onError: (e) => dispatch({ type: 'CREATE_ERROR', token: cmd.token, message: errText(e) ?? undefined }),
+          },
+        );
+        return;
+      case 'createAtPin':
+        createAtPin.mutate(
+          { name: cmd.name, lat: cmd.lat, lon: cmd.lon },
+          {
+            onSuccess: (place) => dispatch({ type: 'CREATE_OK', token: cmd.token, placeId: place.id }),
+            onError: (e) => dispatch({ type: 'CREATE_ERROR', token: cmd.token, message: errText(e) ?? undefined }),
+          },
+        );
+        return;
+      case 'resolved':
+        onChange(cmd.placeId);
+        return;
     }
-  }
+  };
 
   if (placeId) {
     return (
@@ -62,39 +94,71 @@ export function PlacePicker({ placeId, onChange, placeholder }: {
     );
   }
 
+  const phase = state.phase;
+
   return (
     <span className="place-picker">
       <Autocomplete<PlaceSuggestionDto, false, false, true>
         freeSolo
-        options={places}
+        options={options}
         filterOptions={(x) => x}
-        loading={q.length >= 2 && isLoading}
+        loading={(q.length >= 2 && isLoading) || phase.kind === 'geocoding'}
+        getOptionDisabled={(o) => o.type === SuggestionType.Locality}
         value={null}
-        inputValue={text}
-        onInputChange={(_, v) => {
-          setText(v);
-          setError(null);
-        }}
+        inputValue={state.text}
+        onInputChange={(_, v) => dispatch({ type: 'TYPE', text: v })}
         onChange={(_, value) => {
-          if (typeof value === 'string') void commit(value);
-          else if (value) pick(value.id);
+          if (typeof value === 'string') {
+            dispatch({ type: 'COMMIT', suggestions: options });
+          } else if (value && value.type === SuggestionType.Place) {
+            // Sync the machine text first so COMMIT's exact-name match short-circuits to resolved.
+            dispatch({ type: 'TYPE', text: value.name });
+            dispatch({ type: 'COMMIT', suggestions: [value] });
+          }
         }}
         getOptionLabel={(o) => (typeof o === 'string' ? o : o.name)}
         renderOption={({ key, ...props }, o) => (
           <li key={key} {...props}>
             {o.name}
+            {o.type === SuggestionType.Locality && <Chip size="small" label="Area" sx={{ ml: 1 }} />}
             {o.context && <span className="meta"> {o.context}</span>}
           </li>
         )}
         renderInput={(params) => (
-          <TextField {...params} size="small" placeholder={placeholder ?? 'Search or type an address…'} />
+          <TextField
+            {...params}
+            size="small"
+            autoFocus={autoFocus}
+            placeholder={placeholder ?? 'Search or type an address…'}
+          />
         )}
         sx={{ flex: 1 }}
       />
-      <Button variant="outlined" size="small" type="button" onClick={() => void commit(text)} disabled={!text.trim() || resolve.isPending}>
-        {resolve.isPending ? 'Resolving…' : 'Resolve'}
-      </Button>
-      {error && <span className="error-text">{error}</span>}
+      {state.error && phase.kind !== 'previewing' && phase.kind !== 'creating' && (
+        <span className="error-text">{state.error}</span>
+      )}
+      {(phase.kind === 'previewing' || phase.kind === 'creating') && (
+        <GeocodePreview
+          query={state.text}
+          hits={phase.hits}
+          busy={phase.kind === 'creating'}
+          error={state.error}
+          onPick={(index) => dispatch({ type: 'PICK_HIT', index })}
+          onPin={() => dispatch({ type: 'OPEN_PIN', suggestions: options, hits: phase.hits })}
+          onCancel={() => dispatch({ type: 'DISMISS' })}
+        />
+      )}
+      {phase.kind === 'pinning' && (
+        <Suspense fallback={null}>
+          <MapPinDialog
+            title={`Pin “${state.text.trim()}”`}
+            center={phase.center}
+            zoom={phase.zoom}
+            onConfirm={(lat, lon) => dispatch({ type: 'PIN_CONFIRM', lat, lon })}
+            onCancel={() => dispatch({ type: 'PIN_CANCEL' })}
+          />
+        </Suspense>
+      )}
     </span>
   );
 }
