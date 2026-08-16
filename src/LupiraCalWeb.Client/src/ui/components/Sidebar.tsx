@@ -19,7 +19,7 @@ export function Sidebar() {
         <div className="section-label">Tasks</div>
         <label className="cal-toggle" title="Deadlines from Lupira Tasks">
           <Checkbox size="small" sx={{ p: 0 }} checked={tasksVisible} onChange={toggleTasks} />
-          <span className="color-dot" style={{ background: 'var(--text-muted)' }} />
+          <span className="color-dot" style={{ background: 'var(--mui-palette-text-secondary)' }} />
           <span className="cal-toggle-name">⏰ Deadlines</span>
         </label>
       </div>

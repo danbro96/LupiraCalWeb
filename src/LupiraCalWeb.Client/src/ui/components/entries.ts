@@ -55,7 +55,7 @@ export function fromTask(t: TaskDto, now: Date): GridEntry | null {
     start: new Date(due.getFullYear(), due.getMonth(), due.getDate()),
     end: null,
     isAllDay: true,
-    color: overdue ? 'var(--danger)' : 'var(--text-muted)',
+    color: overdue ? 'var(--mui-palette-error-main)' : 'var(--mui-palette-text-secondary)',
     icon: '⏰',
     parentItemId: null,
     childCount: 0,

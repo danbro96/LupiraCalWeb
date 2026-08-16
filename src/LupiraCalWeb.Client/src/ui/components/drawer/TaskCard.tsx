@@ -34,7 +34,7 @@ function TaskBody({ task }: { task: ItemResponse }) {
       <section className="drawer-section">
         <h3>Due</h3>
         {due ? (
-          <p className="field-value" style={overdue ? { color: 'var(--danger)' } : undefined}>
+          <p className="field-value" style={overdue ? { color: 'var(--mui-palette-error-main)' } : undefined}>
             {fmtDate(due)} {fmtTime(due)}
             {overdue ? ' — overdue' : ''}
           </p>

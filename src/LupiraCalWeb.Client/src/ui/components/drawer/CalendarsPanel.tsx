@@ -35,7 +35,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
         const cal = calendars.find((c) => c.id === m.calendarId);
         return (
           <div key={m.calendarId} className="membership-row">
-            <span className="color-dot" style={{ background: cal ? calendarColor(cal) : 'var(--border)' }} />
+            <span className="color-dot" style={{ background: cal ? calendarColor(cal) : 'var(--mui-palette-border)' }} />
             <span className="membership-name">{cal ? calendarLabel(cal) : m.calendarId.slice(0, 8)}</span>
             {m.status === 'Proposed' ? (
               <Chip size="small" variant="outlined" label="proposed" />

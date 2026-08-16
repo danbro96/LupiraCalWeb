@@ -14,7 +14,7 @@ export function CompletenessBadge({ score }: { score?: CompletenessScore | null 
     <div className="completeness">
       <button className="completeness-ring" onClick={() => setOpen((o) => !o)} title={`Completeness ${pct}% (rubric v${score.rubricVersion})`}
         style={{
-          background: `conic-gradient(hsl(${hue} 70% 45%) ${pct}%, var(--divider) ${pct}%)`,
+          background: `conic-gradient(hsl(${hue} 70% 45%) ${pct}%, var(--mui-palette-divider) ${pct}%)`,
         }}
       >
         <span>{pct}</span>

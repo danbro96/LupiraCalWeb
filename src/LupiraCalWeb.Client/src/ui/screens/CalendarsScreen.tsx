@@ -118,7 +118,7 @@ function BookRow({ b }: { b: AddressBookDto }) {
     <>
       <tr>
         <td>
-          <span className="color-dot" style={{ background: 'var(--border)' }} />
+          <span className="color-dot" style={{ background: 'var(--mui-palette-border)' }} />
         </td>
         <td>📇 {addressBookLabel(b)}</td>
         <td>

@@ -1,41 +1,6 @@
-/* Tokens live in @lupira/cal-tokens and reach CSS via the MUI theme (ui/theme/muiTheme.ts, cssVariables) —
-   MUI emits --mui-* in both schemes. The legacy names below bridge the bespoke CSS onto those vars. */
-:root {
-  --bg: var(--mui-palette-background-default);
-  --surface: var(--mui-palette-background-paper);
-  --primary: var(--mui-palette-primary-main);
-  --on-primary: var(--mui-palette-primary-contrastText);
-  --divider: var(--mui-palette-divider);
-  --text: var(--mui-palette-text-primary);
-  --text-muted: var(--mui-palette-text-secondary);
-  --text-disabled: var(--mui-palette-text-disabled);
-  --danger: var(--mui-palette-error-main);
-  /* No MUI palette counterpart — literal, dark overrides below. */
-  --border: #d4d8e0;
-  --text-subtle: #8a909c;
-
-  --sp-xs: 4px;
-  --sp-sm: 8px;
-  --sp-md: 12px;
-  --sp-lg: 16px;
-  --sp-xl: 24px;
-  --r-sm: 6px;
-  --r-md: 8px;
-  --r-lg: 14px;
-  --r-pill: 999px;
-
-  color-scheme: light dark;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.4;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --border: #2c333d;
-    --text-subtle: #7c8492;
-  }
-}
-
+/* Bespoke styling only — every token (--mui-palette-*, --sp-*, --r-*) is emitted by the MUI theme
+   (ui/theme/muiTheme.ts) from @lupira/cal-tokens. Category/family accents below are the exception:
+   they are domain palettes with no MUI counterpart. */
 * {
   box-sizing: border-box;
 }
@@ -58,9 +23,9 @@ code,
 }
 select {
   font: inherit;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
+  color: var(--mui-palette-text-primary);
+  background: var(--mui-palette-background-default);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-md);
   padding: 7px 8px;
 }
@@ -78,7 +43,7 @@ select {
   flex: 1;
 }
 .topnav a {
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   text-decoration: none;
   padding: 6px 12px;
   border-radius: var(--r-md);
@@ -86,8 +51,8 @@ select {
   font-size: 14px;
 }
 .topnav a.active {
-  background: var(--surface);
-  color: var(--text);
+  background: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
 }
 .shell-body {
   display: flex;
@@ -97,7 +62,7 @@ select {
 .sidebar {
   width: 230px;
   flex: none;
-  border-right: 1px solid var(--divider);
+  border-right: 1px solid var(--mui-palette-divider);
   overflow-y: auto;
   padding-bottom: var(--sp-xl);
 }
@@ -125,9 +90,9 @@ select {
   gap: var(--sp-md);
   padding: var(--sp-md) var(--sp-lg);
   margin-bottom: var(--sp-lg);
-  border: 1px solid var(--divider);
+  border: 1px solid var(--mui-palette-divider);
   border-radius: var(--r-md);
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
 }
 .account-who {
   display: flex;
@@ -138,7 +103,7 @@ select {
   font-weight: 700;
 }
 .account-sub {
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   font-size: 13px;
 }
 
@@ -152,7 +117,7 @@ select {
   cursor: pointer;
 }
 .cal-toggle:hover {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
 }
 .cal-toggle-name {
   overflow: hidden;
@@ -191,18 +156,18 @@ select {
   border: 0;
   background: none;
   border-radius: var(--r-md);
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
   text-align: center;
 }
 .cal-title:hover {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
 }
 .dp-caret {
   font-size: 11px;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 .cal-right {
   display: flex;
@@ -220,8 +185,8 @@ select {
   width: 14px;
   height: 14px;
   flex: none;
-  border: 2px solid var(--border);
-  border-top-color: var(--primary);
+  border: 2px solid var(--mui-palette-border);
+  border-top-color: var(--mui-palette-primary-main);
   border-radius: var(--r-pill);
   animation: spin 0.7s linear infinite;
 }
@@ -250,8 +215,8 @@ select {
   width: 260px;
   max-width: calc(100vw - 2 * var(--sp-lg));
   padding: var(--sp-sm);
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--mui-palette-background-default);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-lg);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
@@ -275,7 +240,7 @@ select {
   text-align: center;
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 .dp-day {
   display: flex;
@@ -285,24 +250,24 @@ select {
   border: 0;
   background: none;
   border-radius: var(--r-sm);
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
   font-size: 13px;
   cursor: pointer;
 }
 .dp-day:hover {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
 }
 .dp-day.other {
-  color: var(--text-disabled);
+  color: var(--mui-palette-text-disabled);
 }
 .dp-day.today {
   font-weight: 700;
-  color: var(--primary);
+  color: var(--mui-palette-primary-main);
 }
 .dp-day.sel,
 .dp-day.sel.today {
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-contrastText);
 }
 
 /* ---- Month grid. ---- */
@@ -311,8 +276,8 @@ select {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-auto-rows: minmax(110px, 1fr);
-  border-top: 1px solid var(--divider);
-  border-left: 1px solid var(--divider);
+  border-top: 1px solid var(--mui-palette-divider);
+  border-left: 1px solid var(--mui-palette-divider);
   min-height: 0;
   overflow-y: auto;
 }
@@ -321,10 +286,10 @@ select {
   padding: 4px 8px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-subtle);
-  border-right: 1px solid var(--divider);
-  border-bottom: 1px solid var(--divider);
-  background: var(--surface);
+  color: var(--mui-palette-text-subtle);
+  border-right: 1px solid var(--mui-palette-divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
+  background: var(--mui-palette-background-paper);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -333,8 +298,8 @@ select {
   grid-auto-rows: auto;
 }
 .month-cell {
-  border-right: 1px solid var(--divider);
-  border-bottom: 1px solid var(--divider);
+  border-right: 1px solid var(--mui-palette-divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
   padding: 2px 4px 6px;
   min-height: 110px;
   display: flex;
@@ -343,7 +308,7 @@ select {
   min-width: 0;
 }
 .month-cell.other-month {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
   opacity: 0.75;
 }
 .month-cell-head {
@@ -354,7 +319,7 @@ select {
 .day-number {
   border: 0;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   font-size: 13px;
   font-weight: 600;
   width: 26px;
@@ -362,8 +327,8 @@ select {
   border-radius: var(--r-pill);
 }
 .day-number.today {
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-contrastText);
 }
 .avail-dots {
   display: inline-flex;
@@ -381,8 +346,8 @@ select {
   border: 0;
   border-left: 3px solid;
   border-radius: 3px;
-  background: var(--surface);
-  color: var(--text);
+  background: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
   font-size: 12px;
   padding: 1px 4px;
   text-align: left;
@@ -395,7 +360,7 @@ select {
   flex: none;
 }
 .chip-time {
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   flex: none;
 }
 .chip-title {
@@ -419,16 +384,16 @@ select {
   border-left-width: 3px;
 }
 .month-chip.task-deadline.overdue .chip-title {
-  color: var(--danger);
+  color: var(--mui-palette-error-main);
 }
 .allday-chip.task-deadline {
-  background: var(--surface) !important;
-  color: var(--text);
-  border: 1px solid var(--text-muted);
+  background: var(--mui-palette-background-paper) !important;
+  color: var(--mui-palette-text-primary);
+  border: 1px solid var(--mui-palette-text-secondary);
 }
 .allday-chip.task-deadline.overdue {
-  border-color: var(--danger);
-  color: var(--danger);
+  border-color: var(--mui-palette-error-main);
+  color: var(--mui-palette-error-main);
 }
 .chip-dot.task-deadline {
   border-radius: 2px; /* square dot = deadline in the compact month cells */
@@ -440,7 +405,7 @@ select {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border-top: 1px solid var(--divider);
+  border-top: 1px solid var(--mui-palette-divider);
 }
 .week-head,
 .week-allday {
@@ -452,19 +417,19 @@ select {
   padding: 6px 8px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--text-muted);
-  border-left: 1px solid var(--divider);
+  color: var(--mui-palette-text-secondary);
+  border-left: 1px solid var(--mui-palette-divider);
 }
 .week-head-day.today {
-  color: var(--primary);
+  color: var(--mui-palette-primary-main);
 }
 .week-allday {
-  border-top: 1px solid var(--divider);
-  border-bottom: 1px solid var(--divider);
+  border-top: 1px solid var(--mui-palette-divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
   min-height: 28px;
 }
 .allday-cell {
-  border-left: 1px solid var(--divider);
+  border-left: 1px solid var(--mui-palette-divider);
   padding: 2px;
   display: flex;
   flex-direction: column;
@@ -497,18 +462,18 @@ select {
   right: 6px;
   transform: translateY(-50%);
   font-size: 11px;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 .day-col {
   position: relative;
-  border-left: 1px solid var(--divider);
+  border-left: 1px solid var(--mui-palette-divider);
   min-width: 0;
 }
 .hour-line {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1px solid var(--divider);
+  border-top: 1px solid var(--mui-palette-divider);
 }
 .avail-band {
   position: absolute;
@@ -524,7 +489,7 @@ select {
   font-size: 10px;
   font-weight: 700;
   opacity: 4;
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
 }
 .timed-block {
   position: absolute;
@@ -553,7 +518,7 @@ select {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 2px solid var(--danger);
+  border-top: 2px solid var(--mui-palette-error-main);
   z-index: 2;
 }
 
@@ -646,7 +611,7 @@ select {
   padding: var(--sp-sm);
   position: sticky;
   top: 0;
-  background: var(--bg);
+  background: var(--mui-palette-background-default);
   z-index: 1;
 }
 .drawer-pad {
@@ -663,14 +628,14 @@ select {
 .drawer-section {
   margin-top: var(--sp-lg);
   padding-top: var(--sp-md);
-  border-top: 1px solid var(--divider);
+  border-top: 1px solid var(--mui-palette-divider);
 }
 .drawer-section h3 {
   margin: 0 0 var(--sp-sm);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   text-transform: uppercase;
 }
 .drawer-footer {
@@ -690,26 +655,26 @@ select {
 }
 .form-row label {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
 }
 .text-input {
   flex: 1;
   min-width: 90px;
   font: inherit;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
+  color: var(--mui-palette-text-primary);
+  background: var(--mui-palette-background-default);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-md);
   padding: 8px 10px;
 }
 .text-input:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--mui-palette-primary-main);
   outline-offset: -1px;
 }
 .linklike {
   border: 0;
   background: transparent;
-  color: var(--primary);
+  color: var(--mui-palette-primary-main);
   font-weight: 600;
   font-size: 13px;
   padding: 2px;
@@ -721,8 +686,8 @@ select {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-subtle);
-  border: 1px solid var(--border);
+  color: var(--mui-palette-text-subtle);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-pill);
   padding: 2px 9px;
   white-space: nowrap;
@@ -732,8 +697,8 @@ select {
   border-color: #b45309;
 }
 .badge.severity-absent {
-  color: var(--danger);
-  border-color: var(--danger);
+  color: var(--mui-palette-error-main);
+  border-color: var(--mui-palette-error-main);
 }
 .chip-row {
   display: flex;
@@ -743,23 +708,23 @@ select {
   margin: var(--sp-sm) 0;
 }
 .chip {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
+  border: 1px solid var(--mui-palette-border);
+  background: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
   border-radius: var(--r-pill);
   padding: 5px 12px;
   font-size: 13px;
 }
 .chip.danger {
-  color: var(--danger);
-  border-color: var(--danger);
+  color: var(--mui-palette-error-main);
+  border-color: var(--mui-palette-error-main);
   background: transparent;
 }
 .color-dot {
   width: 13px;
   height: 13px;
   border-radius: var(--r-pill);
-  border: 1px solid var(--border);
+  border: 1px solid var(--mui-palette-border);
   flex: none;
   display: inline-block;
 }
@@ -770,33 +735,33 @@ select {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   padding: var(--sp-lg) var(--sp-lg) var(--sp-sm);
 }
 .meta {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
 }
 .empty {
   text-align: center;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   margin-top: 48px;
 }
 .error-text {
-  color: var(--danger);
+  color: var(--mui-palette-error-main);
   font-size: 13px;
   margin: var(--sp-xs) 0;
 }
 .field-value {
   margin: 0 0 var(--sp-sm);
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
 }
 .card {
-  border: 1px solid var(--border);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-lg);
   padding: var(--sp-md) var(--sp-lg);
   margin: var(--sp-md) 0;
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
 }
 
 /* ---- Detail grid (kind details, contact card). ---- */
@@ -811,7 +776,7 @@ select {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 .detail-grid dd {
   margin: 0;
@@ -820,7 +785,7 @@ select {
 
 /* ---- Payload / attendees / memberships / relations. ---- */
 .payload-card {
-  border: 1px solid var(--border);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-md);
   padding: var(--sp-sm) var(--sp-md);
   margin-bottom: var(--sp-sm);
@@ -834,12 +799,12 @@ select {
   margin: var(--sp-sm) 0;
 }
 .payload-form {
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--mui-palette-border);
   border-radius: var(--r-md);
   padding: var(--sp-sm) var(--sp-md);
 }
 .json-view {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
   border-radius: var(--r-md);
   padding: var(--sp-sm) var(--sp-md);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -854,7 +819,7 @@ select {
   align-items: center;
   gap: var(--sp-sm);
   padding: 6px 0;
-  border-bottom: 1px solid var(--divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
 }
 .attendee-info {
   flex: 1;
@@ -873,8 +838,8 @@ select {
   width: 30px;
   height: 30px;
   border-radius: var(--r-pill);
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-contrastText);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -886,7 +851,7 @@ select {
   color: #16a34a;
 }
 .rsvp-declined {
-  color: var(--danger);
+  color: var(--mui-palette-error-main);
 }
 .rsvp-tentative {
   color: #b45309;
@@ -907,10 +872,10 @@ select {
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
 }
 .completeness-ring span {
-  background: var(--bg);
+  background: var(--mui-palette-background-default);
   width: 30px;
   height: 30px;
   border-radius: var(--r-pill);
@@ -926,8 +891,8 @@ select {
   margin: 4px 0 0;
   padding: var(--sp-sm) var(--sp-md);
   list-style: none;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--mui-palette-background-paper);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-md);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
   min-width: 220px;
@@ -941,14 +906,14 @@ select {
   width: 60px;
   height: 6px;
   border-radius: var(--r-pill);
-  background: var(--divider);
+  background: var(--mui-palette-divider);
   overflow: hidden;
   flex: none;
 }
 .completeness-bar span {
   display: block;
   height: 100%;
-  background: var(--primary);
+  background: var(--mui-palette-primary-main);
 }
 
 /* ---- Inbox. ---- */
@@ -960,7 +925,7 @@ select {
   align-items: center;
   gap: var(--sp-sm);
   padding: var(--sp-sm) 0;
-  border-bottom: 1px solid var(--divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
 }
 .inbox-body {
   flex: 1;
@@ -969,7 +934,7 @@ select {
   align-items: flex-start;
   border: 0;
   background: transparent;
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
   text-align: left;
   padding: 0;
 }
@@ -986,14 +951,14 @@ select {
 .contacts-tree {
   width: 240px;
   flex: none;
-  border-right: 1px solid var(--divider);
+  border-right: 1px solid var(--mui-palette-divider);
   overflow-y: auto;
   padding-bottom: var(--sp-lg);
 }
 .contacts-list-pane {
   width: 340px;
   flex: none;
-  border-right: 1px solid var(--divider);
+  border-right: 1px solid var(--mui-palette-divider);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -1014,7 +979,7 @@ select {
   width: 100%;
   border: 0;
   background: transparent;
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
   font: inherit;
   font-size: 14px;
   text-align: left;
@@ -1022,10 +987,10 @@ select {
   cursor: pointer;
 }
 .tree-node:hover {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
 }
 .tree-node.active {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
   font-weight: 600;
 }
 .tree-node.tree-group {
@@ -1033,14 +998,14 @@ select {
 }
 /* The signed-in user's own contact, pinned at the very top. */
 .tree-node.you-node {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--mui-palette-border);
   margin-bottom: var(--sp-xs);
   font-weight: 600;
 }
 .tree-caret {
   width: 14px;
   flex: none;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   font-size: 10px;
 }
 .tree-label {
@@ -1052,7 +1017,7 @@ select {
 .tree-count {
   flex: none;
   font-size: 12px;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   font-variant-numeric: tabular-nums;
 }
 .tree-add {
@@ -1070,7 +1035,7 @@ select {
   padding: var(--sp-md) 0;
   position: sticky;
   top: 0;
-  background: var(--bg);
+  background: var(--mui-palette-background-default);
   z-index: 1;
 }
 
@@ -1083,14 +1048,14 @@ select {
   align-items: center;
   gap: var(--sp-md);
   padding: 10px 0;
-  border-bottom: 1px solid var(--divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
   text-decoration: none;
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
   overflow: hidden;
 }
 .contact-row:hover,
 .contact-row.active {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
 }
 .contact-name {
   flex: 1;
@@ -1108,7 +1073,7 @@ select {
   font-size: 14px;
   line-height: 1;
   cursor: pointer;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   opacity: 0.2;
   transition: opacity 0.12s, color 0.12s;
 }
@@ -1116,7 +1081,7 @@ select {
   opacity: 0.7;
 }
 .pin-btn.pinned {
-  color: var(--primary);
+  color: var(--mui-palette-primary-main);
   opacity: 1;
 }
 .contact-section-head {
@@ -1124,14 +1089,14 @@ select {
   text-align: left;
   background: none;
   border: none;
-  border-top: 1px solid var(--divider);
+  border-top: 1px solid var(--mui-palette-divider);
   margin-top: var(--sp-md);
   padding: 8px 0;
   cursor: pointer;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 
 /* ---- Containers table. ---- */
@@ -1145,13 +1110,13 @@ select {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   padding: 6px 8px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--mui-palette-border);
 }
 .containers-table td {
   padding: 8px;
-  border-bottom: 1px solid var(--divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
 }
 .share-panel {
   display: flex;
@@ -1159,7 +1124,7 @@ select {
   flex-wrap: wrap;
   gap: var(--sp-sm);
   padding: var(--sp-sm);
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
   border-radius: var(--r-md);
 }
 .modal-head {
@@ -1168,7 +1133,7 @@ select {
   padding: var(--sp-sm) var(--sp-sm) 0;
   position: sticky;
   top: 0;
-  background: var(--bg);
+  background: var(--mui-palette-background-default);
 }
 .modal-body {
   padding: 0 var(--sp-lg) calc(var(--sp-xl) + env(safe-area-inset-bottom));
@@ -1200,16 +1165,16 @@ select {
   padding: 8px var(--sp-sm);
   border: none;
   background: none;
-  border-bottom: 1px solid var(--divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
   text-align: left;
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
   cursor: pointer;
   font: inherit;
   border-radius: var(--r-sm);
 }
 .location-row:hover,
 .location-row.active {
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
 }
 .location-row .location-name {
   flex: 1;
@@ -1229,13 +1194,13 @@ select {
   font-size: 13px;
 }
 .loc-breadcrumb .sep {
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 .loc-role {
   flex-shrink: 0;
   font-size: 11px;
-  color: var(--text-muted);
-  border: 1px solid var(--border);
+  color: var(--mui-palette-text-secondary);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-pill);
   padding: 1px 8px;
 }
@@ -1263,9 +1228,9 @@ select {
   min-height: 300px;
   max-height: 85vh;
   resize: vertical;
-  border: 1px solid var(--border);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-md);
-  background: var(--surface);
+  background: var(--mui-palette-background-paper);
   margin: var(--sp-sm) 0 var(--sp-md);
   overflow: hidden;
 }
@@ -1285,8 +1250,8 @@ select {
   padding: 5px 11px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text);
-  background: var(--bg);
+  color: var(--mui-palette-text-primary);
+  background: var(--mui-palette-background-default);
   border: 2px solid var(--cat-other);
   border-radius: var(--r-pill);
   cursor: pointer;
@@ -1296,16 +1261,16 @@ select {
 .rel-node.cat-Professional { border-color: var(--cat-professional); }
 .rel-node.cat-Emergency { border-color: var(--cat-emergency); }
 .rel-node.center {
-  background: var(--primary);
-  color: var(--on-primary);
-  border-color: var(--primary);
+  background: var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-contrastText);
+  border-color: var(--mui-palette-primary-main);
   font-weight: 700;
 }
 .rel-node.hit {
-  box-shadow: 0 0 0 2px var(--primary);
+  box-shadow: 0 0 0 2px var(--mui-palette-primary-main);
 }
 .rel-node.selected {
-  box-shadow: 0 0 0 3px var(--primary);
+  box-shadow: 0 0 0 3px var(--mui-palette-primary-main);
 }
 .rel-node.dimmed {
   opacity: 0.25;
@@ -1338,7 +1303,7 @@ select {
 .rel-edge.cat-Social .react-flow__edge-path { stroke: var(--cat-social); }
 .rel-edge.cat-Professional .react-flow__edge-path { stroke: var(--cat-professional); }
 .rel-edge.cat-Emergency .react-flow__edge-path { stroke: var(--cat-emergency); }
-.rel-edge .react-flow__edge-text { font-size: 10px; fill: var(--text-muted); }
+.rel-edge .react-flow__edge-text { font-size: 10px; fill: var(--mui-palette-text-secondary); }
 .rel-edge.inferred .react-flow__edge-path { stroke-dasharray: 5 4; opacity: 0.75; }
 
 .badge.cat-Family { color: var(--cat-family); border-color: var(--cat-family); }
@@ -1349,10 +1314,10 @@ select {
 
 .relation-row.incoming { opacity: 0.65; }
 .relation-row.inferred { opacity: 0.75; font-style: italic; }
-.relation-row.ended { opacity: 0.6; text-decoration: line-through; text-decoration-color: var(--text-subtle); }
+.relation-row.ended { opacity: 0.6; text-decoration: line-through; text-decoration-color: var(--mui-palette-text-subtle); }
 .relation-row.selected {
-  box-shadow: inset 3px 0 0 var(--primary);
-  background: var(--surface);
+  box-shadow: inset 3px 0 0 var(--mui-palette-primary-main);
+  background: var(--mui-palette-background-paper);
 }
 
 /* Relation toolbar: search + category filter chips (chips double as the legend). */
@@ -1377,22 +1342,22 @@ select {
   padding: 6px 0;
   margin-top: var(--sp-sm);
   border: 0;
-  border-bottom: 1px solid var(--divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
   background: none;
   cursor: pointer;
   font: inherit;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   text-align: left;
 }
 .relation-section-head .count {
   font-weight: 400;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 .relation-section-head .caret {
   margin-left: auto;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 
 /* Detail-pane header actions + footer, inline contact edit form, address-book management. */
@@ -1418,7 +1383,7 @@ select {
 }
 .edit-field > label {
   font-size: 12px;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
 }
 .edit-actions {
   display: flex;
@@ -1437,7 +1402,7 @@ select {
 }
 .tree-manage {
   flex: none;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   font-size: 12px;
   cursor: pointer;
 }
@@ -1446,7 +1411,7 @@ select {
   flex-direction: column;
   gap: var(--sp-sm);
   padding: var(--sp-sm) calc(var(--sp-lg) + 20px) var(--sp-md);
-  border-left: 2px solid var(--border);
+  border-left: 2px solid var(--mui-palette-border);
   margin-left: var(--sp-lg);
 }
 .legend-dot.cat-Family { background: var(--cat-family); }
@@ -1464,10 +1429,10 @@ select {
 }
 .month-cell.compact-cell {
   border: 0;
-  border-right: 1px solid var(--divider);
-  border-bottom: 1px solid var(--divider);
+  border-right: 1px solid var(--mui-palette-divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
   background: transparent;
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
   font: inherit;
   align-items: center;
   gap: 4px;
@@ -1494,7 +1459,7 @@ select {
 }
 .dot-more {
   font-size: 10px;
-  color: var(--text-subtle);
+  color: var(--mui-palette-text-subtle);
   line-height: 1;
 }
 
@@ -1510,8 +1475,8 @@ select {
   align-items: center;
   min-height: 44px;
   padding: 0 var(--sp-sm);
-  background: var(--bg);
-  border-bottom: 1px solid var(--divider);
+  background: var(--mui-palette-background-default);
+  border-bottom: 1px solid var(--mui-palette-divider);
   flex: none;
 }
 .pane-back .linklike {
@@ -1646,13 +1611,13 @@ select {
 /* ---- Items hierarchy (nesting, drill-down). ---- */
 .item-child {
   margin-left: 26px;
-  border-left: 2px solid var(--divider);
+  border-left: 2px solid var(--mui-palette-divider);
   padding-left: var(--sp-sm);
 }
 .items-caret {
   border: 0;
   background: none;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   cursor: pointer;
   font: inherit;
   padding: 0 2px;
@@ -1662,9 +1627,9 @@ select {
 .items-parent-chip {
   font-size: 11px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   background: none;
-  border: 1px solid var(--border);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-pill);
   padding: 1px 8px;
   cursor: pointer;
@@ -1673,8 +1638,8 @@ select {
 }
 .items-subcount:hover,
 .items-parent-chip:hover {
-  color: var(--text);
-  border-color: var(--text-subtle);
+  color: var(--mui-palette-text-primary);
+  border-color: var(--mui-palette-text-subtle);
 }
 .items-drill-chip {
   display: inline-flex;
@@ -1682,8 +1647,8 @@ select {
   gap: 4px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text);
-  border: 1px solid var(--border);
+  color: var(--mui-palette-text-primary);
+  border: 1px solid var(--mui-palette-border);
   border-radius: var(--r-pill);
   padding: 3px 10px;
   white-space: nowrap;
@@ -1691,7 +1656,7 @@ select {
 .items-drill-chip button {
   border: 0;
   background: none;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   cursor: pointer;
   font: inherit;
   padding: 0 0 0 2px;
@@ -1721,10 +1686,10 @@ select {
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--mui-palette-background-paper);
+  border: 1px solid var(--mui-palette-border);
   border-radius: 8px;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   font-size: 13px;
   padding: 4px 12px;
 }
@@ -1751,7 +1716,7 @@ select {
 }
 .map-search .text-input {
   width: 100%;
-  background: var(--bg);
+  background: var(--mui-palette-background-default);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 .map-timebar,
@@ -1760,8 +1725,8 @@ select {
   flex-wrap: wrap;
   gap: var(--sp-xs);
   align-items: center;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--mui-palette-background-default);
+  border: 1px solid var(--mui-palette-border);
   border-radius: 10px;
   padding: var(--sp-xs) var(--sp-sm);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
@@ -1774,7 +1739,7 @@ select {
   display: inline-flex;
   gap: var(--sp-sm);
   margin-left: var(--sp-xs);
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   font-size: 12px;
 }
 .map-legend-item {
@@ -1792,8 +1757,8 @@ select {
   position: absolute;
   z-index: 7;
   transform: translate(-50%, calc(-100% - 12px));
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--mui-palette-background-default);
+  border: 1px solid var(--mui-palette-border);
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   padding: var(--sp-sm) var(--sp-md);
@@ -1810,7 +1775,7 @@ select {
   right: 8px;
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   cursor: pointer;
   font-size: 16px;
   line-height: 1;
@@ -1824,8 +1789,8 @@ select {
   bottom: var(--sp-md);
   width: min(360px, calc(100vw - 2 * var(--sp-md)));
   overflow-y: auto;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--mui-palette-background-default);
+  border: 1px solid var(--mui-palette-border);
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   padding: var(--sp-md);
@@ -1838,15 +1803,15 @@ select {
   bottom: var(--sp-md);
   width: min(280px, calc(100vw - 2 * var(--sp-md)));
   overflow-y: auto;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--mui-palette-background-default);
+  border: 1px solid var(--mui-palette-border);
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   padding: var(--sp-sm) var(--sp-md) var(--sp-md);
 }
 .map-index h4 {
   margin: var(--sp-md) 0 var(--sp-xs);
-  color: var(--text-muted);
+  color: var(--mui-palette-text-secondary);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1885,7 +1850,7 @@ select {
   }
   .maplibregl-ctrl-attrib {
     background: rgba(26, 26, 25, 0.7) !important;
-    color: var(--text-muted);
+    color: var(--mui-palette-text-secondary);
   }
 }
 
