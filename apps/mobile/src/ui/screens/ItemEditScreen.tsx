@@ -4,13 +4,12 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { List, Switch } from 'react-native-paper';
+import { List, Switch, useTheme } from 'react-native-paper';
 import type { ItemForm } from '../../domain/editors';
 import { categoryAllDayDefault, emptyItemForm, itemCoreFromForm, itemFormFromDoc } from '../../domain/editors';
 import { createItem, reviseItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { ChoiceChips, DateField, Field, TimeField, formStyles } from '../components/form';
-import { ACCENT } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
 
@@ -19,6 +18,7 @@ const CATEGORY_OPTIONS = ['General', 'Meeting', 'Appointment', 'Meal', 'Occasion
   .map((c) => ({ value: c, label: c }));
 
 export function ItemEditScreen() {
+  const theme = useTheme();
   const route = useRoute<RouteProp<RootStackParamList, 'ItemEdit'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const itemId = route.params?.itemId;
@@ -109,7 +109,7 @@ export function ItemEditScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Pressable onPress={saveAndLeave} hitSlop={8}>
-          <Text style={[styles.headerSave, !dirty && styles.headerSaveIdle]}>Save</Text>
+          <Text style={[styles.headerSave, { color: theme.colors.primary }, !dirty && styles.headerSaveIdle]}>Save</Text>
         </Pressable>
       ),
     });
@@ -118,7 +118,7 @@ export function ItemEditScreen() {
   if (itemId && !seeded) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.muted}>Loading…</Text>
+        <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Loading…</Text>
       </View>
     );
   }
@@ -139,10 +139,10 @@ export function ItemEditScreen() {
         <ChoiceChips options={CATEGORY_OPTIONS} value={form.category} onChange={pickCategory} />
       </Field>
       <Field label="Title">
-        <TextInput style={formStyles.input} value={form.title} onChangeText={(v) => set('title', v)} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.title} onChangeText={(v) => set('title', v)} />
       </Field>
       <Field label="Description">
-        <TextInput style={formStyles.multiline} multiline value={form.description} onChangeText={(v) => set('description', v)} />
+        <TextInput style={[formStyles.multiline, { borderColor: theme.colors.outline }]} multiline value={form.description} onChangeText={(v) => set('description', v)} />
       </Field>
 
       <List.Item
@@ -184,24 +184,24 @@ export function ItemEditScreen() {
           required
         />
         <TextInput
-          style={formStyles.input}
+          style={[formStyles.input, { borderColor: theme.colors.outline }]}
           placeholder="or a raw rule: FREQ=WEEKLY;BYDAY=MO"
           autoCapitalize="characters"
           autoCorrect={false}
           value={form.recurrenceRule}
           onChangeText={(v) => set('recurrenceRule', v)}
         />
-        {!!form.recurrenceRule && <Text style={styles.muted}>{describeRrule(form.recurrenceRule)}</Text>}
+        {!!form.recurrenceRule && <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>{describeRrule(form.recurrenceRule)}</Text>}
       </Field>
 
       <Field label="Status">
         <ChoiceChips options={STATUS_OPTIONS} value={form.status} onChange={(v) => set('status', v)} />
       </Field>
       <Field label="Tags (comma-separated)">
-        <TextInput style={formStyles.input} autoCapitalize="none" value={form.tagsCsv} onChangeText={(v) => set('tagsCsv', v)} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} autoCapitalize="none" value={form.tagsCsv} onChangeText={(v) => set('tagsCsv', v)} />
       </Field>
 
-      {error && <Text style={formStyles.error}>{error}</Text>}
+      {error && <Text style={[formStyles.error, { color: theme.colors.error }]}>{error}</Text>}
     </ScrollView>
   );
 }
@@ -209,9 +209,9 @@ export function ItemEditScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 48 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  muted: { color: '#888', fontSize: 13 },
+  muted: { fontSize: 13 },
   pair: { flexDirection: 'row', gap: 8 },
   pairItem: { flex: 1 },
-  headerSave: { color: ACCENT, fontSize: 16, fontWeight: '600', paddingRight: 4 },
+  headerSave: { fontSize: 16, fontWeight: '600', paddingRight: 4 },
   headerSaveIdle: { opacity: 0.45 },
 });

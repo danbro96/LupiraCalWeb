@@ -3,6 +3,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { createItem } from '../../state/actions';
 import { useCalendars } from '../../state/queries';
 import { Button, ChoiceChips, DateField, Field } from '../components/form';
@@ -15,6 +16,7 @@ const STATUS_OPTIONS = Object.keys(AVAILABILITY_COLORS).map((s) => ({ value: s, 
 /// the Availability-kind calendar (title = status, all-day, presence status on the create); the grids
 /// render them as the background band. Editing = delete + re-add (entries are cheap).
 export function AvailabilityEditScreen() {
+  const theme = useTheme();
   const route = useRoute<RouteProp<RootStackParamList, 'AvailabilityEdit'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { data: calendars } = useCalendars();
@@ -54,10 +56,10 @@ export function AvailabilityEditScreen() {
       <Field label="Until (exclusive, optional)">
         <DateField value={endDay} onChange={setEndDay} />
       </Field>
-      <Text style={styles.muted}>
+      <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>
         Shows as a colored band in the calendar. To change a day, delete the entry from its day list and add a new one.
       </Text>
-      {error && <Text style={styles.error}>{error}</Text>}
+      {error && <Text style={[styles.error, { color: theme.colors.error }]}>{error}</Text>}
       <View style={styles.buttons}>
         <Button title="Save" onPress={save} />
         <Button title="Cancel" kind="plain" onPress={() => navigation.goBack()} />
@@ -68,7 +70,7 @@ export function AvailabilityEditScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: 16 },
-  muted: { color: '#888', fontSize: 13, marginTop: 12 },
-  error: { color: '#b91c1c', marginTop: 8 },
+  muted: { fontSize: 13, marginTop: 12 },
+  error: { marginTop: 8 },
   buttons: { flexDirection: 'row', gap: 10, marginTop: 20 },
 });

@@ -2,6 +2,7 @@ import { clampToDay, layoutColumns } from '@lupira/cal-domain/occurrences';
 import { daysFrom, isToday, ymd } from '@lupira/cal-domain/time';
 import { memo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import type { GridRow } from '../../data/mirror';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
@@ -21,6 +22,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
 }) {
   // First tap on an empty lane drops a ＋ chip on that hour; tapping the chip opens the prefilled editor.
   // Slot granularity is 30 min; the ＋ chip covers the tapped half hour (prefill length stays 1h).
+  const theme = useTheme();
   const [pendingSlot, setPendingSlot] = useState<{ day: string; slot: number } | null>(null);
   const days = daysFrom(weekStart, 7);
   const dayKeys = days.map(ymd);
@@ -52,11 +54,11 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
 
   return (
     <View style={styles.root}>
-      <View style={styles.headerRow}>
+      <View style={[styles.headerRow, { borderColor: theme.colors.outlineVariant }]}>
         <View style={styles.gutter} />
         {days.map((d) => (
           <View key={ymd(d)} style={styles.dayHeader}>
-            <Text style={[styles.dayHeaderText, isToday(d) && styles.today]}>
+            <Text style={[styles.dayHeaderText, { color: isToday(d) ? theme.colors.primary : theme.colors.onSurfaceVariant }, isToday(d) && styles.today]}>
               {d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)} {d.getDate()}
             </Text>
           </View>
@@ -64,7 +66,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
       </View>
 
       {hasAllDay && (
-        <View style={styles.allDayRow}>
+        <View style={[styles.allDayRow, { borderColor: theme.colors.outlineVariant }]}>
           <View style={styles.gutter} />
           {days.map((d) => (
             <View key={ymd(d)} style={styles.allDayCell}>
@@ -74,13 +76,17 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
                   style={[
                     styles.allDayChip,
                     isTaskRow(r)
-                      ? [styles.taskChip, r.task.overdue && styles.taskChipOverdue]
+                      ? [
+                          styles.taskChip,
+                          { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
+                          r.task.overdue && { borderColor: theme.colors.error, backgroundColor: theme.colors.error + '22' },
+                        ]
                       : { backgroundColor: rowColor(r) },
                   ]}
                   onPress={() => onPressOccurrence(r)}
                 >
                   <Text
-                    style={[styles.chipText, isTaskRow(r) && (r.task.overdue ? styles.taskChipTextOverdue : styles.taskChipText)]}
+                    style={[styles.chipText, isTaskRow(r) && { color: r.task.overdue ? theme.colors.error : theme.colors.onSurfaceVariant }]}
                     numberOfLines={1}
                   >
                     {isTaskRow(r) ? `⏰ ${r.title ?? ''}` : r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)')}
@@ -96,7 +102,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
         <View style={styles.lanes}>
           <View style={styles.gutter}>
             {Array.from({ length: 24 }, (_, h) => (
-              <Text key={h} style={[styles.hourLabel, { top: h * HOUR_H - 6 }]}>
+              <Text key={h} style={[styles.hourLabel, { top: h * HOUR_H - 6, color: theme.colors.onSurfaceVariant }]}>
                 {String(h).padStart(2, '0')}
               </Text>
             ))}
@@ -113,24 +119,38 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
             return (
               <Pressable
                 key={dayKey}
-                style={[styles.dayColumn, availByDay.has(dayKey) && { backgroundColor: `${availabilityColor(availByDay.get(dayKey) ?? null)}14` }]}
+                style={[
+                  styles.dayColumn,
+                  { borderColor: theme.colors.outlineVariant },
+                  availByDay.has(dayKey) && { backgroundColor: `${availabilityColor(availByDay.get(dayKey) ?? null)}14` },
+                ]}
                 onPress={(e) => {
                   const slot = Math.max(0, Math.min(47, Math.floor(e.nativeEvent.locationY / (HOUR_H / 2))));
                   setPendingSlot((cur) => (cur && cur.day === dayKey && cur.slot === slot ? null : { day: dayKey, slot }));
                 }}
               >
                 {Array.from({ length: 48 }, (_, i) => (
-                  <View key={i} style={[i % 2 ? styles.halfLine : styles.hourLine, { top: (i * HOUR_H) / 2 }]} />
+                  <View
+                    key={i}
+                    style={[
+                      i % 2 ? styles.halfLine : styles.hourLine,
+                      { top: (i * HOUR_H) / 2, backgroundColor: i % 2 ? theme.colors.surface : theme.colors.outlineVariant },
+                    ]}
+                  />
                 ))}
                 {pendingSlot?.day === dayKey && (
                   <Pressable
-                    style={[styles.slotChip, { top: pendingSlot.slot * (HOUR_H / 2) + 1 }]}
+                    style={[styles.slotChip, {
+                      top: pendingSlot.slot * (HOUR_H / 2) + 1,
+                      borderColor: theme.colors.primary,
+                      backgroundColor: theme.colors.primary + '22',
+                    }]}
                     onPress={() => {
                       onCreateSlot(dayKey, slotTime(pendingSlot.slot));
                       setPendingSlot(null);
                     }}
                   >
-                    <Text style={styles.slotChipText}>＋ {slotTime(pendingSlot.slot)}</Text>
+                    <Text style={[styles.slotChipText, { color: theme.colors.primary }]}>＋ {slotTime(pendingSlot.slot)}</Text>
                   </Pressable>
                 )}
                 {placed.map((p) => (
@@ -159,26 +179,23 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  headerRow: { flexDirection: 'row', borderBottomWidth: 0.5, borderColor: '#e4e4e8' },
+  headerRow: { flexDirection: 'row', borderBottomWidth: 0.5 },
   gutter: { width: 34 },
   dayHeader: { flex: 1, alignItems: 'center', paddingVertical: 4 },
-  dayHeaderText: { fontSize: 12, color: '#555' },
-  today: { color: '#4457c2', fontWeight: '700' },
-  allDayRow: { flexDirection: 'row', borderBottomWidth: 0.5, borderColor: '#e4e4e8', paddingVertical: 1 },
+  dayHeaderText: { fontSize: 12 },
+  today: { fontWeight: '700' },
+  allDayRow: { flexDirection: 'row', borderBottomWidth: 0.5, paddingVertical: 1 },
   allDayCell: { flex: 1, gap: 1, paddingHorizontal: 0.5 },
   allDayChip: { borderRadius: 3, paddingHorizontal: 2, paddingVertical: 1 },
   chipText: { fontSize: 9, color: '#fff' },
   // Deadlines read as outlines with dark text, distinct from the white-on-color calendar chips.
-  taskChip: { backgroundColor: '#f1f1f4', borderWidth: 0.5, borderColor: '#c8c8d0' },
-  taskChipOverdue: { borderColor: '#dc2626', backgroundColor: '#fdf0ef' },
-  taskChipText: { color: '#555' },
-  taskChipTextOverdue: { color: '#dc2626' },
+  taskChip: { borderWidth: 0.5 },
   lanes: { flexDirection: 'row', height: 24 * HOUR_H },
-  hourLabel: { position: 'absolute', right: 4, fontSize: 9, color: '#999' },
-  dayColumn: { flex: 1, borderLeftWidth: 0.5, borderColor: '#ececf0' },
-  hourLine: { position: 'absolute', left: 0, right: 0, height: 0.5, backgroundColor: '#ececf0' },
-  halfLine: { position: 'absolute', left: 0, right: 0, height: 0.5, backgroundColor: '#f5f5f8' },
+  hourLabel: { position: 'absolute', right: 4, fontSize: 9 },
+  dayColumn: { flex: 1, borderLeftWidth: 0.5 },
+  hourLine: { position: 'absolute', left: 0, right: 0, height: 0.5 },
+  halfLine: { position: 'absolute', left: 0, right: 0, height: 0.5 },
   event: { position: 'absolute', borderRadius: 4, padding: 2, borderWidth: 0.5, borderColor: '#ffffff88' },
-  slotChip: { position: 'absolute', left: 2, right: 2, height: HOUR_H / 2 - 2, borderRadius: 6, borderWidth: 1.5, borderColor: '#4457c2', borderStyle: 'dashed', backgroundColor: '#eef0fbee', alignItems: 'center', justifyContent: 'center' },
-  slotChipText: { color: '#4457c2', fontWeight: '600', fontSize: 13 },
+  slotChip: { position: 'absolute', left: 2, right: 2, height: HOUR_H / 2 - 2, borderRadius: 6, borderWidth: 1.5, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  slotChipText: { fontWeight: '600', fontSize: 13 },
 });

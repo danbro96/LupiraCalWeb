@@ -113,10 +113,10 @@ export function Button({ title, onPress, kind = 'primary', disabled = false }: {
 }
 
 export const formStyles = StyleSheet.create({
-  input: { borderWidth: 1, borderColor: '#bbb', borderRadius: 6, padding: 8, fontSize: 15 },
-  multiline: { borderWidth: 1, borderColor: '#bbb', borderRadius: 6, padding: 8, fontSize: 15, minHeight: 72, textAlignVertical: 'top' },
-  error: { color: '#b91c1c' },
-  section: { fontSize: 13, fontWeight: '700', color: '#888', textTransform: 'uppercase', marginTop: 16 },
+  input: { borderWidth: 1, borderRadius: 6, padding: 8, fontSize: 15 },
+  multiline: { borderWidth: 1, borderRadius: 6, padding: 8, fontSize: 15, minHeight: 72, textAlignVertical: 'top' },
+  error: {},
+  section: { fontSize: 13, fontWeight: '700', textTransform: 'uppercase', marginTop: 16 },
 });
 
 const styles = StyleSheet.create({

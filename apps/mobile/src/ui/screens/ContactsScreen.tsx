@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { Avatar, FAB } from 'react-native-paper';
+import { Avatar, FAB, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ContactListRow } from '../../data/mirror';
 import { useContactList } from '../../state/queries';
@@ -12,6 +12,7 @@ import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 
 export function ContactsScreen() {
+  const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { data } = useContactList();
   const [query, setQuery] = useState('');
@@ -24,11 +25,11 @@ export function ContactsScreen() {
     || (r.doc.tags ?? []).some((t) => t.toLowerCase().includes(q)));
 
   return (
-    <SafeAreaView style={styles.root} edges={['top']}>
+    <SafeAreaView style={[styles.root, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <SyncBanner />
       <View style={styles.toolbar}>
         <TextInput
-          style={styles.search}
+          style={[styles.search, { borderColor: theme.colors.outline }]}
           placeholder="Search contacts"
           autoCapitalize="none"
           value={query}
@@ -39,7 +40,11 @@ export function ContactsScreen() {
       <FlatList
         data={rows}
         keyExtractor={(r) => r.id}
-        ListEmptyComponent={<Text style={styles.empty}>{data?.length ? 'No matches' : 'No contacts in the mirror yet'}</Text>}
+        ListEmptyComponent={
+          <Text style={[styles.empty, { color: theme.colors.onSurfaceVariant }]}>
+            {data?.length ? 'No matches' : 'No contacts in the mirror yet'}
+          </Text>
+        }
         renderItem={({ item }) => (
           <ContactRow row={item} onPress={() => navigation.navigate('ContactDetail', { contactId: item.id })} />
         )}
@@ -49,13 +54,14 @@ export function ContactsScreen() {
 }
 
 function ContactRow({ row, onPress }: { row: ContactListRow; onPress: () => void }) {
+  const theme = useTheme();
   const firstChannel = (row.doc.channels ?? []).find((c) => c.preferred) ?? (row.doc.channels ?? [])[0];
   return (
     <Pressable style={styles.row} onPress={onPress}>
       <Avatar.Text size={38} label={initialsOf(row.displayName)} style={{ backgroundColor: hashColor(row.id) }} />
       <View style={styles.rowBody}>
         <Text style={styles.name}>{row.displayName}</Text>
-        {firstChannel && <Text style={styles.sub} numberOfLines={1}>{firstChannel.value}</Text>}
+        {firstChannel && <Text style={[styles.sub, { color: theme.colors.onSurfaceVariant }]} numberOfLines={1}>{firstChannel.value}</Text>}
       </View>
       {row.doc.birthday && <Text style={styles.bday}>🎂 {partialDateBadge(row.doc.birthday)}</Text>}
     </Pressable>
@@ -69,13 +75,13 @@ export function initialsOf(name: string): string {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#fff' },
+  root: { flex: 1 },
   toolbar: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10 },
-  search: { flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 18, paddingHorizontal: 14, paddingVertical: 6, fontSize: 14 },
-  empty: { textAlign: 'center', color: '#999', marginTop: 32 },
+  search: { flex: 1, borderWidth: 1, borderRadius: 18, paddingHorizontal: 14, paddingVertical: 6, fontSize: 14 },
+  empty: { textAlign: 'center', marginTop: 32 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 8 },
   rowBody: { flex: 1 },
   name: { fontSize: 15 },
-  sub: { fontSize: 12, color: '#888' },
+  sub: { fontSize: 12 },
   bday: { fontSize: 12, color: '#b45309' },
 });

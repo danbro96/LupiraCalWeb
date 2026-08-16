@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { PermissionsAndroid, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import type { BridgeState, ContactsSampleRow } from '../../../modules/lupira-bridge/src';
 import { LupiraBridge } from '../../../modules/lupira-bridge/src';
 import { getDb } from '../../data/db/expoDb';
@@ -11,6 +12,7 @@ import { Button, formStyles } from '../components/form';
 /// Manual halves of the automated bridge flows, for diagnosis and repair: capture/publish (Kotlin),
 /// inbox drain (JS→outbox), the OS scheduler, and account lifecycle. Reached via Settings → Developer.
 export function BridgeDiagnosticsScreen() {
+  const theme = useTheme();
   const confirm = useConfirm();
   const [state, setState] = useState<BridgeState | null>(null);
   const [inboxCount, setInboxCount] = useState<number | null>(null);
@@ -57,14 +59,14 @@ export function BridgeDiagnosticsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={formStyles.section}>State</Text>
-      <Text style={styles.mono}>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>State</Text>
+      <Text style={[styles.mono, { color: theme.colors.onSurface }]}>
         account: {state ? String(state.accountPresent) : '…'}   calendarId: {state?.calendarId ?? '—'}{'\n'}
         last OS sync: {state?.lastSyncAt ? new Date(state.lastSyncAt).toLocaleString() : 'never'}{'\n'}
         inbox rows: {inboxCount ?? '…'}
       </Text>
 
-      <Text style={formStyles.section}>Actions</Text>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Actions</Text>
       <View style={styles.buttons}>
         <Button title="Request permissions" onPress={() => void requestPermissions()} />
         <Button title="Ensure account" onPress={run('ensureAccount', () => LupiraBridge.ensureAccount())} />
@@ -97,17 +99,17 @@ export function BridgeDiagnosticsScreen() {
 
       {contacts && (
         <>
-          <Text style={formStyles.section}>Raw contacts ({contacts.total})</Text>
+          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Raw contacts ({contacts.total})</Text>
           {contacts.rows.map((r) => (
-            <Text key={r.id} style={styles.mono}>
+            <Text key={r.id} style={[styles.mono, { color: theme.colors.onSurface }]}>
               {r.displayName ?? '(no name)'} · {r.accountType ?? 'local'} · src={r.sourceId ?? '—'} · dirty={r.dirty} del={r.deleted}
             </Text>
           ))}
         </>
       )}
 
-      <Text style={formStyles.section}>Log</Text>
-      {log.map((l, i) => <Text key={i} style={styles.mono}>{l}</Text>)}
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Log</Text>
+      {log.map((l, i) => <Text key={i} style={[styles.mono, { color: theme.colors.onSurface }]}>{l}</Text>)}
     </ScrollView>
   );
 }
@@ -115,5 +117,5 @@ export function BridgeDiagnosticsScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 6 },
   buttons: { gap: 8 },
-  mono: { fontFamily: 'monospace', fontSize: 12, color: '#444' },
+  mono: { fontFamily: 'monospace', fontSize: 12 },
 });

@@ -1,6 +1,7 @@
 import { isToday, monthMatrix, ymd } from '@lupira/cal-domain/time';
 import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
@@ -12,6 +13,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
   selectedDay: string | null;
   onSelectDay: (day: string) => void;
 }) {
+  const theme = useTheme();
   const weeks = monthMatrix(anchor);
   const dayKeys = weeks.flat().map(ymd);
   const { rows } = useDaysOccurrences(dayKeys);
@@ -35,7 +37,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
     <View style={styles.grid}>
       <View style={styles.weekdayRow}>
         {weeks[0].map((d) => (
-          <Text key={ymd(d)} style={styles.weekday}>
+          <Text key={ymd(d)} style={[styles.weekday, { color: theme.colors.onSurfaceVariant }]}>
             {d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)}
           </Text>
         ))}
@@ -48,20 +50,37 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
             const inMonth = d.getMonth() === anchor.getMonth();
             const selected = key === selectedDay;
             return (
-              <Pressable key={key} style={[styles.cell, selected && styles.cellSelected]} onPress={() => onSelectDay(key)}>
+              <Pressable
+                key={key}
+                style={[styles.cell, { borderColor: theme.colors.outlineVariant }, selected && [styles.cellSelected, { borderColor: theme.colors.primary }]]}
+                onPress={() => onSelectDay(key)}
+              >
                 {availByDay.has(key) && (
                   <View style={[styles.availStrip, { backgroundColor: availabilityColor(availByDay.get(key) ?? null) }]} />
                 )}
-                <Text style={[styles.dayNum, !inMonth && styles.dayNumDim, isToday(d) && styles.dayNumToday]}>
+                <Text
+                  style={[
+                    styles.dayNum,
+                    { color: isToday(d) ? theme.colors.primary : inMonth ? theme.colors.onSurface : theme.colors.onSurfaceVariant },
+                    isToday(d) && styles.dayNumToday,
+                  ]}
+                >
                   {d.getDate()}
                 </Text>
                 {dayRows.slice(0, 3).map((r) =>
                   isTaskRow(r) ? (
                     <View
                       key={`${r.source}-${r.source_id}-${r.start_utc}`}
-                      style={[styles.taskBar, r.task.overdue && styles.taskBarOverdue]}
+                      style={[
+                        styles.taskBar,
+                        { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
+                        r.task.overdue && { borderColor: theme.colors.error, backgroundColor: theme.colors.error + '22' },
+                      ]}
                     >
-                      <Text style={[styles.taskBarText, r.task.overdue && styles.taskBarTextOverdue]} numberOfLines={1}>
+                      <Text
+                        style={[styles.taskBarText, { color: r.task.overdue ? theme.colors.error : theme.colors.onSurfaceVariant }]}
+                        numberOfLines={1}
+                      >
                         ⏰ {r.title ?? '(untitled)'}
                       </Text>
                     </View>
@@ -76,7 +95,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
                     </View>
                   ),
                 )}
-                {dayRows.length > 3 && <Text style={styles.more}>+{dayRows.length - 3}</Text>}
+                {dayRows.length > 3 && <Text style={[styles.more, { color: theme.colors.onSurfaceVariant }]}>+{dayRows.length - 3}</Text>}
               </Pressable>
             );
           })}
@@ -92,19 +111,16 @@ const styles = StyleSheet.create({
   grid: { paddingHorizontal: 2, flex: 1 },
   weekRow: { flexDirection: 'row', flex: 1 },
   weekdayRow: { flexDirection: 'row' },
-  weekday: { flex: 1, textAlign: 'center', fontSize: 11, color: '#888', paddingVertical: 2 },
-  cell: { flex: 1, minHeight: 56, borderWidth: 0.5, borderColor: '#e4e4e8', padding: 1, gap: 1, overflow: 'hidden' },
-  cellSelected: { borderColor: '#4457c2', borderWidth: 1.5 },
+  weekday: { flex: 1, textAlign: 'center', fontSize: 11, paddingVertical: 2 },
+  cell: { flex: 1, minHeight: 56, borderWidth: 0.5, padding: 1, gap: 1, overflow: 'hidden' },
+  cellSelected: { borderWidth: 1.5 },
   availStrip: { height: 3, borderRadius: 2, marginBottom: 1 },
-  dayNum: { fontSize: 11, color: '#333', paddingLeft: 2 },
-  dayNumDim: { color: '#bbb' },
-  dayNumToday: { color: '#4457c2', fontWeight: '700' },
+  dayNum: { fontSize: 11, paddingLeft: 2 },
+  dayNumToday: { fontWeight: '700' },
   bar: { borderRadius: 3, paddingHorizontal: 2, paddingVertical: 0.5 },
   barText: { fontSize: 8.5, color: '#fff' },
   // Deadlines read as outlines, not filled calendar bars (web parity: muted, danger when overdue).
-  taskBar: { borderRadius: 3, paddingHorizontal: 2, paddingVertical: 0.5, backgroundColor: '#f1f1f4', borderWidth: 0.5, borderColor: '#c8c8d0' },
-  taskBarOverdue: { borderColor: '#dc2626', backgroundColor: '#fdf0ef' },
-  taskBarText: { fontSize: 8.5, color: '#555' },
-  taskBarTextOverdue: { color: '#dc2626' },
-  more: { fontSize: 9, color: '#888', paddingLeft: 2 },
+  taskBar: { borderRadius: 3, paddingHorizontal: 2, paddingVertical: 0.5, borderWidth: 0.5 },
+  taskBarText: { fontSize: 8.5 },
+  more: { fontSize: 9, paddingLeft: 2 },
 });

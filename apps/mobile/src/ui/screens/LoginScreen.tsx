@@ -3,6 +3,7 @@ import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { exchangeAuthCode } from '../../data/auth/oidc';
 import { OIDC_CLIENT_ID, OIDC_ISSUER, OIDC_REDIRECT_PATH, OIDC_SCHEME, OIDC_SCOPES } from '../../data/auth/oidcConfig';
 import { logDebug } from '../../debug/log';
@@ -14,6 +15,7 @@ WebBrowser.maybeCompleteAuthSession();
 const redirectUri = AuthSession.makeRedirectUri({ scheme: OIDC_SCHEME, path: OIDC_REDIRECT_PATH });
 
 export function LoginScreen({ navigation }: NativeStackScreenProps<RootStackParamList, 'Login'>) {
+  const theme = useTheme();
   const discovery = AuthSession.useAutoDiscovery(OIDC_ISSUER);
   const [request, , promptAsync] = AuthSession.useAuthRequest(
     { clientId: OIDC_CLIENT_ID, scopes: OIDC_SCOPES, redirectUri, usePKCE: true },
@@ -51,13 +53,13 @@ export function LoginScreen({ navigation }: NativeStackScreenProps<RootStackPara
       {busy || !request ? (
         <ActivityIndicator />
       ) : (
-        <Pressable style={styles.button} onPress={() => void signIn()}>
-          <Text style={styles.buttonText}>Sign in with Lupira</Text>
+        <Pressable style={[styles.button, { backgroundColor: theme.colors.primary }]} onPress={() => void signIn()}>
+          <Text style={[styles.buttonText, { color: theme.colors.onPrimary }]}>Sign in with Lupira</Text>
         </Pressable>
       )}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <Text style={[styles.error, { color: theme.colors.error }]}>{error}</Text> : null}
       <Pressable onPress={() => navigation.navigate('Developer')}>
-        <Text style={styles.link}>Backend settings</Text>
+        <Text style={[styles.link, { color: theme.colors.primary }]}>Backend settings</Text>
       </Pressable>
     </View>
   );
@@ -66,8 +68,8 @@ export function LoginScreen({ navigation }: NativeStackScreenProps<RootStackPara
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 },
   title: { fontSize: 24, fontWeight: '600' },
-  button: { backgroundColor: '#4457c2', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 },
-  buttonText: { color: 'white', fontSize: 16, fontWeight: '600' },
-  error: { color: '#c03030', textAlign: 'center' },
-  link: { color: '#4457c2', marginTop: 24 },
+  button: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 },
+  buttonText: { fontSize: 16, fontWeight: '600' },
+  error: { textAlign: 'center' },
+  link: { marginTop: 24 },
 });

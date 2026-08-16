@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { getDb } from '../../data/db/expoDb';
 import type { OutboxRow } from '../../data/mirror';
 import { opOfRow } from '../../data/mirror';
@@ -15,6 +16,7 @@ import { IndeterminateBar } from '../components/IndeterminateBar';
 /// The review surface for offline writes: parked ops (gave up after backoff or hit a definitive rejection)
 /// get per-row retry / discard — discard also rolls the optimistic mirror write back to server truth.
 export function SyncIssuesScreen() {
+  const theme = useTheme();
   const { data } = useOutboxRows();
   const { syncing, serverReachable, lastSyncAt, lastError, progress } = useSyncStatus();
 
@@ -24,7 +26,7 @@ export function SyncIssuesScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.statusRow}>
-        <Text style={styles.statusText}>
+        <Text style={[styles.statusText, { color: theme.colors.onSurfaceVariant }]}>
           {syncing ? 'Syncing…' : serverReachable ? 'Server reachable' : 'Offline'}
           {lastSyncAt ? ` · last sync ${new Date(lastSyncAt).toLocaleTimeString()}` : ''}
         </Text>
@@ -35,24 +37,24 @@ export function SyncIssuesScreen() {
       {syncing && (
         <View style={styles.progressBlock}>
           <IndeterminateBar />
-          <Text style={styles.progressText}>
+          <Text style={[styles.progressText, { color: theme.colors.onSurfaceVariant }]}>
             {progress ? `${progress.count} ${PHASE_LABELS[progress.phase]}…` : 'Starting…'}
           </Text>
         </View>
       )}
 
       {!syncing && parked.length === 0 && pending.length === 0 && (
-        <Text style={styles.empty}>All changes are synced.</Text>
+        <Text style={[styles.empty, { color: theme.colors.onSurfaceVariant }]}>All changes are synced.</Text>
       )}
 
-      {parked.length > 0 && <Text style={formStyles.section}>Needs attention</Text>}
+      {parked.length > 0 && <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Needs attention</Text>}
       {parked.map((row) => <ParkedCard key={row.seq} row={row} />)}
 
-      {pending.length > 0 && <Text style={formStyles.section}>Waiting to sync</Text>}
+      {pending.length > 0 && <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Waiting to sync</Text>}
       {pending.map((row) => (
-        <View key={row.seq} style={styles.pendingRow}>
+        <View key={row.seq} style={[styles.pendingRow, { borderColor: theme.colors.outlineVariant }]}>
           <Text style={styles.opLabel}>{labelOf(row)}</Text>
-          <Text style={styles.muted}>
+          <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>
             {new Date(row.occurred_at).toLocaleString()}
             {row.attempts > 0 ? ` · attempt ${row.attempts}` : ''}
             {row.next_attempt_at ? ` · retries ${new Date(row.next_attempt_at).toLocaleTimeString()}` : ''}
@@ -64,6 +66,7 @@ export function SyncIssuesScreen() {
 }
 
 function ParkedCard({ row }: { row: OutboxRow }) {
+  const theme = useTheme();
   const confirm = useConfirm();
   const [expanded, setExpanded] = useState(false);
 
@@ -79,15 +82,17 @@ function ParkedCard({ row }: { row: OutboxRow }) {
   };
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
       <Pressable onPress={() => setExpanded(!expanded)}>
-        <Text style={styles.opLabel}>{labelOf(row)}</Text>
-        <Text style={styles.muted}>
+        <Text style={[styles.opLabel, { color: theme.colors.onSurface }]}>{labelOf(row)}</Text>
+        <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>
           {new Date(row.occurred_at).toLocaleString()} · {row.attempts} attempt{row.attempts === 1 ? '' : 's'}
         </Text>
-        {row.last_error && <Text style={styles.error} numberOfLines={expanded ? undefined : 2}>{row.last_error}</Text>}
+        {row.last_error && (
+          <Text style={[styles.error, { color: theme.colors.error }]} numberOfLines={expanded ? undefined : 2}>{row.last_error}</Text>
+        )}
       </Pressable>
-      {expanded && <Text style={styles.payload}>{payloadOf(row)}</Text>}
+      {expanded && <Text style={[styles.payload, { color: theme.colors.onSurface, backgroundColor: theme.colors.background }]}>{payloadOf(row)}</Text>}
       <View style={styles.cardButtons}>
         <Button title="Retry" onPress={() => void retry()} />
         <Button title="Discard" kind="danger" onPress={() => void discard()} />
@@ -112,16 +117,16 @@ function payloadOf(row: OutboxRow): string {
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   statusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  statusText: { fontSize: 13, color: '#555' },
+  statusText: { fontSize: 13 },
   lastError: { fontSize: 12, color: '#b45309' },
   progressBlock: { gap: 6, marginTop: 8 },
-  progressText: { fontSize: 13, color: '#555', textAlign: 'center' },
-  empty: { textAlign: 'center', color: '#999', marginTop: 32 },
-  card: { borderWidth: 1, borderColor: '#e8c9a8', backgroundColor: '#fdf8f1', borderRadius: 8, padding: 10, gap: 6 },
+  progressText: { fontSize: 13, textAlign: 'center' },
+  empty: { textAlign: 'center', marginTop: 32 },
+  card: { borderWidth: 1, borderColor: '#e8c9a8', borderRadius: 8, padding: 10, gap: 6 },
   opLabel: { fontSize: 15, fontWeight: '600' },
-  muted: { fontSize: 12, color: '#888' },
-  error: { fontSize: 12, color: '#b91c1c' },
-  payload: { fontFamily: 'monospace', fontSize: 11, color: '#444', backgroundColor: '#f4f4f6', borderRadius: 6, padding: 8 },
+  muted: { fontSize: 12 },
+  error: { fontSize: 12 },
+  payload: { fontFamily: 'monospace', fontSize: 11, borderRadius: 6, padding: 8 },
   cardButtons: { flexDirection: 'row', gap: 8 },
-  pendingRow: { paddingVertical: 6, borderBottomWidth: 0.5, borderColor: '#eee' },
+  pendingRow: { paddingVertical: 6, borderBottomWidth: 0.5 },
 });

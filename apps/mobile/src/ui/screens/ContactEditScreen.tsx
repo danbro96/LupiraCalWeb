@@ -3,7 +3,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { List, Switch } from 'react-native-paper';
+import { List, Switch, useTheme } from 'react-native-paper';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
@@ -11,7 +11,6 @@ import { contactCoreFromForm, contactFormFromDoc, emptyContactForm, parseCsv } f
 import { createContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../../state/actions';
 import { useAddressBooks, useContactState } from '../../state/queries';
 import { ChoiceChips, DateField, Field, formStyles } from '../components/form';
-import { ACCENT } from '../components/palette';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
@@ -25,6 +24,7 @@ const NAME_FORMAT_OPTIONS = [
 const CHANNEL_TYPES = [null, 'Home', 'Work', 'Mobile'] as const;
 
 export function ContactEditScreen() {
+  const theme = useTheme();
   const route = useRoute<RouteProp<RootStackParamList, 'ContactEdit'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const contactId = route.params?.contactId;
@@ -132,7 +132,7 @@ export function ContactEditScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Pressable onPress={saveAndLeave} hitSlop={8}>
-          <Text style={[styles.headerSave, !dirty && styles.headerSaveIdle]}>Save</Text>
+          <Text style={[styles.headerSave, { color: theme.colors.primary }, !dirty && styles.headerSaveIdle]}>Save</Text>
         </Pressable>
       ),
     });
@@ -141,7 +141,7 @@ export function ContactEditScreen() {
   if (contactId && !seeded) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.muted}>Loading…</Text>
+        <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Loading…</Text>
       </View>
     );
   }
@@ -159,16 +159,16 @@ export function ContactEditScreen() {
         </Field>
       )}
       <Field label="Given name">
-        <TextInput style={formStyles.input} value={form.givenName} onChangeText={(v) => set('givenName', v)} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.givenName} onChangeText={(v) => set('givenName', v)} />
       </Field>
       <Field label="Middle name">
-        <TextInput style={formStyles.input} value={form.middleName} onChangeText={(v) => set('middleName', v)} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.middleName} onChangeText={(v) => set('middleName', v)} />
       </Field>
       <Field label="Family name">
-        <TextInput style={formStyles.input} value={form.familyName} onChangeText={(v) => set('familyName', v)} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.familyName} onChangeText={(v) => set('familyName', v)} />
       </Field>
       <Field label="Nickname">
-        <TextInput style={formStyles.input} value={form.nickname} onChangeText={(v) => set('nickname', v)} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.nickname} onChangeText={(v) => set('nickname', v)} />
       </Field>
       <Field label="Shown as">
         <ChoiceChips options={NAME_FORMAT_OPTIONS} value={form.displayNameFormat} onChange={(v) => set('displayNameFormat', v)} />
@@ -177,7 +177,7 @@ export function ContactEditScreen() {
         <ChoiceChips options={KIND_OPTIONS} value={form.kind} onChange={(v) => set('kind', v)} />
       </Field>
       <Field label="Pronouns">
-        <TextInput style={formStyles.input} autoCapitalize="none" value={form.pronouns} onChangeText={(v) => set('pronouns', v)} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} autoCapitalize="none" value={form.pronouns} onChangeText={(v) => set('pronouns', v)} />
       </Field>
 
       <Field label="Birthday">
@@ -195,7 +195,7 @@ export function ContactEditScreen() {
         ) : (
           <View style={styles.pair}>
             <TextInput
-              style={[formStyles.input, styles.pairItem]}
+              style={[formStyles.input, { borderColor: theme.colors.outline }, styles.pairItem]}
               placeholder="Month (1–12)"
               keyboardType="number-pad"
               maxLength={2}
@@ -203,7 +203,7 @@ export function ContactEditScreen() {
               onChangeText={(v) => set('birthdayMonth', v.replace(/[^0-9]/g, ''))}
             />
             <TextInput
-              style={[formStyles.input, styles.pairItem]}
+              style={[formStyles.input, { borderColor: theme.colors.outline }, styles.pairItem]}
               placeholder="Day (1–31)"
               keyboardType="number-pad"
               maxLength={2}
@@ -212,15 +212,15 @@ export function ContactEditScreen() {
             />
           </View>
         )}
-        {contactId && <Text style={styles.muted}>Clearing a birthday isn't supported — leave empty to keep it.</Text>}
+        {contactId && <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Clearing a birthday isn't supported — leave empty to keep it.</Text>}
       </Field>
 
-      <Text style={formStyles.section}>Reach</Text>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Reach</Text>
       {channels.map((c, i) => (
         <View key={`ch-${i}`} style={styles.reachRow}>
           <ReachIcon kind={c.medium} />
           <TextInput
-            style={[formStyles.input, styles.reachValue]}
+            style={[formStyles.input, { borderColor: theme.colors.outline }, styles.reachValue]}
             placeholder={c.medium === 'Phone' ? '+46…' : 'name@example.com'}
             autoCapitalize="none"
             keyboardType={c.medium === 'Phone' ? 'phone-pad' : 'email-address'}
@@ -233,50 +233,50 @@ export function ContactEditScreen() {
               : x)))}
             hitSlop={6}
           >
-            <Text style={styles.typeChip}>{c.type ?? 'type'}</Text>
+            <Text style={[styles.typeChip, { color: theme.colors.primary, borderColor: theme.colors.primary + '66' }]}>{c.type ?? 'type'}</Text>
           </Pressable>
           <Pressable onPress={() => setChannels((d) => d.map((x, j) => (j === i ? { ...x, preferred: !x.preferred } : x)))} hitSlop={6}>
-            <Text style={[styles.star, c.preferred && styles.starOn]}>★</Text>
+            <Text style={[styles.star, { color: theme.colors.outline }, c.preferred && styles.starOn]}>★</Text>
           </Pressable>
           <Pressable onPress={() => setChannels((d) => d.filter((_, j) => j !== i))} hitSlop={6}>
-            <Text style={styles.remove}>✕</Text>
+            <Text style={[styles.remove, { color: theme.colors.onSurfaceVariant }]}>✕</Text>
           </Pressable>
         </View>
       ))}
       {profiles.map((p, i) => (
         <View key={`pr-${i}`} style={styles.reachRow}>
           <ReachIcon kind={p.service} />
-          <Text style={styles.reachService} numberOfLines={1}>{p.service}</Text>
+          <Text style={[styles.reachService, { color: theme.colors.onSurfaceVariant }]} numberOfLines={1}>{p.service}</Text>
           <TextInput
-            style={[formStyles.input, styles.reachValue]}
+            style={[formStyles.input, { borderColor: theme.colors.outline }, styles.reachValue]}
             placeholder="@handle or URL"
             autoCapitalize="none"
             value={p.handle}
             onChangeText={(v) => setProfiles((d) => d.map((x, j) => (j === i ? { ...x, handle: v } : x)))}
           />
           <Pressable onPress={() => setProfiles((d) => d.filter((_, j) => j !== i))} hitSlop={6}>
-            <Text style={styles.remove}>✕</Text>
+            <Text style={[styles.remove, { color: theme.colors.onSurfaceVariant }]}>✕</Text>
           </Pressable>
         </View>
       ))}
       <View style={styles.addRow}>
         {REACH_KINDS.map((k) => (
-          <Pressable key={k.key} style={styles.addChip} onPress={() => addReach(k.key)}>
+          <Pressable key={k.key} style={[styles.addChip, { borderColor: theme.colors.outline }]} onPress={() => addReach(k.key)}>
             <ReachIcon kind={k.key} size={13} />
-            <Text style={styles.addChipText}>{k.key}</Text>
+            <Text style={[styles.addChipText, { color: theme.colors.onSurface }]}>{k.key}</Text>
           </Pressable>
         ))}
       </View>
 
       <Field label="Tags (comma-separated)">
-        <TextInput style={formStyles.input} autoCapitalize="none" value={tagsCsv} onChangeText={setTagsCsv} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} autoCapitalize="none" value={tagsCsv} onChangeText={setTagsCsv} />
       </Field>
 
       <Field label="Notes">
-        <TextInput style={formStyles.multiline} multiline value={form.notes} onChangeText={(v) => set('notes', v)} />
+        <TextInput style={[formStyles.multiline, { borderColor: theme.colors.outline }]} multiline value={form.notes} onChangeText={(v) => set('notes', v)} />
       </Field>
 
-      {error && <Text style={formStyles.error}>{error}</Text>}
+      {error && <Text style={[formStyles.error, { color: theme.colors.error }]}>{error}</Text>}
     </ScrollView>
   );
 }
@@ -284,20 +284,20 @@ export function ContactEditScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 48 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  muted: { color: '#888', fontSize: 13 },
+  muted: { fontSize: 13 },
   pair: { flexDirection: 'row', gap: 8 },
   pairItem: { flex: 1 },
   reachRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
-  reachService: { flex: 2, fontSize: 13, color: '#555' },
+  reachService: { flex: 2, fontSize: 13 },
   reachValue: { flex: 3 },
-  typeChip: { fontSize: 11, color: '#4457c2', borderWidth: 1, borderColor: '#c6cbe8', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3 },
-  star: { fontSize: 18, color: '#ccc' },
+  typeChip: { fontSize: 11, borderWidth: 1, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3 },
+  star: { fontSize: 18 },
   starOn: { color: '#d97706' },
-  remove: { fontSize: 14, color: '#999', paddingHorizontal: 4 },
+  remove: { fontSize: 14, paddingHorizontal: 4 },
   addRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 },
-  addChip: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderColor: '#bbb', borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 },
-  addChipText: { fontSize: 13, color: '#444' },
-  headerSave: { color: ACCENT, fontSize: 16, fontWeight: '600', paddingRight: 4 },
+  addChip: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 },
+  addChipText: { fontSize: 13 },
+  headerSave: { fontSize: 16, fontWeight: '600', paddingRight: 4 },
   headerSaveIdle: { opacity: 0.45 },
 });
 

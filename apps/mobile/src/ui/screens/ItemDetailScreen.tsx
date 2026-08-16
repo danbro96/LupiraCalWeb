@@ -5,6 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { Centered } from '../components/Centered';
@@ -14,6 +15,7 @@ import { useCalendarColors } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
 
 export function ItemDetailScreen() {
+  const theme = useTheme();
   const route = useRoute<RouteProp<RootStackParamList, 'ItemDetail'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { itemId } = route.params;
@@ -40,24 +42,26 @@ export function ItemDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {state.deleted && <Text style={styles.deleted}>Deleted — pending sync</Text>}
+      {state.deleted && <Text style={[styles.deleted, { color: theme.colors.error }]}>Deleted — pending sync</Text>}
       <Text style={styles.h1}>{doc.title ?? '(untitled)'}</Text>
       {start && (
-        <Text style={styles.when}>
+        <Text style={[styles.when, { color: theme.colors.onSurfaceVariant }]}>
           {fmtWhen(start, doc.isAllDay)}
           {end ? ` → ${fmtWhen(end, doc.isAllDay)}` : ''}
         </Text>
       )}
-      {doc.recurrenceRule && <Text style={styles.recur}>{describeRrule(doc.recurrenceRule)}</Text>}
+      {doc.recurrenceRule && <Text style={[styles.recur, { color: theme.colors.primary }]}>{describeRrule(doc.recurrenceRule)}</Text>}
       <View style={styles.chipRow}>
-        {doc.status && <Text style={styles.metaChip}>{doc.status}</Text>}
-        {doc.category && <Text style={styles.metaChip}>{doc.category}</Text>}
-        {(doc.tags ?? []).map((t) => <Text key={t} style={styles.tagChip}>#{t}</Text>)}
+        {doc.status && <Text style={[styles.metaChip, { color: theme.colors.onSurfaceVariant, borderColor: theme.colors.outline }]}>{doc.status}</Text>}
+        {doc.category && <Text style={[styles.metaChip, { color: theme.colors.onSurfaceVariant, borderColor: theme.colors.outline }]}>{doc.category}</Text>}
+        {(doc.tags ?? []).map((t) => (
+          <Text key={t} style={[styles.tagChip, { color: theme.colors.primary, backgroundColor: theme.colors.primary + '22' }]}>#{t}</Text>
+        ))}
       </View>
-      {doc.description ? <Text style={styles.description}>{doc.description}</Text> : null}
-      {attendees > 0 && <Text style={styles.note}>{attendees} participant{attendees === 1 ? '' : 's'} (manage on web)</Text>}
-      {doc.prompt != null && <Text style={styles.note}>Has a prompt payload (view on web)</Text>}
-      {doc.action != null && <Text style={styles.note}>Has an action payload (view on web)</Text>}
+      {doc.description ? <Text style={[styles.description, { color: theme.colors.onSurface }]}>{doc.description}</Text> : null}
+      {attendees > 0 && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>{attendees} participant{attendees === 1 ? '' : 's'} (manage on web)</Text>}
+      {doc.prompt != null && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>Has a prompt payload (view on web)</Text>}
+      {doc.action != null && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>Has an action payload (view on web)</Text>}
 
       <CalendarsPanel itemId={itemId} memberships={doc.calendars} />
       <MetadataPanel itemId={itemId} metadata={doc.metadata ?? null} />
@@ -75,13 +79,14 @@ function CalendarsPanel({ itemId, memberships }: {
   itemId: string;
   memberships: { calendarId: string; status: string }[];
 }) {
+  const theme = useTheme();
   const { data: calendars } = useCalendars();
   const colorOf = useCalendarColors();
   const statusOf = (calId: string) => memberships.find((m) => m.calendarId === calId)?.status;
 
   return (
     <View>
-      <Text style={formStyles.section}>Calendars</Text>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Calendars</Text>
       {selectableCalendars(calendars).map((c) => {
         const status = statusOf(c.id);
         const member = status === 'Accepted' || status === 'Proposed';
@@ -94,7 +99,7 @@ function CalendarsPanel({ itemId, memberships }: {
             <View style={[styles.calDot, { backgroundColor: colorOf(c.id) }]} />
             <Text style={styles.calName}>{c.displayName ?? c.id}</Text>
             {status === 'Proposed' && <Text style={styles.proposed}>proposed</Text>}
-            <Text style={styles.calCheck}>{member ? '✓' : ''}</Text>
+            <Text style={[styles.calCheck, { color: theme.colors.primary }]}>{member ? '✓' : ''}</Text>
           </Pressable>
         );
       })}
@@ -104,6 +109,7 @@ function CalendarsPanel({ itemId, memberships }: {
 
 /// Merge-patch editor: add or overwrite one key at a time (the REST surface has no key removal).
 function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<string, unknown> | null }) {
+  const theme = useTheme();
   const [key, setKey] = useState('');
   const [value, setValue] = useState('');
   const entries = Object.entries(metadata ?? {});
@@ -118,16 +124,16 @@ function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<
 
   return (
     <View>
-      <Text style={formStyles.section}>Metadata</Text>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Metadata</Text>
       {entries.map(([k, v]) => (
         <Pressable key={k} style={styles.metaRow} onPress={() => { setKey(k); setValue(typeof v === 'string' ? v : JSON.stringify(v)); }}>
-          <Text style={styles.metaKey}>{k}</Text>
-          <Text style={styles.metaValue} numberOfLines={1}>{typeof v === 'string' ? v : JSON.stringify(v)}</Text>
+          <Text style={[styles.metaKey, { color: theme.colors.onSurfaceVariant }]}>{k}</Text>
+          <Text style={[styles.metaValue, { color: theme.colors.onSurface }]} numberOfLines={1}>{typeof v === 'string' ? v : JSON.stringify(v)}</Text>
         </Pressable>
       ))}
       <View style={styles.metaEdit}>
-        <TextInput style={[formStyles.input, styles.metaKeyInput]} placeholder="key" autoCapitalize="none" value={key} onChangeText={setKey} />
-        <TextInput style={[formStyles.input, styles.metaValueInput]} placeholder="value" value={value} onChangeText={setValue} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }, styles.metaKeyInput]} placeholder="key" autoCapitalize="none" value={key} onChangeText={setKey} />
+        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }, styles.metaValueInput]} placeholder="value" value={value} onChangeText={setValue} />
         <Button title="Set" onPress={save} disabled={!key.trim()} />
       </View>
     </View>
@@ -136,23 +142,23 @@ function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<
 
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 6 },
-  deleted: { color: '#b91c1c', fontWeight: '600' },
+  deleted: { fontWeight: '600' },
   h1: { fontSize: 20, fontWeight: '600' },
-  when: { fontSize: 14, color: '#555' },
-  recur: { fontSize: 13, color: '#4457c2' },
+  when: { fontSize: 14 },
+  recur: { fontSize: 13 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
-  metaChip: { fontSize: 12, color: '#555', borderWidth: 1, borderColor: '#ccc', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
-  tagChip: { fontSize: 12, color: '#4457c2', backgroundColor: '#eef0fb', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
-  description: { fontSize: 14, color: '#333', marginTop: 6 },
-  note: { color: '#888', fontSize: 13, marginTop: 4 },
+  metaChip: { fontSize: 12, borderWidth: 1, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
+  tagChip: { fontSize: 12, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
+  description: { fontSize: 14, marginTop: 6 },
+  note: { fontSize: 13, marginTop: 4 },
   calRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8 },
   calDot: { width: 10, height: 10, borderRadius: 5 },
   calName: { flex: 1, fontSize: 15 },
   proposed: { fontSize: 11, color: '#b45309' },
-  calCheck: { width: 20, color: '#4457c2', fontSize: 16, textAlign: 'center' },
+  calCheck: { width: 20, fontSize: 16, textAlign: 'center' },
   metaRow: { flexDirection: 'row', gap: 8, paddingVertical: 4 },
-  metaKey: { fontWeight: '600', fontSize: 13, color: '#555' },
-  metaValue: { flex: 1, fontSize: 13, color: '#333' },
+  metaKey: { fontWeight: '600', fontSize: 13 },
+  metaValue: { flex: 1, fontSize: 13 },
   metaEdit: { flexDirection: 'row', gap: 6, alignItems: 'center', marginTop: 6 },
   metaKeyInput: { flex: 2 },
   metaValueInput: { flex: 3 },

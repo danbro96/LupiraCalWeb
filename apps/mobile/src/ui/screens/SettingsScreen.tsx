@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { List, Switch } from 'react-native-paper';
+import { List, Switch, useTheme } from 'react-native-paper';
 import { APP_VERSION } from '../../config';
 import { useAuth } from '../../state/auth-store';
 import { useBridge } from '../../state/bridge-store';
@@ -16,6 +16,7 @@ import type { RootStackParamList } from '../navigation/types';
 /// Everything developer-shaped (backend switching, debug log, bridge diagnostics) lives behind
 /// the Developer row.
 export function SettingsScreen() {
+  const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { authMode, user, token } = useAuth();
   const bridge = useBridge();
@@ -48,21 +49,21 @@ export function SettingsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={formStyles.section}>Account</Text>
-      <Text style={styles.detail}>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Account</Text>
+      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
         {authMode === 'none' ? 'Dev auto-auth (no sign-in)' : user ? `Signed in as ${user.sub}` : 'Signed out'}
       </Text>
       {token !== null && (
         <Button title="Sign out" onPress={() => void useAuth.getState().clearSession()} />
       )}
 
-      <Text style={formStyles.section}>Android integration</Text>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Android integration</Text>
       <List.Item
         title="Sync with Android calendar & contacts"
         right={() => <Switch value={bridge.enabled} onValueChange={toggleBridge} disabled={!bridge.loaded} />}
       />
       {bridge.enabled && (
-        <Text style={styles.detail}>
+        <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
           {bridge.status?.accountPresent ? 'Account active' : 'Account missing — toggle off and on to repair'}
           {bridge.status?.lastSyncAt ? ` · last OS sync ${new Date(bridge.status.lastSyncAt).toLocaleString()}` : ''}
         </Text>
@@ -73,7 +74,7 @@ export function SettingsScreen() {
         </Pressable>
       )}
 
-      <Text style={formStyles.section}>Calendars</Text>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Calendars</Text>
       <List.Item
         title="Show system calendars"
         right={() => (
@@ -84,7 +85,7 @@ export function SettingsScreen() {
           />
         )}
       />
-      <Text style={styles.detail}>Agent-managed calendars (inbox, availability …) and their events stay hidden unless enabled.</Text>
+      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Agent-managed calendars (inbox, availability …) and their events stay hidden unless enabled.</Text>
       <List.Item
         title="Show task deadlines"
         right={() => (
@@ -95,27 +96,27 @@ export function SettingsScreen() {
           />
         )}
       />
-      <Text style={styles.detail}>Deadlines from Lupira Tasks appear on their due day. Needs a connection.</Text>
+      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Deadlines from Lupira Tasks appear on their due day. Needs a connection.</Text>
 
-      <Text style={formStyles.section}>Sync</Text>
-      <Text style={styles.detail}>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Sync</Text>
+      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
         {syncing ? 'Syncing…' : lastSyncAt ? `Last synced ${new Date(lastSyncAt).toLocaleString()}` : 'Not synced yet'}
       </Text>
       <View style={styles.row}>
         <Button title="Sync now" onPress={() => void runSync()} disabled={syncing} />
         <Pressable onPress={() => navigation.navigate('SyncIssues')}>
-          <Text style={styles.link}>
+          <Text style={[styles.link, { color: theme.colors.primary }]}>
             Sync issues{pending + parked > 0 ? ` (${pending + parked})` : ''}
           </Text>
         </Pressable>
       </View>
 
-      <Text style={formStyles.section}>About</Text>
-      <Text style={styles.detail}>Lupira Calendar {APP_VERSION}</Text>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>About</Text>
+      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Lupira Calendar {APP_VERSION}</Text>
 
-      <Text style={formStyles.section}>Developer</Text>
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Developer</Text>
       <Pressable onPress={() => navigation.navigate('Developer')}>
-        <Text style={styles.link}>Developer options</Text>
+        <Text style={[styles.link, { color: theme.colors.primary }]}>Developer options</Text>
       </Pressable>
     </ScrollView>
   );
@@ -123,8 +124,8 @@ export function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
-  detail: { color: '#777', fontSize: 13 },
+  detail: { fontSize: 13 },
   warning: { color: '#b45309', fontSize: 13, paddingVertical: 4 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  link: { color: '#4457c2', paddingVertical: 6 },
+  link: { paddingVertical: 6 },
 });

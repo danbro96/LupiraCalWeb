@@ -5,7 +5,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Avatar } from 'react-native-paper';
+import { Avatar, useTheme } from 'react-native-paper';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
@@ -16,7 +16,7 @@ import { useContactState } from '../../state/queries';
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';
 import { formStyles } from '../components/form';
-import { ACCENT, hashColor } from '../components/palette';
+import { hashColor } from '../components/palette';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { initialsOf } from './ContactsScreen';
@@ -26,6 +26,7 @@ import { initialsOf } from './ContactsScreen';
 /// (tap → Google Maps via a geo place lookup), notes, metadata, emergency contacts and relations with
 /// names resolved from the mirror.
 export function ContactDetailScreen() {
+  const theme = useTheme();
   const route = useRoute<RouteProp<RootStackParamList, 'ContactDetail'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { contactId } = route.params;
@@ -40,7 +41,7 @@ export function ContactDetailScreen() {
       headerRight: () => (
         <View style={styles.headerActions}>
           <Pressable onPress={() => navigation.navigate('ContactEdit', { contactId })} hitSlop={8}>
-            <Text style={styles.headerAction}>Edit</Text>
+            <Text style={[styles.headerAction, { color: theme.colors.primary }]}>Edit</Text>
           </Pressable>
           <Pressable
             hitSlop={8}
@@ -55,12 +56,12 @@ export function ContactDetailScreen() {
               })
             }
           >
-            <Text style={styles.headerDanger}>Delete</Text>
+            <Text style={[styles.headerDanger, { color: theme.colors.error }]}>Delete</Text>
           </Pressable>
         </View>
       ),
     });
-  }, [navigation, contactId, name, confirm]);
+  }, [navigation, contactId, name, confirm, theme]);
 
   if (isLoading) return <Centered text="Loading…" />;
   if (!state) return <Centered text="This contact is not in the offline mirror." />;
@@ -74,12 +75,12 @@ export function ContactDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {state.deleted && <Text style={styles.deletedNote}>Deleted — pending sync</Text>}
+      {state.deleted && <Text style={[styles.deletedNote, { color: theme.colors.error }]}>Deleted — pending sync</Text>}
       <View style={styles.header}>
         <Avatar.Text size={52} label={initialsOf(displayName)} style={{ backgroundColor: hashColor(contactId) }} />
         <View style={styles.headerBody}>
           <Text style={styles.h1}>{displayName}{deceased ? ' ✝' : ''}</Text>
-          <Text style={styles.sub}>
+          <Text style={[styles.sub, { color: theme.colors.onSurfaceVariant }]}>
             {[doc.pronouns, doc.kind === 'Organization' ? 'Organization' : null, doc.nickname ? `“${doc.nickname}”` : null]
               .filter(Boolean).join(' · ')}
           </Text>
@@ -88,19 +89,21 @@ export function ContactDetailScreen() {
 
       {doc.birthday != null && <BirthdayRow birthday={doc.birthday} deceased={deceased} />}
       {deceased && (
-        <Text style={styles.deceased}>
+        <Text style={[styles.deceased, { color: theme.colors.onSurfaceVariant }]}>
           Deceased{typeof doc.deathDate === 'string' ? ` — ${doc.deathDate}` : ''}
         </Text>
       )}
 
-      <Text style={formStyles.section}>Reach</Text>
-      {(doc.channels ?? []).length === 0 && (doc.profiles ?? []).length === 0 && <Text style={styles.muted}>Nothing yet</Text>}
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Reach</Text>
+      {(doc.channels ?? []).length === 0 && (doc.profiles ?? []).length === 0 && (
+        <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Nothing yet</Text>
+      )}
       {(doc.channels ?? []).map((c, i) => (
         <Pressable key={`ch-${i}`} onPress={() => openReach(c.medium, c.value)}>
           <View style={styles.reachRow}>
             <ReachIcon kind={c.medium} />
             <Text style={styles.reachText}>
-              <Text style={styles.rowKind}>{c.medium}{c.type ? ` (${c.type})` : ''}  </Text>
+              <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{c.medium}{c.type ? ` (${c.type})` : ''}  </Text>
               {c.value}{c.preferred ? '  ★' : ''}
             </Text>
           </View>
@@ -111,7 +114,7 @@ export function ContactDetailScreen() {
           <View style={styles.reachRow}>
             <ReachIcon kind={p.service} />
             <Text style={styles.reachText}>
-              <Text style={styles.rowKind}>{p.service}  </Text>
+              <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{p.service}  </Text>
               {p.handle}{p.preferred ? '  ★' : ''}
             </Text>
           </View>
@@ -120,28 +123,32 @@ export function ContactDetailScreen() {
 
       {(doc.tags ?? []).length > 0 && (
         <>
-          <Text style={formStyles.section}>Tags</Text>
-          <View style={styles.chipRow}>{(doc.tags ?? []).map((t) => <Text key={t} style={styles.tagChip}>#{t}</Text>)}</View>
+          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Tags</Text>
+          <View style={styles.chipRow}>
+            {(doc.tags ?? []).map((t) => (
+              <Text key={t} style={[styles.tagChip, { color: theme.colors.primary, backgroundColor: theme.colors.primary + '22' }]}>#{t}</Text>
+            ))}
+          </View>
         </>
       )}
 
       {addresses.length > 0 && (
         <>
-          <Text style={formStyles.section}>Addresses</Text>
+          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Addresses</Text>
           {addresses.map((a, i) => <AddressRow key={i} placeId={a.placeId ?? null} type={a.type ?? 'Home'} />)}
         </>
       )}
 
       {doc.notes ? (
         <>
-          <Text style={formStyles.section}>Notes</Text>
-          <Text style={styles.notes}>{doc.notes}</Text>
+          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Notes</Text>
+          <Text style={[styles.notes, { color: theme.colors.onSurface }]}>{doc.notes}</Text>
         </>
       ) : null}
 
       {emergency.length > 0 && (
         <>
-          <Text style={formStyles.section}>Emergency contacts</Text>
+          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Emergency contacts</Text>
           {emergency.map((id, i) => <ResolvedName key={id} contactId={id} prefix={`${i + 1}. `} navigation={navigation} />)}
         </>
       )}
@@ -149,10 +156,10 @@ export function ContactDetailScreen() {
       {relations.filter((r) => !r.ended).length > 0 && (
         <>
           <Pressable style={styles.sectionToggle} onPress={() => setRelationsOpen((o) => !o)}>
-            <Text style={formStyles.section}>
+            <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>
               Relations ({relations.filter((r) => !r.ended).length})
             </Text>
-            <Text style={styles.chevron}>{relationsOpen ? '▾' : '▸'}</Text>
+            <Text style={[styles.chevron, { color: theme.colors.onSurfaceVariant }]}>{relationsOpen ? '▾' : '▸'}</Text>
           </Pressable>
           {relationsOpen && relations.filter((r) => !r.ended).map((r, i) => (
             <ResolvedName
@@ -167,10 +174,10 @@ export function ContactDetailScreen() {
 
       {metadata.length > 0 && (
         <>
-          <Text style={formStyles.section}>Metadata</Text>
+          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Metadata</Text>
           {metadata.map(([k, v]) => (
             <Text key={k} style={styles.row}>
-              <Text style={styles.rowKind}>{k}  </Text>
+              <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{k}  </Text>
               {typeof v === 'string' ? v : JSON.stringify(v)}
             </Text>
           ))}
@@ -178,7 +185,7 @@ export function ContactDetailScreen() {
       )}
 
       {typeof doc.updatedAt === 'string' && (
-        <Text style={styles.footer}>Updated {new Date(doc.updatedAt).toLocaleString()}</Text>
+        <Text style={[styles.footer, { color: theme.colors.onSurfaceVariant }]}>Updated {new Date(doc.updatedAt).toLocaleString()}</Text>
       )}
 
     </ScrollView>
@@ -205,6 +212,7 @@ function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; decease
 /// Address rows are place refs — resolving to something mappable needs the geo API (online). Tap-to-open
 /// keeps the offline path clean: nothing is fetched until asked.
 function AddressRow({ placeId, type }: { placeId: string | null; type: string }) {
+  const theme = useTheme();
   const [busy, setBusy] = useState(false);
 
   const open = async () => {
@@ -230,7 +238,7 @@ function AddressRow({ placeId, type }: { placeId: string | null; type: string })
   return (
     <Pressable onPress={() => void open()} disabled={!placeId}>
       <Text style={styles.row}>
-        <Text style={styles.rowKind}>{type}  </Text>
+        <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{type}  </Text>
         {placeId ? (busy ? 'Opening map…' : 'Open in Google Maps ↗') : '(no place linked)'}
       </Text>
     </Pressable>
@@ -242,6 +250,7 @@ function ResolvedName({ contactId, prefix, navigation }: {
   prefix: string;
   navigation: NativeStackNavigationProp<RootStackParamList>;
 }) {
+  const theme = useTheme();
   const [name, setName] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -257,7 +266,7 @@ function ResolvedName({ contactId, prefix, navigation }: {
   return (
     <Pressable onPress={() => name && navigation.push('ContactDetail', { contactId })}>
       <Text style={styles.row}>
-        <Text style={styles.rowKind}>{prefix}</Text>
+        <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{prefix}</Text>
         {name ?? '(not in mirror)'}
       </Text>
     </Pressable>
@@ -266,25 +275,25 @@ function ResolvedName({ contactId, prefix, navigation }: {
 
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 4 },
-  deletedNote: { color: '#b91c1c', fontWeight: '600' },
+  deletedNote: { fontWeight: '600' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   headerBody: { flex: 1 },
   h1: { fontSize: 20, fontWeight: '600' },
-  sub: { color: '#888', fontSize: 13 },
+  sub: { fontSize: 13 },
   birthday: { fontSize: 14, color: '#b45309', marginTop: 6 },
-  deceased: { fontSize: 13, color: '#666', fontStyle: 'italic' },
+  deceased: { fontSize: 13, fontStyle: 'italic' },
   row: { fontSize: 14, paddingVertical: 4 },
-  rowKind: { color: '#888', fontSize: 13 },
-  muted: { color: '#999', fontSize: 13 },
-  notes: { fontSize: 14, color: '#333' },
+  rowKind: { fontSize: 13 },
+  muted: { fontSize: 13 },
+  notes: { fontSize: 14 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  tagChip: { fontSize: 12, color: '#4457c2', backgroundColor: '#eef0fb', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
-  footer: { color: '#aaa', fontSize: 11, marginTop: 12, marginBottom: 16 },
+  tagChip: { fontSize: 12, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
+  footer: { fontSize: 11, marginTop: 12, marginBottom: 16 },
   headerActions: { flexDirection: 'row', gap: 16, paddingRight: 4 },
-  headerAction: { color: ACCENT, fontSize: 15 },
-  headerDanger: { color: '#b91c1c', fontSize: 15 },
+  headerAction: { fontSize: 15 },
+  headerDanger: { fontSize: 15 },
   reachRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4 },
   reachText: { flex: 1, fontSize: 14 },
   sectionToggle: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  chevron: { color: '#888', fontSize: 13 },
+  chevron: { fontSize: 13 },
 });

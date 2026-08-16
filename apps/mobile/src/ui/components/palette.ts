@@ -7,8 +7,6 @@ export function availabilityColor(status: string | null): string {
   return (status && (AVAILABILITY_COLORS as Record<string, string>)[status]) || '#94a3b8';
 }
 
-export const ACCENT = '#4457c2';
-
 /// Calendar color: the container's own color when it set one, else a stable hash — same idea as the web grid.
 export function useCalendarColors(): (calendarId: string | null) => string {
   const { data } = useCalendars();

@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { FAB } from 'react-native-paper';
+import { FAB, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
@@ -12,7 +12,7 @@ import { useHorizontalSwipe } from '../calendar/useHorizontalSwipe';
 import { MonthView } from '../calendar/MonthView';
 import { WeekView } from '../calendar/WeekView';
 import { BridgePrompt } from '../components/BridgePrompt';
-import { ACCENT, BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
+import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -22,6 +22,7 @@ type Mode = 'month' | 'week';
 /// (snap points ≈ 38% / 78%, drag below ~20% deselects). Changing month or jumping to today clears
 /// the selection. Week mode: timed lanes with tap-to-create slots.
 export function CalendarScreen() {
+  const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [mode, setMode] = useState<Mode>('month');
   const [anchor, setAnchor] = useState(() => new Date());
@@ -96,18 +97,18 @@ export function CalendarScreen() {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={styles.root} edges={['top']}>
+    <SafeAreaView style={[styles.root, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <SyncBanner />
       <BridgePrompt />
       <View style={styles.toolbar}>
-        <Pressable onPress={() => step(-1)} hitSlop={8}><Text style={styles.nav}>‹</Text></Pressable>
+        <Pressable onPress={() => step(-1)} hitSlop={8}><Text style={[styles.nav, { color: theme.colors.primary }]}>‹</Text></Pressable>
         <Text style={styles.title}>{title}</Text>
-        <Pressable onPress={() => step(1)} hitSlop={8}><Text style={styles.nav}>›</Text></Pressable>
-        <Pressable style={styles.toolButton} onPress={goToday}>
-          <Text style={styles.toolButtonText}>Today</Text>
+        <Pressable onPress={() => step(1)} hitSlop={8}><Text style={[styles.nav, { color: theme.colors.primary }]}>›</Text></Pressable>
+        <Pressable style={[styles.toolButton, { borderColor: theme.colors.primary }]} onPress={goToday}>
+          <Text style={[styles.toolButtonText, { color: theme.colors.primary }]}>Today</Text>
         </Pressable>
-        <Pressable style={styles.toolButton} onPress={() => setMode(mode === 'month' ? 'week' : 'month')}>
-          <Text style={styles.toolButtonText}>{mode === 'month' ? 'Week' : 'Month'}</Text>
+        <Pressable style={[styles.toolButton, { borderColor: theme.colors.primary }]} onPress={() => setMode(mode === 'month' ? 'week' : 'month')}>
+          <Text style={[styles.toolButtonText, { color: theme.colors.primary }]}>{mode === 'month' ? 'Week' : 'Month'}</Text>
         </Pressable>
       </View>
 
@@ -122,16 +123,16 @@ export function CalendarScreen() {
           <MonthView anchor={anchor} selectedDay={selectedDay} onSelectDay={selectDay} />
           <SwipeHint hint={swipe.hint} prevLabel={periodLabel(-1)} nextLabel={periodLabel(1)} />
           {selectedDay && (
-            <Animated.View style={[styles.sheet, { height: sheetH }]}>
+            <Animated.View style={[styles.sheet, { height: sheetH, backgroundColor: theme.colors.surface, borderColor: theme.colors.outlineVariant }]}>
               <View style={styles.sheetHeader} {...pan.panHandlers}>
-                <View style={styles.handle} />
+                <View style={[styles.handle, { backgroundColor: theme.colors.outlineVariant }]} />
                 <View style={styles.sheetHeaderRow}>
-                  <Text style={styles.sheetTitle}>
+                  <Text style={[styles.sheetTitle, { color: theme.colors.onSurface }]}>
                     {parseYmd(selectedDay).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
                   </Text>
                   <View style={styles.sheetActions}>
                     <Pressable onPress={() => navigation.navigate('AvailabilityEdit', { day: selectedDay })} hitSlop={6}>
-                      <Text style={styles.sheetLink}>Availability</Text>
+                      <Text style={[styles.sheetLink, { color: theme.colors.primary }]}>Availability</Text>
                     </Pressable>
                     <FAB size="small" icon="plus" onPress={() => navigation.navigate('ItemEdit', { day: selectedDay })} />
                   </View>
@@ -154,6 +155,7 @@ export function CalendarScreen() {
 }
 
 function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) => void }) {
+  const theme = useTheme();
   const { rows } = useDaysOccurrences([day]);
   const taskRows = useTaskDeadlines([day]);
   const colorOf = useCalendarColors();
@@ -161,7 +163,7 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
 
   return (
     <View style={styles.agenda}>
-      {sorted.length === 0 && <Text style={styles.agendaEmpty}>Nothing scheduled</Text>}
+      {sorted.length === 0 && <Text style={[styles.agendaEmpty, { color: theme.colors.onSurfaceVariant }]}>Nothing scheduled</Text>}
       {sorted.map((r) => (
         r.is_availability === 1 ? (
           <Pressable key={`${r.source}-${r.source_id}-${r.start_utc}`} style={styles.agendaRow} onPress={() => onPress(r)}>
@@ -174,15 +176,15 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
           <View
             style={[
               styles.dot,
-              { backgroundColor: isTaskRow(r) ? (r.task.overdue ? '#dc2626' : '#64748b') : r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) },
+              { backgroundColor: isTaskRow(r) ? (r.task.overdue ? theme.colors.error : '#64748b') : r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) },
             ]}
           />
-          <Text style={styles.agendaTime}>
+          <Text style={[styles.agendaTime, { color: theme.colors.onSurfaceVariant }]}>
             {isTaskRow(r) ? '⏰' : r.source === 'birthday' ? '🎂' : r.all_day === 1 ? 'all day' : fmtTime(new Date(r.start_utc))}
           </Text>
           <Text style={styles.agendaText} numberOfLines={1}>{r.title ?? '(untitled)'}</Text>
-          {isTaskRow(r) && r.task.overdue && <Text style={styles.cancelled}>overdue</Text>}
-          {r.status === 'Cancelled' && <Text style={styles.cancelled}>cancelled</Text>}
+          {isTaskRow(r) && r.task.overdue && <Text style={[styles.cancelled, { color: theme.colors.error }]}>overdue</Text>}
+          {r.status === 'Cancelled' && <Text style={[styles.cancelled, { color: theme.colors.error }]}>cancelled</Text>}
         </Pressable>
         )
       ))}
@@ -191,31 +193,31 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#fff' },
+  root: { flex: 1 },
   toolbar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, gap: 8 },
-  nav: { fontSize: 22, color: ACCENT, paddingHorizontal: 6 },
+  nav: { fontSize: 22, paddingHorizontal: 6 },
   title: { flexGrow: 1, fontSize: 16, fontWeight: '600', textAlign: 'center' },
-  toolButton: { borderWidth: 1, borderColor: ACCENT, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 5, minWidth: 64, alignItems: 'center' },
-  toolButtonText: { color: ACCENT, fontSize: 13, fontWeight: '600' },
+  toolButton: { borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 5, minWidth: 64, alignItems: 'center' },
+  toolButtonText: { fontSize: 13, fontWeight: '600' },
   monthArea: { flex: 1 },
   sheet: {
-    position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: '#fff',
-    borderTopLeftRadius: 16, borderTopRightRadius: 16, borderWidth: 0.5, borderColor: '#dcdce4',
+    position: 'absolute', left: 0, right: 0, bottom: 0,
+    borderTopLeftRadius: 16, borderTopRightRadius: 16, borderWidth: 0.5,
     shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 8, shadowOffset: { width: 0, height: -3 }, elevation: 8,
   },
   sheetHeader: { paddingTop: 6, paddingBottom: 4, paddingHorizontal: 14 },
-  handle: { alignSelf: 'center', width: 40, height: 4, borderRadius: 2, backgroundColor: '#ccc', marginBottom: 6 },
+  handle: { alignSelf: 'center', width: 40, height: 4, borderRadius: 2, marginBottom: 6 },
   sheetHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sheetTitle: { fontSize: 14, fontWeight: '700', color: '#444' },
+  sheetTitle: { fontSize: 14, fontWeight: '700' },
   sheetActions: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  sheetLink: { color: ACCENT, fontSize: 13, fontWeight: '600' },
+  sheetLink: { fontSize: 13, fontWeight: '600' },
   availPill: { borderRadius: 10, paddingHorizontal: 10, paddingVertical: 3 },
   availPillText: { color: '#fff', fontSize: 12, fontWeight: '600' },
   agenda: { paddingHorizontal: 14, paddingBottom: 24, gap: 2 },
-  agendaEmpty: { color: '#999', fontSize: 13, paddingVertical: 8 },
+  agendaEmpty: { fontSize: 13, paddingVertical: 8 },
   agendaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 },
   dot: { width: 8, height: 8, borderRadius: 4 },
-  agendaTime: { width: 52, fontSize: 12, color: '#777' },
+  agendaTime: { width: 52, fontSize: 12 },
   agendaText: { flex: 1, fontSize: 14 },
-  cancelled: { fontSize: 11, color: '#b91c1c' },
+  cancelled: { fontSize: 11 },
 });
