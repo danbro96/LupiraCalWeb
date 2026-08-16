@@ -96,7 +96,7 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
             onKeyDown={(e) => {
               if (e.key === 'Escape') setQ('');
             }}
-            // index.css styled the bespoke input for map-overlay legibility; MUI's is transparent by default.
+            // Opaque for map-overlay legibility.
             sx={{ bgcolor: 'background.default', borderRadius: 1, boxShadow: '0 1px 4px rgb(0 0 0 / 0.15)' }}
           />
         )}

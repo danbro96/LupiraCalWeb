@@ -32,10 +32,11 @@ import { useSnackbar } from '../SnackbarHost';
 import { fuzzyToInput, parseFuzzyInput } from '@lupira/cal-domain/fuzzyDate';
 import { inputToPartialDate, partialDateKey, partialDateToInput } from '@lupira/cal-domain/partialDate';
 
-type AddressDraft = ContactPostalAddress & { movedInText: string; movedOutText: string };
+// placeId stays null in drafts until a place is picked; save filters those rows out.
+type AddressDraft = Omit<ContactPostalAddress, 'placeId'> & { placeId: string | null; movedInText: string; movedOutText: string };
 
 /** Null-vs-undefined and key-order insensitive shape for the addresses change diff. */
-function normAddr(a: ContactPostalAddress) {
+function normAddr(a: Omit<ContactPostalAddress, 'placeId'> & { placeId?: string | null }) {
   return { placeId: a.placeId ?? null, type: a.type, movedIn: fuzzyToInput(a.movedIn), movedOut: fuzzyToInput(a.movedOut) };
 }
 

@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Fab from '@mui/material/Fab';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import AddIcon from '@mui/icons-material/Add';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import { useEnsureBootstrap } from '../state/useContainers';
 import { useEnsureContactBootstrap } from '../state/useAddressBooks';
 import { BottomNav } from './components/BottomNav';
@@ -37,30 +44,54 @@ export function AppShell() {
   return (
     <CalendarVisibilityProvider>
       <div className="shell">
-        <header className="topbar">
-          <nav className="topnav">
-            <NavLink to="/" end>
-              Calendar
-            </NavLink>
-            <NavLink to="/items">Items</NavLink>
-            <NavLink to="/inbox">Inbox</NavLink>
-            <NavLink to="/contacts">Contacts</NavLink>
-            <NavLink to="/locations">Map</NavLink>
-            <NavLink to="/calendars">Manage</NavLink>
-          </nav>
-        </header>
+        <AppBar
+          position="static"
+          color="transparent"
+          elevation={0}
+          sx={{ display: { xs: 'none', md: 'block' }, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Toolbar variant="dense">
+            <nav className="topnav">
+              <NavLink to="/" end>
+                Calendar
+              </NavLink>
+              <NavLink to="/items">Items</NavLink>
+              <NavLink to="/inbox">Inbox</NavLink>
+              <NavLink to="/contacts">Contacts</NavLink>
+              <NavLink to="/locations">Map</NavLink>
+              <NavLink to="/calendars">Manage</NavLink>
+            </nav>
+          </Toolbar>
+        </AppBar>
         <div className="shell-body">
           {showSidebar && <Sidebar />}
           <main className="content">
             <Outlet />
           </main>
         </div>
-        <button className="fab fab-secondary" onClick={() => setSettingAvailability(true)} aria-label="Set availability" title="Set availability">
-          ▤
-        </button>
-        <button className="fab" onClick={() => setCreating(true)} aria-label="New item" title="New item">
-          +
-        </button>
+        <Box
+          sx={{
+            position: 'fixed',
+            right: 16,
+            bottom: { xs: 'calc(56px + env(safe-area-inset-bottom) + 12px)', md: 16 },
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1.5,
+            zIndex: 'fab',
+          }}
+        >
+          <Tooltip title="Set availability">
+            <Fab size="small" onClick={() => setSettingAvailability(true)} aria-label="Set availability">
+              <EventAvailableIcon fontSize="small" />
+            </Fab>
+          </Tooltip>
+          <Tooltip title="New item">
+            <Fab color="primary" onClick={() => setCreating(true)} aria-label="New item">
+              <AddIcon />
+            </Fab>
+          </Tooltip>
+        </Box>
         <BottomNav />
       </div>
       {itemId && <ItemDrawer itemId={itemId} onClose={() => dropParams('item')} />}

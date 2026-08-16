@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import { useResolvePlace, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
 import { errText } from '../errText';
@@ -50,9 +53,11 @@ export function PlacePicker({ placeId, onChange, placeholder }: {
     return (
       <span className="place-picker resolved">
         📍 <PlaceLabel placeId={placeId} />
-        <button type="button" className="icon-btn" title="Clear place" onClick={() => onChange(null)}>
-          ×
-        </button>
+        <Tooltip title="Clear place">
+          <IconButton size="small" onClick={() => onChange(null)}>
+            ×
+          </IconButton>
+        </Tooltip>
       </span>
     );
   }
@@ -86,9 +91,9 @@ export function PlacePicker({ placeId, onChange, placeholder }: {
         )}
         sx={{ flex: 1 }}
       />
-      <button type="button" className="btn" onClick={() => void commit(text)} disabled={!text.trim() || resolve.isPending}>
+      <Button variant="outlined" size="small" type="button" onClick={() => void commit(text)} disabled={!text.trim() || resolve.isPending}>
         {resolve.isPending ? 'Resolving…' : 'Resolve'}
-      </button>
+      </Button>
       {error && <span className="error-text">{error}</span>}
     </span>
   );

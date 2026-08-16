@@ -1,3 +1,4 @@
+import Checkbox from '@mui/material/Checkbox';
 import type { ContainerDto } from '../../data/api/models';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
@@ -17,7 +18,7 @@ export function Sidebar() {
       <div className="cal-group">
         <div className="section-label">Tasks</div>
         <label className="cal-toggle" title="Deadlines from Lupira Tasks">
-          <input type="checkbox" checked={tasksVisible} onChange={toggleTasks} />
+          <Checkbox size="small" sx={{ p: 0 }} checked={tasksVisible} onChange={toggleTasks} />
           <span className="color-dot" style={{ background: 'var(--text-muted)' }} />
           <span className="cal-toggle-name">⏰ Deadlines</span>
         </label>
@@ -34,7 +35,7 @@ function CalendarGroup({ title, calendars }: { title: string; calendars: Contain
       <div className="section-label">{title}</div>
       {calendars.map((c) => (
         <label key={c.id} className="cal-toggle" title={`${c.kind ?? ''} · ${c.access}`}>
-          <input type="checkbox" checked={isVisible(c)} onChange={() => toggle(c)} />
+          <Checkbox size="small" sx={{ p: 0 }} checked={isVisible(c)} onChange={() => toggle(c)} />
           <span className="color-dot" style={{ background: calendarColor(c) }} />
           <span className="cal-toggle-name">
             {c.kind ? `${CALENDAR_KIND_ICONS[c.kind]} ` : ''}
