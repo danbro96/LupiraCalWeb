@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
 import { addMonths, fmtMonthTitle, isToday, monthMatrix, sameDay, startOfMonth } from '@lupira/cal-domain/time';
 
 interface Props {
@@ -20,13 +21,13 @@ export function MiniMonthPicker({ selected, onPick, onClose }: Props) {
       <div className="picker-backdrop" onClick={onClose} />
       <div className="date-picker" role="dialog" aria-label="Pick a date">
         <div className="dp-head">
-          <button className="icon-btn" onClick={() => setCursor(addMonths(cursor, -1))} aria-label="Previous month">
+          <IconButton size="small" onClick={() => setCursor(addMonths(cursor, -1))} aria-label="Previous month">
             ‹
-          </button>
+          </IconButton>
           <span className="dp-title">{fmtMonthTitle(cursor)}</span>
-          <button className="icon-btn" onClick={() => setCursor(addMonths(cursor, 1))} aria-label="Next month">
+          <IconButton size="small" onClick={() => setCursor(addMonths(cursor, 1))} aria-label="Next month">
             ›
-          </button>
+          </IconButton>
         </div>
         <div className="dp-grid">
           {DOW.map((d) => (

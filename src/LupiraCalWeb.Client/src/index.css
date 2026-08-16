@@ -72,18 +72,6 @@ select {
   height: 100vh;
   height: 100dvh;
 }
-/* Phone-only/desktop-only structural toggles; flipped in the phone media block at the end. */
-.phone-only {
-  display: none;
-}
-.topbar {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-lg);
-  padding: var(--sp-sm) var(--sp-lg);
-  border-bottom: 1px solid var(--divider);
-  flex: none;
-}
 .topnav {
   display: flex;
   gap: var(--sp-sm);
@@ -216,12 +204,6 @@ select {
   font-size: 11px;
   color: var(--text-subtle);
 }
-.cal-arrow {
-  font-size: 22px;
-}
-.today-btn {
-  margin-left: var(--sp-sm);
-}
 .cal-right {
   display: flex;
   align-items: center;
@@ -233,9 +215,6 @@ select {
   display: flex;
   align-items: center;
   gap: var(--sp-sm);
-}
-.tag-input {
-  width: 90px;
 }
 .spinner {
   width: 14px;
@@ -661,24 +640,6 @@ select {
   }
 }
 
-/* ---- Drawer. ---- */
-.drawer-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 10;
-}
-.drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(480px, 100vw);
-  background: var(--bg);
-  border-left: 1px solid var(--divider);
-  overflow-y: auto;
-  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
-}
 .drawer-head {
   display: flex;
   justify-content: flex-end;
@@ -731,12 +692,6 @@ select {
   font-size: 13px;
   color: var(--text-muted);
 }
-.check-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-}
 .text-input {
   flex: 1;
   min-width: 90px;
@@ -751,65 +706,6 @@ select {
   outline: 2px solid var(--primary);
   outline-offset: -1px;
 }
-.notes-input {
-  min-height: 72px;
-  resize: vertical;
-  width: 100%;
-}
-.inline-name {
-  border-color: transparent;
-  background: transparent;
-  padding: 4px 6px;
-}
-.inline-name:hover,
-.inline-name:focus {
-  border-color: var(--border);
-  background: var(--bg);
-}
-.title-input {
-  flex: 1;
-  width: 100%;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--divider);
-  padding: var(--sp-sm) 0;
-}
-.title-input:focus-visible {
-  outline: none;
-  border-bottom-color: var(--primary);
-}
-.btn {
-  font-weight: 600;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  border-radius: var(--r-md);
-  padding: 8px 14px;
-}
-.btn.primary {
-  background: var(--primary);
-  color: var(--on-primary);
-  border-color: var(--primary);
-}
-.btn.destructive {
-  background: transparent;
-  color: var(--danger);
-  border-color: var(--danger);
-}
-.icon-btn {
-  border: 0;
-  background: transparent;
-  color: var(--text-subtle);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  border-radius: var(--r-sm);
-  flex: none;
-}
 .linklike {
   border: 0;
   background: transparent;
@@ -819,26 +715,6 @@ select {
   padding: 2px;
   text-decoration: none;
   white-space: nowrap;
-}
-.seg {
-  display: inline-flex;
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  overflow: hidden;
-}
-.seg-btn {
-  border: 0;
-  background: transparent;
-  color: var(--text-muted);
-  padding: 6px 14px;
-  font-size: 13px;
-}
-.seg-btn + .seg-btn {
-  border-left: 1px solid var(--border);
-}
-.seg-btn.active {
-  background: var(--primary);
-  color: var(--on-primary);
 }
 .badge {
   font-size: 11px;
@@ -878,21 +754,6 @@ select {
   color: var(--danger);
   border-color: var(--danger);
   background: transparent;
-}
-.tag-chip {
-  font-size: 11px;
-  font-weight: 600;
-  color: #fff;
-  background: var(--text-subtle);
-  border-radius: var(--r-pill);
-  padding: 2px 9px;
-  line-height: 1.6;
-}
-.tag-x {
-  border: 0;
-  background: transparent;
-  color: #fff;
-  padding: 0 0 0 2px;
 }
 .color-dot {
   width: 13px;
@@ -1301,26 +1162,6 @@ select {
   background: var(--surface);
   border-radius: var(--r-md);
 }
-
-/* ---- Modal (create forms). ---- */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-.modal {
-  background: var(--bg);
-  width: 100%;
-  max-width: 560px;
-  max-height: 92vh;
-  max-height: 92dvh;
-  overflow-y: auto;
-  border-radius: var(--r-lg);
-}
 .modal-head {
   display: flex;
   justify-content: flex-end;
@@ -1347,18 +1188,6 @@ select {
 }
 .centered h2 {
   margin: 0;
-}
-
-/* ---- Locations page (master–detail catalog + relations). ---- */
-.locations-page {
-  max-width: 1100px;
-}
-.locations-split {
-  display: grid;
-  grid-template-columns: minmax(260px, 320px) 1fr;
-  gap: var(--sp-xl);
-  align-items: start;
-  margin-top: var(--sp-md);
 }
 .location-list {
   display: flex;
@@ -1388,9 +1217,6 @@ select {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.location-detail {
-  min-width: 0;
 }
 .loc-breadcrumb {
   display: flex;
@@ -1442,9 +1268,6 @@ select {
   background: var(--surface);
   margin: var(--sp-sm) 0 var(--sp-md);
   overflow: hidden;
-}
-.relation-modal {
-  max-width: min(1400px, 94vw);
 }
 .relation-graph.fullscreen {
   height: 84vh;
@@ -1544,27 +1367,6 @@ select {
   flex: 1;
   min-width: 160px;
 }
-.cat-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  color: var(--text-muted);
-}
-.cat-chip .legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: var(--r-pill);
-}
-.cat-chip.active {
-  font-weight: 600;
-  background: var(--bg);
-}
-.cat-chip.active.cat-Family { color: var(--cat-family); border-color: var(--cat-family); }
-.cat-chip.active.cat-Social { color: var(--cat-social); border-color: var(--cat-social); }
-.cat-chip.active.cat-Professional { color: var(--cat-professional); border-color: var(--cat-professional); }
-.cat-chip.active.cat-Other { color: var(--cat-other); border-color: var(--cat-other); }
 
 /* Collapsible category sections in the relations list. */
 .relation-section-head {
@@ -1622,13 +1424,6 @@ select {
   display: flex;
   gap: var(--sp-sm);
 }
-.chip-x {
-  border: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  padding: 0 0 0 4px;
-}
 .place-picker {
   position: relative;
   display: inline-flex;
@@ -1639,36 +1434,6 @@ select {
 }
 .place-picker .text-input {
   flex: 1;
-}
-.place-suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 10;
-  margin: 2px 0 0;
-  padding: 0;
-  list-style: none;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
-  max-height: 220px;
-  max-width: calc(100vw - 32px);
-  overflow-y: auto;
-}
-.place-suggestions button {
-  display: block;
-  width: 100%;
-  text-align: left;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  padding: 6px var(--sp-sm);
-  cursor: pointer;
-}
-.place-suggestions button:hover {
-  background: var(--surface);
 }
 .tree-manage {
   flex: none;
@@ -1684,139 +1449,13 @@ select {
   border-left: 2px solid var(--border);
   margin-left: var(--sp-lg);
 }
-
-.relation-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-md);
-  margin-bottom: var(--sp-sm);
-  font-size: 11px;
-  color: var(--text-muted);
-}
-.relation-legend .legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.relation-legend .legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: var(--r-pill);
-  background: var(--cat-other);
-}
 .legend-dot.cat-Family { background: var(--cat-family); }
 .legend-dot.cat-Social { background: var(--cat-social); }
 .legend-dot.cat-Professional { background: var(--cat-professional); }
 .legend-dot.cat-Emergency { background: var(--cat-emergency); }
 .legend-dot.cat-Other { background: var(--cat-other); }
 
-/* ---- Mobile. Class-driven pieces (only rendered on phones) sit outside the media
-   query; width-driven overrides of desktop rules live inside it. ---- */
-
-/* Bottom tab bar: static flex footer of the .shell column, shown on phones only. */
-.bottom-nav {
-  display: none;
-}
-.bottom-tab {
-  flex: 1;
-  min-height: 48px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  text-decoration: none;
-  color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 600;
-  border: 0;
-  background: none;
-  font-family: inherit;
-  cursor: pointer;
-}
-.bottom-tab .tab-icon {
-  font-size: 18px;
-  line-height: 1;
-}
-.bottom-tab.active {
-  color: var(--primary);
-}
-
-/* Bottom sheet hosting the calendar-visibility sidebar on phones. */
-.sheet {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 11;
-  max-height: 70dvh;
-  overflow-y: auto;
-  background: var(--bg);
-  border-top: 1px solid var(--divider);
-  border-radius: var(--r-lg) var(--r-lg) 0 0;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.sheet .sidebar {
-  display: block;
-  width: auto;
-  border-right: 0;
-}
-
-/* Floating "New" action — sits bottom-right, lifted above the bottom nav on phones. */
-.fab {
-  position: fixed;
-  right: var(--sp-lg);
-  bottom: var(--sp-lg);
-  width: 52px;
-  height: 52px;
-  border: 1px solid var(--primary);
-  border-radius: var(--r-pill);
-  background: var(--primary);
-  color: var(--on-primary);
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
-  z-index: 30;
-}
-
-/* Availability quick-add sits just above the primary FAB, visually subordinate to it. */
-.fab.fab-secondary {
-  bottom: calc(var(--sp-lg) + 62px);
-  width: 44px;
-  height: 44px;
-  font-size: 18px;
-  background: var(--surface);
-  color: var(--primary);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* "More" overflow for secondary sections, above the bottom tabs. */
-.more-sheet {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: calc(48px + env(safe-area-inset-bottom));
-  z-index: 12;
-  background: var(--bg);
-  border-top: 1px solid var(--divider);
-  border-radius: var(--r-lg) var(--r-lg) 0 0;
-  display: flex;
-  flex-direction: column;
-  padding: var(--sp-sm) 0;
-}
-.more-item {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-md);
-  padding: var(--sp-md) var(--sp-lg);
-  color: var(--text);
-  text-decoration: none;
-  font-weight: 600;
-}
-.more-item.active {
-  color: var(--primary);
-}
+/* ---- Mobile: width-driven overrides of desktop rules live in the media block at the end. ---- */
 
 /* Compact month: the whole cell is one button with event dots; tap opens the day view. */
 .month-grid.compact {
@@ -1880,37 +1519,10 @@ select {
   padding: 8px;
 }
 
-/* Phone stand-in for the inline relation-graph embed. */
-.graph-open {
-  align-self: flex-start;
-  margin: var(--sp-sm) 0 var(--sp-md);
-}
-
 /* Phone breakpoint — keep in sync with ui/useIsPhone.ts. */
 @media (max-width: 820px) {
-  .phone-only {
-    display: revert;
-  }
-  .desktop-only {
-    display: none;
-  }
-
-  /* Shell: the top bar is dropped entirely — bottom tabs navigate, the FAB creates. */
-  .topbar {
-    display: none;
-  }
   .sidebar {
     display: none;
-  }
-  .bottom-nav {
-    display: flex;
-    flex: none;
-    background: var(--bg);
-    border-top: 1px solid var(--divider);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  .fab {
-    bottom: calc(48px + env(safe-area-inset-bottom) + var(--sp-md));
   }
 
   .page {
@@ -1928,9 +1540,6 @@ select {
   }
   .cal-actions {
     width: 100%;
-  }
-  .cal-actions .seg {
-    margin-right: auto;
   }
   .cal-search {
     width: 100%;
@@ -1971,20 +1580,6 @@ select {
     display: none;
   }
 
-  .locations-split {
-    grid-template-columns: 1fr;
-  }
-
-  /* Relation-graph fullscreen modal goes edge-to-edge. */
-  .relation-modal {
-    width: 100vw;
-    max-width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    border-radius: 0;
-    display: flex;
-    flex-direction: column;
-  }
   .relation-graph.fullscreen {
     flex: 1;
     height: auto;
@@ -1993,18 +1588,8 @@ select {
 
 /* Touch ergonomics: grow hit areas (negative margins preserve visual density). */
 @media (pointer: coarse) {
-  .icon-btn {
-    padding: 10px;
-  }
-  .seg-btn {
-    padding: 10px 14px;
-  }
   .cal-toggle {
     padding: 10px var(--sp-lg);
-  }
-  .cal-toggle input[type='checkbox'] {
-    width: 18px;
-    height: 18px;
   }
   .tree-node {
     padding: 10px var(--sp-lg);
@@ -2020,11 +1605,6 @@ select {
   .tree-manage {
     padding: 10px;
     margin: -10px 0;
-  }
-  .chip-x,
-  .tag-x {
-    padding: 10px 10px 10px 6px;
-    margin: -10px -6px -10px 0;
   }
   .day-number {
     width: 36px;
@@ -2056,17 +1636,6 @@ select {
   gap: 4px;
   white-space: nowrap;
   flex: none;
-}
-.items-more {
-  display: block;
-  margin: var(--sp-md) auto;
-}
-.items-sheet {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--sp-md);
-  padding: var(--sp-lg);
 }
 @media (max-width: 820px) {
   .items-list .items-cal {
@@ -2184,14 +1753,6 @@ select {
   width: 100%;
   background: var(--bg);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-}
-.map-search-results {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  max-height: 40vh;
-  overflow-y: auto;
 }
 .map-timebar,
 .map-toggles {
@@ -2311,6 +1872,7 @@ select {
     width: auto;
   }
 }
+
 @media (prefers-color-scheme: dark) {
   .map-search .text-input,
   .map-timebar,
@@ -2327,7 +1889,3 @@ select {
   }
 }
 
-.residency-input {
-  width: 7.5em;
-  flex: none;
-}
