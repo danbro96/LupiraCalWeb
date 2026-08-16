@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
@@ -134,6 +135,17 @@ function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: Prompt
   );
 }
 
+type PromptFormValues = {
+  intent: PromptIntent;
+  instruction: string;
+  output: OutputKind;
+  tools: string;
+  tier: '' | ModelTier;
+  onMiss: FallbackMode;
+  fire: PromptFire;
+  enabled: boolean;
+};
+
 function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => void }) {
   const invalidate = useInvalidateItems();
   const showSnack = useSnackbar();
@@ -146,89 +158,122 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
       onError: (e) => showSnack(errText(e) ?? 'Request failed.'),
     },
   });
-  const [form, setForm] = useState<SetItemPromptRequest>(() => ({
-    intent: item.prompt?.intent ?? 'EnrichRecord',
-    instruction: item.prompt?.instruction ?? '',
-    output: item.prompt?.output ?? 'RecordEdit',
-    tools: item.prompt?.tools ?? null,
-    tier: item.prompt?.tier ?? null,
-    onMiss: item.prompt?.onMiss ?? 'Retry',
-    fire: item.prompt?.fire ?? { kind: 'OnStart', offsetMinutes: null, allDayAt: null },
-    enabled: item.prompt?.enabled ?? true,
-  }));
+  const { control, handleSubmit } = useForm<PromptFormValues>({
+    defaultValues: {
+      intent: item.prompt?.intent ?? 'EnrichRecord',
+      instruction: item.prompt?.instruction ?? '',
+      output: item.prompt?.output ?? 'RecordEdit',
+      tools: item.prompt?.tools?.join(', ') ?? '',
+      tier: item.prompt?.tier ?? '',
+      onMiss: item.prompt?.onMiss ?? 'Retry',
+      fire: item.prompt?.fire ?? { kind: 'OnStart', offsetMinutes: null, allDayAt: null },
+      enabled: item.prompt?.enabled ?? true,
+    },
+  });
+
+  const submit = handleSubmit((v) => {
+    const body: SetItemPromptRequest = {
+      intent: v.intent,
+      instruction: v.instruction,
+      output: v.output,
+      tools: v.tools ? v.tools.split(',').map((t) => t.trim()).filter(Boolean) : null,
+      tier: v.tier || null,
+      onMiss: v.onMiss,
+      fire: v.fire,
+      enabled: v.enabled,
+    };
+    set.mutate({ id: item.id, data: body });
+  });
 
   return (
-    <form
-      className="payload-form"
-      onSubmit={(e) => {
-        e.preventDefault();
-        set.mutate({ id: item.id, data: form });
-      }}
-    >
+    <form className="payload-form" onSubmit={submit}>
       <div className="form-row">
         <label>Intent</label>
-        <TextField select size="small" value={form.intent} onChange={(e) => setForm({ ...form, intent: e.target.value as SetItemPromptRequest['intent'] })}>
-          {Object.values(PromptIntent).map((v) => (
-            <MenuItem key={v} value={v}>
-              {v}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Controller
+          name="intent"
+          control={control}
+          render={({ field }) => (
+            <TextField select size="small" {...field}>
+              {Object.values(PromptIntent).map((v) => (
+                <MenuItem key={v} value={v}>
+                  {v}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
         <label>Output</label>
-        <TextField select size="small" value={form.output} onChange={(e) => setForm({ ...form, output: e.target.value as SetItemPromptRequest['output'] })}>
-          {Object.values(OutputKind).map((v) => (
-            <MenuItem key={v} value={v}>
-              {v}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Controller
+          name="output"
+          control={control}
+          render={({ field }) => (
+            <TextField select size="small" {...field}>
+              {Object.values(OutputKind).map((v) => (
+                <MenuItem key={v} value={v}>
+                  {v}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
       </div>
-      <TextField
-        size="small"
-        multiline
-        minRows={3}
-        placeholder="Instruction for the agent…"
-        value={form.instruction}
-        onChange={(e) => setForm({ ...form, instruction: e.target.value })}
-        required
+      <Controller
+        name="instruction"
+        control={control}
+        render={({ field }) => (
+          <TextField size="small" multiline minRows={3} placeholder="Instruction for the agent…" {...field} required />
+        )}
       />
       <div className="form-row">
         <label>Tier</label>
-        <TextField
-          select
-          size="small"
-          value={form.tier ?? ''}
-          onChange={(e) => setForm({ ...form, tier: (e.target.value || null) as SetItemPromptRequest['tier'] })}
-          slotProps={{ select: { displayEmpty: true } }}
-        >
-          <MenuItem value="">(default)</MenuItem>
-          {Object.values(ModelTier).map((v) => (
-            <MenuItem key={v} value={v}>
-              {v}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Controller
+          name="tier"
+          control={control}
+          render={({ field }) => (
+            <TextField select size="small" {...field} slotProps={{ select: { displayEmpty: true } }}>
+              <MenuItem value="">(default)</MenuItem>
+              {Object.values(ModelTier).map((v) => (
+                <MenuItem key={v} value={v}>
+                  {v}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
         <label>On miss</label>
-        <TextField select size="small" value={form.onMiss ?? 'Retry'} onChange={(e) => setForm({ ...form, onMiss: e.target.value as SetItemPromptRequest['onMiss'] })}>
-          {Object.values(FallbackMode).map((v) => (
-            <MenuItem key={v} value={v}>
-              {v}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Controller
+          name="onMiss"
+          control={control}
+          render={({ field }) => (
+            <TextField select size="small" {...field}>
+              {Object.values(FallbackMode).map((v) => (
+                <MenuItem key={v} value={v}>
+                  {v}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
       </div>
-      <TextField
-        size="small"
-        placeholder="Tools (comma-separated, optional)"
-        value={form.tools?.join(', ') ?? ''}
-        onChange={(e) =>
-          setForm({ ...form, tools: e.target.value ? e.target.value.split(',').map((t) => t.trim()).filter(Boolean) : null })
-        }
+      <Controller
+        name="tools"
+        control={control}
+        render={({ field }) => <TextField size="small" placeholder="Tools (comma-separated, optional)" {...field} />}
       />
-      <FireEditor fire={form.fire} onChange={(fire) => setForm({ ...form, fire })} />
-      <FormControlLabel
-        control={<Checkbox size="small" checked={form.enabled ?? true} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />}
-        label="Enabled"
+      <Controller
+        name="fire"
+        control={control}
+        render={({ field }) => <FireEditor fire={field.value} onChange={field.onChange} />}
+      />
+      <Controller
+        name="enabled"
+        control={control}
+        render={({ field }) => (
+          <FormControlLabel
+            control={<Checkbox size="small" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
+            label="Enabled"
+          />
+        )}
       />
       <div className="chip-row">
         <Button variant="contained" size="small" type="submit" disabled={set.isPending}>
@@ -242,6 +287,13 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
   );
 }
 
+type ActionFormValues = {
+  kind: ActionKind;
+  paramsJson: string;
+  fire: PromptFire;
+  enabled: boolean;
+};
+
 function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => void }) {
   const invalidate = useInvalidateItems();
   const showSnack = useSnackbar();
@@ -254,55 +306,82 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
       onError: (e) => showSnack(errText(e) ?? 'Request failed.'),
     },
   });
-  const [form, setForm] = useState<SetItemActionRequest>(() => ({
-    kind: item.action?.kind ?? 'Notify',
-    paramsJson: item.action ? prettyJson(item.action.paramsJson) : '{}',
-    fire: item.action?.fire ?? { kind: 'OnStart', offsetMinutes: null, allDayAt: null },
-    enabled: item.action?.enabled ?? true,
-  }));
-  const [jsonError, setJsonError] = useState<string | null>(null);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ActionFormValues>({
+    defaultValues: {
+      kind: item.action?.kind ?? 'Notify',
+      paramsJson: item.action ? prettyJson(item.action.paramsJson) : '{}',
+      fire: item.action?.fire ?? { kind: 'OnStart', offsetMinutes: null, allDayAt: null },
+      enabled: item.action?.enabled ?? true,
+    },
+  });
+
+  const submit = handleSubmit((v) => {
+    const body: SetItemActionRequest = {
+      kind: v.kind,
+      paramsJson: v.paramsJson,
+      fire: v.fire,
+      enabled: v.enabled,
+    };
+    set.mutate({ id: item.id, data: body });
+  });
 
   return (
-    <form
-      className="payload-form"
-      onSubmit={(e) => {
-        e.preventDefault();
-        try {
-          JSON.parse(form.paramsJson);
-        } catch {
-          setJsonError('Params must be valid JSON.');
-          return;
-        }
-        setJsonError(null);
-        set.mutate({ id: item.id, data: form });
-      }}
-    >
+    <form className="payload-form" onSubmit={submit}>
       <div className="form-row">
         <label>Kind</label>
-        <TextField select size="small" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value as SetItemActionRequest['kind'] })}>
-          {Object.values(ActionKind).map((v) => (
-            <MenuItem key={v} value={v}>
-              {v}
-            </MenuItem>
-          ))}
-        </TextField>
-      </div>
-      <Tooltip title="Frozen params JSON (e.g. a SendCheckIn message)">
-        <TextField
-          size="small"
-          multiline
-          minRows={3}
-          slotProps={{ input: { sx: { fontFamily: 'monospace' } } }}
-          value={form.paramsJson}
-          onChange={(e) => setForm({ ...form, paramsJson: e.target.value })}
+        <Controller
+          name="kind"
+          control={control}
+          render={({ field }) => (
+            <TextField select size="small" {...field}>
+              {Object.values(ActionKind).map((v) => (
+                <MenuItem key={v} value={v}>
+                  {v}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
         />
-      </Tooltip>
-      <FireEditor fire={form.fire} onChange={(fire) => setForm({ ...form, fire })} />
-      <FormControlLabel
-        control={<Checkbox size="small" checked={form.enabled ?? true} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />}
-        label="Enabled"
+      </div>
+      <Controller
+        name="paramsJson"
+        control={control}
+        rules={{
+          validate: (v) => {
+            try {
+              JSON.parse(v);
+              return true;
+            } catch {
+              return 'Params must be valid JSON.';
+            }
+          },
+        }}
+        render={({ field }) => (
+          <Tooltip title="Frozen params JSON (e.g. a SendCheckIn message)">
+            <TextField size="small" multiline minRows={3} slotProps={{ input: { sx: { fontFamily: 'monospace' } } }} {...field} />
+          </Tooltip>
+        )}
       />
-      {jsonError && <p className="error-text">{jsonError}</p>}
+      <Controller
+        name="fire"
+        control={control}
+        render={({ field }) => <FireEditor fire={field.value} onChange={field.onChange} />}
+      />
+      <Controller
+        name="enabled"
+        control={control}
+        render={({ field }) => (
+          <FormControlLabel
+            control={<Checkbox size="small" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
+            label="Enabled"
+          />
+        )}
+      />
+      {errors.paramsJson && <p className="error-text">{errors.paramsJson.message}</p>}
       <div className="chip-row">
         <Button variant="contained" size="small" type="submit" disabled={set.isPending}>
           Save action
