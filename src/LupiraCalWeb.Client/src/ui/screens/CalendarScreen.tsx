@@ -1,5 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { familyKey } from '@lupira/cal-domain/family';
 import { useContainers } from '../../state/useContainers';
 import { useRangeOccurrences } from '../../state/useRangeOccurrences';
@@ -120,22 +125,22 @@ export function CalendarScreen() {
     <div className="cal-screen">
       <div className="cal-toolbar">
         <div className="cal-nav">
-          <button className="icon-btn cal-arrow" onClick={() => navigate(-1)} aria-label="Previous">
+          <IconButton size="small" onClick={() => navigate(-1)} aria-label="Previous">
             ‹
-          </button>
+          </IconButton>
           <button className="cal-title" onClick={() => setDateOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={dateOpen}>
             {title}
             <span className="dp-caret" aria-hidden>
               ▾
             </span>
           </button>
-          <button className="icon-btn cal-arrow" onClick={() => navigate(1)} aria-label="Next">
+          <IconButton size="small" onClick={() => navigate(1)} aria-label="Next">
             ›
-          </button>
+          </IconButton>
           {!todayVisible && (
-            <button className="btn today-btn" onClick={() => setDate(null)}>
+            <Button variant="outlined" size="small" onClick={() => setDate(null)}>
               Today
-            </button>
+            </Button>
           )}
           {isLoading && <span className="spinner" aria-label="loading" />}
           {dateOpen && (
@@ -151,24 +156,32 @@ export function CalendarScreen() {
         </div>
         <div className="cal-right">
           <div className="cal-actions">
-            <div className="seg">
+            <ToggleButtonGroup exclusive size="small" value={view} onChange={(_, nv) => nv != null && setView(nv)}>
               {(['month', 'week', 'day'] as const).map((v) => (
-                <button key={v} className={`seg-btn ${view === v ? 'active' : ''}`} onClick={() => setView(v)}>
+                <ToggleButton key={v} value={v}>
                   {v}
-                </button>
+                </ToggleButton>
               ))}
-            </div>
-            <button
-              className="btn phone-only"
+            </ToggleButtonGroup>
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ display: { md: 'none' } }}
               onClick={() => setSearchOpen((o) => !o)}
               aria-label="Search"
               aria-pressed={searchOpen}
             >
               🔍
-            </button>
-            <button className="btn phone-only" onClick={() => setSheetOpen(true)} aria-label="Calendars">
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ display: { md: 'none' } }}
+              onClick={() => setSheetOpen(true)}
+              aria-label="Calendars"
+            >
               🗂
-            </button>
+            </Button>
           </div>
           <div className={`cal-search ${searchOpen ? 'open' : ''}`}>
             <form
@@ -177,15 +190,15 @@ export function CalendarScreen() {
                 setParam('q', search || null);
               }}
             >
-              <input
-                className="text-input"
+              <TextField
+                size="small"
                 placeholder="Search title/description…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </form>
-            <input
-              className="text-input tag-input"
+            <TextField
+              size="small"
               placeholder="tag"
               defaultValue={tag}
               onKeyDown={(e) => {

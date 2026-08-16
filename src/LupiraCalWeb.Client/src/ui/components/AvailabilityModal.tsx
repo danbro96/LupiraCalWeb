@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import { useCreateItem } from '../../data/api/lupiraCalApi';
 import { AvailabilityStatus, type CreateCalendarItemRequest } from '../../data/api/models';
 import { ymd } from '@lupira/cal-domain/time';
@@ -47,38 +51,44 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
           <strong>Set availability</strong>
-          <button className="icon-btn" onClick={onClose} aria-label="Close">
+          <IconButton size="small" onClick={onClose} aria-label="Close">
             ✕
-          </button>
+          </IconButton>
         </div>
         <form className="modal-body" onSubmit={submit}>
           {!availabilityCalendar && <p className="meta">No availability calendar — bootstrap the standard set first.</p>}
           <div className="form-row">
             <label>Status</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value as AvailabilityStatus)}>
+            <TextField select size="small" value={status} onChange={(e) => setStatus(e.target.value as AvailabilityStatus)}>
               {Object.values(AvailabilityStatus).map((s) => (
-                <option key={s} value={s}>
+                <MenuItem key={s} value={s}>
                   {s}
-                </option>
+                </MenuItem>
               ))}
-            </select>
+            </TextField>
           </div>
           <div className="form-row">
             <label>From</label>
-            <input type="date" className="text-input" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+            <TextField type="date" size="small" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
           </div>
           <div className="form-row">
             <label>Until (exclusive)</label>
-            <input type="date" className="text-input" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={startDate} />
+            <TextField
+              type="date"
+              size="small"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              slotProps={{ htmlInput: { min: startDate } }}
+            />
           </div>
           {create.error ? <p className="error">{errText(create.error)}</p> : null}
           <div className="modal-actions">
-            <button className="btn primary" type="submit" disabled={!availabilityCalendar || create.isPending}>
+            <Button variant="contained" size="small" type="submit" disabled={!availabilityCalendar || create.isPending}>
               Save
-            </button>
-            <button className="btn" type="button" onClick={onClose}>
+            </Button>
+            <Button variant="outlined" size="small" type="button" onClick={onClose}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       </div>

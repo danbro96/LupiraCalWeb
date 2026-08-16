@@ -1,3 +1,4 @@
+import Button from '@mui/material/Button';
 import type { ItemDetails } from '../../../data/api/models';
 import { fmtDateTime } from '@lupira/cal-domain/time';
 
@@ -43,9 +44,9 @@ export function KindDetailsCard({ details }: { details?: ItemDetails | null }) {
         ))}
       </dl>
       {details.booking?.url && (
-        <a className="linklike" href={details.booking.url} target="_blank" rel="noreferrer">
+        <Button variant="text" size="small" href={details.booking.url} target="_blank" rel="noreferrer">
           Booking ↗
-        </a>
+        </Button>
       )}
     </section>
   );

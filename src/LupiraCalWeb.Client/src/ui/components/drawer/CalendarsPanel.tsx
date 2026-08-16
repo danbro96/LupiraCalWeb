@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import {
   useAcceptItemIntoCalendar,
   useFileItemToCalendar,
@@ -31,29 +37,34 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
           <div key={m.calendarId} className="membership-row">
             <span className="color-dot" style={{ background: cal ? calendarColor(cal) : 'var(--border)' }} />
             <span className="membership-name">{cal ? calendarLabel(cal) : m.calendarId.slice(0, 8)}</span>
-            {m.status === 'Proposed' ? <span className="badge severity-weak">proposed</span> : <span className="badge">accepted</span>}
-            {m.status === 'Proposed' && (
-              <button className="chip" onClick={() => accept.mutate({ itemId: item.id, calendarId: m.calendarId })}>
-                Accept
-              </button>
+            {m.status === 'Proposed' ? (
+              <Chip size="small" variant="outlined" label="proposed" />
+            ) : (
+              <Chip size="small" variant="outlined" label="accepted" />
             )}
-            <button className="icon-btn" title="Remove from calendar" onClick={() => remove.mutate({ itemId: item.id, calendarId: m.calendarId })}>
-              ×
-            </button>
+            {m.status === 'Proposed' && (
+              <Chip size="small" variant="outlined" label="Accept" onClick={() => accept.mutate({ itemId: item.id, calendarId: m.calendarId })} />
+            )}
+            <Tooltip title="Remove from calendar">
+              <IconButton size="small" onClick={() => remove.mutate({ itemId: item.id, calendarId: m.calendarId })}>
+                ×
+              </IconButton>
+            </Tooltip>
           </div>
         );
       })}
       <div className="form-row">
-        <select value={target} onChange={(e) => setTarget(e.target.value)}>
-          <option value="">File into calendar…</option>
+        <TextField select size="small" value={target} onChange={(e) => setTarget(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+          <MenuItem value="">File into calendar…</MenuItem>
           {fileable.map((c) => (
-            <option key={c.id} value={c.id}>
+            <MenuItem key={c.id} value={c.id}>
               {calendarLabel(c)}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-        <button
-          className="btn"
+        </TextField>
+        <Button
+          variant="outlined"
+          size="small"
           disabled={!target || file.isPending}
           onClick={() => {
             file.mutate({ itemId: item.id, calendarId: target, params: { status: 'accepted' } });
@@ -61,7 +72,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
           }}
         >
           File
-        </button>
+        </Button>
       </div>
     </section>
   );

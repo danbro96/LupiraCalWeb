@@ -1,4 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
 import { useGetItem, useSearchItems } from '../../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { fmtWhen } from '@lupira/cal-domain/time';
@@ -37,9 +38,9 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
         </Link>
       ))}
       {children.length > 0 && (
-        <Link className="linklike" to={`/items?parent=${item.id}`}>
+        <Button variant="text" size="small" component={Link} to={`/items?parent=${item.id}`}>
           open in list
-        </Link>
+        </Button>
       )}
     </section>
   );

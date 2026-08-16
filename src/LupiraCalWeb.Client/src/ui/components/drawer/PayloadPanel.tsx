@@ -1,4 +1,11 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import {
   useClearItemAction,
   useClearItemPrompt,
@@ -37,10 +44,10 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
       {item.prompt && editing !== 'prompt' && (
         <div className="payload-card">
           <div className="payload-head">
-            <span className="badge">LLM prompt</span>
-            <span className="badge">{item.prompt.intent}</span>
-            <span className="badge">→ {item.prompt.output}</span>
-            {!item.prompt.enabled && <span className="badge severity-absent">disabled</span>}
+            <Chip size="small" variant="outlined" label="LLM prompt" />
+            <Chip size="small" variant="outlined" label={item.prompt.intent} />
+            <Chip size="small" variant="outlined" label={`→ ${item.prompt.output}`} />
+            {!item.prompt.enabled && <Chip size="small" variant="outlined" label="disabled" />}
           </div>
           <p className="payload-instruction">{item.prompt.instruction}</p>
           <p className="meta">
@@ -49,44 +56,32 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             {item.prompt.tools?.length ? ` · tools: ${item.prompt.tools.join(', ')}` : ''}
           </p>
           <div className="chip-row">
-            <button className="chip" onClick={() => setEditing('prompt')}>
-              Edit
-            </button>
-            <button className="chip danger" onClick={() => clearPrompt.mutate({ id: item.id })}>
-              Remove
-            </button>
+            <Chip size="small" variant="outlined" label="Edit" onClick={() => setEditing('prompt')} />
+            <Chip size="small" variant="outlined" color="error" label="Remove" onClick={() => clearPrompt.mutate({ id: item.id })} />
           </div>
         </div>
       )}
       {item.action && editing !== 'action' && (
         <div className="payload-card">
           <div className="payload-head">
-            <span className="badge">Action</span>
-            <span className="badge">{item.action.kind}</span>
-            {!item.action.enabled && <span className="badge severity-absent">disabled</span>}
+            <Chip size="small" variant="outlined" label="Action" />
+            <Chip size="small" variant="outlined" label={item.action.kind} />
+            {!item.action.enabled && <Chip size="small" variant="outlined" label="disabled" />}
           </div>
           <pre className="json-view">{prettyJson(item.action.paramsJson)}</pre>
           <p className="meta">
             Fires {describeFire(item.action.fire.kind, item.action.fire.offsetMinutes, item.action.fire.allDayAt)}
           </p>
           <div className="chip-row">
-            <button className="chip" onClick={() => setEditing('action')}>
-              Edit
-            </button>
-            <button className="chip danger" onClick={() => clearAction.mutate({ id: item.id })}>
-              Remove
-            </button>
+            <Chip size="small" variant="outlined" label="Edit" onClick={() => setEditing('action')} />
+            <Chip size="small" variant="outlined" color="error" label="Remove" onClick={() => clearAction.mutate({ id: item.id })} />
           </div>
         </div>
       )}
       {!item.prompt && !item.action && editing === null && (
         <div className="chip-row">
-          <button className="chip" onClick={() => setEditing('prompt')}>
-            + LLM prompt
-          </button>
-          <button className="chip" onClick={() => setEditing('action')}>
-            + Action
-          </button>
+          <Chip size="small" variant="outlined" label="+ LLM prompt" onClick={() => setEditing('prompt')} />
+          <Chip size="small" variant="outlined" label="+ Action" onClick={() => setEditing('action')} />
         </div>
       )}
       {editing === 'prompt' && <PromptForm item={item} onDone={() => setEditing(null)} />}
@@ -107,24 +102,27 @@ function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: Prompt
   return (
     <div className="form-row">
       <label>Fires</label>
-      <select value={fire.kind} onChange={(e) => onChange({ ...fire, kind: e.target.value as PromptFire['kind'] })}>
+      <TextField select size="small" value={fire.kind} onChange={(e) => onChange({ ...fire, kind: e.target.value as PromptFire['kind'] })}>
         {Object.values(PromptFireKind).map((k) => (
-          <option key={k}>{k}</option>
+          <MenuItem key={k} value={k}>
+            {k}
+          </MenuItem>
         ))}
-      </select>
+      </TextField>
       {fire.kind === 'Offset' && (
-        <input
-          type="number"
-          className="text-input"
-          value={fire.offsetMinutes ?? -30}
-          onChange={(e) => onChange({ ...fire, offsetMinutes: Number(e.target.value) })}
-          title="Minutes relative to start (negative = before)"
-        />
+        <Tooltip title="Minutes relative to start (negative = before)">
+          <TextField
+            type="number"
+            size="small"
+            value={fire.offsetMinutes ?? -30}
+            onChange={(e) => onChange({ ...fire, offsetMinutes: Number(e.target.value) })}
+          />
+        </Tooltip>
       )}
       {fire.kind === 'AllDayAt' && (
-        <input
+        <TextField
           type="time"
-          className="text-input"
+          size="small"
           value={(fire.allDayAt ?? '09:00:00').slice(0, 5)}
           onChange={(e) => onChange({ ...fire, allDayAt: `${e.target.value}:00` })}
         />
@@ -164,20 +162,26 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
     >
       <div className="form-row">
         <label>Intent</label>
-        <select value={form.intent} onChange={(e) => setForm({ ...form, intent: e.target.value as SetItemPromptRequest['intent'] })}>
+        <TextField select size="small" value={form.intent} onChange={(e) => setForm({ ...form, intent: e.target.value as SetItemPromptRequest['intent'] })}>
           {Object.values(PromptIntent).map((v) => (
-            <option key={v}>{v}</option>
+            <MenuItem key={v} value={v}>
+              {v}
+            </MenuItem>
           ))}
-        </select>
+        </TextField>
         <label>Output</label>
-        <select value={form.output} onChange={(e) => setForm({ ...form, output: e.target.value as SetItemPromptRequest['output'] })}>
+        <TextField select size="small" value={form.output} onChange={(e) => setForm({ ...form, output: e.target.value as SetItemPromptRequest['output'] })}>
           {Object.values(OutputKind).map((v) => (
-            <option key={v}>{v}</option>
+            <MenuItem key={v} value={v}>
+              {v}
+            </MenuItem>
           ))}
-        </select>
+        </TextField>
       </div>
-      <textarea
-        className="text-input notes-input"
+      <TextField
+        size="small"
+        multiline
+        minRows={3}
         placeholder="Instruction for the agent…"
         value={form.instruction}
         onChange={(e) => setForm({ ...form, instruction: e.target.value })}
@@ -185,24 +189,31 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
       />
       <div className="form-row">
         <label>Tier</label>
-        <select
+        <TextField
+          select
+          size="small"
           value={form.tier ?? ''}
           onChange={(e) => setForm({ ...form, tier: (e.target.value || null) as SetItemPromptRequest['tier'] })}
+          slotProps={{ select: { displayEmpty: true } }}
         >
-          <option value="">(default)</option>
+          <MenuItem value="">(default)</MenuItem>
           {Object.values(ModelTier).map((v) => (
-            <option key={v}>{v}</option>
+            <MenuItem key={v} value={v}>
+              {v}
+            </MenuItem>
           ))}
-        </select>
+        </TextField>
         <label>On miss</label>
-        <select value={form.onMiss ?? 'Retry'} onChange={(e) => setForm({ ...form, onMiss: e.target.value as SetItemPromptRequest['onMiss'] })}>
+        <TextField select size="small" value={form.onMiss ?? 'Retry'} onChange={(e) => setForm({ ...form, onMiss: e.target.value as SetItemPromptRequest['onMiss'] })}>
           {Object.values(FallbackMode).map((v) => (
-            <option key={v}>{v}</option>
+            <MenuItem key={v} value={v}>
+              {v}
+            </MenuItem>
           ))}
-        </select>
+        </TextField>
       </div>
-      <input
-        className="text-input"
+      <TextField
+        size="small"
         placeholder="Tools (comma-separated, optional)"
         value={form.tools?.join(', ') ?? ''}
         onChange={(e) =>
@@ -210,18 +221,18 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
         }
       />
       <FireEditor fire={form.fire} onChange={(fire) => setForm({ ...form, fire })} />
-      <label className="check-row">
-        <input type="checkbox" checked={form.enabled ?? true} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />
-        Enabled
-      </label>
+      <FormControlLabel
+        control={<Checkbox size="small" checked={form.enabled ?? true} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />}
+        label="Enabled"
+      />
       {errText(set.error) && <p className="error-text">{errText(set.error)}</p>}
       <div className="chip-row">
-        <button className="btn primary" type="submit" disabled={set.isPending}>
+        <Button variant="contained" size="small" type="submit" disabled={set.isPending}>
           Save prompt
-        </button>
-        <button className="btn" type="button" onClick={onDone}>
+        </Button>
+        <Button variant="outlined" size="small" type="button" onClick={onDone}>
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -262,31 +273,37 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
     >
       <div className="form-row">
         <label>Kind</label>
-        <select value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value as SetItemActionRequest['kind'] })}>
+        <TextField select size="small" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value as SetItemActionRequest['kind'] })}>
           {Object.values(ActionKind).map((v) => (
-            <option key={v}>{v}</option>
+            <MenuItem key={v} value={v}>
+              {v}
+            </MenuItem>
           ))}
-        </select>
+        </TextField>
       </div>
-      <textarea
-        className="text-input notes-input mono"
-        value={form.paramsJson}
-        onChange={(e) => setForm({ ...form, paramsJson: e.target.value })}
-        title="Frozen params JSON (e.g. a SendCheckIn message)"
-      />
+      <Tooltip title="Frozen params JSON (e.g. a SendCheckIn message)">
+        <TextField
+          size="small"
+          multiline
+          minRows={3}
+          slotProps={{ input: { sx: { fontFamily: 'monospace' } } }}
+          value={form.paramsJson}
+          onChange={(e) => setForm({ ...form, paramsJson: e.target.value })}
+        />
+      </Tooltip>
       <FireEditor fire={form.fire} onChange={(fire) => setForm({ ...form, fire })} />
-      <label className="check-row">
-        <input type="checkbox" checked={form.enabled ?? true} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />
-        Enabled
-      </label>
+      <FormControlLabel
+        control={<Checkbox size="small" checked={form.enabled ?? true} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />}
+        label="Enabled"
+      />
       {(jsonError ?? errText(set.error)) && <p className="error-text">{jsonError ?? errText(set.error)}</p>}
       <div className="chip-row">
-        <button className="btn primary" type="submit" disabled={set.isPending}>
+        <Button variant="contained" size="small" type="submit" disabled={set.isPending}>
           Save action
-        </button>
-        <button className="btn" type="button" onClick={onDone}>
+        </Button>
+        <Button variant="outlined" size="small" type="button" onClick={onDone}>
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   useAddContactGroupMember,
@@ -54,14 +60,18 @@ export function ContactDetailPane() {
         <h2>
           {contact.displayName}
           {contact.nickname && contact.nickname !== contact.displayName && <span className="meta"> “{contact.nickname}”</span>}
-          {contact.deceased && <span className="badge" title={contact.deathDate ? `died ${contact.deathDate}` : 'deceased'}>†</span>}
+          {contact.deceased && (
+            <Tooltip title={contact.deathDate ? `died ${contact.deathDate}` : 'deceased'}>
+              <Chip size="small" variant="outlined" label="†" />
+            </Tooltip>
+          )}
         </h2>
         <div className="head-actions">
           <CompletenessBadge score={contact.completeness} />
           {!editing && (
-            <button className="btn" onClick={() => setEditing(true)}>
+            <Button variant="outlined" size="small" onClick={() => setEditing(true)}>
               Edit
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -123,9 +133,7 @@ export function ContactDetailPane() {
           {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).length > 0 && (
             <div className="chip-row">
               {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).map((t) => (
-                <span key={t} className="tag-chip">
-                  {t}
-                </span>
+                <Chip key={t} size="small" label={t} />
               ))}
             </div>
           )}
@@ -135,7 +143,7 @@ export function ContactDetailPane() {
               <h3>Emergency contacts</h3>
               {contact.emergencyContactIds.map((cid, i) => (
                 <div key={cid} className="membership-row">
-                  <span className="badge">{i + 1}</span>
+                  <Chip size="small" variant="outlined" label={i + 1} />
                   <Link className="membership-name" to={link(cid)}>
                     {nameOf(cid)}
                   </Link>
@@ -150,30 +158,32 @@ export function ContactDetailPane() {
         <h3>Groups</h3>
         {memberOf.map((g) => (
           <div key={g.id} className="membership-row">
-            <span className="badge">{g.kind === 'Organization' ? '🏢' : '👥'}</span>
+            <Chip size="small" variant="outlined" label={g.kind === 'Organization' ? '🏢' : '👥'} />
             <Link className="membership-name" to={{ pathname: `/contacts/groups/${g.id}`, search: groupSearch }}>
               {g.name}
             </Link>
-            <button
-              className="icon-btn"
-              title="Remove from group"
-              onClick={() => removeMember.mutate({ groupId: g.id, contactId: contact.id })}
-            >
-              ×
-            </button>
+            <Tooltip title="Remove from group">
+              <IconButton
+                size="small"
+                onClick={() => removeMember.mutate({ groupId: g.id, contactId: contact.id })}
+              >
+                ×
+              </IconButton>
+            </Tooltip>
           </div>
         ))}
         <div className="form-row">
-          <select value={groupId} onChange={(e) => setGroupId(e.target.value)}>
-            <option value="">Add to group…</option>
+          <TextField select size="small" value={groupId} onChange={(e) => setGroupId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+            <MenuItem value="">Add to group…</MenuItem>
             {joinable.map((g) => (
-              <option key={g.id} value={g.id}>
+              <MenuItem key={g.id} value={g.id}>
                 {g.name}
-              </option>
+              </MenuItem>
             ))}
-          </select>
-          <button
-            className="btn"
+          </TextField>
+          <Button
+            variant="outlined"
+            size="small"
             disabled={!groupId}
             onClick={() => {
               addMember.mutate({ groupId, params: { contactId: contact.id } });
@@ -181,7 +191,7 @@ export function ContactDetailPane() {
             }}
           >
             Add
-          </button>
+          </Button>
         </div>
       </section>
 
@@ -192,9 +202,9 @@ export function ContactDetailPane() {
       <section className="drawer-section">
         <div className="page-head">
           <h3>Social circles</h3>
-          <button className="linklike" onClick={() => setShowCircles((v) => !v)}>
+          <Button variant="text" size="small" onClick={() => setShowCircles((v) => !v)}>
             {showCircles ? 'Hide' : 'Show'}
-          </button>
+          </Button>
         </div>
         {showCircles && <ContactCircles focusId={contact.id} />}
       </section>
@@ -206,12 +216,12 @@ export function ContactDetailPane() {
         </p>
       )}
       <div className="detail-footer">
-        <button className="linklike" disabled={setMe.isPending} onClick={() => setMe.mutate({ data: { contactId: contact.id } })}>
+        <Button variant="text" size="small" disabled={setMe.isPending} onClick={() => setMe.mutate({ data: { contactId: contact.id } })}>
           This is me
-        </button>
-        <button className="btn destructive" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
+        </Button>
+        <Button variant="outlined" color="error" size="small" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
           Delete contact
-        </button>
+        </Button>
       </div>
       {errText(setMe.error) && <p className="error-text">{errText(setMe.error)}</p>}
     </div>

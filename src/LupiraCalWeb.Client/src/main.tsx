@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { router } from './ui/navigation/router';
+import { SnackbarHost } from './ui/components/SnackbarHost';
 import { theme } from './ui/theme/muiTheme';
 import { ApiError } from './data/fetcher';
 import './index.css';
@@ -25,7 +26,9 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <SnackbarHost>
+          <RouterProvider router={router} />
+        </SnackbarHost>
       </QueryClientProvider>
     </ThemeProvider>
   </StrictMode>,

@@ -1,4 +1,9 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import { useDeleteItem, useGetItem, useUpdateItem } from '../../../data/api/lupiraCalApi';
 import {
   AvailabilityStatus,
@@ -29,9 +34,9 @@ export function ItemDrawer({ itemId, onClose }: { itemId: string; onClose: () =>
     <div className="drawer-backdrop" onClick={onClose}>
       <aside className="drawer" onClick={(e) => e.stopPropagation()}>
         <div className="drawer-head">
-          <button className="icon-btn" onClick={onClose} aria-label="Close">
+          <IconButton size="small" onClick={onClose} aria-label="Close">
             ✕
-          </button>
+          </IconButton>
         </div>
         {isLoading && <p className="meta drawer-pad">Loading…</p>}
         {!isLoading && !item && <p className="meta drawer-pad">Item not found (or no access).</p>}
@@ -68,8 +73,10 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             {ITEM_CATEGORY_ICONS[item.category] ?? ''}
           </span>
         )}
-        <input
-          className="title-input"
+        <TextField
+          variant="standard"
+          fullWidth
+          slotProps={{ input: { sx: { fontSize: '1.35rem', fontWeight: 600 } } }}
           value={title}
           placeholder="(untitled)"
           onChange={(e) => setTitle(e.target.value)}
@@ -81,24 +88,31 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
 
       <div className="form-row">
         <label>Status</label>
-        <select value={item.status ?? ''} onChange={(e) => patch({ status: e.target.value || null })}>
-          <option value="">(none)</option>
+        <TextField select size="small" value={item.status ?? ''} onChange={(e) => patch({ status: e.target.value || null })} slotProps={{ select: { displayEmpty: true } }}>
+          <MenuItem value="">(none)</MenuItem>
           {Object.values(ItemStatus).map((s) => (
-            <option key={s}>{s}</option>
+            <MenuItem key={s} value={s}>
+              {s}
+            </MenuItem>
           ))}
-        </select>
+        </TextField>
         {item.details?.presence && (
           <>
             <label>Availability</label>
-            <select
+            <TextField
+              select
+              size="small"
               value={item.details.presence.status ?? ''}
               onChange={(e) => e.target.value && patch({ availability: e.target.value as AvailabilityStatus })}
+              slotProps={{ select: { displayEmpty: true } }}
             >
-              <option value="">(set…)</option>
+              <MenuItem value="">(set…)</MenuItem>
               {Object.values(AvailabilityStatus).map((s) => (
-                <option key={s}>{s}</option>
+                <MenuItem key={s} value={s}>
+                  {s}
+                </MenuItem>
               ))}
-            </select>
+            </TextField>
           </>
         )}
       </div>
@@ -112,9 +126,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
           </p>
         ) : (
           <div className="form-row">
-            <input
+            <TextField
               type="datetime-local"
-              className="text-input"
+              size="small"
               defaultValue={isoToLocalInput(item.startsAt)}
               onBlur={(e) => {
                 const iso = localInputToIso(e.target.value);
@@ -122,9 +136,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
               }}
             />
             <span className="meta">→</span>
-            <input
+            <TextField
               type="datetime-local"
-              className="text-input"
+              size="small"
               defaultValue={isoToLocalInput(item.endsAt)}
               onBlur={(e) => {
                 const iso = localInputToIso(e.target.value);
@@ -135,7 +149,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         )}
         <div className="form-row">
           <label>Repeats</label>
-          <select
+          <TextField
+            select
+            size="small"
             value={RRULE_PRESETS.some((p) => p.rrule === rrule) ? rrule : rrule ? 'custom' : ''}
             onChange={(e) => {
               if (e.target.value && e.target.value !== 'custom') {
@@ -143,17 +159,19 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
                 patch({ recurrenceRule: e.target.value });
               }
             }}
+            slotProps={{ select: { displayEmpty: true } }}
           >
-            <option value="">never</option>
+            <MenuItem value="">never</MenuItem>
             {RRULE_PRESETS.map((p) => (
-              <option key={p.rrule} value={p.rrule}>
+              <MenuItem key={p.rrule} value={p.rrule}>
                 {p.label}
-              </option>
+              </MenuItem>
             ))}
-            {rrule && !RRULE_PRESETS.some((p) => p.rrule === rrule) && <option value="custom">custom</option>}
-          </select>
-          <input
-            className="text-input mono"
+            {rrule && !RRULE_PRESETS.some((p) => p.rrule === rrule) && <MenuItem value="custom">custom</MenuItem>}
+          </TextField>
+          <TextField
+            size="small"
+            slotProps={{ input: { sx: { fontFamily: 'monospace' } } }}
             placeholder="RRULE…"
             value={rrule}
             onChange={(e) => setRrule(e.target.value)}
@@ -166,8 +184,8 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <section className="drawer-section">
         <h3>Where</h3>
         {item.locationLabel && <p className="field-value">📍 {item.locationLabel}</p>}
-        <input
-          className="text-input"
+        <TextField
+          size="small"
           placeholder={item.locationLabel ? 'Change location…' : 'Add location…'}
           value={location}
           onChange={(e) => setLocation(e.target.value)}
@@ -177,8 +195,10 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
 
       <section className="drawer-section">
         <h3>Description</h3>
-        <textarea
-          className="text-input notes-input"
+        <TextField
+          size="small"
+          multiline
+          minRows={3}
           value={description}
           placeholder="Notes…"
           onChange={(e) => setDescription(e.target.value)}
@@ -190,15 +210,10 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         <h3>Tags</h3>
         <div className="chip-row">
           {(item.tags ?? []).map((t) => (
-            <span key={t} className="tag-chip">
-              {t}{' '}
-              <button className="tag-x" onClick={() => patch({ tags: (item.tags ?? []).filter((x) => x !== t) })}>
-                ×
-              </button>
-            </span>
+            <Chip key={t} size="small" label={t} onDelete={() => patch({ tags: (item.tags ?? []).filter((x) => x !== t) })} />
           ))}
-          <input
-            className="text-input tag-input"
+          <TextField
+            size="small"
             placeholder="+ tag"
             value={newTag}
             onChange={(e) => setNewTag(e.target.value)}
@@ -225,9 +240,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         <span className="meta" title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
           {item.category ?? 'General'} item
         </span>
-        <button className="btn destructive" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>
+        <Button variant="outlined" color="error" size="small" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>
           Delete item
-        </button>
+        </Button>
       </div>
     </div>
   );

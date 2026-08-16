@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import { useGetContact } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto } from '../../../data/api-contact/models';
 import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
@@ -14,9 +16,9 @@ export function BirthdayCard({ contactId, year, onClose }: { contactId: string; 
     <div className="drawer-backdrop" onClick={onClose}>
       <aside className="drawer" onClick={(e) => e.stopPropagation()}>
         <div className="drawer-head">
-          <button className="icon-btn" onClick={onClose} aria-label="Close">
+          <IconButton size="small" onClick={onClose} aria-label="Close">
             ✕
-          </button>
+          </IconButton>
         </div>
         {isLoading && <p className="meta drawer-pad">Loading…</p>}
         {!isLoading && !contact && <p className="meta drawer-pad">Contact not found (or no access).</p>}
@@ -59,9 +61,9 @@ function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | n
         )}
       </section>
 
-      <Link className="linklike" to={`/contacts/${contact.id}`}>
+      <Button variant="text" size="small" component={Link} to={`/contacts/${contact.id}`}>
         View contact →
-      </Link>
+      </Button>
     </div>
   );
 }

@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import {
   useClearContactDeceased,
   useMarkContactDeceased,
@@ -61,18 +67,13 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
       {values.length > 0 && (
         <div className="chip-row">
           {values.map((v, i) => (
-            <span key={`${v}-${i}`} className="tag-chip">
-              {v}
-              <button type="button" className="chip-x" title="Remove" onClick={() => onChange(values.filter((_, j) => j !== i))}>
-                ×
-              </button>
-            </span>
+            <Chip key={`${v}-${i}`} size="small" label={v} onDelete={() => onChange(values.filter((_, j) => j !== i))} />
           ))}
         </div>
       )}
       <div className="form-row">
-        <input
-          className="text-input"
+        <TextField
+          size="small"
           type={inputType}
           value={draft}
           placeholder={placeholder}
@@ -84,9 +85,9 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
             }
           }}
         />
-        <button type="button" className="btn" onClick={commit} disabled={!draft.trim()}>
+        <Button variant="outlined" size="small" onClick={commit} disabled={!draft.trim()}>
           Add
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -204,29 +205,29 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
     >
       <div className="edit-field">
         <label>Given name</label>
-        <input className="text-input" value={givenName} onChange={(e) => setGivenName(e.target.value)} />
+        <TextField size="small" value={givenName} onChange={(e) => setGivenName(e.target.value)} />
       </div>
       <div className="edit-field">
         <label>Middle name</label>
-        <input className="text-input" value={middleName} onChange={(e) => setMiddleName(e.target.value)} />
+        <TextField size="small" value={middleName} onChange={(e) => setMiddleName(e.target.value)} />
       </div>
       <div className="edit-field">
         <label>Family name</label>
-        <input className="text-input" value={familyName} onChange={(e) => setFamilyName(e.target.value)} />
+        <TextField size="small" value={familyName} onChange={(e) => setFamilyName(e.target.value)} />
       </div>
       <div className="edit-field">
         <label>Nickname</label>
-        <input className="text-input" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+        <TextField size="small" value={nickname} onChange={(e) => setNickname(e.target.value)} />
       </div>
       <div className="edit-field">
         <label>Display as</label>
-        <select value={displayNameFormat} onChange={(e) => setDisplayNameFormat(e.target.value as DisplayNameFormat)}>
+        <TextField select size="small" value={displayNameFormat} onChange={(e) => setDisplayNameFormat(e.target.value as DisplayNameFormat)}>
           {Object.values(DisplayNameFormat).map((f) => (
-            <option key={f} value={f}>
+            <MenuItem key={f} value={f}>
               {DISPLAY_NAME_FORMAT_LABELS[f]}
-            </option>
+            </MenuItem>
           ))}
-        </select>
+        </TextField>
       </div>
       <div className="edit-field">
         <label>Birthday</label>
@@ -244,11 +245,11 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
           Enter year
         </label>
         {birthdayYearKnown ? (
-          <input className="text-input" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
+          <TextField size="small" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
         ) : (
           <div className="form-row">
-            <input className="text-input" type="number" min={1} max={12} placeholder="Month" value={birthdayMonth} onChange={(e) => setBirthdayMonth(e.target.value)} />
-            <input className="text-input" type="number" min={1} max={31} placeholder="Day" value={birthdayDay} onChange={(e) => setBirthdayDay(e.target.value)} />
+            <TextField size="small" type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }} placeholder="Month" value={birthdayMonth} onChange={(e) => setBirthdayMonth(e.target.value)} />
+            <TextField size="small" type="number" slotProps={{ htmlInput: { min: 1, max: 31 } }} placeholder="Day" value={birthdayDay} onChange={(e) => setBirthdayDay(e.target.value)} />
           </div>
         )}
       </div>
@@ -257,24 +258,26 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         <label>Reach channels</label>
         {channels.map((c, i) => (
           <div key={i} className="form-row">
-            <select
+            <TextField
+              select
+              size="small"
               value={c.medium}
               onChange={(e) => setChannelsState(channels.map((x, j) => (j === i ? { ...x, medium: e.target.value as ReachMedium } : x)))}
             >
               {Object.values(ReachMedium).map((m) => (
-                <option key={m} value={m}>
+                <MenuItem key={m} value={m}>
                   {m}
-                </option>
+                </MenuItem>
               ))}
-            </select>
-            <input
-              className="text-input"
+            </TextField>
+            <TextField
+              size="small"
               placeholder={c.medium === ReachMedium.Phone ? '+46…' : 'name@example.com'}
               value={c.value}
               onChange={(e) => setChannelsState(channels.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)))}
             />
-            <input
-              className="text-input"
+            <TextField
+              size="small"
               placeholder="type (home/work…)"
               value={c.type ?? ''}
               onChange={(e) => setChannelsState(channels.map((x, j) => (j === i ? { ...x, type: e.target.value || null } : x)))}
@@ -297,18 +300,20 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               />{' '}
               preferred
             </label>
-            <button type="button" className="icon-btn" title="Remove channel" onClick={() => setChannelsState(channels.filter((_, j) => j !== i))}>
-              ×
-            </button>
+            <Tooltip title="Remove channel">
+              <IconButton size="small" onClick={() => setChannelsState(channels.filter((_, j) => j !== i))}>
+                ×
+              </IconButton>
+            </Tooltip>
           </div>
         ))}
-        <button
-          type="button"
-          className="linklike"
+        <Button
+          variant="text"
+          size="small"
           onClick={() => setChannelsState([...channels, { medium: ReachMedium.Email, value: '', type: null, preferred: false }])}
         >
           + Add channel
-        </button>
+        </Button>
       </div>
 
       <ChipList label="Tags" values={tags} onChange={setTagsState} placeholder="work, family…" />
@@ -317,62 +322,68 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         <label>Addresses</label>
         {addresses.map((a, i) => (
           <div key={i} className="form-row">
-            <select
+            <TextField
+              select
+              size="small"
               value={a.type ?? ContactAddressType.Home}
               onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, type: e.target.value as ContactAddressType } : x)))}
             >
               {Object.values(ContactAddressType).map((t) => (
-                <option key={t} value={t}>
+                <MenuItem key={t} value={t}>
                   {t}
-                </option>
+                </MenuItem>
               ))}
-            </select>
+            </TextField>
             <PlacePicker
               placeId={a.placeId ?? null}
               placeholder="Street, city…"
               onChange={(placeId) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, placeId } : x)))}
             />
-            <input
-              className="text-input residency-input"
-              placeholder="Moved in"
-              title="Moved in — YYYY, YYYY-MM, or YYYY-MM-DD; as precise as actually known"
-              value={a.movedInText}
-              onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, movedInText: e.target.value } : x)))}
-            />
-            <input
-              className="text-input residency-input"
-              placeholder="Moved out"
-              title="Moved out — filling this marks the address as former"
-              value={a.movedOutText}
-              onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, movedOutText: e.target.value } : x)))}
-            />
+            <Tooltip title="Moved in — YYYY, YYYY-MM, or YYYY-MM-DD; as precise as actually known">
+              <TextField
+                size="small"
+                placeholder="Moved in"
+                value={a.movedInText}
+                onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, movedInText: e.target.value } : x)))}
+              />
+            </Tooltip>
+            <Tooltip title="Moved out — filling this marks the address as former">
+              <TextField
+                size="small"
+                placeholder="Moved out"
+                value={a.movedOutText}
+                onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, movedOutText: e.target.value } : x)))}
+              />
+            </Tooltip>
             {a.movedOutText.trim() !== '' && <span className="meta">former</span>}
-            <button type="button" className="icon-btn" title="Remove address" onClick={() => setAddressesState(addresses.filter((_, j) => j !== i))}>
-              ×
-            </button>
+            <Tooltip title="Remove address">
+              <IconButton size="small" onClick={() => setAddressesState(addresses.filter((_, j) => j !== i))}>
+                ×
+              </IconButton>
+            </Tooltip>
           </div>
         ))}
-        <button
-          type="button"
-          className="linklike"
+        <Button
+          variant="text"
+          size="small"
           onClick={() => setAddressesState([...addresses, { type: ContactAddressType.Home, placeId: null, movedInText: '', movedOutText: '' }])}
         >
           + Add address
-        </button>
+        </Button>
       </div>
 
       <div className="edit-field">
         <label>Social profiles</label>
         {profiles.map((p, i) => (
           <div key={i} className="form-row">
-            <input
-              className="text-input"
+            <TextField
+              size="small"
               placeholder="service (telegram…)"
               value={p.service ?? ''}
               onChange={(e) => setProfilesState(profiles.map((x, j) => (j === i ? { ...x, service: e.target.value } : x)))}
             />
-            <input
-              className="text-input"
+            <TextField
+              size="small"
               placeholder="handle"
               value={p.handle ?? ''}
               onChange={(e) => setProfilesState(profiles.map((x, j) => (j === i ? { ...x, handle: e.target.value } : x)))}
@@ -385,14 +396,16 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               />{' '}
               preferred
             </label>
-            <button type="button" className="icon-btn" title="Remove profile" onClick={() => setProfilesState(profiles.filter((_, j) => j !== i))}>
-              ×
-            </button>
+            <Tooltip title="Remove profile">
+              <IconButton size="small" onClick={() => setProfilesState(profiles.filter((_, j) => j !== i))}>
+                ×
+              </IconButton>
+            </Tooltip>
           </div>
         ))}
-        <button type="button" className="linklike" onClick={() => setProfilesState([...profiles, { service: '', handle: '', preferred: false }])}>
+        <Button variant="text" size="small" onClick={() => setProfilesState([...profiles, { service: '', handle: '', preferred: false }])}>
           + Add profile
-        </button>
+        </Button>
       </div>
 
       <div className="edit-field">
@@ -400,27 +413,32 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         <p className="meta">In priority order — who to call about this person.</p>
         {emergency.map((cid, i) => (
           <div key={cid} className="membership-row">
-            <span className="badge">{i + 1}</span>
+            <Chip size="small" variant="outlined" label={i + 1} />
             <span className="membership-name">{nameOf(cid)}</span>
-            <button type="button" className="icon-btn" title="Remove" onClick={() => setEmergencyState(emergency.filter((x) => x !== cid))}>
-              ×
-            </button>
+            <Tooltip title="Remove">
+              <IconButton size="small" onClick={() => setEmergencyState(emergency.filter((x) => x !== cid))}>
+                ×
+              </IconButton>
+            </Tooltip>
           </div>
         ))}
         {emergencyPickable.length > 0 && (
-          <select
+          <TextField
+            select
+            size="small"
             value=""
             onChange={(e) => {
               if (e.target.value) setEmergencyState([...emergency, e.target.value]);
             }}
+            slotProps={{ select: { displayEmpty: true } }}
           >
-            <option value="">Add emergency contact…</option>
+            <MenuItem value="">Add emergency contact…</MenuItem>
             {emergencyPickable.map((c) => (
-              <option key={c.id} value={c.id}>
+              <MenuItem key={c.id} value={c.id}>
                 {c.displayName}
-              </option>
+              </MenuItem>
             ))}
-          </select>
+          </TextField>
         )}
       </div>
 
@@ -429,18 +447,18 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
           <input type="checkbox" checked={deceased} onChange={(e) => setDeceased(e.target.checked)} /> Deceased
         </label>
         {deceased && (
-          <input className="text-input" type="date" value={deathDate} onChange={(e) => setDeathDate(e.target.value)} />
+          <TextField size="small" type="date" value={deathDate} onChange={(e) => setDeathDate(e.target.value)} />
         )}
       </div>
 
       {error && <p className="error-text">{error}</p>}
       <div className="edit-actions">
-        <button className="btn primary" type="submit" disabled={saving}>
+        <Button variant="contained" size="small" type="submit" disabled={saving}>
           {saving ? 'Saving…' : 'Save'}
-        </button>
-        <button className="btn" type="button" onClick={onDone} disabled={saving}>
+        </Button>
+        <Button variant="outlined" size="small" onClick={onDone} disabled={saving}>
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

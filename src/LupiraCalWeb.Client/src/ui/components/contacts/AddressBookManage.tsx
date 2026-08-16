@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import {
   useDeleteAddressBook,
   useGrantAddressBookOwner,
@@ -42,26 +48,27 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
           update.mutate({ addressBookId: book.id, data: { slug: slug.trim() || null, displayName: displayName.trim() || null } });
         }}
       >
-        <input className="text-input" placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
-        <input className="text-input" placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        <button className="btn" type="submit" disabled={update.isPending}>
+        <TextField size="small" placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
+        <TextField size="small" placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+        <Button variant="outlined" size="small" type="submit" disabled={update.isPending}>
           Rename
-        </button>
+        </Button>
       </form>
 
       <div className="section-label">Shared with</div>
       {(owners ?? []).map((o) => (
         <div key={o.principalId} className="membership-row">
-          <span className="badge">{o.access}</span>
+          <Chip size="small" variant="outlined" label={o.access} />
           <span className="membership-name">{o.displayName ?? o.email}</span>
-          <button
-            className="icon-btn"
-            title="Revoke access"
-            disabled={revoke.isPending}
-            onClick={() => revoke.mutate({ addressBookId: book.id, params: { email: o.email } })}
-          >
-            ×
-          </button>
+          <Tooltip title="Revoke access">
+            <IconButton
+              size="small"
+              disabled={revoke.isPending}
+              onClick={() => revoke.mutate({ addressBookId: book.id, params: { email: o.email } })}
+            >
+              ×
+            </IconButton>
+          </Tooltip>
         </div>
       ))}
       <form
@@ -73,22 +80,22 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
           setEmail('');
         }}
       >
-        <input className="text-input" type="email" placeholder="email to share with" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <select value={access} onChange={(e) => setAccess(e.target.value)}>
+        <TextField size="small" type="email" placeholder="email to share with" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <TextField select size="small" value={access} onChange={(e) => setAccess(e.target.value)}>
           {ACCESS_OPTIONS.map((a) => (
-            <option key={a.value} value={a.value}>
+            <MenuItem key={a.value} value={a.value}>
               {a.label}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-        <button className="btn" type="submit" disabled={!email.trim() || grant.isPending}>
+        </TextField>
+        <Button variant="outlined" size="small" type="submit" disabled={!email.trim() || grant.isPending}>
           Share
-        </button>
+        </Button>
       </form>
 
-      <button className="btn destructive" disabled={del.isPending} onClick={() => del.mutate({ addressBookId: book.id })}>
+      <Button variant="outlined" color="error" size="small" disabled={del.isPending} onClick={() => del.mutate({ addressBookId: book.id })}>
         Delete address book
-      </button>
+      </Button>
       {errors.map((msg, i) => (
         <p key={i} className="error-text">
           {msg}

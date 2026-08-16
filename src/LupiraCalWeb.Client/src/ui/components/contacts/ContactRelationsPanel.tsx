@@ -1,4 +1,10 @@
 import { useMemo, useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import { Link, useLocation } from 'react-router-dom';
 import {
   useAddContactRelation,
@@ -71,28 +77,32 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
     <section className="drawer-section">
       <div className="page-head">
         <h3>Relations</h3>
-        <button className="linklike" onClick={() => setShowExtended((v) => !v)}>
+        <Button variant="text" size="small" onClick={() => setShowExtended((v) => !v)}>
           {showExtended ? 'Hide extended family' : 'Show extended family'}
-        </button>
+        </Button>
       </div>
 
       <div className="relation-toolbar">
-        <input
-          className="text-input"
+        <TextField
+          size="small"
           placeholder="Search relations…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         {groups.map((g) => (
-          <button
+          <Chip
             key={g.category}
-            className={`chip cat-chip cat-${g.category}${activeCats.has(g.category) ? ' active' : ''}`}
+            size="small"
+            variant={activeCats.has(g.category) ? 'filled' : 'outlined'}
+            label={
+              <>
+                <span className={`legend-dot cat-${g.category}`} /> {g.category} · {g.total}
+              </>
+            }
             aria-pressed={activeCats.has(g.category)}
             onClick={() => toggleCat(g.category)}
-          >
-            <span className={`legend-dot cat-${g.category}`} />
-            {g.category} · {g.total}
-          </button>
+            sx={{ color: `var(--cat-${g.category.toLowerCase()})`, borderColor: `var(--cat-${g.category.toLowerCase()})` }}
+          />
         ))}
       </div>
 
@@ -127,44 +137,47 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
               </button>
               {open && outgoing.map((r) => (
                 <div key={`out-${r.contactId}-${r.kind}`} className={rowClass(r, r.ended ? ' ended' : '')} onClick={rowSelect(r.contactId)}>
-                  <span className={`badge cat-${g.category}`}>{r.kind}</span>
+                  <Chip size="small" variant="outlined" label={r.kind} sx={{ color: `var(--cat-${g.category.toLowerCase()})`, borderColor: `var(--cat-${g.category.toLowerCase()})` }} />
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
                   {r.label && <span className="meta">“{r.label}”</span>}
                   {r.ended && <span className="meta">· ended{r.until ? ` ${r.until}` : ''}</span>}
                   {r.ended ? (
-                    <button
-                      className="icon-btn"
-                      title="Revive relationship"
-                      disabled={add.isPending}
-                      onClick={() => add.mutate({ id: contact.id, data: { toContactId: r.contactId, kind: r.kind as ContactRelationKind, label: r.label ?? null } })}
-                    >
-                      ↺
-                    </button>
+                    <Tooltip title="Revive relationship">
+                      <IconButton
+                        size="small"
+                        disabled={add.isPending}
+                        onClick={() => add.mutate({ id: contact.id, data: { toContactId: r.contactId, kind: r.kind as ContactRelationKind, label: r.label ?? null } })}
+                      >
+                        ↺
+                      </IconButton>
+                    </Tooltip>
                   ) : (
-                    <button
-                      className="icon-btn"
-                      title="End relationship (ran its course)"
-                      disabled={end.isPending}
-                      onClick={() => end.mutate({ id: contact.id, toContactId: r.contactId, data: { kind: r.kind as ContactRelationKind } })}
-                    >
-                      ⏻
-                    </button>
+                    <Tooltip title="End relationship (ran its course)">
+                      <IconButton
+                        size="small"
+                        disabled={end.isPending}
+                        onClick={() => end.mutate({ id: contact.id, toContactId: r.contactId, data: { kind: r.kind as ContactRelationKind } })}
+                      >
+                        ⏻
+                      </IconButton>
+                    </Tooltip>
                   )}
-                  <button
-                    className="icon-btn"
-                    title="Remove relation (entered by mistake)"
-                    disabled={remove.isPending}
-                    onClick={() => remove.mutate({ id: contact.id, toContactId: r.contactId, params: { kind: r.kind as ContactRelationKind } })}
-                  >
-                    ×
-                  </button>
+                  <Tooltip title="Remove relation (entered by mistake)">
+                    <IconButton
+                      size="small"
+                      disabled={remove.isPending}
+                      onClick={() => remove.mutate({ id: contact.id, toContactId: r.contactId, params: { kind: r.kind as ContactRelationKind } })}
+                    >
+                      ×
+                    </IconButton>
+                  </Tooltip>
                 </div>
               ))}
               {open && incoming.map((r) => (
                 <div key={`in-${r.contactId}-${r.kind}`} className={rowClass(r, ' incoming')} onClick={rowSelect(r.contactId)}>
-                  <span className={`badge cat-${g.category}`}>{r.kind}</span>
+                  <Chip size="small" variant="outlined" label={r.kind} sx={{ color: `var(--cat-${g.category.toLowerCase()})`, borderColor: `var(--cat-${g.category.toLowerCase()})` }} />
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
@@ -173,7 +186,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
               ))}
               {open && inferred.map((r) => (
                 <div key={`kin-${r.contactId}-${r.kind}`} className={rowClass(r, ' inferred')} onClick={rowSelect(r.contactId)}>
-                  <span className={`badge cat-${g.category}`}>{r.kind}</span>
+                  <Chip size="small" variant="outlined" label={r.kind} sx={{ color: `var(--cat-${g.category.toLowerCase()})`, borderColor: `var(--cat-${g.category.toLowerCase()})` }} />
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
@@ -194,30 +207,30 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
           setLabel('');
         }}
       >
-        <select value={toContactId} onChange={(e) => setToContactId(e.target.value)}>
-          <option value="">Relate a contact…</option>
+        <TextField select size="small" value={toContactId} onChange={(e) => setToContactId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+          <MenuItem value="">Relate a contact…</MenuItem>
           {pickable.map((c) => (
-            <option key={c.id} value={c.id}>
+            <MenuItem key={c.id} value={c.id}>
               {c.displayName}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-        <select value={kind} onChange={(e) => setKind(e.target.value as RelationKind)}>
+        </TextField>
+        <TextField select size="small" value={kind} onChange={(e) => setKind(e.target.value as RelationKind)}>
           {RELATION_KINDS.map((k) => (
-            <option key={k} value={k}>
+            <MenuItem key={k} value={k}>
               {k}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-        <input
-          className="text-input"
+        </TextField>
+        <TextField
+          size="small"
           placeholder="label (dad, boss…)"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
         />
-        <button className="btn" type="submit" disabled={!toContactId || add.isPending}>
+        <Button variant="outlined" size="small" type="submit" disabled={!toContactId || add.isPending}>
           Add
-        </button>
+        </Button>
       </form>
       {errText(add.error) && <p className="error-text">{errText(add.error)}</p>}
       {errText(end.error) && <p className="error-text">{errText(end.error)}</p>}

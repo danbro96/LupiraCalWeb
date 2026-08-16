@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import TextField from '@mui/material/TextField';
 import { useCreateItemRelation, useListItemRelations } from '../../../data/api/lupiraCalApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 
@@ -14,7 +17,7 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
       <h3>Relations</h3>
       {(relations ?? []).map((r) => (
         <div key={r.id} className="relation-row">
-          <span className="badge">{r.relationType}</span>
+          <Chip size="small" variant="outlined" label={r.relationType} />
           <span className="meta">
             {r.toKind}: <code>{r.toRef}</code>
           </span>
@@ -28,12 +31,12 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
           setForm({ toKind: '', toRef: '', relationType: '' });
         }}
       >
-        <input className="text-input" placeholder="kind (task, url…)" value={form.toKind} onChange={(e) => setForm({ ...form, toKind: e.target.value })} required />
-        <input className="text-input" placeholder="reference" value={form.toRef} onChange={(e) => setForm({ ...form, toRef: e.target.value })} required />
-        <input className="text-input" placeholder="relation (blocks…)" value={form.relationType} onChange={(e) => setForm({ ...form, relationType: e.target.value })} required />
-        <button className="btn" type="submit" disabled={create.isPending}>
+        <TextField size="small" placeholder="kind (task, url…)" value={form.toKind} onChange={(e) => setForm({ ...form, toKind: e.target.value })} required />
+        <TextField size="small" placeholder="reference" value={form.toRef} onChange={(e) => setForm({ ...form, toRef: e.target.value })} required />
+        <TextField size="small" placeholder="relation (blocks…)" value={form.relationType} onChange={(e) => setForm({ ...form, relationType: e.target.value })} required />
+        <Button variant="outlined" size="small" type="submit" disabled={create.isPending}>
           Link
-        </button>
+        </Button>
       </form>
     </section>
   );

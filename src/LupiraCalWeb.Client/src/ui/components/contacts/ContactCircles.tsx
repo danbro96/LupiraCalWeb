@@ -1,3 +1,4 @@
+import Chip from '@mui/material/Chip';
 import { Link, useLocation } from 'react-router-dom';
 import { useGetContactCircles } from '../../../data/api-contact/lupiraContactApi';
 import type { CircleKind } from '../../../data/api-contact/models';
@@ -26,7 +27,7 @@ export function ContactCircles({ focusId }: { focusId: string }) {
           <p className="section-label">{CIRCLE_LABEL[c.kind]}</p>
           {c.members.map((m) => (
             <div key={m.contactId} className="membership-row">
-              {m.kind && <span className="badge">{m.kind}</span>}
+              {m.kind && <Chip size="small" variant="outlined" label={m.kind} />}
               <Link className="membership-name" to={{ pathname: `/contacts/${m.contactId}`, search: location.search }}>
                 {m.displayName}
               </Link>

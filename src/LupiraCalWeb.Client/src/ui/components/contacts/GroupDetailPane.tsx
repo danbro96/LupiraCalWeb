@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   useAddContactGroupMember,
@@ -44,9 +50,10 @@ export function GroupDetailPane() {
     <div className="contacts-detail-pane">
       <div className="page-head">
         <h2>
-          <span className="badge">{group.kind === 'Organization' ? '🏢 org' : '👥 group'}</span>{' '}
-          <input
-            className="text-input inline-name"
+          <Chip size="small" variant="outlined" label={group.kind === 'Organization' ? '🏢 org' : '👥 group'} />{' '}
+          <TextField
+            size="small"
+            variant="standard"
             defaultValue={group.name}
             onBlur={(e) => {
               if (e.target.value && e.target.value !== group.name)
@@ -65,27 +72,29 @@ export function GroupDetailPane() {
             <Link className="membership-name" to={{ pathname: `/contacts/${c.id}`, search: backSearch }}>
               {c.displayName}
             </Link>
-            <button
-              className="icon-btn"
-              title="Remove from group"
-              onClick={() => removeMember.mutate({ groupId: group.id, contactId: c.id })}
-            >
-              ×
-            </button>
+            <Tooltip title="Remove from group">
+              <IconButton
+                size="small"
+                onClick={() => removeMember.mutate({ groupId: group.id, contactId: c.id })}
+              >
+                ×
+              </IconButton>
+            </Tooltip>
           </div>
         ))}
         {members.length === 0 && <p className="meta">No members yet.</p>}
         <div className="form-row">
-          <select value={addId} onChange={(e) => setAddId(e.target.value)}>
-            <option value="">Add member…</option>
+          <TextField select size="small" value={addId} onChange={(e) => setAddId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+            <MenuItem value="">Add member…</MenuItem>
             {nonMembers.map((c) => (
-              <option key={c.id} value={c.id}>
+              <MenuItem key={c.id} value={c.id}>
                 {c.displayName}
-              </option>
+              </MenuItem>
             ))}
-          </select>
-          <button
-            className="btn"
+          </TextField>
+          <Button
+            variant="outlined"
+            size="small"
             disabled={!addId}
             onClick={() => {
               addMember.mutate({ groupId: group.id, params: { contactId: addId } });
@@ -93,14 +102,14 @@ export function GroupDetailPane() {
             }}
           >
             Add
-          </button>
+          </Button>
         </div>
       </section>
 
       <div className="drawer-footer">
-        <button className="btn destructive" onClick={() => del.mutate({ groupId: group.id })} disabled={del.isPending}>
+        <Button variant="outlined" color="error" size="small" onClick={() => del.mutate({ groupId: group.id })} disabled={del.isPending}>
           Delete {group.kind === 'Organization' ? 'organization' : 'group'}
-        </button>
+        </Button>
       </div>
     </div>
   );

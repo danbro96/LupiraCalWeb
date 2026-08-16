@@ -1,4 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQueries } from '@tanstack/react-query';
 import { Background, Controls, Handle, MarkerType, Panel, Position, ReactFlow } from '@xyflow/react';
@@ -172,13 +175,11 @@ export function ContactRelationGraph({
       <Background />
       <Controls showInteractive={false} />
       <Panel position="top-right">
-        <button
-          className="icon-btn"
-          title={fullscreen ? 'Close' : 'Fullscreen'}
-          onClick={() => setFullscreen((v) => !v)}
-        >
-          {fullscreen ? '✕' : '⛶'}
-        </button>
+        <Tooltip title={fullscreen ? 'Close' : 'Fullscreen'}>
+          <IconButton size="small" onClick={() => setFullscreen((v) => !v)}>
+            {fullscreen ? '✕' : '⛶'}
+          </IconButton>
+        </Tooltip>
       </Panel>
     </ReactFlow>
   );
@@ -194,9 +195,9 @@ export function ContactRelationGraph({
   // The inline embed is unusable at phone width — offer the fullscreen modal instead.
   if (isPhone)
     return (
-      <button className="btn graph-open" onClick={() => setFullscreen(true)}>
+      <Button variant="outlined" size="small" onClick={() => setFullscreen(true)}>
         ⛶ Open relation graph
-      </button>
+      </Button>
     );
   return <div className="relation-graph">{flow}</div>;
 }

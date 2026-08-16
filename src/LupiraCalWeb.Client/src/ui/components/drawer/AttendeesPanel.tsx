@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import {
   useConfirmAttendance,
   useGetParticipationSummary,
@@ -79,52 +85,55 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
             <div className="attendee-actions">
               {status === 'NeedsAction' && (
                 <>
-                  <button className="chip" title="Accept" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'accepted' } })}>
-                    ✓
-                  </button>
-                  <button className="chip" title="Tentative" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'tentative' } })}>
-                    ?
-                  </button>
-                  <button className="chip" title="Decline" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'declined' } })}>
-                    ✗
-                  </button>
+                  <Tooltip title="Accept">
+                    <Chip size="small" variant="outlined" label="✓" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'accepted' } })} />
+                  </Tooltip>
+                  <Tooltip title="Tentative">
+                    <Chip size="small" variant="outlined" label="?" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'tentative' } })} />
+                  </Tooltip>
+                  <Tooltip title="Decline">
+                    <Chip size="small" variant="outlined" label="✗" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'declined' } })} />
+                  </Tooltip>
                 </>
               )}
               {status === 'Accepted' && !a.attendedAt && (
-                <button className="chip" title="Confirm attendance" onClick={() => attend.mutate({ id: item.id, participationId: pid })}>
-                  attended
-                </button>
+                <Tooltip title="Confirm attendance">
+                  <Chip size="small" variant="outlined" label="attended" onClick={() => attend.mutate({ id: item.id, participationId: pid })} />
+                </Tooltip>
               )}
               {!a.leftAt && (
-                <button className="chip" title="Left" onClick={() => leave.mutate({ id: item.id, participationId: pid })}>
-                  left
-                </button>
+                <Tooltip title="Left">
+                  <Chip size="small" variant="outlined" label="left" onClick={() => leave.mutate({ id: item.id, participationId: pid })} />
+                </Tooltip>
               )}
-              <button className="icon-btn" title="Remove" onClick={() => remove.mutate({ id: item.id, participationId: pid })}>
-                ×
-              </button>
+              <Tooltip title="Remove">
+                <IconButton size="small" onClick={() => remove.mutate({ id: item.id, participationId: pid })}>
+                  ×
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
         );
       })}
       <div className="form-row">
-        <select value={contactId} onChange={(e) => setContactId(e.target.value)}>
-          <option value="">Invite a contact…</option>
+        <TextField select size="small" value={contactId} onChange={(e) => setContactId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+          <MenuItem value="">Invite a contact…</MenuItem>
           {invitable.map((c) => (
-            <option key={c.id} value={c.id}>
+            <MenuItem key={c.id} value={c.id}>
               {c.displayName}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
+        </TextField>
+        <TextField select size="small" value={role} onChange={(e) => setRole(e.target.value)}>
           {ROLE_OPTIONS.map((r) => (
-            <option key={r.value} value={r.value}>
+            <MenuItem key={r.value} value={r.value}>
               {r.label}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-        <button
-          className="btn"
+        </TextField>
+        <Button
+          variant="outlined"
+          size="small"
           disabled={!contactId || invite.isPending}
           onClick={() => {
             invite.mutate({ id: item.id, params: { contactId, role } });
@@ -132,7 +141,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
           }}
         >
           Invite
-        </button>
+        </Button>
       </div>
       {errText(invite.error) && <p className="error-text">{errText(invite.error)}</p>}
     </section>

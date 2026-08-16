@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
 import { useAcceptItemIntoCalendar, useRemoveItemFromCalendar } from '../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../data/api/models';
 import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
@@ -41,12 +42,17 @@ export function InboxScreen() {
                 <span className="title">{item.title || '(untitled)'}</span>
                 <span className="meta">{itemWhen(item)}</span>
               </button>
-              <button className="btn" onClick={() => accept.mutate({ itemId: item.id, calendarId: calendar.id })}>
+              <Button variant="outlined" size="small" onClick={() => accept.mutate({ itemId: item.id, calendarId: calendar.id })}>
                 Accept
-              </button>
-              <button className="btn destructive" onClick={() => remove.mutate({ itemId: item.id, calendarId: calendar.id })}>
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                size="small"
+                onClick={() => remove.mutate({ itemId: item.id, calendarId: calendar.id })}
+              >
                 Reject
-              </button>
+              </Button>
             </div>
           ))}
         </section>

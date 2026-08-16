@@ -1,4 +1,5 @@
 import { Link, Outlet, useMatch, useSearchParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
 import { ContactsTree } from '../components/contacts/ContactsTree';
 import { ContactList } from '../components/contacts/ContactList';
 import { useIsPhone } from '../useIsPhone';
@@ -31,9 +32,9 @@ export function ContactsLayout() {
     return (
       <div className="contacts-stack">
         <div className="pane-back">
-          <Link className="linklike" to={{ pathname: '/contacts', search: back.toString() }}>
+          <Button variant="text" size="small" component={Link} to={{ pathname: '/contacts', search: back.toString() }}>
             ‹ Contacts
-          </Link>
+          </Button>
         </div>
         <Outlet />
       </div>
@@ -44,9 +45,9 @@ export function ContactsLayout() {
     return (
       <div className="contacts-stack">
         <div className="pane-back">
-          <Link className="linklike" to="/contacts">
+          <Button variant="text" size="small" component={Link} to="/contacts">
             ‹ Books
-          </Link>
+          </Button>
         </div>
         <ContactList />
       </div>

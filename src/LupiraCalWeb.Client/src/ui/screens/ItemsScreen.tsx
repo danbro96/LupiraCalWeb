@@ -1,5 +1,11 @@
 import { Fragment, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useGetItem } from '../../data/api/lupiraCalApi';
 import { useGetContact } from '../../data/api-contact/lupiraContactApi';
 import { ItemCategory, ItemStatus, OriginKind, type CalendarItemOccurrenceDto, type ContainerDto } from '../../data/api/models';
@@ -75,8 +81,8 @@ export function ItemsScreen() {
 
   const filterControls = (
     <>
-      <input
-        className="text-input tag-input"
+      <TextField
+        size="small"
         placeholder="tag"
         defaultValue={filters.tag}
         onKeyDown={(e) => {
@@ -84,65 +90,80 @@ export function ItemsScreen() {
         }}
         onBlur={(e) => setParam('tag', e.target.value || null)}
       />
-      <select value={filters.cal} onChange={(e) => setParam('cal', e.target.value || null)} aria-label="Calendar">
-        <option value="">All calendars</option>
+      <TextField
+        select
+        size="small"
+        value={filters.cal}
+        onChange={(e) => setParam('cal', e.target.value || null)}
+        slotProps={{ htmlInput: { 'aria-label': 'Calendar' }, select: { displayEmpty: true } }}
+      >
+        <MenuItem value="">All calendars</MenuItem>
         {calendars.map((c) => (
-          <option key={c.id} value={c.id}>
+          <MenuItem key={c.id} value={c.id}>
             {calendarLabel(c)}
-          </option>
+          </MenuItem>
         ))}
-      </select>
-      <select
+      </TextField>
+      <TextField
+        select
+        size="small"
         value={filters.category}
         onChange={(e) => setParam('category', e.target.value || null)}
-        aria-label="Category"
+        slotProps={{ htmlInput: { 'aria-label': 'Category' }, select: { displayEmpty: true } }}
       >
-        <option value="">Any category</option>
+        <MenuItem value="">Any category</MenuItem>
         {Object.values(ItemCategory).map((c) => (
-          <option key={c} value={c}>
+          <MenuItem key={c} value={c}>
             {ITEM_CATEGORY_ICONS[c]} {c}
-          </option>
+          </MenuItem>
         ))}
-      </select>
-      <select value={filters.status} onChange={(e) => setParam('status', e.target.value || null)} aria-label="Status">
-        <option value="">Any status</option>
+      </TextField>
+      <TextField
+        select
+        size="small"
+        value={filters.status}
+        onChange={(e) => setParam('status', e.target.value || null)}
+        slotProps={{ htmlInput: { 'aria-label': 'Status' }, select: { displayEmpty: true } }}
+      >
+        <MenuItem value="">Any status</MenuItem>
         {Object.values(ItemStatus).map((s) => (
-          <option key={s} value={s}>
+          <MenuItem key={s} value={s}>
             {s}
-          </option>
+          </MenuItem>
         ))}
-      </select>
+      </TextField>
     </>
   );
 
   const rangeControls = (
     <>
-      <div className="seg">
+      <ToggleButtonGroup
+        exclusive
+        size="small"
+        value={filters.range}
+        onChange={(_, nv) => nv != null && setParam('range', nv === 'upcoming' ? null : nv)}
+      >
         {RANGE_PRESETS.map((r) => (
-          <button
-            key={r}
-            className={`seg-btn ${filters.range === r ? 'active' : ''}`}
-            onClick={() => setParam('range', r === 'upcoming' ? null : r)}
-          >
+          <ToggleButton key={r} value={r}>
             {r}
-          </button>
+          </ToggleButton>
         ))}
-      </div>
+      </ToggleButtonGroup>
       {filters.range === 'custom' && (
         <>
-          <input
-            className="text-input"
+          <TextField
+            size="small"
             type="date"
             value={filters.from}
             onChange={(e) => setParam('from', e.target.value || null)}
-            aria-label="From"
+            slotProps={{ htmlInput: { 'aria-label': 'From' } }}
           />
-          <input
-            className="text-input"
+          <TextField
+            size="small"
             type="date"
             value={filters.to}
             onChange={(e) => setParam('to', e.target.value || null)}
-            aria-label="To"
+            slotProps={{ htmlInput: { 'aria-label': 'To' } }}
           />
         </>
       )}
@@ -162,8 +183,8 @@ export function ItemsScreen() {
             setParam('q', search || null);
           }}
         >
-          <input
-            className="text-input"
+          <TextField
+            size="small"
             placeholder="Search title/description…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -192,9 +213,9 @@ export function ItemsScreen() {
           rangeControls
         )}
         {isPhone ? (
-          <button className="btn" onClick={() => setSheetOpen(true)}>
+          <Button variant="outlined" size="small" onClick={() => setSheetOpen(true)}>
             ☰ Filters{secondaryCount > 0 ? ` (${secondaryCount})` : ''}
-          </button>
+          </Button>
         ) : (
           filterControls
         )}
@@ -226,9 +247,9 @@ export function ItemsScreen() {
         {error && <p className="empty">{errText(error) ?? 'Search failed.'}</p>}
       </div>
       {hasNextPage && (
-        <button className="btn items-more" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
+        <Button variant="outlined" size="small" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
           {isFetchingNextPage ? 'Loading…' : `Load ${SEARCH_PAGE_SIZE} more`}
-        </button>
+        </Button>
       )}
 
       {sheetOpen && (
@@ -284,11 +305,9 @@ function ItemRow({
         </button>
       )}
       {o.tags?.map((t) => (
-        <span key={t} className="tag-chip">
-          {t}
-        </span>
+        <Chip key={t} size="small" label={t} />
       ))}
-      {o.status && o.status !== ItemStatus.Confirmed && <span className="badge">{o.status.toLowerCase()}</span>}
+      {o.status && o.status !== ItemStatus.Confirmed && <Chip size="small" variant="outlined" label={o.status.toLowerCase()} />}
       {childCount > 0 && (
         <button className="items-subcount" onClick={(e) => stop(e, () => onDrill?.(o.id))}>
           {childCount} sub-item{childCount === 1 ? '' : 's'}

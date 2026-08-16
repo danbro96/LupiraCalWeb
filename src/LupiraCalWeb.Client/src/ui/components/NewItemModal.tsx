@@ -1,5 +1,11 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import { useCreateItem } from '../../data/api/lupiraCalApi';
 import { AvailabilityStatus, type CreateCalendarItemRequest } from '../../data/api/models';
 import { RRULE_PRESETS } from '@lupira/cal-domain/rrule';
@@ -73,74 +79,90 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <button className="icon-btn" onClick={onClose} aria-label="Close">
+          <IconButton size="small" onClick={onClose} aria-label="Close">
             ✕
-          </button>
+          </IconButton>
         </div>
         <form className="modal-body" onSubmit={submit}>
-          <input className="title-input" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} autoFocus />
+          <TextField
+            variant="standard"
+            fullWidth
+            slotProps={{ input: { sx: { fontSize: '1.35rem', fontWeight: 600 } } }}
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            autoFocus
+          />
           <div className="form-row">
             <label>Calendar</label>
-            <select value={calendarId} onChange={(e) => setCalendarId(e.target.value)}>
+            <TextField select size="small" value={calendarId} onChange={(e) => setCalendarId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
               {calendars.map((c) => (
-                <option key={c.id} value={c.id}>
+                <MenuItem key={c.id} value={c.id}>
                   {calendarLabel(c)}
                   {c.class === 'System' ? ' (system)' : ''}
-                </option>
+                </MenuItem>
               ))}
-              <option value="">(unfiled → curation)</option>
-            </select>
-            <label className="check-row">
-              <input type="checkbox" checked={isAllDay} onChange={(e) => setIsAllDay(e.target.checked)} />
-              All day
-            </label>
+              <MenuItem value="">(unfiled → curation)</MenuItem>
+            </TextField>
+            <FormControlLabel
+              control={<Checkbox size="small" checked={isAllDay} onChange={(e) => setIsAllDay(e.target.checked)} />}
+              label="All day"
+            />
           </div>
           {isAllDay ? (
             <div className="form-row">
-              <input type="date" className="text-input" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+              <TextField type="date" size="small" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
               <span className="meta">→</span>
-              <input type="date" className="text-input" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+              <TextField type="date" size="small" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </div>
           ) : (
             <div className="form-row">
-              <input type="datetime-local" className="text-input" value={start} onChange={(e) => setStart(e.target.value)} required />
+              <TextField type="datetime-local" size="small" value={start} onChange={(e) => setStart(e.target.value)} required />
               <span className="meta">→</span>
-              <input type="datetime-local" className="text-input" value={end} onChange={(e) => setEnd(e.target.value)} />
+              <TextField type="datetime-local" size="small" value={end} onChange={(e) => setEnd(e.target.value)} />
             </div>
           )}
           <div className="form-row">
             <label>Repeats</label>
-            <select value={rrule} onChange={(e) => setRrule(e.target.value)}>
-              <option value="">never</option>
+            <TextField select size="small" value={rrule} onChange={(e) => setRrule(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+              <MenuItem value="">never</MenuItem>
               {RRULE_PRESETS.map((p) => (
-                <option key={p.rrule} value={p.rrule}>
+                <MenuItem key={p.rrule} value={p.rrule}>
                   {p.label}
-                </option>
+                </MenuItem>
               ))}
-            </select>
+            </TextField>
             {(isAvailabilityCalendar || availability) && (
               <>
                 <label>Availability</label>
-                <select value={availability} onChange={(e) => setAvailability(e.target.value as AvailabilityStatus | '')}>
-                  <option value="">(status…)</option>
+                <TextField
+                  select
+                  size="small"
+                  value={availability}
+                  onChange={(e) => setAvailability(e.target.value as AvailabilityStatus | '')}
+                  slotProps={{ select: { displayEmpty: true } }}
+                >
+                  <MenuItem value="">(status…)</MenuItem>
                   {Object.values(AvailabilityStatus).map((s) => (
-                    <option key={s}>{s}</option>
+                    <MenuItem key={s} value={s}>
+                      {s}
+                    </MenuItem>
                   ))}
-                </select>
+                </TextField>
               </>
             )}
           </div>
-          <input className="text-input" placeholder="Location (free text — becomes a Place)" value={location} onChange={(e) => setLocation(e.target.value)} />
-          <input className="text-input" placeholder="Tags (comma-separated)" value={tags} onChange={(e) => setTags(e.target.value)} />
-          <textarea className="text-input notes-input" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+          <TextField size="small" placeholder="Location (free text — becomes a Place)" value={location} onChange={(e) => setLocation(e.target.value)} />
+          <TextField size="small" placeholder="Tags (comma-separated)" value={tags} onChange={(e) => setTags(e.target.value)} />
+          <TextField size="small" multiline minRows={3} placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
           {errText(create.error) && <p className="error-text">{errText(create.error)}</p>}
           <div className="chip-row">
-            <button className="btn primary" type="submit" disabled={create.isPending}>
+            <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
               Create
-            </button>
-            <button className="btn" type="button" onClick={onClose}>
+            </Button>
+            <Button variant="outlined" size="small" type="button" onClick={onClose}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       </div>

@@ -1,3 +1,5 @@
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import { useGetListsListIdItemsItemId } from '../../../data/api-tasks/lupiraTasksApi';
 import type { ItemResponse } from '../../../data/api-tasks/models';
 import { fmtDate, fmtTime } from '@lupira/cal-domain/time';
@@ -11,9 +13,9 @@ export function TaskCard({ listId, itemId, onClose }: { listId: string; itemId: 
     <div className="drawer-backdrop" onClick={onClose}>
       <aside className="drawer" onClick={(e) => e.stopPropagation()}>
         <div className="drawer-head">
-          <button className="icon-btn" onClick={onClose} aria-label="Close">
+          <IconButton size="small" onClick={onClose} aria-label="Close">
             ✕
-          </button>
+          </IconButton>
         </div>
         {isLoading && <p className="meta drawer-pad">Loading…</p>}
         {!isLoading && !task && <p className="meta drawer-pad">Task not found (or no access).</p>}
@@ -66,13 +68,13 @@ function TaskBody({ task }: { task: ItemResponse }) {
       )}
 
       <section className="drawer-section">
-        <a className="btn primary" href={`lupiratasks://task/${task.listId}/${task.id}`}>
+        <Button variant="contained" size="small" href={`lupiratasks://task/${task.listId}/${task.id}`}>
           Open in Lupira Tasks
-        </a>
+        </Button>
       </section>
-      <a className="linklike" href={`https://tasks.lupira.com/lists/${task.listId}`} target="_blank" rel="noreferrer">
+      <Button variant="text" size="small" href={`https://tasks.lupira.com/lists/${task.listId}`} target="_blank" rel="noreferrer">
         Open list on the web →
-      </a>
+      </Button>
     </div>
   );
 }

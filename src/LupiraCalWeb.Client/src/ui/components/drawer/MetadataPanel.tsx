@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import { useMergeItemMetadata } from '../../../data/api/lupiraCalApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 
@@ -22,22 +24,26 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
   return (
     <section className="drawer-section">
       <h3>
-        <button className="linklike" onClick={() => setOpen((o) => !o)}>
+        <Button variant="text" size="small" onClick={() => setOpen((o) => !o)}>
           Metadata {open ? '▾' : '▸'}
-        </button>
+        </Button>
       </h3>
       {open && (
         <>
           <pre className="json-view">{isEmpty ? '{}' : JSON.stringify(metadata, null, 2)}</pre>
-          <textarea
-            className="text-input notes-input mono"
+          <TextField
+            size="small"
+            multiline
+            minRows={3}
+            slotProps={{ input: { sx: { fontFamily: 'monospace' } } }}
             placeholder='Merge JSON, e.g. {"source":"manual"}'
             value={patch}
             onChange={(e) => setPatch(e.target.value)}
           />
           {jsonError && <p className="error-text">{jsonError}</p>}
-          <button
-            className="btn"
+          <Button
+            variant="outlined"
+            size="small"
             disabled={!patch || merge.isPending}
             onClick={() => {
               try {
@@ -50,7 +56,7 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
             }}
           >
             Merge
-          </button>
+          </Button>
         </>
       )}
     </section>

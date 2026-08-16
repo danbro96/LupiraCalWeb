@@ -1,4 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
 import { formatCoords, osmUrl } from '@lupira/cal-domain/places';
@@ -20,7 +22,7 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
           <section className="card">
             <div className="drawer-title-row">
               <h3 style={{ margin: 0, flex: 1 }}>{place.name}</h3>
-              <span className="badge">{place.category}</span>
+              <Chip size="small" variant="outlined" label={place.category} />
             </div>
             {(place.containment ?? []).length > 0 && (
               <div className="loc-breadcrumb">
@@ -39,9 +41,15 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
                 {osmUrl(place.latitude, place.longitude) && (
                   <>
                     {' '}
-                    <a className="linklike" href={osmUrl(place.latitude, place.longitude)!} target="_blank" rel="noreferrer">
+                    <Button
+                      variant="text"
+                      size="small"
+                      href={osmUrl(place.latitude, place.longitude)!}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       OSM ↗
-                    </a>
+                    </Button>
                   </>
                 )}
               </p>
