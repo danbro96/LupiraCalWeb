@@ -2301,6 +2301,11 @@ select {
 }
 .map-index .location-row {
   width: 100%;
+  flex-wrap: wrap;
+}
+.map-index .location-row .meta {
+  flex-basis: 100%;
+  text-align: left;
 }
 @media (max-width: 700px) {
   .map-topbar {
@@ -2329,4 +2334,9 @@ select {
     background: rgba(26, 26, 25, 0.7) !important;
     color: var(--text-muted);
   }
+}
+
+.residency-input {
+  width: 7.5em;
+  flex: none;
 }

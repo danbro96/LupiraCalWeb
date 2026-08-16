@@ -10,6 +10,7 @@ import {
   useSetMyContact,
 } from '../../../data/api-contact/lupiraContactApi';
 import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
+import { fmtResidencyPeriod } from '@lupira/cal-domain/fuzzyDate';
 import { fmtDate } from '@lupira/cal-domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
@@ -92,7 +93,12 @@ export function ContactDetailPane() {
             {contact.addresses.filter((a) => a.placeId).map((a, i) => (
               <div key={i}>
                 <dt>{a.type} address</dt>
-                <dd>📍 <PlaceLabel placeId={a.placeId} link /></dd>
+                <dd>
+                  📍 <PlaceLabel placeId={a.placeId} link />
+                  {(a.movedIn || a.movedOut) && (
+                    <span className="meta"> · {fmtResidencyPeriod(a.movedIn, a.movedOut)}{a.movedOut ? ' (former)' : ''}</span>
+                  )}
+                </dd>
               </div>
             ))}
             {contact.profiles.map((p, i) => (

@@ -22,7 +22,15 @@ import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { PlacePicker } from '../places/PlacePicker';
 import { errText } from '../errText';
+import { fuzzyToInput, parseFuzzyInput } from '@lupira/cal-domain/fuzzyDate';
 import { inputToPartialDate, partialDateKey, partialDateToInput } from '@lupira/cal-domain/partialDate';
+
+type AddressDraft = ContactPostalAddress & { movedInText: string; movedOutText: string };
+
+/** Null-vs-undefined and key-order insensitive shape for the addresses change diff. */
+function normAddr(a: ContactPostalAddress) {
+  return { placeId: a.placeId ?? null, type: a.type, movedIn: fuzzyToInput(a.movedIn), movedOut: fuzzyToInput(a.movedOut) };
+}
 
 const norm = (s?: string | null) => (s ?? '').trim();
 const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((v, i) => v === b[i]);
@@ -110,7 +118,13 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   const [birthdayDay, setBirthdayDay] = useState(!yearKnownInitial && contact.birthday ? String(Number(contact.birthday.day)) : '');
   const [channels, setChannelsState] = useState<ContactReachChannel[]>(contact.channels.map((c) => ({ ...c })));
   const [tags, setTagsState] = useState<string[]>((contact.tags ?? []).filter((t) => t !== PINNED_TAG));
-  const [addresses, setAddressesState] = useState<ContactPostalAddress[]>(contact.addresses.map((a) => ({ ...a })));
+  // Residency dates are edited as text ("2015", "2015-06", "2015-06-12" — precision = certainty) and
+  // parsed at save; a filled moved-out marks the address as former.
+  const [addresses, setAddressesState] = useState<AddressDraft[]>(contact.addresses.map((a) => ({
+    ...a,
+    movedInText: fuzzyToInput(a.movedIn),
+    movedOutText: fuzzyToInput(a.movedOut),
+  })));
   const [profiles, setProfilesState] = useState<ContactSocialProfile[]>(contact.profiles.map((p) => ({ ...p })));
   const [emergency, setEmergencyState] = useState<string[]>([...contact.emergencyContactIds]);
   const [deceased, setDeceased] = useState(!!contact.deceased);
@@ -144,8 +158,19 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       const nextTags = (contact.tags ?? []).includes(PINNED_TAG) ? [...tags, PINNED_TAG] : tags;
       if (!sameList(nextTags, contact.tags ?? [])) await setTags.mutateAsync({ id, data: { tags: nextTags } });
 
-      const cleanAddresses = addresses.filter((a) => a.placeId);
-      if (JSON.stringify(cleanAddresses) !== JSON.stringify(contact.addresses))
+      const cleanAddresses: ContactPostalAddress[] = [];
+      for (const a of addresses) {
+        if (!a.placeId) continue;
+        const movedIn = a.movedInText.trim() ? parseFuzzyInput(a.movedInText) : null;
+        const movedOut = a.movedOutText.trim() ? parseFuzzyInput(a.movedOutText) : null;
+        if ((a.movedInText.trim() && !movedIn) || (a.movedOutText.trim() && !movedOut)) {
+          setError('Residency dates must be YYYY, YYYY-MM, or YYYY-MM-DD.');
+          setSaving(false);
+          return;
+        }
+        cleanAddresses.push({ placeId: a.placeId, type: a.type, movedIn, movedOut });
+      }
+      if (JSON.stringify(cleanAddresses.map(normAddr)) !== JSON.stringify(contact.addresses.map(normAddr)))
         await setAddresses.mutateAsync({ id, data: { addresses: cleanAddresses } });
 
       const cleanProfiles = profiles.filter((p) => norm(p.service) && norm(p.handle));
@@ -307,12 +332,31 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               placeholder="Street, city…"
               onChange={(placeId) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, placeId } : x)))}
             />
+            <input
+              className="text-input residency-input"
+              placeholder="Moved in"
+              title="Moved in — YYYY, YYYY-MM, or YYYY-MM-DD; as precise as actually known"
+              value={a.movedInText}
+              onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, movedInText: e.target.value } : x)))}
+            />
+            <input
+              className="text-input residency-input"
+              placeholder="Moved out"
+              title="Moved out — filling this marks the address as former"
+              value={a.movedOutText}
+              onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, movedOutText: e.target.value } : x)))}
+            />
+            {a.movedOutText.trim() !== '' && <span className="meta">former</span>}
             <button type="button" className="icon-btn" title="Remove address" onClick={() => setAddressesState(addresses.filter((_, j) => j !== i))}>
               ×
             </button>
           </div>
         ))}
-        <button type="button" className="linklike" onClick={() => setAddressesState([...addresses, { type: ContactAddressType.Home, placeId: null }])}>
+        <button
+          type="button"
+          className="linklike"
+          onClick={() => setAddressesState([...addresses, { type: ContactAddressType.Home, placeId: null, movedInText: '', movedOutText: '' }])}
+        >
           + Add address
         </button>
       </div>

@@ -9,7 +9,7 @@ import { featureProp, useGeoJsonLayer, type LayerSpecSansSource } from './useGeo
 /** What a pin click surfaces — MapScreen renders the popover / navigates. */
 export interface PinSelection {
   lngLat: [number, number];
-  kind: 'contact' | 'visit' | 'saved' | 'current';
+  kind: 'contact' | 'contact-former' | 'visit' | 'saved' | 'current';
   props: Record<string, unknown>;
 }
 
@@ -145,6 +145,55 @@ export function ContactsLayer({ theme, features, onSelect }: CommonLayerProps & 
       }),
       'contacts-clusters': expandCluster(map, 'contacts'),
     }), [map, onSelect]),
+  });
+  return null;
+}
+
+/** Former residencies: hollow faded pins beneath the current contact pins; no clustering (few entries). */
+export function FormerContactsLayer({ theme, features, onSelect }: CommonLayerProps & { features: FeatureCollection }) {
+  const map = useMap();
+  const colors = MAP_COLORS[theme];
+
+  const layers = useMemo<LayerSpecSansSource[]>(() => [
+    {
+      id: 'contacts-former-pins', type: 'circle',
+      paint: {
+        'circle-radius': 6,
+        'circle-opacity': 0,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.contact,
+        'circle-stroke-opacity': 0.55,
+      },
+    },
+    {
+      id: 'contacts-former-labels', type: 'symbol',
+      layout: {
+        'text-field': ['get', 'label'],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': 11,
+        'text-anchor': 'top',
+        'text-offset': [0, 0.8],
+        'text-max-width': 14,
+        'text-optional': true,
+      },
+      paint: { 'text-color': colors.ink, 'text-opacity': 0.6, 'text-halo-color': colors.ring, 'text-halo-width': 1.2 },
+    },
+  ], [colors]);
+
+  useGeoJsonLayer(map, 'contacts-former', features, layers, {
+    onClick: useMemo(() => ({
+      'contacts-former-pins': (f: MapGeoJSONFeature, e) => onSelect({
+        lngLat: [e.lngLat.lng, e.lngLat.lat],
+        kind: 'contact-former',
+        props: {
+          names: featureProp<string[]>(f, 'names') ?? [],
+          contactIds: featureProp<string[]>(f, 'contactIds') ?? [],
+          periods: featureProp<string[]>(f, 'periods') ?? [],
+          placeId: featureProp<string>(f, 'placeId'),
+          placeName: featureProp<string>(f, 'placeName'),
+        },
+      }),
+    }), [onSelect]),
   });
   return null;
 }

@@ -37,6 +37,7 @@ export * from './createContactRequest';
 export * from './createContactsBatchRequest';
 export * from './displayNameFormat';
 export * from './endContactRelationRequest';
+export * from './fuzzyDate';
 export * from './gapSeverity';
 export * from './getChangesParams';
 export * from './getContactCirclesParams';

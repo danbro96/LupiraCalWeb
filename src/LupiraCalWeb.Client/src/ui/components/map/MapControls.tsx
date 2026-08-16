@@ -62,11 +62,13 @@ export function TimeRangeBar({ range, onChange }: { range: DateRange; onChange: 
 }
 
 /** Layer chips gate the queries (enabled:), not just visibility. */
-export function LayerToggles({ active, onToggle, theme, unmappableCount }: {
+export function LayerToggles({ active, onToggle, theme, unmappableCount, showHistory, onToggleHistory }: {
   active: LayerKey[];
   onToggle: (key: LayerKey) => void;
   theme: MapTheme;
   unmappableCount: number;
+  showHistory: boolean;
+  onToggleHistory: () => void;
 }) {
   const toggles: { key: LayerKey; label: string }[] = [
     { key: 'events', label: 'Events' },
@@ -92,6 +94,15 @@ export function LayerToggles({ active, onToggle, theme, unmappableCount }: {
           )}
         </button>
       ))}
+      {active.includes('contacts') && (
+        <button
+          className={`chip${showHistory ? ' active' : ''}`}
+          title="Show former addresses (residency history)"
+          onClick={onToggleHistory}
+        >
+          History
+        </button>
+      )}
       {active.includes('movement') && (
         <span className="map-legend">
           {(['Walk', 'Run', 'Cycle', 'Vehicle'] as const).map((a) => (

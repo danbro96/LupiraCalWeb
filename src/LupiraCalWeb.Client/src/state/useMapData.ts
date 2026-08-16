@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { Feature, FeatureCollection, LineString, Point } from 'geojson';
+import { fmtResidencyPeriod } from '@lupira/cal-domain/fuzzyDate';
 import { splitTrack } from '@lupira/cal-domain/geo';
 import { useSearchContacts } from '../data/api-contact/lupiraContactApi';
 import { useListSavedPlaces } from '../data/api-geo/lupiraGeoApi';
@@ -79,41 +80,61 @@ export function useEventFeatures(from: string, to: string, enabled: boolean): Ev
   }, [occurrences, places, isLoading, hydrating, enabled]);
 }
 
-/** Contact pins: every address placeId hydrated; co-located contacts (shared household place) merge into one pin. */
-export function useContactFeatures(enabled: boolean): { features: FeatureCollection; isLoading: boolean } {
+/** Contact pins: every address placeId hydrated; co-located contacts (shared household place) merge into one pin.
+ * `features` = current addresses; `former` = residency history (movedOut set), labeled with the period. */
+export function useContactFeatures(enabled: boolean): {
+  features: FeatureCollection;
+  former: FeatureCollection;
+  isLoading: boolean;
+} {
   const contactsQ = useSearchContacts({}, { query: { enabled } });
   const contacts = useMemo(() => contactsQ.data ?? [], [contactsQ.data]);
 
+  // One hydration serves both current and former pins.
   const { places, isLoading: hydrating } = usePlaceCoords(
     useMemo(() => contacts.flatMap((c) => c.addresses.map((a) => a.placeId)), [contacts]),
   );
 
   return useMemo(() => {
-    const byPlace = new Map<string, { names: string[]; contactIds: string[]; types: string[] }>();
-    for (const contact of contacts) {
-      for (const address of contact.addresses) {
-        if (!address.placeId || !places.has(address.placeId)) continue;
-        const entry = byPlace.get(address.placeId) ?? { names: [], contactIds: [], types: [] };
-        entry.names.push(contact.displayName);
-        entry.contactIds.push(contact.id);
-        entry.types.push(String(address.type));
-        byPlace.set(address.placeId, entry);
+    interface Entry { names: string[]; contactIds: string[]; types: string[]; periods: string[] }
+    const group = (isFormer: boolean) => {
+      const byPlace = new Map<string, Entry>();
+      for (const contact of contacts) {
+        for (const address of contact.addresses) {
+          if (!!address.movedOut !== isFormer) continue;
+          if (!address.placeId || !places.has(address.placeId)) continue;
+          const entry = byPlace.get(address.placeId) ?? { names: [], contactIds: [], types: [], periods: [] };
+          entry.names.push(contact.displayName);
+          entry.contactIds.push(contact.id);
+          entry.types.push(String(address.type));
+          entry.periods.push(fmtResidencyPeriod(address.movedIn, address.movedOut));
+          byPlace.set(address.placeId, entry);
+        }
       }
-    }
-    const features = [...byPlace.entries()].map(([placeId, entry]) => {
-      const place = places.get(placeId)!;
-      return point(place.longitude!, place.latitude!, {
-        layer: 'contact',
-        placeId,
-        placeName: place.name,
-        names: entry.names,
-        contactIds: entry.contactIds,
-        addressTypes: entry.types,
-        label: contactPinLabel(entry.names, entry.types),
+      return byPlace;
+    };
+
+    const toFeatures = (byPlace: Map<string, Entry>, layer: 'contact' | 'contact-former') =>
+      [...byPlace.entries()].map(([placeId, entry]) => {
+        const place = places.get(placeId)!;
+        const periods = [...new Set(entry.periods)];
+        return point(place.longitude!, place.latitude!, {
+          layer,
+          placeId,
+          placeName: place.name,
+          names: entry.names,
+          contactIds: entry.contactIds,
+          addressTypes: entry.types,
+          periods: entry.periods,
+          label: layer === 'contact'
+            ? contactPinLabel(entry.names, entry.types)
+            : `${contactPinLabel(entry.names, entry.types)} · ${periods.join(', ')}`,
+        });
       });
-    });
+
     return {
-      features: { type: 'FeatureCollection', features } satisfies FeatureCollection,
+      features: { type: 'FeatureCollection', features: toFeatures(group(false), 'contact') } satisfies FeatureCollection,
+      former: { type: 'FeatureCollection', features: toFeatures(group(true), 'contact-former') } satisfies FeatureCollection,
       isLoading: enabled && (contactsQ.isLoading || hydrating),
     };
   }, [contacts, places, contactsQ.isLoading, hydrating, enabled]);

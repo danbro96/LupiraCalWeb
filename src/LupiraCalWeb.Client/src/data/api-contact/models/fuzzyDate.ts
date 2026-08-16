@@ -5,13 +5,11 @@
  * Contacts, address books, and kinship backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
-import type { ContactAddressType } from './contactAddressType';
-import type { FuzzyDate } from './fuzzyDate';
 
-export interface ContactPostalAddress {
+export interface FuzzyDate {
+  year: number;
   /** @nullable */
-  placeId?: string | null;
-  type?: ContactAddressType;
-  movedIn?: null | FuzzyDate;
-  movedOut?: null | FuzzyDate;
+  month?: number | null;
+  /** @nullable */
+  day?: number | null;
 }

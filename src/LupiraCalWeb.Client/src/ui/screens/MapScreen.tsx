@@ -21,7 +21,7 @@ import { MapIndexPanel, type IndexGroup } from '../components/map/MapIndexPanel'
 import { MapPopover } from '../components/map/MapPopover';
 import { MapSearch, type SearchTarget } from '../components/map/MapSearch';
 import { PlaceDetailPanel } from '../components/map/PlaceDetailPanel';
-import { ContactsLayer, EventsLayer, MovementLayer, SavedPlacesLayer, type PinSelection } from '../components/map/layers';
+import { ContactsLayer, EventsLayer, FormerContactsLayer, MovementLayer, SavedPlacesLayer, type PinSelection } from '../components/map/layers';
 import { FitToData, FlyToPlace } from '../components/map/mapEffects';
 
 /** The map over everything located: events, GPS movement, contacts, saved places. Route stays
@@ -94,6 +94,7 @@ export default function MapScreen() {
   const anyLoading = events.isLoading || movement.isLoading || contacts.isLoading || saved.isLoading;
 
   const showIndex = params.get('index') === '1';
+  const showHistory = params.get('history') === '1';
   const indexGroups = useMemo<IndexGroup[]>(() => {
     const flyTo = (feature: GeoJSON.Feature, placeId?: unknown) => () => {
       const [lon, lat] = (feature.geometry as GeoJSON.Point).coordinates;
@@ -142,8 +143,25 @@ export default function MapScreen() {
       };
     });
 
-    return [...contactGroups, { title: 'Saved places', rows: savedRows }, { title: 'Events in range', rows: eventRows }];
-  }, [contacts.features, saved.features, events.features, setParam]);
+    const formerRows = showHistory
+      ? contacts.former.features.map((f) => {
+          const p = f.properties!;
+          return {
+            key: `cf:${p.placeId}`,
+            primary: ((p.names as string[]) ?? []).join(', '),
+            secondary: `${((p.periods as string[]) ?? []).join(', ')} · ${p.placeName}`,
+            onClick: flyTo(f, p.placeId),
+          };
+        })
+      : [];
+
+    return [
+      ...contactGroups,
+      { title: 'Contacts · Former', rows: formerRows },
+      { title: 'Saved places', rows: savedRows },
+      { title: 'Events in range', rows: eventRows },
+    ];
+  }, [contacts.features, contacts.former, showHistory, saved.features, events.features, setParam]);
 
   return (
     <div className="map-page">
@@ -153,6 +171,9 @@ export default function MapScreen() {
         )}
         {activeLayers.includes('events') && (
           <EventsLayer theme={theme} features={events.features} onOpenItem={openItem} />
+        )}
+        {activeLayers.includes('contacts') && showHistory && (
+          <FormerContactsLayer theme={theme} features={contacts.former} onSelect={onSelect} />
         )}
         {activeLayers.includes('contacts') && (
           <ContactsLayer theme={theme} features={contacts.features} onSelect={onSelect} />
@@ -173,7 +194,14 @@ export default function MapScreen() {
       <div className="map-overlay map-topbar">
         <MapSearch onPick={onSearchPick} />
         <TimeRangeBar range={range} onChange={setRange} />
-        <LayerToggles active={activeLayers} onToggle={toggleLayer} theme={theme} unmappableCount={events.unmappableCount} />
+        <LayerToggles
+          active={activeLayers}
+          onToggle={toggleLayer}
+          theme={theme}
+          unmappableCount={events.unmappableCount}
+          showHistory={showHistory}
+          onToggleHistory={() => setParam('history', showHistory ? undefined : '1')}
+        />
         <button className={`chip${showIndex ? ' active' : ''}`} onClick={() => setParam('index', showIndex ? undefined : '1')}>
           ☰ List
         </button>
@@ -191,15 +219,17 @@ export default function MapScreen() {
 
 function PopoverBody({ selection }: { selection: PinSelection }) {
   const { kind, props } = selection;
-  if (kind === 'contact') {
+  if (kind === 'contact' || kind === 'contact-former') {
     const names = (props.names as string[]) ?? [];
     const ids = (props.contactIds as string[]) ?? [];
+    const periods = (props.periods as string[]) ?? [];
     return (
       <>
         {props.placeName != null && <h4>{String(props.placeName)}</h4>}
         {names.map((name, i) => (
           <Link key={ids[i] ?? name} to={`/contacts/${ids[i]}`} className="location-row">
             <span className="location-name">{name}</span>
+            {kind === 'contact-former' && periods[i] && <span className="meta">{periods[i]}</span>}
           </Link>
         ))}
       </>
