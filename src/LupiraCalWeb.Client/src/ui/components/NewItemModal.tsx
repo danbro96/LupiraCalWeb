@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Controller, useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
@@ -17,6 +17,21 @@ import { localInputToIso } from './drawer/inputs';
 import { errText } from './errText';
 import { useSnackbar } from './SnackbarHost';
 import { useIsPhone } from '../useIsPhone';
+
+type FormValues = {
+  title: string;
+  calendarId: string;
+  isAllDay: boolean;
+  start: string;
+  end: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  rrule: string;
+  availability: '' | AvailabilityStatus;
+  tags: string;
+  description: string;
+};
 
 /** Quick-create: title, calendar, when (timed or all-day), location, recurrence, kind/availability, tags. */
 export function NewItemModal({ onClose }: { onClose: () => void }) {
@@ -41,45 +56,51 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
   });
 
   const defaultCalendar = calendars.find((c) => c.kind === 'Personal') ?? calendars[0];
-  const [title, setTitle] = useState('');
-  const [calendarId, setCalendarId] = useState(defaultCalendar?.id ?? '');
-  const [isAllDay, setIsAllDay] = useState(false);
-  const [start, setStart] = useState('');
-  const [end, setEnd] = useState('');
-  const [startDate, setStartDate] = useState(ymd(new Date()));
-  const [endDate, setEndDate] = useState('');
-  const [location, setLocation] = useState('');
-  const [rrule, setRrule] = useState('');
-  const [availability, setAvailability] = useState<'' | AvailabilityStatus>('');
-  const [tags, setTags] = useState('');
-  const [description, setDescription] = useState('');
+  const { control, handleSubmit, watch } = useForm<FormValues>({
+    defaultValues: {
+      title: '',
+      calendarId: defaultCalendar?.id ?? '',
+      isAllDay: false,
+      start: '',
+      end: '',
+      startDate: ymd(new Date()),
+      endDate: '',
+      location: '',
+      rrule: '',
+      availability: '',
+      tags: '',
+      description: '',
+    },
+  });
+  const isAllDay = watch('isAllDay');
+  const calendarId = watch('calendarId');
+  const availability = watch('availability');
 
   const selectedCalendar = calendars.find((c) => c.id === calendarId);
   const isAvailabilityCalendar = selectedCalendar?.kind === 'Availability';
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = handleSubmit((v) => {
     const body: CreateCalendarItemRequest = {
-      calendarId: calendarId || null,
-      title: title || null,
-      description: description || null,
-      location: location || null,
-      isAllDay,
-      startsAt: isAllDay ? null : localInputToIso(start),
-      endsAt: isAllDay ? null : localInputToIso(end),
-      startDate: isAllDay ? startDate || null : null,
-      endDate: isAllDay ? endDate || null : null,
-      recurrenceRule: rrule || null,
-      availability: availability || null,
-      tags: tags
-        ? tags
+      calendarId: v.calendarId || null,
+      title: v.title || null,
+      description: v.description || null,
+      location: v.location || null,
+      isAllDay: v.isAllDay,
+      startsAt: v.isAllDay ? null : localInputToIso(v.start),
+      endsAt: v.isAllDay ? null : localInputToIso(v.end),
+      startDate: v.isAllDay ? v.startDate || null : null,
+      endDate: v.isAllDay ? v.endDate || null : null,
+      recurrenceRule: v.rrule || null,
+      availability: v.availability || null,
+      tags: v.tags
+        ? v.tags
             .split(',')
             .map((t) => t.trim())
             .filter(Boolean)
         : null,
     };
     create.mutate({ data: body });
-  };
+  });
 
   return (
     <Dialog open onClose={onClose} maxWidth="sm" fullWidth fullScreen={isPhone}>
@@ -89,86 +110,129 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
         </IconButton>
       </div>
       <form className="modal-body" onSubmit={submit}>
-          <TextField
-            variant="standard"
-            fullWidth
-            slotProps={{ input: { sx: { fontSize: '1.35rem', fontWeight: 600 } } }}
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            autoFocus
-          />
-          <div className="form-row">
-            <label>Calendar</label>
-            <TextField select size="small" value={calendarId} onChange={(e) => setCalendarId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
-              {calendars.map((c) => (
-                <MenuItem key={c.id} value={c.id}>
-                  {calendarLabel(c)}
-                  {c.class === 'System' ? ' (system)' : ''}
-                </MenuItem>
-              ))}
-              <MenuItem value="">(unfiled → curation)</MenuItem>
-            </TextField>
-            <FormControlLabel
-              control={<Checkbox size="small" checked={isAllDay} onChange={(e) => setIsAllDay(e.target.checked)} />}
-              label="All day"
+        <Controller
+          name="title"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              variant="standard"
+              fullWidth
+              slotProps={{ input: { sx: { fontSize: '1.35rem', fontWeight: 600 } } }}
+              placeholder="Title"
+              autoFocus
+              {...field}
             />
-          </div>
-          {isAllDay ? (
-            <div className="form-row">
-              <TextField type="date" size="small" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
-              <span className="meta">→</span>
-              <TextField type="date" size="small" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-            </div>
-          ) : (
-            <div className="form-row">
-              <TextField type="datetime-local" size="small" value={start} onChange={(e) => setStart(e.target.value)} required />
-              <span className="meta">→</span>
-              <TextField type="datetime-local" size="small" value={end} onChange={(e) => setEnd(e.target.value)} />
-            </div>
           )}
-          <div className="form-row">
-            <label>Repeats</label>
-            <TextField select size="small" value={rrule} onChange={(e) => setRrule(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
-              <MenuItem value="">never</MenuItem>
-              {RRULE_PRESETS.map((p) => (
-                <MenuItem key={p.rrule} value={p.rrule}>
-                  {p.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            {(isAvailabilityCalendar || availability) && (
-              <>
-                <label>Availability</label>
-                <TextField
-                  select
-                  size="small"
-                  value={availability}
-                  onChange={(e) => setAvailability(e.target.value as AvailabilityStatus | '')}
-                  slotProps={{ select: { displayEmpty: true } }}
-                >
-                  <MenuItem value="">(status…)</MenuItem>
-                  {Object.values(AvailabilityStatus).map((s) => (
-                    <MenuItem key={s} value={s}>
-                      {s}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </>
+        />
+        <div className="form-row">
+          <label>Calendar</label>
+          <Controller
+            name="calendarId"
+            control={control}
+            render={({ field }) => (
+              <TextField select size="small" {...field} slotProps={{ select: { displayEmpty: true } }}>
+                {calendars.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    {calendarLabel(c)}
+                    {c.class === 'System' ? ' (system)' : ''}
+                  </MenuItem>
+                ))}
+                <MenuItem value="">(unfiled → curation)</MenuItem>
+              </TextField>
             )}
+          />
+          <Controller
+            name="isAllDay"
+            control={control}
+            render={({ field }) => (
+              <FormControlLabel
+                control={<Checkbox size="small" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
+                label="All day"
+              />
+            )}
+          />
+        </div>
+        {isAllDay ? (
+          <div className="form-row">
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => <TextField type="date" size="small" {...field} required />}
+            />
+            <span className="meta">→</span>
+            <Controller name="endDate" control={control} render={({ field }) => <TextField type="date" size="small" {...field} />} />
           </div>
-          <TextField size="small" placeholder="Location (free text — becomes a Place)" value={location} onChange={(e) => setLocation(e.target.value)} />
-          <TextField size="small" placeholder="Tags (comma-separated)" value={tags} onChange={(e) => setTags(e.target.value)} />
-          <TextField size="small" multiline minRows={3} placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-          <div className="chip-row">
-            <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
-              Create
-            </Button>
-            <Button variant="outlined" size="small" type="button" onClick={onClose}>
-              Cancel
-            </Button>
+        ) : (
+          <div className="form-row">
+            <Controller
+              name="start"
+              control={control}
+              render={({ field }) => <TextField type="datetime-local" size="small" {...field} required />}
+            />
+            <span className="meta">→</span>
+            <Controller name="end" control={control} render={({ field }) => <TextField type="datetime-local" size="small" {...field} />} />
           </div>
-        </form>
+        )}
+        <div className="form-row">
+          <label>Repeats</label>
+          <Controller
+            name="rrule"
+            control={control}
+            render={({ field }) => (
+              <TextField select size="small" {...field} slotProps={{ select: { displayEmpty: true } }}>
+                <MenuItem value="">never</MenuItem>
+                {RRULE_PRESETS.map((p) => (
+                  <MenuItem key={p.rrule} value={p.rrule}>
+                    {p.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+          {(isAvailabilityCalendar || availability) && (
+            <>
+              <label>Availability</label>
+              <Controller
+                name="availability"
+                control={control}
+                render={({ field }) => (
+                  <TextField select size="small" {...field} slotProps={{ select: { displayEmpty: true } }}>
+                    <MenuItem value="">(status…)</MenuItem>
+                    {Object.values(AvailabilityStatus).map((s) => (
+                      <MenuItem key={s} value={s}>
+                        {s}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
+            </>
+          )}
+        </div>
+        <Controller
+          name="location"
+          control={control}
+          render={({ field }) => <TextField size="small" placeholder="Location (free text — becomes a Place)" {...field} />}
+        />
+        <Controller
+          name="tags"
+          control={control}
+          render={({ field }) => <TextField size="small" placeholder="Tags (comma-separated)" {...field} />}
+        />
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => <TextField size="small" multiline minRows={3} placeholder="Description" {...field} />}
+        />
+        <div className="chip-row">
+          <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
+            Create
+          </Button>
+          <Button variant="outlined" size="small" type="button" onClick={onClose}>
+            Cancel
+          </Button>
+        </div>
+      </form>
     </Dialog>
   );
 }
