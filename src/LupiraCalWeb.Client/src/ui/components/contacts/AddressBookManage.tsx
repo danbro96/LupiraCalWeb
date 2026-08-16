@@ -15,6 +15,7 @@ import {
 import type { AddressBookDto } from '../../../data/api-contact/models';
 import { useInvalidateAddressBooks } from '../../../state/useInvalidate';
 import { errText } from '../errText';
+import { useSnackbar } from '../SnackbarHost';
 
 const ACCESS_OPTIONS = [
   { value: 'read', label: 'Read' },
@@ -23,21 +24,21 @@ const ACCESS_OPTIONS = [
 ];
 
 /** Owner-only management for one address book: rename, share (grant/revoke co-owners), delete.
- *  Delete is refused server-side for the personal book or a non-empty book — the 409 surfaces inline. */
+ *  Delete is refused server-side for the personal book or a non-empty book — the 409 surfaces as a snackbar. */
 export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; onDeleted: () => void }) {
   const invalidate = useInvalidateAddressBooks();
-  const update = useUpdateAddressBook({ mutation: { onSuccess: invalidate } });
-  const del = useDeleteAddressBook({ mutation: { onSuccess: () => { invalidate(); onDeleted(); } } });
-  const grant = useGrantAddressBookOwner({ mutation: { onSuccess: invalidate } });
-  const revoke = useRevokeAddressBookOwner({ mutation: { onSuccess: invalidate } });
+  const showSnack = useSnackbar();
+  const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
+  const update = useUpdateAddressBook({ mutation: { onSuccess: invalidate, onError } });
+  const del = useDeleteAddressBook({ mutation: { onSuccess: () => { invalidate(); onDeleted(); }, onError } });
+  const grant = useGrantAddressBookOwner({ mutation: { onSuccess: invalidate, onError } });
+  const revoke = useRevokeAddressBookOwner({ mutation: { onSuccess: invalidate, onError } });
   const { data: owners } = useListAddressBookOwners(book.id);
 
   const [displayName, setDisplayName] = useState(book.displayName ?? '');
   const [slug, setSlug] = useState(book.slug);
   const [email, setEmail] = useState('');
   const [access, setAccess] = useState('read');
-
-  const errors = [update, del, grant, revoke].map((m) => errText(m.error)).filter(Boolean);
 
   return (
     <div className="book-manage">
@@ -96,11 +97,6 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
       <Button variant="outlined" color="error" size="small" disabled={del.isPending} onClick={() => del.mutate({ addressBookId: book.id })}>
         Delete address book
       </Button>
-      {errors.map((msg, i) => (
-        <p key={i} className="error-text">
-          {msg}
-        </p>
-      ))}
     </div>
   );
 }

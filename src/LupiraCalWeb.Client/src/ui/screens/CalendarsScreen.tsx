@@ -14,6 +14,7 @@ import { addressBookLabel, useAddressBooks } from '../../state/useAddressBooks';
 import { useInvalidateAddressBooks, useInvalidateContainers } from '../../state/useInvalidate';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 import { errText } from '../components/errText';
+import { useSnackbar } from '../components/SnackbarHost';
 
 /** Container management: calendars (class/kind/color/tz, from cal-api) and address books (from
  *  contact-api), with creation and per-owner sharing. */
@@ -147,8 +148,10 @@ function BookRow({ b }: { b: AddressBookDto }) {
 function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
   const invalidateContainers = useInvalidateContainers();
   const invalidateBooks = useInvalidateAddressBooks();
-  const calOpts = { mutation: { onSuccess: invalidateContainers } };
-  const bookOpts = { mutation: { onSuccess: invalidateBooks } };
+  const showSnack = useSnackbar();
+  const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
+  const calOpts = { mutation: { onSuccess: invalidateContainers, onError } };
+  const bookOpts = { mutation: { onSuccess: invalidateBooks, onError } };
   const grantCal = useGrantCalendarOwner(calOpts);
   const revokeCal = useRevokeCalendarOwner(calOpts);
   const grantBook = useGrantAddressBookOwner(bookOpts);
@@ -159,7 +162,6 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
   const isCalendar = kind === 'calendar';
   const grant = isCalendar ? grantCal : grantBook;
   const revoke = isCalendar ? revokeCal : revokeBook;
-  const error = [grantCal, grantBook, revokeCal, revokeBook].map((m) => errText(m.error)).find(Boolean);
 
   return (
     <div className="share-panel">
@@ -195,7 +197,6 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
         Revoke
       </Button>
       {(grant.isPending || revoke.isPending) && <span className="meta">…</span>}
-      {error && <span className="error-text">{error}</span>}
     </div>
   );
 }
@@ -203,8 +204,10 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
 function NewContainerForm({ onDone }: { onDone: () => void }) {
   const invalidateContainers = useInvalidateContainers();
   const invalidateBooks = useInvalidateAddressBooks();
-  const createCal = useCreateCalendar({ mutation: { onSuccess: () => { invalidateContainers(); onDone(); } } });
-  const createBook = useCreateAddressBook({ mutation: { onSuccess: () => { invalidateBooks(); onDone(); } } });
+  const showSnack = useSnackbar();
+  const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
+  const createCal = useCreateCalendar({ mutation: { onSuccess: () => { invalidateContainers(); onDone(); }, onError } });
+  const createBook = useCreateAddressBook({ mutation: { onSuccess: () => { invalidateBooks(); onDone(); }, onError } });
   const [form, setForm] = useState({
     type: 'calendar',
     slug: '',
@@ -216,7 +219,6 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
   });
 
   const isBook = form.type === 'addressbook';
-  const error = errText(createCal.error) || errText(createBook.error);
   const pending = createCal.isPending || createBook.isPending;
 
   return (
@@ -269,7 +271,6 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
           </TextField>
         </div>
       )}
-      {error && <p className="error-text">{error}</p>}
       <div className="chip-row">
         <Button variant="contained" size="small" type="submit" disabled={pending}>
           Create

@@ -14,12 +14,14 @@ import { calendarLabel, useContainers } from '../../state/useContainers';
 import { useInvalidateItems } from '../../state/useInvalidate';
 import { localInputToIso } from './drawer/inputs';
 import { errText } from './errText';
+import { useSnackbar } from './SnackbarHost';
 
 /** Quick-create: title, calendar, when (timed or all-day), location, recurrence, kind/availability, tags. */
 export function NewItemModal({ onClose }: { onClose: () => void }) {
   const { calendars } = useContainers();
   const invalidate = useInvalidateItems();
   const [, setSearchParams] = useSearchParams();
+  const showSnack = useSnackbar();
   const create = useCreateItem({
     mutation: {
       onSuccess: (created) => {
@@ -31,6 +33,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
           return next;
         });
       },
+      onError: (e) => showSnack(errText(e) ?? 'Request failed.'),
     },
   });
 
@@ -155,7 +158,6 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
           <TextField size="small" placeholder="Location (free text — becomes a Place)" value={location} onChange={(e) => setLocation(e.target.value)} />
           <TextField size="small" placeholder="Tags (comma-separated)" value={tags} onChange={(e) => setTags(e.target.value)} />
           <TextField size="small" multiline minRows={3} placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-          {errText(create.error) && <p className="error-text">{errText(create.error)}</p>}
           <div className="chip-row">
             <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
               Create

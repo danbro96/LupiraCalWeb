@@ -9,6 +9,7 @@ import { ymd } from '@lupira/cal-domain/time';
 import { useContainers } from '../../state/useContainers';
 import { useInvalidateItems } from '../../state/useInvalidate';
 import { errText } from './errText';
+import { useSnackbar } from './SnackbarHost';
 
 /**
  * Availability quick-add: status + date range only. Entries are all-day items in the Availability-kind
@@ -18,12 +19,14 @@ import { errText } from './errText';
 export function AvailabilityModal({ onClose }: { onClose: () => void }) {
   const { calendars } = useContainers();
   const invalidate = useInvalidateItems();
+  const showSnack = useSnackbar();
   const create = useCreateItem({
     mutation: {
       onSuccess: () => {
         invalidate();
         onClose();
       },
+      onError: (e) => showSnack(errText(e) ?? 'Request failed.'),
     },
   });
 
@@ -81,7 +84,6 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
               slotProps={{ htmlInput: { min: startDate } }}
             />
           </div>
-          {create.error ? <p className="error">{errText(create.error)}</p> : null}
           <div className="modal-actions">
             <Button variant="contained" size="small" type="submit" disabled={!availabilityCalendar || create.isPending}>
               Save

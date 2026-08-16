@@ -27,6 +27,7 @@ import {
 import { describeFire } from '@lupira/cal-domain/fire';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
+import { useSnackbar } from '../SnackbarHost';
 
 /**
  * The event-bound payload (⚡): at most one of prompt/action per item (server-enforced XOR — a 409
@@ -35,8 +36,10 @@ import { errText } from '../errText';
 export function PayloadPanel({ item }: { item: CalendarItemDto }) {
   const [editing, setEditing] = useState<'prompt' | 'action' | null>(null);
   const invalidate = useInvalidateItems();
-  const clearPrompt = useClearItemPrompt({ mutation: { onSuccess: invalidate } });
-  const clearAction = useClearItemAction({ mutation: { onSuccess: invalidate } });
+  const showSnack = useSnackbar();
+  const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
+  const clearPrompt = useClearItemPrompt({ mutation: { onSuccess: invalidate, onError } });
+  const clearAction = useClearItemAction({ mutation: { onSuccess: invalidate, onError } });
 
   return (
     <section className="drawer-section">
@@ -133,12 +136,14 @@ function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: Prompt
 
 function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => void }) {
   const invalidate = useInvalidateItems();
+  const showSnack = useSnackbar();
   const set = useSetItemPrompt({
     mutation: {
       onSuccess: () => {
         invalidate();
         onDone();
       },
+      onError: (e) => showSnack(errText(e) ?? 'Request failed.'),
     },
   });
   const [form, setForm] = useState<SetItemPromptRequest>(() => ({
@@ -225,7 +230,6 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
         control={<Checkbox size="small" checked={form.enabled ?? true} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />}
         label="Enabled"
       />
-      {errText(set.error) && <p className="error-text">{errText(set.error)}</p>}
       <div className="chip-row">
         <Button variant="contained" size="small" type="submit" disabled={set.isPending}>
           Save prompt
@@ -240,12 +244,14 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
 
 function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => void }) {
   const invalidate = useInvalidateItems();
+  const showSnack = useSnackbar();
   const set = useSetItemAction({
     mutation: {
       onSuccess: () => {
         invalidate();
         onDone();
       },
+      onError: (e) => showSnack(errText(e) ?? 'Request failed.'),
     },
   });
   const [form, setForm] = useState<SetItemActionRequest>(() => ({
@@ -296,7 +302,7 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
         control={<Checkbox size="small" checked={form.enabled ?? true} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />}
         label="Enabled"
       />
-      {(jsonError ?? errText(set.error)) && <p className="error-text">{jsonError ?? errText(set.error)}</p>}
+      {jsonError && <p className="error-text">{jsonError}</p>}
       <div className="chip-row">
         <Button variant="contained" size="small" type="submit" disabled={set.isPending}>
           Save action

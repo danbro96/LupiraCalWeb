@@ -13,6 +13,7 @@ import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBook
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useTieredContacts } from '../../../state/useTieredContacts';
 import { errText } from '../errText';
+import { useSnackbar } from '../SnackbarHost';
 import { inputToPartialDate, partialDateBadge } from '@lupira/cal-domain/partialDate';
 import { useGroup } from './useGroup';
 
@@ -99,7 +100,10 @@ export function ContactList() {
 /** One contact row + a pin toggle (⭐ = a reserved tag that keeps the contact in the Active tier). */
 function ContactRow({ contact: c, search }: { contact: ContactDto; search: string }) {
   const invalidate = useInvalidateContacts();
-  const setTags = useSetContactTags({ mutation: { onSuccess: invalidate } });
+  const showSnack = useSnackbar();
+  const setTags = useSetContactTags({
+    mutation: { onSuccess: invalidate, onError: (e) => showSnack(errText(e) ?? 'Request failed.') },
+  });
   const pinned = isPinned(c);
 
   const togglePin = (e: React.MouseEvent) => {
@@ -136,7 +140,10 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
 
 function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onDone: () => void }) {
   const invalidate = useInvalidateContacts();
-  const create = useCreateContact({ mutation: { onSuccess: () => { invalidate(); onDone(); } } });
+  const showSnack = useSnackbar();
+  const create = useCreateContact({
+    mutation: { onSuccess: () => { invalidate(); onDone(); }, onError: (e) => showSnack(errText(e) ?? 'Request failed.') },
+  });
   const { addressBooks } = useAddressBooks();
   const [form, setForm] = useState({
     addressBookId: defaultBookId ?? '',
@@ -212,7 +219,6 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
         <TextField size="small" placeholder="Emails (comma-separated)" value={form.emails} onChange={(e) => setForm({ ...form, emails: e.target.value })} />
         <TextField size="small" placeholder="Phones (comma-separated)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} />
       </div>
-      {errText(create.error) && <p className="error-text">{errText(create.error)}</p>}
       <div className="chip-row">
         <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
           Create

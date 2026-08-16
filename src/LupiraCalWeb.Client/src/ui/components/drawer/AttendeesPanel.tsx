@@ -18,6 +18,7 @@ import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
 import { rankByInteraction } from '@lupira/cal-domain/contactRank';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
+import { useSnackbar } from '../SnackbarHost';
 
 const ROLE_OPTIONS = [
   { value: 'req-participant', label: 'Required' },
@@ -47,7 +48,8 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
   const { data: contacts } = useSearchContacts();
   const contactName = (id?: string) => contacts?.find((c) => c.id === id)?.displayName ?? (id ?? '?').slice(0, 8);
 
-  const opts = { mutation: { onSuccess: invalidate } };
+  const showSnack = useSnackbar();
+  const opts = { mutation: { onSuccess: invalidate, onError: (e: unknown) => showSnack(errText(e) ?? 'Request failed.') } };
   const invite = useInviteParticipant(opts);
   const respond = useRespondToInvitation(opts);
   const attend = useConfirmAttendance(opts);
@@ -143,7 +145,6 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
           Invite
         </Button>
       </div>
-      {errText(invite.error) && <p className="error-text">{errText(invite.error)}</p>}
     </section>
   );
 }

@@ -21,6 +21,7 @@ import { fmtDate } from '@lupira/cal-domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
 import { errText } from '../errText';
+import { useSnackbar } from '../SnackbarHost';
 import { PlaceLabel } from '../places/PlaceLabel';
 import { ContactCircles } from './ContactCircles';
 import { ContactEditForm } from './ContactEditForm';
@@ -37,10 +38,12 @@ export function ContactDetailPane() {
   const { data: groups } = useListContactGroups(contact?.addressBookId ?? '', { query: { enabled: !!contact } });
   const { data: bookContacts } = useSearchContacts({ addressBookId: contact?.addressBookId ?? '' }, { query: { enabled: !!contact } });
   const invalidate = useInvalidateContacts();
-  const addMember = useAddContactGroupMember({ mutation: { onSuccess: invalidate } });
-  const removeMember = useRemoveContactGroupMember({ mutation: { onSuccess: invalidate } });
-  const del = useDeleteContact({ mutation: { onSuccess: () => { invalidate(); navigate('/contacts'); } } });
-  const setMe = useSetMyContact({ mutation: { onSuccess: invalidate } });
+  const showSnack = useSnackbar();
+  const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
+  const addMember = useAddContactGroupMember({ mutation: { onSuccess: invalidate, onError } });
+  const removeMember = useRemoveContactGroupMember({ mutation: { onSuccess: invalidate, onError } });
+  const del = useDeleteContact({ mutation: { onSuccess: () => { invalidate(); navigate('/contacts'); }, onError } });
+  const setMe = useSetMyContact({ mutation: { onSuccess: invalidate, onError } });
   const [groupId, setGroupId] = useState('');
   const [editing, setEditing] = useState(false);
   const [showCircles, setShowCircles] = useState(false);
@@ -223,7 +226,6 @@ export function ContactDetailPane() {
           Delete contact
         </Button>
       </div>
-      {errText(setMe.error) && <p className="error-text">{errText(setMe.error)}</p>}
     </div>
   );
 }

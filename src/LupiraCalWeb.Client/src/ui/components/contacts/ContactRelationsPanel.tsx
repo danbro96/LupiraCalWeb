@@ -18,6 +18,7 @@ import { groupRelationEntries, RELATION_KINDS } from '@lupira/cal-domain/contact
 import type { RelationCategory, RelationKind } from '@lupira/cal-domain/contactRelations';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
+import { useSnackbar } from '../SnackbarHost';
 import { ContactRelationGraph } from './ContactRelationGraph';
 
 /** Sections with more rows than this start collapsed. */
@@ -33,9 +34,11 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
   const [showExtended, setShowExtended] = useState(false);
   const { data: relations } = useListContactRelations(contact.id, { includeInferred: showExtended });
   const { data: candidates } = useSearchContacts({ addressBookId: contact.addressBookId });
-  const add = useAddContactRelation({ mutation: { onSuccess: invalidate } });
-  const end = useEndContactRelation({ mutation: { onSuccess: invalidate } });
-  const remove = useRemoveContactRelation({ mutation: { onSuccess: invalidate } });
+  const showSnack = useSnackbar();
+  const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
+  const add = useAddContactRelation({ mutation: { onSuccess: invalidate, onError } });
+  const end = useEndContactRelation({ mutation: { onSuccess: invalidate, onError } });
+  const remove = useRemoveContactRelation({ mutation: { onSuccess: invalidate, onError } });
 
   const [activeCats, setActiveCats] = useState<ReadonlySet<RelationCategory>>(new Set());
   const [query, setQuery] = useState('');
@@ -232,9 +235,6 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
           Add
         </Button>
       </form>
-      {errText(add.error) && <p className="error-text">{errText(add.error)}</p>}
-      {errText(end.error) && <p className="error-text">{errText(end.error)}</p>}
-      {errText(remove.error) && <p className="error-text">{errText(remove.error)}</p>}
     </section>
   );
 }

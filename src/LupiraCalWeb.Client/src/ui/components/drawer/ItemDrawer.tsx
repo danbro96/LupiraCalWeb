@@ -25,6 +25,7 @@ import { MetadataPanel } from './MetadataPanel';
 import { PayloadPanel } from './PayloadPanel';
 import { RelationsPanel } from './RelationsPanel';
 import { errText } from '../errText';
+import { useSnackbar } from '../SnackbarHost';
 
 /** The item detail drawer (?item=<id>): every field the REST read model exposes, editable where the API allows. */
 export function ItemDrawer({ itemId, onClose }: { itemId: string; onClose: () => void }) {
@@ -48,13 +49,16 @@ export function ItemDrawer({ itemId, onClose }: { itemId: string; onClose: () =>
 
 function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => void }) {
   const invalidate = useInvalidateItems();
-  const update = useUpdateItem({ mutation: { onSuccess: invalidate } });
+  const showSnack = useSnackbar();
+  const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
+  const update = useUpdateItem({ mutation: { onSuccess: invalidate, onError } });
   const del = useDeleteItem({
     mutation: {
       onSuccess: () => {
         invalidate();
         onClose();
       },
+      onError,
     },
   });
   const patch = (data: UpdateCalendarItemRequest) => update.mutate({ id: item.id, data });
@@ -235,7 +239,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <RelationsPanel itemId={item.id} />
       <MetadataPanel itemId={item.id} metadata={item.metadata} />
 
-      {errText(update.error) && <p className="error-text">{errText(update.error)}</p>}
       <div className="drawer-footer">
         <span className="meta" title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
           {item.category ?? 'General'} item

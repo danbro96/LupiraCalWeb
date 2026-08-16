@@ -6,6 +6,8 @@ import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { useInvalidateItems } from '../../state/useInvalidate';
 import { useProposedByCalendar } from '../../state/useProposed';
+import { errText } from '../components/errText';
+import { useSnackbar } from '../components/SnackbarHost';
 import { calendarColor } from '../theme/kinds';
 
 /** The curation queue: everything proposed into any calendar, with accept/reject per membership. */
@@ -13,8 +15,10 @@ export function InboxScreen() {
   const { calendars } = useContainers();
   const proposed = useProposedByCalendar(calendars);
   const invalidate = useInvalidateItems();
-  const accept = useAcceptItemIntoCalendar({ mutation: { onSuccess: invalidate } });
-  const remove = useRemoveItemFromCalendar({ mutation: { onSuccess: invalidate } });
+  const showSnack = useSnackbar();
+  const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
+  const accept = useAcceptItemIntoCalendar({ mutation: { onSuccess: invalidate, onError } });
+  const remove = useRemoveItemFromCalendar({ mutation: { onSuccess: invalidate, onError } });
   const [, setSearchParams] = useSearchParams();
 
   const open = (id: string) =>

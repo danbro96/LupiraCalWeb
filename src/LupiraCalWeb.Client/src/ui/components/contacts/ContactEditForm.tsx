@@ -28,6 +28,7 @@ import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { PlacePicker } from '../places/PlacePicker';
 import { errText } from '../errText';
+import { useSnackbar } from '../SnackbarHost';
 import { fuzzyToInput, parseFuzzyInput } from '@lupira/cal-domain/fuzzyDate';
 import { inputToPartialDate, partialDateKey, partialDateToInput } from '@lupira/cal-domain/partialDate';
 
@@ -97,6 +98,7 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
  *  wholesale-replace endpoints so entries can be removed. A single Save fans out only to the sections that changed. */
 export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDone: () => void }) {
   const invalidate = useInvalidateContacts();
+  const showSnack = useSnackbar();
   const revise = useReviseContact();
   const setChannels = useSetContactChannels();
   const setTags = useSetContactTags();
@@ -189,7 +191,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       invalidate();
       onDone();
     } catch (e) {
-      setError(errText(e) ?? 'Save failed.');
+      showSnack(errText(e) ?? 'Save failed.');
     } finally {
       setSaving(false);
     }
