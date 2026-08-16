@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import { useGetContact } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto } from '../../../data/api-contact/models';
 import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
 import { fmtDate } from '@lupira/cal-domain/time';
 import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
+import { DetailDrawer } from './DetailDrawer';
 
 /** Read-only view for a birthday occurrence (a contact projection, not a stored item): the birthday date,
  *  the age the contact is turning when known, and a link to the contact. `year` is the clicked occurrence's year. */
@@ -13,18 +13,11 @@ export function BirthdayCard({ contactId, year, onClose }: { contactId: string; 
   const { data: contact, isLoading } = useGetContact(contactId);
 
   return (
-    <div className="drawer-backdrop" onClick={onClose}>
-      <aside className="drawer" onClick={(e) => e.stopPropagation()}>
-        <div className="drawer-head">
-          <IconButton size="small" onClick={onClose} aria-label="Close">
-            ✕
-          </IconButton>
-        </div>
-        {isLoading && <p className="meta drawer-pad">Loading…</p>}
-        {!isLoading && !contact && <p className="meta drawer-pad">Contact not found (or no access).</p>}
-        {contact && <BirthdayBody contact={contact} year={year} />}
-      </aside>
-    </div>
+    <DetailDrawer onClose={onClose}>
+      {isLoading && <p className="meta drawer-pad">Loading…</p>}
+      {!isLoading && !contact && <p className="meta drawer-pad">Contact not found (or no access).</p>}
+      {contact && <BirthdayBody contact={contact} year={year} />}
+    </DetailDrawer>
   );
 }
 

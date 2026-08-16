@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import Dialog from '@mui/material/Dialog';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
@@ -15,9 +16,11 @@ import { useInvalidateItems } from '../../state/useInvalidate';
 import { localInputToIso } from './drawer/inputs';
 import { errText } from './errText';
 import { useSnackbar } from './SnackbarHost';
+import { useIsPhone } from '../useIsPhone';
 
 /** Quick-create: title, calendar, when (timed or all-day), location, recurrence, kind/availability, tags. */
 export function NewItemModal({ onClose }: { onClose: () => void }) {
+  const isPhone = useIsPhone();
   const { calendars } = useContainers();
   const invalidate = useInvalidateItems();
   const [, setSearchParams] = useSearchParams();
@@ -79,14 +82,13 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-head">
-          <IconButton size="small" onClick={onClose} aria-label="Close">
-            ✕
-          </IconButton>
-        </div>
-        <form className="modal-body" onSubmit={submit}>
+    <Dialog open onClose={onClose} maxWidth="sm" fullWidth fullScreen={isPhone}>
+      <div className="modal-head">
+        <IconButton size="small" onClick={onClose} aria-label="Close">
+          ✕
+        </IconButton>
+      </div>
+      <form className="modal-body" onSubmit={submit}>
           <TextField
             variant="standard"
             fullWidth
@@ -167,7 +169,6 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   );
 }

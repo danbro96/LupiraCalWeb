@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 import { useResolvePlace, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
-import { SuggestionType } from '../../../data/api-geo/models';
+import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
 import { errText } from '../errText';
 import { PlaceLabel } from './PlaceLabel';
 
@@ -21,7 +23,7 @@ export function PlacePicker({ placeId, onChange, placeholder }: {
     return () => clearTimeout(t);
   }, [text]);
 
-  const { data: suggestions } = useSuggestPlaces({ q, limit: 8 }, { query: { enabled: q.length >= 2 } });
+  const { data: suggestions, isLoading } = useSuggestPlaces({ q, limit: 8 }, { query: { enabled: q.length >= 2 } });
   // Locality suggestions are admin areas, not places — their ids aren't valid placeIds.
   const places = q.length >= 2 ? (suggestions ?? []).filter((s) => s.type === SuggestionType.Place) : [];
 
@@ -31,8 +33,8 @@ export function PlacePicker({ placeId, onChange, placeholder }: {
     setError(null);
   };
 
-  async function commit() {
-    const t = text.trim();
+  async function commit(raw: string) {
+    const t = raw.trim();
     if (!t) return;
     setError(null);
     try {
@@ -57,36 +59,36 @@ export function PlacePicker({ placeId, onChange, placeholder }: {
 
   return (
     <span className="place-picker">
-      <input
-        className="text-input"
-        value={text}
-        placeholder={placeholder ?? 'Search or type an address…'}
-        onChange={(e) => {
-          setText(e.target.value);
+      <Autocomplete<PlaceSuggestionDto, false, false, true>
+        freeSolo
+        options={places}
+        filterOptions={(x) => x}
+        loading={q.length >= 2 && isLoading}
+        value={null}
+        inputValue={text}
+        onInputChange={(_, v) => {
+          setText(v);
           setError(null);
         }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            void commit();
-          }
+        onChange={(_, value) => {
+          if (typeof value === 'string') void commit(value);
+          else if (value) pick(value.id);
         }}
+        getOptionLabel={(o) => (typeof o === 'string' ? o : o.name)}
+        renderOption={({ key, ...props }, o) => (
+          <li key={key} {...props}>
+            {o.name}
+            {o.context && <span className="meta"> {o.context}</span>}
+          </li>
+        )}
+        renderInput={(params) => (
+          <TextField {...params} size="small" placeholder={placeholder ?? 'Search or type an address…'} />
+        )}
+        sx={{ flex: 1 }}
       />
-      <button type="button" className="btn" onClick={() => void commit()} disabled={!text.trim() || resolve.isPending}>
+      <button type="button" className="btn" onClick={() => void commit(text)} disabled={!text.trim() || resolve.isPending}>
         {resolve.isPending ? 'Resolving…' : 'Resolve'}
       </button>
-      {places.length > 0 && (
-        <ul className="place-suggestions">
-          {places.map((s) => (
-            <li key={s.id}>
-              <button type="button" onClick={() => pick(s.id)}>
-                {s.name}
-                {s.context && <span className="meta"> {s.context}</span>}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
       {error && <span className="error-text">{error}</span>}
     </span>
   );

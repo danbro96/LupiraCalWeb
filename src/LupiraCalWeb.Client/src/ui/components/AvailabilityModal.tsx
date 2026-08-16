@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
@@ -50,15 +51,14 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-head">
-          <strong>Set availability</strong>
-          <IconButton size="small" onClick={onClose} aria-label="Close">
-            ✕
-          </IconButton>
-        </div>
-        <form className="modal-body" onSubmit={submit}>
+    <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
+      <div className="modal-head">
+        <strong>Set availability</strong>
+        <IconButton size="small" onClick={onClose} aria-label="Close">
+          ✕
+        </IconButton>
+      </div>
+      <form className="modal-body" onSubmit={submit}>
           {!availabilityCalendar && <p className="meta">No availability calendar — bootstrap the standard set first.</p>}
           <div className="form-row">
             <label>Status</label>
@@ -93,7 +93,6 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   );
 }

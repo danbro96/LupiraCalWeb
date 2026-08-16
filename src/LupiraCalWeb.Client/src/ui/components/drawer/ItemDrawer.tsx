@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import { useDeleteItem, useGetItem, useUpdateItem } from '../../../data/api/lupiraCalApi';
@@ -17,6 +16,7 @@ import { useInvalidateItems } from '../../../state/useInvalidate';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 import { AttendeesPanel } from './AttendeesPanel';
 import { CalendarsPanel } from './CalendarsPanel';
+import { DetailDrawer } from './DetailDrawer';
 import { CompletenessBadge } from './CompletenessBadge';
 import { HierarchyPanel } from './HierarchyPanel';
 import { isoToLocalInput, localInputToIso } from './inputs';
@@ -32,18 +32,11 @@ export function ItemDrawer({ itemId, onClose }: { itemId: string; onClose: () =>
   const { data: item, isLoading } = useGetItem(itemId);
 
   return (
-    <div className="drawer-backdrop" onClick={onClose}>
-      <aside className="drawer" onClick={(e) => e.stopPropagation()}>
-        <div className="drawer-head">
-          <IconButton size="small" onClick={onClose} aria-label="Close">
-            ✕
-          </IconButton>
-        </div>
-        {isLoading && <p className="meta drawer-pad">Loading…</p>}
-        {!isLoading && !item && <p className="meta drawer-pad">Item not found (or no access).</p>}
-        {item && <DrawerBody key={item.etag} item={item} onClose={onClose} />}
-      </aside>
-    </div>
+    <DetailDrawer onClose={onClose}>
+      {isLoading && <p className="meta drawer-pad">Loading…</p>}
+      {!isLoading && !item && <p className="meta drawer-pad">Item not found (or no access).</p>}
+      {item && <DrawerBody key={item.etag} item={item} onClose={onClose} />}
+    </DetailDrawer>
   );
 }
 

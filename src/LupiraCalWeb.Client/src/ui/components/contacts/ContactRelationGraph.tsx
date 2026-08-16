@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -186,11 +187,9 @@ export function ContactRelationGraph({
 
   if (fullscreen)
     return (
-      <div className="modal-backdrop" onClick={() => setFullscreen(false)}>
-        <div className="modal relation-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="relation-graph fullscreen">{flow}</div>
-        </div>
-      </div>
+      <Dialog open onClose={() => setFullscreen(false)} fullScreen>
+        <div className="relation-graph fullscreen">{flow}</div>
+      </Dialog>
     );
   // The inline embed is unusable at phone width — offer the fullscreen modal instead.
   if (isPhone)

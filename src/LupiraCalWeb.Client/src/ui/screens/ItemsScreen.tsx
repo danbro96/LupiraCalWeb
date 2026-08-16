@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -252,12 +253,16 @@ export function ItemsScreen() {
         </Button>
       )}
 
-      {sheetOpen && (
-        <>
-          <div className="drawer-backdrop" onClick={() => setSheetOpen(false)} />
-          <div className="sheet items-sheet">{filterControls}</div>
-        </>
-      )}
+      <SwipeableDrawer
+        anchor="bottom"
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        onOpen={() => setSheetOpen(true)}
+        disableSwipeToOpen
+        slotProps={{ paper: { sx: { maxHeight: '85dvh', p: 2 } } }}
+      >
+        {filterControls}
+      </SwipeableDrawer>
     </div>
   );
 }

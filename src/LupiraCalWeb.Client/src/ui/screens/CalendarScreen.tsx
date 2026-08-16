@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -223,14 +224,16 @@ export function CalendarScreen() {
       ) : (
         <WeekGrid days={days} entries={entries} segments={segments} onOpenItem={openItem} selectedFamilyKey={selectedFamilyKey} />
       )}
-      {sheetOpen && (
-        <>
-          <div className="drawer-backdrop" onClick={() => setSheetOpen(false)} />
-          <div className="sheet">
-            <Sidebar />
-          </div>
-        </>
-      )}
+      <SwipeableDrawer
+        anchor="bottom"
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        onOpen={() => setSheetOpen(true)}
+        disableSwipeToOpen
+        slotProps={{ paper: { sx: { maxHeight: '85dvh' } } }}
+      >
+        <Sidebar />
+      </SwipeableDrawer>
     </div>
   );
 }

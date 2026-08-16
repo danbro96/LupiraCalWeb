@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 import { useForwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
-import { SuggestionType } from '../../../data/api-geo/models';
+import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
 
 export interface SearchTarget {
   lat: number;
@@ -8,6 +10,11 @@ export interface SearchTarget {
   /** Set only for gazetteer places — opens the detail panel too. */
   placeId?: string;
 }
+
+/** Synthetic option offering the nominatim fallback when the gazetteer has no match. */
+type GeocodeFallback = { geocode: true };
+type SearchOption = PlaceSuggestionDto | GeocodeFallback;
+const isFallback = (o: SearchOption): o is GeocodeFallback => 'geocode' in o;
 
 /** Gazetteer typeahead (places + localities) with a nominatim forward-geocode fallback. */
 export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }) {
@@ -39,34 +46,61 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
     onPick({ lat, lon, placeId: type === SuggestionType.Place ? id : undefined });
   };
 
+  const options: SearchOption[] =
+    suggestions.length > 0
+      ? suggestions
+      : q.trim().length >= 2 && !suggestQ.isLoading
+        ? [{ geocode: true }]
+        : [];
+
   return (
     <div className="map-search">
-      <input
-        className="text-input"
-        placeholder="Search places…"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && suggestions.length === 0 && q.trim().length >= 2) setGeocodeQ(q.trim());
-          if (e.key === 'Escape') setQ('');
+      <Autocomplete<SearchOption, false, false, true>
+        freeSolo
+        options={options}
+        filterOptions={(x) => x}
+        loading={q.trim().length >= 2 && suggestQ.isLoading}
+        value={null}
+        inputValue={q}
+        onInputChange={(_, v) => setQ(v)}
+        onChange={(_, value) => {
+          if (typeof value === 'string') {
+            if (suggestions.length === 0 && value.trim().length >= 2) setGeocodeQ(value.trim());
+          } else if (value && isFallback(value)) {
+            setGeocodeQ(q.trim());
+          } else if (value) {
+            pick(value.id, value.type, value.latitude, value.longitude);
+          }
         }}
+        getOptionKey={(o) => (typeof o === 'string' ? o : isFallback(o) ? 'geocode' : `${o.type}:${o.id}`)}
+        getOptionLabel={(o) => (typeof o === 'string' ? o : isFallback(o) ? q.trim() : o.name)}
+        getOptionDisabled={(o) => isFallback(o) && geocode.isLoading}
+        renderOption={({ key, ...props }, o) => (
+          <li key={key} {...props}>
+            {isFallback(o) ? (
+              geocode.isLoading ? 'Searching…' : `Search address "${q.trim()}"`
+            ) : (
+              <>
+                <span className="location-name">{o.name}</span>
+                {o.context && <span className="meta"> {o.context}</span>}
+                <span className="badge">{o.type === SuggestionType.Place ? o.category ?? 'Place' : 'Area'}</span>
+              </>
+            )}
+          </li>
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            size="small"
+            placeholder="Search places…"
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setQ('');
+            }}
+            // index.css styled the bespoke input for map-overlay legibility; MUI's is transparent by default.
+            sx={{ bgcolor: 'background.default', borderRadius: 1, boxShadow: '0 1px 4px rgb(0 0 0 / 0.15)' }}
+          />
+        )}
       />
-      {(suggestions.length > 0 || (q.trim().length >= 2 && !suggestQ.isLoading)) && (
-        <div className="place-suggestions map-search-results">
-          {suggestions.map((s) => (
-            <button key={`${s.type}:${s.id}`} className="place-suggestion" onClick={() => pick(s.id, s.type, s.latitude, s.longitude)}>
-              <span className="location-name">{s.name}</span>
-              {s.context && <span className="meta"> {s.context}</span>}
-              <span className="badge">{s.type === SuggestionType.Place ? s.category ?? 'Place' : 'Area'}</span>
-            </button>
-          ))}
-          {suggestions.length === 0 && (
-            <button className="place-suggestion" onClick={() => setGeocodeQ(q.trim())} disabled={geocode.isLoading}>
-              {geocode.isLoading ? 'Searching…' : `Search address "${q.trim()}"`}
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }
