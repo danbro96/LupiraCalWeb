@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { getListsListIdItemsItemId } from '../../data/api/generated/tasks/items/items';
 import { taskDeepLink } from '../../domain/taskRows';
+import { Centered } from '../components/Centered';
 import { Button } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -58,14 +59,6 @@ export function TaskDetailScreen() {
   );
 }
 
-function Centered({ text }: { text: string }) {
-  return (
-    <View style={styles.centered}>
-      <Text style={styles.centeredText}>{text}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   h1: { fontSize: 20, fontWeight: '700' },
@@ -76,6 +69,4 @@ const styles = StyleSheet.create({
   note: { fontSize: 13, color: '#777' },
   notes: { fontSize: 14, color: '#333', marginTop: 4 },
   actions: { marginTop: 12 },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  centeredText: { color: '#777', fontSize: 14 },
 });

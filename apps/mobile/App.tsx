@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { useAuth } from './src/state/auth-store';
+import { ConfirmDialogHost } from './src/ui/components/ConfirmDialog';
 import { navDark, navLight, paperDark, paperLight } from './src/ui/theme/paperTheme';
 import { useBridge } from './src/state/bridge-store';
 import { usePrefs } from './src/state/prefs-store';
@@ -36,10 +37,12 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <PaperProvider theme={scheme === 'dark' ? paperDark : paperLight}>
-        <NavigationContainer linking={linking} theme={scheme === 'dark' ? navDark : navLight}>
-          <StatusBar style="auto" />
-          <RootNav />
-        </NavigationContainer>
+        <ConfirmDialogHost>
+          <NavigationContainer linking={linking} theme={scheme === 'dark' ? navDark : navLight}>
+            <StatusBar style="auto" />
+            <RootNav />
+          </NavigationContainer>
+        </ConfirmDialogHost>
       </PaperProvider>
     </QueryClientProvider>
   );

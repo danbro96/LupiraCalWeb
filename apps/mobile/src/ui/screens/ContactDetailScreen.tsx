@@ -5,6 +5,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Avatar } from 'react-native-paper';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
@@ -12,6 +13,8 @@ import type { PartialDateDto } from '../../domain/docTypes';
 import { reachLink } from '../../domain/reach';
 import { deleteContact } from '../../state/actions';
 import { useContactState } from '../../state/queries';
+import { Centered } from '../components/Centered';
+import { useConfirm } from '../components/ConfirmDialog';
 import { formStyles } from '../components/form';
 import { ACCENT, hashColor } from '../components/palette';
 import { ReachIcon } from '../components/ReachIcon';
@@ -27,6 +30,7 @@ export function ContactDetailScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { contactId } = route.params;
   const { data: state, isLoading } = useContactState(contactId);
+  const confirm = useConfirm();
   const [relationsOpen, setRelationsOpen] = useState(false);
   const name = state ? composeDisplayName(state.doc) : '';
 
@@ -41,14 +45,14 @@ export function ContactDetailScreen() {
           <Pressable
             hitSlop={8}
             onPress={() =>
-              Alert.alert('Delete contact', `Delete ${name || 'this contact'}? It syncs to everyone.`, [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                  text: 'Delete',
-                  style: 'destructive',
-                  onPress: () => void deleteContact(contactId).then(() => navigation.goBack()),
-                },
-              ])
+              void confirm({
+                title: 'Delete contact',
+                message: `Delete ${name || 'this contact'}? It syncs to everyone.`,
+                confirmLabel: 'Delete',
+                destructive: true,
+              }).then((ok) => {
+                if (ok) void deleteContact(contactId).then(() => navigation.goBack());
+              })
             }
           >
             <Text style={styles.headerDanger}>Delete</Text>
@@ -56,7 +60,7 @@ export function ContactDetailScreen() {
         </View>
       ),
     });
-  }, [navigation, contactId, name]);
+  }, [navigation, contactId, name, confirm]);
 
   if (isLoading) return <Centered text="Loading…" />;
   if (!state) return <Centered text="This contact is not in the offline mirror." />;
@@ -72,9 +76,7 @@ export function ContactDetailScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       {state.deleted && <Text style={styles.deletedNote}>Deleted — pending sync</Text>}
       <View style={styles.header}>
-        <View style={[styles.avatar, { backgroundColor: hashColor(contactId) }]}>
-          <Text style={styles.avatarText}>{initialsOf(displayName)}</Text>
-        </View>
+        <Avatar.Text size={52} label={initialsOf(displayName)} style={{ backgroundColor: hashColor(contactId) }} />
         <View style={styles.headerBody}>
           <Text style={styles.h1}>{displayName}{deceased ? ' ✝' : ''}</Text>
           <Text style={styles.sub}>
@@ -262,21 +264,10 @@ function ResolvedName({ contactId, prefix, navigation }: {
   );
 }
 
-function Centered({ text }: { text: string }) {
-  return (
-    <View style={styles.centered}>
-      <Text style={styles.muted}>{text}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 4 },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   deletedNote: { color: '#b91c1c', fontWeight: '600' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  avatar: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { color: '#fff', fontWeight: '700', fontSize: 18 },
   headerBody: { flex: 1 },
   h1: { fontSize: 20, fontWeight: '600' },
   sub: { color: '#888', fontSize: 13 },
@@ -296,5 +287,4 @@ const styles = StyleSheet.create({
   reachText: { flex: 1, fontSize: 14 },
   sectionToggle: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   chevron: { color: '#888', fontSize: 13 },
-  buttons: { flexDirection: 'row', gap: 10, marginTop: 16 },
 });

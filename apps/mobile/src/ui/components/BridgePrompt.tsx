@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Card, Text } from 'react-native-paper';
 import { useBridge } from '../../state/bridge-store';
 import { Button } from './form';
 
@@ -9,23 +10,22 @@ export function BridgePrompt() {
   if (!loaded || prompted || enabled) return null;
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>Show in Android calendar & contacts?</Text>
-      <Text style={styles.body}>
-        Your events and contacts can appear in this phone's own calendar and contacts apps, and edits
-        there sync back. You can change this anytime in Settings.
-      </Text>
-      <View style={styles.buttons}>
+    <Card mode="contained" style={styles.card}>
+      <Card.Title title="Show in Android calendar & contacts?" titleVariant="titleMedium" />
+      <Card.Content>
+        <Text variant="bodyMedium">
+          Your events and contacts can appear in this phone's own calendar and contacts apps, and edits
+          there sync back. You can change this anytime in Settings.
+        </Text>
+      </Card.Content>
+      <Card.Actions>
         <Button title="Enable" onPress={() => void useBridge.getState().enable()} />
         <Button title="Not now" kind="plain" onPress={() => void useBridge.getState().markPrompted()} />
-      </View>
-    </View>
+      </Card.Actions>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { margin: 10, padding: 12, borderRadius: 10, backgroundColor: '#eef0fb', gap: 6 },
-  title: { fontSize: 15, fontWeight: '600' },
-  body: { fontSize: 13, color: '#555' },
-  buttons: { flexDirection: 'row', gap: 10, marginTop: 4 },
+  card: { margin: 10 },
 });

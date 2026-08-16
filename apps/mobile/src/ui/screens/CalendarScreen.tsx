@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FAB } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
@@ -132,9 +133,7 @@ export function CalendarScreen() {
                     <Pressable onPress={() => navigation.navigate('AvailabilityEdit', { day: selectedDay })} hitSlop={6}>
                       <Text style={styles.sheetLink}>Availability</Text>
                     </Pressable>
-                    <Pressable style={styles.add} onPress={() => navigation.navigate('ItemEdit', { day: selectedDay })}>
-                      <Text style={styles.addText}>＋</Text>
-                    </Pressable>
+                    <FAB size="small" icon="plus" onPress={() => navigation.navigate('ItemEdit', { day: selectedDay })} />
                   </View>
                 </View>
               </View>
@@ -198,8 +197,6 @@ const styles = StyleSheet.create({
   title: { flexGrow: 1, fontSize: 16, fontWeight: '600', textAlign: 'center' },
   toolButton: { borderWidth: 1, borderColor: ACCENT, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 5, minWidth: 64, alignItems: 'center' },
   toolButtonText: { color: ACCENT, fontSize: 13, fontWeight: '600' },
-  add: { backgroundColor: ACCENT, borderRadius: 16, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' },
-  addText: { color: '#fff', fontSize: 16, lineHeight: 20 },
   monthArea: { flex: 1 },
   sheet: {
     position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: '#fff',

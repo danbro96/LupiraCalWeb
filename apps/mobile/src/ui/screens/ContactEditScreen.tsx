@@ -2,7 +2,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { List, Switch } from 'react-native-paper';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
@@ -180,13 +181,15 @@ export function ContactEditScreen() {
       </Field>
 
       <Field label="Birthday">
-        <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>Enter year</Text>
-          <Switch
-            value={form.birthdayYearKnown}
-            onValueChange={(v) => setForm((f) => ({ ...f, birthdayYearKnown: v, birthday: '', birthdayMonth: '', birthdayDay: '' }))}
-          />
-        </View>
+        <List.Item
+          title="Enter year"
+          right={() => (
+            <Switch
+              value={form.birthdayYearKnown}
+              onValueChange={(v) => setForm((f) => ({ ...f, birthdayYearKnown: v, birthday: '', birthdayMonth: '', birthdayDay: '' }))}
+            />
+          )}
+        />
         {form.birthdayYearKnown ? (
           <DateField value={form.birthday} onChange={(v) => set('birthday', v)} />
         ) : (
@@ -282,12 +285,9 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 48 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   muted: { color: '#888', fontSize: 13 },
-  switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
-  switchLabel: { fontSize: 14 },
   pair: { flexDirection: 'row', gap: 8 },
   pairItem: { flex: 1 },
   reachRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
-  reachKind: { fontSize: 18, width: 24, textAlign: 'center' },
   reachService: { flex: 2, fontSize: 13, color: '#555' },
   reachValue: { flex: 3 },
   typeChip: { fontSize: 11, color: '#4457c2', borderWidth: 1, borderColor: '#c6cbe8', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3 },

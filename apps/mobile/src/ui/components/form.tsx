@@ -1,13 +1,13 @@
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Button as PaperButton, Chip, IconButton, Text, useTheme } from 'react-native-paper';
 import { localDay, localTime } from '../../domain/editors';
-import { ACCENT } from './palette';
 
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
+      <Text variant="labelMedium">{label}</Text>
       {children}
     </View>
   );
@@ -24,13 +24,15 @@ export function ChoiceChips({ options, value, onChange, required = false }: {
       {options.map((o) => {
         const active = o.value === value;
         return (
-          <Pressable
+          <Chip
             key={o.value}
-            style={[styles.chip, active && styles.chipActive]}
+            mode="outlined"
+            compact
+            selected={active}
             onPress={() => onChange(active && !required ? '' : o.value)}
           >
-            <Text style={[styles.chipText, active && styles.chipTextActive]}>{o.label}</Text>
-          </Pressable>
+            {o.label}
+          </Chip>
         );
       })}
     </View>
@@ -76,16 +78,18 @@ export function TimeField({ value, onChange, placeholder = 'Set time' }: {
 function PickerButton({ text, isSet, onPress, onClear }: {
   text: string; isSet: boolean; onPress: () => void; onClear: () => void;
 }) {
+  const theme = useTheme();
   return (
     <View style={styles.pickerRow}>
-      <Pressable style={styles.picker} onPress={onPress}>
-        <Text style={[styles.pickerText, !isSet && styles.pickerPlaceholder]}>{text}</Text>
-      </Pressable>
-      {isSet && (
-        <Pressable style={styles.clear} onPress={onClear} hitSlop={8}>
-          <Text style={styles.clearText}>✕</Text>
-        </Pressable>
-      )}
+      <PaperButton
+        mode="outlined"
+        style={styles.picker}
+        textColor={isSet ? undefined : theme.colors.onSurfaceVariant}
+        onPress={onPress}
+      >
+        {text}
+      </PaperButton>
+      {isSet && <IconButton icon="close" size={16} onPress={onClear} />}
     </View>
   );
 }
@@ -93,15 +97,18 @@ function PickerButton({ text, isSet, onPress, onClear }: {
 export function Button({ title, onPress, kind = 'primary', disabled = false }: {
   title: string; onPress: () => void; kind?: 'primary' | 'danger' | 'plain'; disabled?: boolean;
 }) {
-  const color = kind === 'danger' ? '#b91c1c' : ACCENT;
+  const theme = useTheme();
   return (
-    <Pressable
-      style={[styles.button, { borderColor: color }, disabled && styles.buttonDisabled]}
+    <PaperButton
+      mode={kind === 'plain' ? 'outlined' : 'contained'}
+      buttonColor={kind === 'danger' ? theme.colors.error : undefined}
+      textColor={kind === 'danger' ? theme.colors.onError : undefined}
+      style={styles.button}
       disabled={disabled}
       onPress={onPress}
     >
-      <Text style={{ color }}>{title}</Text>
-    </Pressable>
+      {title}
+    </PaperButton>
   );
 }
 
@@ -114,18 +121,8 @@ export const formStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
   field: { gap: 4, marginTop: 10 },
-  label: { fontSize: 12, fontWeight: '600', color: '#777' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  chip: { borderWidth: 1, borderColor: '#bbb', borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
-  chipActive: { borderColor: ACCENT, backgroundColor: '#eef0fb' },
-  chipText: { fontSize: 13, color: '#444' },
-  chipTextActive: { color: ACCENT, fontWeight: '600' },
   pickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  picker: { borderWidth: 1, borderColor: '#bbb', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 8, flexGrow: 1 },
-  pickerText: { fontSize: 15 },
-  pickerPlaceholder: { color: '#999' },
-  clear: { padding: 4 },
-  clearText: { color: '#999', fontSize: 14 },
-  button: { borderWidth: 1, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8, alignSelf: 'flex-start' },
-  buttonDisabled: { opacity: 0.4 },
+  picker: { flexGrow: 1 },
+  button: { alignSelf: 'flex-start' },
 });

@@ -1,12 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Alert, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { List, Switch } from 'react-native-paper';
 import { APP_VERSION } from '../../config';
 import { useAuth } from '../../state/auth-store';
 import { useBridge } from '../../state/bridge-store';
 import { usePrefs } from '../../state/prefs-store';
 import { runSync } from '../../sync/sync';
 import { useSyncStatus } from '../../sync/syncStatus';
+import { useConfirm } from '../components/ConfirmDialog';
 import { Button, formStyles } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -19,22 +21,28 @@ export function SettingsScreen() {
   const bridge = useBridge();
   const prefs = usePrefs();
   const { syncing, pending, parked, lastSyncAt } = useSyncStatus();
+  const confirm = useConfirm();
 
   const toggleBridge = (value: boolean) => {
     if (value) {
-      void useBridge.getState().enable().then((ok) => {
-        if (!ok) {
-          Alert.alert('Permissions needed', 'Calendar and contacts permissions are required. Grant them in the system settings and try again.', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Open app settings', onPress: () => void Linking.openSettings() },
-          ]);
-        }
+      void useBridge.getState().enable().then(async (ok) => {
+        if (ok) return;
+        const open = await confirm({
+          title: 'Permissions needed',
+          message: 'Calendar and contacts permissions are required. Grant them in the system settings and try again.',
+          confirmLabel: 'Open app settings',
+        });
+        if (open) void Linking.openSettings();
       });
     } else {
-      Alert.alert('Turn off Android integration', 'The Lupira calendar and contacts are removed from this phone (they stay in the app and on the server).', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Turn off', style: 'destructive', onPress: () => void useBridge.getState().disable() },
-      ]);
+      void confirm({
+        title: 'Turn off Android integration',
+        message: 'The Lupira calendar and contacts are removed from this phone (they stay in the app and on the server).',
+        confirmLabel: 'Turn off',
+        destructive: true,
+      }).then((ok) => {
+        if (ok) void useBridge.getState().disable();
+      });
     }
   };
 
@@ -49,10 +57,10 @@ export function SettingsScreen() {
       )}
 
       <Text style={formStyles.section}>Android integration</Text>
-      <View style={styles.switchRow}>
-        <Text style={styles.switchLabel}>Sync with Android calendar & contacts</Text>
-        <Switch value={bridge.enabled} onValueChange={toggleBridge} disabled={!bridge.loaded} />
-      </View>
+      <List.Item
+        title="Sync with Android calendar & contacts"
+        right={() => <Switch value={bridge.enabled} onValueChange={toggleBridge} disabled={!bridge.loaded} />}
+      />
       {bridge.enabled && (
         <Text style={styles.detail}>
           {bridge.status?.accountPresent ? 'Account active' : 'Account missing — toggle off and on to repair'}
@@ -66,23 +74,27 @@ export function SettingsScreen() {
       )}
 
       <Text style={formStyles.section}>Calendars</Text>
-      <View style={styles.switchRow}>
-        <Text style={styles.switchLabel}>Show system calendars</Text>
-        <Switch
-          value={prefs.showSystemCalendars}
-          onValueChange={(v) => void usePrefs.getState().setShowSystemCalendars(v)}
-          disabled={!prefs.loaded}
-        />
-      </View>
+      <List.Item
+        title="Show system calendars"
+        right={() => (
+          <Switch
+            value={prefs.showSystemCalendars}
+            onValueChange={(v) => void usePrefs.getState().setShowSystemCalendars(v)}
+            disabled={!prefs.loaded}
+          />
+        )}
+      />
       <Text style={styles.detail}>Agent-managed calendars (inbox, availability …) and their events stay hidden unless enabled.</Text>
-      <View style={styles.switchRow}>
-        <Text style={styles.switchLabel}>Show task deadlines</Text>
-        <Switch
-          value={prefs.showTaskDeadlines}
-          onValueChange={(v) => void usePrefs.getState().setShowTaskDeadlines(v)}
-          disabled={!prefs.loaded}
-        />
-      </View>
+      <List.Item
+        title="Show task deadlines"
+        right={() => (
+          <Switch
+            value={prefs.showTaskDeadlines}
+            onValueChange={(v) => void usePrefs.getState().setShowTaskDeadlines(v)}
+            disabled={!prefs.loaded}
+          />
+        )}
+      />
       <Text style={styles.detail}>Deadlines from Lupira Tasks appear on their due day. Needs a connection.</Text>
 
       <Text style={formStyles.section}>Sync</Text>
@@ -112,8 +124,6 @@ export function SettingsScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   detail: { color: '#777', fontSize: 13 },
-  switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  switchLabel: { fontSize: 15, flex: 1 },
   warning: { color: '#b45309', fontSize: 13, paddingVertical: 4 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   link: { color: '#4457c2', paddingVertical: 6 },

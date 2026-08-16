@@ -1,7 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable } from 'react-native';
+import { Banner, Text, useTheme } from 'react-native-paper';
 import { getMe } from '../../data/api/generated/cal/me/me';
 import { PHASE_LABELS, useSyncStatus } from '../../sync/syncStatus';
 import type { RootStackParamList } from '../navigation/types';
@@ -10,6 +11,7 @@ import type { RootStackParamList } from '../navigation/types';
 /// ("Connected as …" proves token → BFF → cal-api). Tapping it opens the sync issues screen.
 export function SyncBanner() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const theme = useTheme();
   const { syncing, serverReachable, pending, parked, lastError, progress } = useSyncStatus();
   const [who, setWho] = useState<string | null>(null);
 
@@ -42,15 +44,15 @@ export function SyncBanner() {
   const alert = parked > 0 || (!syncing && !serverReachable) || (!syncing && !!lastError);
 
   return (
-    <Pressable style={[styles.banner, alert && styles.alert]} onPress={() => navigation.navigate('SyncIssues')}>
-      <Text style={[styles.text, alert && styles.alertText]}>{text}</Text>
+    <Pressable onPress={() => navigation.navigate('SyncIssues')}>
+      <Banner visible style={alert ? { backgroundColor: theme.colors.errorContainer } : undefined}>
+        <Text
+          variant="bodySmall"
+          style={{ color: alert ? theme.colors.onErrorContainer : theme.colors.onSurfaceVariant }}
+        >
+          {text}
+        </Text>
+      </Banner>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  banner: { paddingHorizontal: 12, paddingVertical: 4, backgroundColor: '#f2f3f7' },
-  alert: { backgroundColor: '#fdf1e3' },
-  text: { fontSize: 12, color: '#777' },
-  alertText: { color: '#b45309' },
-});

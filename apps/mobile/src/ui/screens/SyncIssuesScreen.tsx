@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { getDb } from '../../data/db/expoDb';
 import type { OutboxRow } from '../../data/mirror';
 import { opOfRow } from '../../data/mirror';
@@ -8,6 +8,7 @@ import { retryOne } from '../../sync/outbox';
 import { discardParkedAndRestore, runSync } from '../../sync/sync';
 import { PHASE_LABELS, useSyncStatus } from '../../sync/syncStatus';
 import { useOutboxRows } from '../../state/queries';
+import { useConfirm } from '../components/ConfirmDialog';
 import { Button, formStyles } from '../components/form';
 import { IndeterminateBar } from '../components/IndeterminateBar';
 
@@ -63,18 +64,19 @@ export function SyncIssuesScreen() {
 }
 
 function ParkedCard({ row }: { row: OutboxRow }) {
+  const confirm = useConfirm();
   const [expanded, setExpanded] = useState(false);
 
   const retry = async () => retryOne(await getDb(), row.seq);
-  const discard = () =>
-    Alert.alert(
-      'Discard change',
-      `Discard “${labelOf(row)}”? The local edit is undone and the server’s version is restored.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Discard', style: 'destructive', onPress: () => void discardParkedAndRestore(row.seq) },
-      ],
-    );
+  const discard = async () => {
+    const ok = await confirm({
+      title: 'Discard change',
+      message: `Discard “${labelOf(row)}”? The local edit is undone and the server’s version is restored.`,
+      confirmLabel: 'Discard',
+      destructive: true,
+    });
+    if (ok) void discardParkedAndRestore(row.seq);
+  };
 
   return (
     <View style={styles.card}>
@@ -88,7 +90,7 @@ function ParkedCard({ row }: { row: OutboxRow }) {
       {expanded && <Text style={styles.payload}>{payloadOf(row)}</Text>}
       <View style={styles.cardButtons}>
         <Button title="Retry" onPress={() => void retry()} />
-        <Button title="Discard" kind="danger" onPress={discard} />
+        <Button title="Discard" kind="danger" onPress={() => void discard()} />
         <Button title={expanded ? 'Less' : 'Details'} kind="plain" onPress={() => setExpanded(!expanded)} />
       </View>
     </View>

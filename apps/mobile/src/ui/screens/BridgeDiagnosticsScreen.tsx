@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, PermissionsAndroid, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { PermissionsAndroid, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { BridgeState, ContactsSampleRow } from '../../../modules/lupira-bridge/src';
 import { LupiraBridge } from '../../../modules/lupira-bridge/src';
 import { getDb } from '../../data/db/expoDb';
 import { drainBridgeInbox } from '../../sync/bridge';
 import { runSync } from '../../sync/sync';
+import { useConfirm } from '../components/ConfirmDialog';
 import { Button, formStyles } from '../components/form';
 
 /// Manual halves of the automated bridge flows, for diagnosis and repair: capture/publish (Kotlin),
 /// inbox drain (JS→outbox), the OS scheduler, and account lifecycle. Reached via Settings → Developer.
 export function BridgeDiagnosticsScreen() {
+  const confirm = useConfirm();
   const [state, setState] = useState<BridgeState | null>(null);
   const [inboxCount, setInboxCount] = useState<number | null>(null);
   const [log, setLog] = useState<string[]>([]);
@@ -81,10 +83,14 @@ export function BridgeDiagnosticsScreen() {
           title="Remove account"
           kind="danger"
           onPress={() =>
-            Alert.alert('Remove Lupira account', 'Also removes the published calendar and contacts from this phone. The app and server keep everything.', [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Remove', style: 'destructive', onPress: () => void run('removeAccount', () => LupiraBridge.removeAccount())() },
-            ])
+            void confirm({
+              title: 'Remove Lupira account',
+              message: 'Also removes the published calendar and contacts from this phone. The app and server keep everything.',
+              confirmLabel: 'Remove',
+              destructive: true,
+            }).then((ok) => {
+              if (ok) void run('removeAccount', () => LupiraBridge.removeAccount())();
+            })
           }
         />
       </View>

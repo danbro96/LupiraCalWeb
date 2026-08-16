@@ -3,10 +3,11 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Avatar, FAB } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ContactListRow } from '../../data/mirror';
 import { useContactList } from '../../state/queries';
-import { ACCENT, hashColor } from '../components/palette';
+import { hashColor } from '../components/palette';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -33,9 +34,7 @@ export function ContactsScreen() {
           value={query}
           onChangeText={setQuery}
         />
-        <Pressable style={styles.add} onPress={() => navigation.navigate('ContactEdit', {})}>
-          <Text style={styles.addText}>＋</Text>
-        </Pressable>
+        <FAB size="small" icon="plus" onPress={() => navigation.navigate('ContactEdit', {})} />
       </View>
       <FlatList
         data={rows}
@@ -53,9 +52,7 @@ function ContactRow({ row, onPress }: { row: ContactListRow; onPress: () => void
   const firstChannel = (row.doc.channels ?? []).find((c) => c.preferred) ?? (row.doc.channels ?? [])[0];
   return (
     <Pressable style={styles.row} onPress={onPress}>
-      <View style={[styles.avatar, { backgroundColor: hashColor(row.id) }]}>
-        <Text style={styles.avatarText}>{initialsOf(row.displayName)}</Text>
-      </View>
+      <Avatar.Text size={38} label={initialsOf(row.displayName)} style={{ backgroundColor: hashColor(row.id) }} />
       <View style={styles.rowBody}>
         <Text style={styles.name}>{row.displayName}</Text>
         {firstChannel && <Text style={styles.sub} numberOfLines={1}>{firstChannel.value}</Text>}
@@ -75,12 +72,8 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#fff' },
   toolbar: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10 },
   search: { flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 18, paddingHorizontal: 14, paddingVertical: 6, fontSize: 14 },
-  add: { backgroundColor: ACCENT, borderRadius: 16, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' },
-  addText: { color: '#fff', fontSize: 16, lineHeight: 20 },
   empty: { textAlign: 'center', color: '#999', marginTop: 32 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 8 },
-  avatar: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { color: '#fff', fontWeight: '600' },
   rowBody: { flex: 1 },
   name: { fontSize: 15 },
   sub: { fontSize: 12, color: '#888' },

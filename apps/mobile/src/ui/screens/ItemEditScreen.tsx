@@ -3,7 +3,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { List, Switch } from 'react-native-paper';
 import type { ItemForm } from '../../domain/editors';
 import { categoryAllDayDefault, emptyItemForm, itemCoreFromForm, itemFormFromDoc } from '../../domain/editors';
 import { createItem, reviseItem } from '../../state/actions';
@@ -144,10 +145,10 @@ export function ItemEditScreen() {
         <TextInput style={formStyles.multiline} multiline value={form.description} onChangeText={(v) => set('description', v)} />
       </Field>
 
-      <View style={styles.switchRow}>
-        <Text style={styles.switchLabel}>All-day</Text>
-        <Switch value={form.isAllDay} onValueChange={(v) => setSchedule('isAllDay', v)} />
-      </View>
+      <List.Item
+        title="All-day"
+        right={() => <Switch value={form.isAllDay} onValueChange={(v) => setSchedule('isAllDay', v)} />}
+      />
 
       {form.isAllDay ? (
         <>
@@ -209,8 +210,6 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 48 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   muted: { color: '#888', fontSize: 13 },
-  switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 },
-  switchLabel: { fontSize: 15 },
   pair: { flexDirection: 'row', gap: 8 },
   pairItem: { flex: 1 },
   headerSave: { color: ACCENT, fontSize: 16, fontWeight: '600', paddingRight: 4 },

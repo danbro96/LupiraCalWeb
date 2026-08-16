@@ -4,9 +4,11 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
+import { Centered } from '../components/Centered';
+import { useConfirm } from '../components/ConfirmDialog';
 import { Button, formStyles } from '../components/form';
 import { useCalendarColors } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
@@ -16,6 +18,7 @@ export function ItemDetailScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { itemId } = route.params;
   const { data: state, isLoading } = useItemState(itemId);
+  const confirm = useConfirm();
 
   if (isLoading) return <Centered text="Loading…" />;
   if (!state) return <Centered text="This item is not in the offline mirror." />;
@@ -25,17 +28,15 @@ export function ItemDetailScreen() {
   const end = doc.isAllDay ? doc.endDate : doc.endsAt;
   const attendees = Array.isArray(doc.attendees) ? doc.attendees.length : 0;
 
-  const confirmDelete = () =>
-    Alert.alert('Delete event', `Delete “${doc.title ?? 'this event'}”? It syncs to everyone.`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          void deleteItem(itemId).then(() => navigation.goBack());
-        },
-      },
-    ]);
+  const confirmDelete = async () => {
+    const ok = await confirm({
+      title: 'Delete event',
+      message: `Delete “${doc.title ?? 'this event'}”? It syncs to everyone.`,
+      confirmLabel: 'Delete',
+      destructive: true,
+    });
+    if (ok) void deleteItem(itemId).then(() => navigation.goBack());
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -63,7 +64,7 @@ export function ItemDetailScreen() {
 
       <View style={styles.buttons}>
         <Button title="Edit" onPress={() => navigation.navigate('ItemEdit', { itemId })} />
-        <Button title="Delete" kind="danger" onPress={confirmDelete} />
+        <Button title="Delete" kind="danger" onPress={() => void confirmDelete()} />
       </View>
     </ScrollView>
   );
@@ -133,17 +134,8 @@ function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<
   );
 }
 
-function Centered({ text }: { text: string }) {
-  return (
-    <View style={styles.centered}>
-      <Text style={styles.note}>{text}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 6 },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   deleted: { color: '#b91c1c', fontWeight: '600' },
   h1: { fontSize: 20, fontWeight: '600' },
   when: { fontSize: 14, color: '#555' },
