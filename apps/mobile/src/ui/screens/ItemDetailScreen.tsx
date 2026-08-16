@@ -4,13 +4,13 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';
-import { Button, formStyles } from '../components/form';
+import { Button, Input, formStyles } from '../components/form';
 import { useCalendarColors } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -132,8 +132,8 @@ function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<
         </Pressable>
       ))}
       <View style={styles.metaEdit}>
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }, styles.metaKeyInput]} placeholder="key" autoCapitalize="none" value={key} onChangeText={setKey} />
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }, styles.metaValueInput]} placeholder="value" value={value} onChangeText={setValue} />
+        <Input label="key" style={styles.metaKeyInput} autoCapitalize="none" value={key} onChangeText={setKey} />
+        <Input label="value" style={styles.metaValueInput} value={value} onChangeText={setValue} />
         <Button title="Set" onPress={save} disabled={!key.trim()} />
       </View>
     </View>

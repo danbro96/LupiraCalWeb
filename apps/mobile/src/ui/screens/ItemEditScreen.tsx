@@ -3,13 +3,13 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { List, Switch, useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { HelperText, List, Switch, useTheme } from 'react-native-paper';
 import type { ItemForm } from '../../domain/editors';
 import { categoryAllDayDefault, emptyItemForm, itemCoreFromForm, itemFormFromDoc } from '../../domain/editors';
 import { createItem, reviseItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
-import { ChoiceChips, DateField, Field, TimeField, formStyles } from '../components/form';
+import { ChoiceChips, DateField, Field, Input, TimeField } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
 
@@ -138,12 +138,15 @@ export function ItemEditScreen() {
       <Field label="Category">
         <ChoiceChips options={CATEGORY_OPTIONS} value={form.category} onChange={pickCategory} />
       </Field>
-      <Field label="Title">
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.title} onChangeText={(v) => set('title', v)} />
-      </Field>
-      <Field label="Description">
-        <TextInput style={[formStyles.multiline, { borderColor: theme.colors.outline }]} multiline value={form.description} onChangeText={(v) => set('description', v)} />
-      </Field>
+      <Input label="Title" value={form.title} onChangeText={(v) => set('title', v)} />
+      <Input
+        label="Description"
+        multiline
+        numberOfLines={3}
+        style={{ minHeight: 72 }}
+        value={form.description}
+        onChangeText={(v) => set('description', v)}
+      />
 
       <List.Item
         title="All-day"
@@ -183,9 +186,9 @@ export function ItemEditScreen() {
           onChange={(v) => set('recurrenceRule', v)}
           required
         />
-        <TextInput
-          style={[formStyles.input, { borderColor: theme.colors.outline }]}
-          placeholder="or a raw rule: FREQ=WEEKLY;BYDAY=MO"
+        <Input
+          label="or a raw rule"
+          placeholder="FREQ=WEEKLY;BYDAY=MO"
           autoCapitalize="characters"
           autoCorrect={false}
           value={form.recurrenceRule}
@@ -197,11 +200,9 @@ export function ItemEditScreen() {
       <Field label="Status">
         <ChoiceChips options={STATUS_OPTIONS} value={form.status} onChange={(v) => set('status', v)} />
       </Field>
-      <Field label="Tags (comma-separated)">
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} autoCapitalize="none" value={form.tagsCsv} onChangeText={(v) => set('tagsCsv', v)} />
-      </Field>
+      <Input label="Tags (comma-separated)" autoCapitalize="none" value={form.tagsCsv} onChangeText={(v) => set('tagsCsv', v)} />
 
-      {error && <Text style={[formStyles.error, { color: theme.colors.error }]}>{error}</Text>}
+      <HelperText type="error" visible={!!error}>{error}</HelperText>
     </ScrollView>
   );
 }

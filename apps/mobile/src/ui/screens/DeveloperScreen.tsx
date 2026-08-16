@@ -1,12 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { API_PRESETS, type AuthMode } from '../../config';
 import { presetFor, useAuth } from '../../state/auth-store';
 import { useSyncStatus } from '../../sync/syncStatus';
-import { formStyles } from '../components/form';
+import { Input, formStyles } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 
 /// Developer tooling, deliberately out of the user path: backend switching (a family member on the
@@ -39,9 +39,8 @@ export function DeveloperScreen() {
       ))}
       <View style={styles.custom}>
         <Text style={styles.rowLabel}>{activeKey === 'custom' ? '● ' : '○ '}Custom</Text>
-        <TextInput
-          style={[formStyles.input, { borderColor: theme.colors.outline }]}
-          placeholder="http://host:5181"
+        <Input
+          label="http://host:5181"
           autoCapitalize="none"
           autoCorrect={false}
           value={customUrl}

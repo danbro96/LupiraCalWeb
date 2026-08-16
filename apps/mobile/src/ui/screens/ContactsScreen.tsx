@@ -2,8 +2,8 @@ import { partialDateBadge } from '@lupira/cal-domain/partialDate';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { Avatar, FAB, useTheme } from 'react-native-paper';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Avatar, FAB, Searchbar, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ContactListRow } from '../../data/mirror';
 import { useContactList } from '../../state/queries';
@@ -28,8 +28,8 @@ export function ContactsScreen() {
     <SafeAreaView style={[styles.root, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <SyncBanner />
       <View style={styles.toolbar}>
-        <TextInput
-          style={[styles.search, { borderColor: theme.colors.outline }]}
+        <Searchbar
+          style={styles.search}
           placeholder="Search contacts"
           autoCapitalize="none"
           value={query}
@@ -77,7 +77,7 @@ export function initialsOf(name: string): string {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   toolbar: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10 },
-  search: { flex: 1, borderWidth: 1, borderRadius: 18, paddingHorizontal: 14, paddingVertical: 6, fontSize: 14 },
+  search: { flex: 1 },
   empty: { textAlign: 'center', marginTop: 32 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 8 },
   rowBody: { flex: 1 },

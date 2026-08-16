@@ -1,9 +1,14 @@
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button as PaperButton, Chip, IconButton, Text, useTheme } from 'react-native-paper';
+import { Button as PaperButton, Chip, IconButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { localDay, localTime } from '../../domain/editors';
 
+export function Input({ style, ...props }: ComponentProps<typeof TextInput>) {
+  return <TextInput mode="outlined" dense style={[styles.input, style]} {...props} />;
+}
+
+/// Wrapper for non-text controls (chips, date/time pickers, switches) — text inputs carry their own label.
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <View style={styles.field}>
@@ -113,13 +118,11 @@ export function Button({ title, onPress, kind = 'primary', disabled = false }: {
 }
 
 export const formStyles = StyleSheet.create({
-  input: { borderWidth: 1, borderRadius: 6, padding: 8, fontSize: 15 },
-  multiline: { borderWidth: 1, borderRadius: 6, padding: 8, fontSize: 15, minHeight: 72, textAlignVertical: 'top' },
-  error: {},
   section: { fontSize: 13, fontWeight: '700', textTransform: 'uppercase', marginTop: 16 },
 });
 
 const styles = StyleSheet.create({
+  input: { marginTop: 10 },
   field: { gap: 4, marginTop: 10 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   pickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },

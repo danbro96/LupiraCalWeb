@@ -1,6 +1,7 @@
 import { MD3DarkTheme, MD3LightTheme, adaptNavigationTheme } from 'react-native-paper';
 import { DarkTheme as NavDarkBase, DefaultTheme as NavLightBase } from '@react-navigation/native';
 import { DARK, LIGHT, type ColorScheme } from '@lupira/cal-tokens/color';
+import { RADII } from '@lupira/cal-tokens/spacing';
 
 function md3Colors(c: ColorScheme) {
   return {
@@ -17,8 +18,8 @@ function md3Colors(c: ColorScheme) {
   };
 }
 
-export const paperLight = { ...MD3LightTheme, colors: { ...MD3LightTheme.colors, ...md3Colors(LIGHT) } };
-export const paperDark = { ...MD3DarkTheme, colors: { ...MD3DarkTheme.colors, ...md3Colors(DARK) } };
+export const paperLight = { ...MD3LightTheme, roundness: RADII.sm, colors: { ...MD3LightTheme.colors, ...md3Colors(LIGHT) } };
+export const paperDark = { ...MD3DarkTheme, roundness: RADII.sm, colors: { ...MD3DarkTheme.colors, ...md3Colors(DARK) } };
 
 const adapted = adaptNavigationTheme({
   reactNavigationLight: NavLightBase,

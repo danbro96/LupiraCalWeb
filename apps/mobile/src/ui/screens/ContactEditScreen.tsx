@@ -2,15 +2,15 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { List, Switch, useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { HelperText, List, Switch, useTheme } from 'react-native-paper';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
 import { contactCoreFromForm, contactFormFromDoc, emptyContactForm, parseCsv } from '../../domain/editors';
 import { createContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../../state/actions';
 import { useAddressBooks, useContactState } from '../../state/queries';
-import { ChoiceChips, DateField, Field, formStyles } from '../components/form';
+import { ChoiceChips, DateField, Field, Input, formStyles } from '../components/form';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
@@ -158,27 +158,17 @@ export function ContactEditScreen() {
           />
         </Field>
       )}
-      <Field label="Given name">
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.givenName} onChangeText={(v) => set('givenName', v)} />
-      </Field>
-      <Field label="Middle name">
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.middleName} onChangeText={(v) => set('middleName', v)} />
-      </Field>
-      <Field label="Family name">
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.familyName} onChangeText={(v) => set('familyName', v)} />
-      </Field>
-      <Field label="Nickname">
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} value={form.nickname} onChangeText={(v) => set('nickname', v)} />
-      </Field>
+      <Input label="Given name" value={form.givenName} onChangeText={(v) => set('givenName', v)} />
+      <Input label="Middle name" value={form.middleName} onChangeText={(v) => set('middleName', v)} />
+      <Input label="Family name" value={form.familyName} onChangeText={(v) => set('familyName', v)} />
+      <Input label="Nickname" value={form.nickname} onChangeText={(v) => set('nickname', v)} />
       <Field label="Shown as">
         <ChoiceChips options={NAME_FORMAT_OPTIONS} value={form.displayNameFormat} onChange={(v) => set('displayNameFormat', v)} />
       </Field>
       <Field label="Kind">
         <ChoiceChips options={KIND_OPTIONS} value={form.kind} onChange={(v) => set('kind', v)} />
       </Field>
-      <Field label="Pronouns">
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} autoCapitalize="none" value={form.pronouns} onChangeText={(v) => set('pronouns', v)} />
-      </Field>
+      <Input label="Pronouns" autoCapitalize="none" value={form.pronouns} onChangeText={(v) => set('pronouns', v)} />
 
       <Field label="Birthday">
         <List.Item
@@ -194,17 +184,17 @@ export function ContactEditScreen() {
           <DateField value={form.birthday} onChange={(v) => set('birthday', v)} />
         ) : (
           <View style={styles.pair}>
-            <TextInput
-              style={[formStyles.input, { borderColor: theme.colors.outline }, styles.pairItem]}
-              placeholder="Month (1–12)"
+            <Input
+              label="Month (1–12)"
+              style={styles.pairItem}
               keyboardType="number-pad"
               maxLength={2}
               value={form.birthdayMonth}
               onChangeText={(v) => set('birthdayMonth', v.replace(/[^0-9]/g, ''))}
             />
-            <TextInput
-              style={[formStyles.input, { borderColor: theme.colors.outline }, styles.pairItem]}
-              placeholder="Day (1–31)"
+            <Input
+              label="Day (1–31)"
+              style={styles.pairItem}
               keyboardType="number-pad"
               maxLength={2}
               value={form.birthdayDay}
@@ -219,9 +209,9 @@ export function ContactEditScreen() {
       {channels.map((c, i) => (
         <View key={`ch-${i}`} style={styles.reachRow}>
           <ReachIcon kind={c.medium} />
-          <TextInput
-            style={[formStyles.input, { borderColor: theme.colors.outline }, styles.reachValue]}
-            placeholder={c.medium === 'Phone' ? '+46…' : 'name@example.com'}
+          <Input
+            label={c.medium === 'Phone' ? '+46…' : 'name@example.com'}
+            style={styles.reachValue}
             autoCapitalize="none"
             keyboardType={c.medium === 'Phone' ? 'phone-pad' : 'email-address'}
             value={c.value}
@@ -247,9 +237,9 @@ export function ContactEditScreen() {
         <View key={`pr-${i}`} style={styles.reachRow}>
           <ReachIcon kind={p.service} />
           <Text style={[styles.reachService, { color: theme.colors.onSurfaceVariant }]} numberOfLines={1}>{p.service}</Text>
-          <TextInput
-            style={[formStyles.input, { borderColor: theme.colors.outline }, styles.reachValue]}
-            placeholder="@handle or URL"
+          <Input
+            label="@handle or URL"
+            style={styles.reachValue}
             autoCapitalize="none"
             value={p.handle}
             onChangeText={(v) => setProfiles((d) => d.map((x, j) => (j === i ? { ...x, handle: v } : x)))}
@@ -268,15 +258,18 @@ export function ContactEditScreen() {
         ))}
       </View>
 
-      <Field label="Tags (comma-separated)">
-        <TextInput style={[formStyles.input, { borderColor: theme.colors.outline }]} autoCapitalize="none" value={tagsCsv} onChangeText={setTagsCsv} />
-      </Field>
+      <Input label="Tags (comma-separated)" autoCapitalize="none" value={tagsCsv} onChangeText={setTagsCsv} />
 
-      <Field label="Notes">
-        <TextInput style={[formStyles.multiline, { borderColor: theme.colors.outline }]} multiline value={form.notes} onChangeText={(v) => set('notes', v)} />
-      </Field>
+      <Input
+        label="Notes"
+        multiline
+        numberOfLines={3}
+        style={{ minHeight: 72 }}
+        value={form.notes}
+        onChangeText={(v) => set('notes', v)}
+      />
 
-      {error && <Text style={[formStyles.error, { color: theme.colors.error }]}>{error}</Text>}
+      <HelperText type="error" visible={!!error}>{error}</HelperText>
     </ScrollView>
   );
 }
