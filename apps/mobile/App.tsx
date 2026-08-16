@@ -3,7 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { useColorScheme } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 import { useAuth } from './src/state/auth-store';
+import { navDark, navLight, paperDark, paperLight } from './src/ui/theme/paperTheme';
 import { useBridge } from './src/state/bridge-store';
 import { usePrefs } from './src/state/prefs-store';
 import { registerBackgroundSync } from './src/sync/backgroundTask';
@@ -13,6 +16,7 @@ import { RootNav } from './src/ui/navigation/RootNav';
 import type { RootStackParamList } from './src/ui/navigation/types';
 
 export default function App() {
+  const scheme = useColorScheme();
   const loaded = useAuth((s) => s.loaded);
   const authed = useAuth((s) => s.authMode === 'none' || s.token !== null);
 
@@ -31,10 +35,12 @@ export default function App() {
   if (!loaded) return null;   // hydration gate — avoids a login flash over a persisted session
   return (
     <QueryClientProvider client={queryClient}>
-      <NavigationContainer linking={linking}>
-        <StatusBar style="auto" />
-        <RootNav />
-      </NavigationContainer>
+      <PaperProvider theme={scheme === 'dark' ? paperDark : paperLight}>
+        <NavigationContainer linking={linking} theme={scheme === 'dark' ? navDark : navLight}>
+          <StatusBar style="auto" />
+          <RootNav />
+        </NavigationContainer>
+      </PaperProvider>
     </QueryClientProvider>
   );
 }
