@@ -1,0 +1,75 @@
+// Local string unions, not generated DTO types (purity). Consumers re-type these records against the
+// API enums — a compile error at that assignment is the drift tripwire.
+export type CalendarKindName =
+  | 'Personal'
+  | 'Group'
+  | 'Birthdays'
+  | 'Availability'
+  | 'Inbox'
+  | 'LlmPrompts'
+  | 'UserCheckIn'
+  | 'DevOps'
+  | 'FoodPlan'
+  | 'Generic';
+
+export type AvailabilityStatusName = 'Office' | 'Home' | 'Vacation' | 'Sick' | 'Leave';
+
+/** Fallback calendar colors by kind (used when the container has no stored color). */
+export const KIND_COLORS: Record<CalendarKindName, string> = {
+  Personal: '#1d6feb',
+  Group: '#0e7490',
+  Birthdays: '#db2777',
+  Availability: '#16a34a',
+  Inbox: '#6b7280',
+  LlmPrompts: '#9333ea',
+  UserCheckIn: '#ea580c',
+  DevOps: '#475569',
+  FoodPlan: '#65a30d',
+  Generic: '#64748b',
+};
+
+export const AVAILABILITY_COLORS: Record<AvailabilityStatusName, string> = {
+  Office: '#2563eb',
+  Home: '#16a34a',
+  Vacation: '#f59e0b',
+  Sick: '#dc2626',
+  Leave: '#9333ea',
+};
+
+export const BIRTHDAY_COLOR = '#d97706';
+
+/** Accents for parent/child item families — a separate color channel from calendar colors. */
+export const FAMILY_ACCENTS = [
+  '#e11d48', // rose
+  '#d97706', // amber
+  '#7c3aed', // violet
+  '#059669', // emerald
+  '#c026d3', // fuchsia
+  '#0284c7', // sky
+  '#ca8a04', // dark yellow
+  '#dc2626', // red
+] as const;
+
+export function familyAccent(key: string): string {
+  let h = 5381;
+  for (let i = 0; i < key.length; i++) h = (h * 33 + key.charCodeAt(i)) >>> 0;
+  return FAMILY_ACCENTS[h % FAMILY_ACCENTS.length];
+}
+
+/** Stable per-calendar fallback when a container has no stored color and no kind mapping applies. */
+export const CALENDAR_FALLBACK_COLORS = [
+  '#4457c2',
+  '#0e7490',
+  '#b45309',
+  '#15803d',
+  '#a21caf',
+  '#be123c',
+  '#4d7c0f',
+  '#0f766e',
+] as const;
+
+export function hashColor(id: string): string {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  return CALENDAR_FALLBACK_COLORS[Math.abs(h) % CALENDAR_FALLBACK_COLORS.length];
+}

@@ -7,10 +7,12 @@ WORKDIR /repo
 COPY package.json package-lock.json .npmrc ./
 COPY src/LupiraCalWeb.Client/package.json src/LupiraCalWeb.Client/
 COPY packages/domain/package.json packages/domain/
+COPY packages/tokens/package.json packages/tokens/
 COPY apps/mobile/package.json apps/mobile/
 # Web workspaces only — the mobile app's Expo tree has no business in this image.
-RUN npm ci -w src/LupiraCalWeb.Client -w packages/domain --include-workspace-root
+RUN npm ci -w src/LupiraCalWeb.Client -w packages/domain -w packages/tokens --include-workspace-root
 COPY packages/domain/ packages/domain/
+COPY packages/tokens/ packages/tokens/
 COPY src/LupiraCalWeb.Client/ src/LupiraCalWeb.Client/
 RUN npm run build -w src/LupiraCalWeb.Client -- --outDir dist --emptyOutDir
 
