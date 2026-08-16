@@ -20,4 +20,8 @@ export interface GeocodeResultDto {
   region?: string | null;
   /** @nullable */
   locality?: string | null;
+  /** @nullable */
+  osmType?: string | null;
+  /** @nullable */
+  osmId?: number | null;
 }

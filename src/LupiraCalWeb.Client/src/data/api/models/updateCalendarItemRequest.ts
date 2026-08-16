@@ -19,6 +19,9 @@ export interface UpdateCalendarItemRequest {
   /** @nullable */
   status?: string | null;
   /** @nullable */
+  placeId?: string | null;
+  placeIdProvided?: boolean;
+  /** @nullable */
   startsAt?: string | null;
   startsAtProvided?: boolean;
   /** @nullable */

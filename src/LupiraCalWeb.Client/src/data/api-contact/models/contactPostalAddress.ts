@@ -9,8 +9,7 @@ import type { ContactAddressType } from './contactAddressType';
 import type { FuzzyDate } from './fuzzyDate';
 
 export interface ContactPostalAddress {
-  /** @nullable */
-  placeId?: string | null;
+  placeId: string;
   type?: ContactAddressType;
   movedIn?: null | FuzzyDate;
   movedOut?: null | FuzzyDate;

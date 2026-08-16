@@ -28,8 +28,10 @@ import type {
   AddAliasRequest,
   AddExternalIdRequest,
   AdminAreaDto,
+  CreatePlaceFromGeocodeRequest,
   CreatePlaceRequest,
   CreateSavedPlaceRequest,
+  CurationEventDto,
   ExternalScheme,
   ForwardGeocodeParams,
   GeocodeResultDto,
@@ -37,11 +39,15 @@ import type {
   LookupPlacesRequest,
   MeDto,
   MergePlaceRequest,
+  OrphanCandidateDto,
   PingDto,
   PlaceDto,
   PlaceLookupItemDto,
   PlaceSuggestionDto,
   ProblemDetails,
+  PrunePlaceResultDto,
+  PrunePlacesRequest,
+  RegeocodePlaceParams,
   ResolvePlaceRequest,
   ResolvePlaceResponse,
   ResolvePlacesBatchRequest,
@@ -304,7 +310,7 @@ export const getSearchPlacesUrl = (params?: SearchPlacesParams,) => {
 }
 
 /**
- * @summary Search the gazetteer: text (q, trigram), category/kind, containment (withinAreaId), and spatial — proximity (nearLat+nearLon[+radiusM], returns distanceM) or viewport (bbox=minLon&bbox=minLat&bbox=maxLon&bbox=maxLat).
+ * @summary Search the gazetteer: text (q, trigram), category/kind, containment (withinAreaId), curation state (hasCoordinates/source/verified — hasCoordinates=false lists unlocated stubs), and spatial — proximity (nearLat+nearLon[+radiusM], returns distanceM) or viewport (bbox=minLon&bbox=minLat&bbox=maxLon&bbox=maxLat).
  */
 export const searchPlaces = async (params?: SearchPlacesParams, options?: Parameters<typeof customFetchGeo>[1]): Promise<PlaceDto[]> => {
 
@@ -375,7 +381,7 @@ export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Search the gazetteer: text (q, trigram), category/kind, containment (withinAreaId), and spatial — proximity (nearLat+nearLon[+radiusM], returns distanceM) or viewport (bbox=minLon&bbox=minLat&bbox=maxLon&bbox=maxLat).
+ * @summary Search the gazetteer: text (q, trigram), category/kind, containment (withinAreaId), curation state (hasCoordinates/source/verified — hasCoordinates=false lists unlocated stubs), and spatial — proximity (nearLat+nearLon[+radiusM], returns distanceM) or viewport (bbox=minLon&bbox=minLat&bbox=maxLon&bbox=maxLat).
  */
 
 export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails | void>(
@@ -672,6 +678,107 @@ export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPla
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetPlaceByExternalIdQueryOptions(scheme,value,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetPlaceHistoryUrl = (id: string,) => {
+
+
+
+
+  return `/places/${id}/history`
+}
+
+/**
+ * @summary The append-only curation log for a place, oldest first. Readable for tombstoned/merged places; 404 only for unknown ids.
+ */
+export const getPlaceHistory = async (id: string, options?: Parameters<typeof customFetchGeo>[1]): Promise<CurationEventDto[]> => {
+
+  return customFetchGeo<CurationEventDto[]>(getGetPlaceHistoryUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPlaceHistoryQueryKey = (id: string,) => {
+    return [
+    `/places/${id}/history`
+    ] as const;
+    }
+
+
+export const getGetPlaceHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPlaceHistoryQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPlaceHistory>>> = ({ signal }) => getPlaceHistory(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetPlaceHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getPlaceHistory>>>
+export type GetPlaceHistoryQueryError = void
+
+
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPlaceHistory>>,
+          TError,
+          Awaited<ReturnType<typeof getPlaceHistory>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPlaceHistory>>,
+          TError,
+          Awaited<ReturnType<typeof getPlaceHistory>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary The append-only curation log for a place, oldest first. Readable for tombstoned/merged places; 404 only for unknown ids.
+ */
+
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetPlaceHistoryQueryOptions(id,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1292,20 +1399,29 @@ export const useMergePlace = <TError = ProblemDetails | void,
       return useMutation(getMergePlaceMutationOptions(options), queryClient);
     }
 
-export const getRegeocodePlaceUrl = (id: string,) => {
+export const getRegeocodePlaceUrl = (id: string,
+    params?: RegeocodePlaceParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/places/${id}/regeocode`
+  return stringifiedParams.length > 0 ? `/places/${id}/regeocode?${stringifiedParams}` : `/places/${id}/regeocode`
 }
 
 /**
- * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. 400 on a no-hit or transient geocoder outage; the place is left unchanged.
+ * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. force=true bypasses and overwrites the frozen geocode cache (heals a frozen empty answer). 400 on a no-hit or transient geocoder outage; the place is left unchanged.
  */
-export const regeocodePlace = async (id: string, options?: Parameters<typeof customFetchGeo>[1]): Promise<PlaceDto> => {
+export const regeocodePlace = async (id: string,
+    params?: RegeocodePlaceParams, options?: Parameters<typeof customFetchGeo>[1]): Promise<PlaceDto> => {
 
-  return customFetchGeo<PlaceDto>(getRegeocodePlaceUrl(id),
+  return customFetchGeo<PlaceDto>(getRegeocodePlaceUrl(id,params),
   {
     ...options,
     method: 'POST'
@@ -1319,8 +1435,8 @@ export const regeocodePlace = async (id: string, options?: Parameters<typeof cus
 
 
 export const getRegeocodePlaceMutationOptions = <TError = ProblemDetails | void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
-): UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string;params?: RegeocodePlaceParams}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+): UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string;params?: RegeocodePlaceParams}, TContext> => {
 
 const mutationKey = ['regeocodePlace'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1332,10 +1448,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof regeocodePlace>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof regeocodePlace>>, {id: string;params?: RegeocodePlaceParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  regeocodePlace(id,requestOptions)
+          return  regeocodePlace(id,params,requestOptions)
         }
 
 
@@ -1350,14 +1466,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type RegeocodePlaceMutationError = ProblemDetails | void
 
     /**
- * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. 400 on a no-hit or transient geocoder outage; the place is left unchanged.
+ * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. force=true bypasses and overwrites the frozen geocode cache (heals a frozen empty answer). 400 on a no-hit or transient geocoder outage; the place is left unchanged.
  */
 export const useRegeocodePlace = <TError = ProblemDetails | void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string;params?: RegeocodePlaceParams}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof regeocodePlace>>,
         TError,
-        {id: string},
+        {id: string;params?: RegeocodePlaceParams},
         TContext
       > => {
       return useMutation(getRegeocodePlaceMutationOptions(options), queryClient);
@@ -1574,6 +1690,249 @@ export const useResolvePlacesBatch = <TError = ProblemDetails | void,
         TContext
       > => {
       return useMutation(getResolvePlacesBatchMutationOptions(options), queryClient);
+    }
+
+export const getCreatePlaceFromGeocodeUrl = () => {
+
+
+
+
+  return `/places/from-geocode`
+}
+
+/**
+ * @summary Create/dedupe a place from one specific forward-geocode hit the user picked (query + OSM identity). Reuses the frozen geocode cache — no extra geocoder call. 400 if the hit is not among the query's geocode results.
+ */
+export const createPlaceFromGeocode = async (createPlaceFromGeocodeRequest: CreatePlaceFromGeocodeRequest, options?: Parameters<typeof customFetchGeo>[1]): Promise<ResolvePlaceResponse> => {
+
+  return customFetchGeo<ResolvePlaceResponse>(getCreatePlaceFromGeocodeUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createPlaceFromGeocodeRequest)
+  }
+);}
+
+
+
+
+
+export const getCreatePlaceFromGeocodeMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlaceFromGeocode>>, TError,{data: CreatePlaceFromGeocodeRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+): UseMutationOptions<Awaited<ReturnType<typeof createPlaceFromGeocode>>, TError,{data: CreatePlaceFromGeocodeRequest}, TContext> => {
+
+const mutationKey = ['createPlaceFromGeocode'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPlaceFromGeocode>>, {data: CreatePlaceFromGeocodeRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createPlaceFromGeocode(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreatePlaceFromGeocodeMutationResult = NonNullable<Awaited<ReturnType<typeof createPlaceFromGeocode>>>
+    export type CreatePlaceFromGeocodeMutationBody = CreatePlaceFromGeocodeRequest
+    export type CreatePlaceFromGeocodeMutationError = ProblemDetails | void
+
+    /**
+ * @summary Create/dedupe a place from one specific forward-geocode hit the user picked (query + OSM identity). Reuses the frozen geocode cache — no extra geocoder call. 400 if the hit is not among the query's geocode results.
+ */
+export const useCreatePlaceFromGeocode = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlaceFromGeocode>>, TError,{data: CreatePlaceFromGeocodeRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createPlaceFromGeocode>>,
+        TError,
+        {data: CreatePlaceFromGeocodeRequest},
+        TContext
+      > => {
+      return useMutation(getCreatePlaceFromGeocodeMutationOptions(options), queryClient);
+    }
+
+export const getFindOrphanPlacesUrl = () => {
+
+
+
+
+  return `/curation/orphans`
+}
+
+/**
+ * @summary Live places nothing references — cross-checked against contact addresses, calendar items (live + deleted counted separately), and saved places. Fails 400 when a reference source is unreachable (never declares orphans on partial data).
+ */
+export const findOrphanPlaces = async ( options?: Parameters<typeof customFetchGeo>[1]): Promise<OrphanCandidateDto[]> => {
+
+  return customFetchGeo<OrphanCandidateDto[]>(getFindOrphanPlacesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getFindOrphanPlacesQueryKey = () => {
+    return [
+    `/curation/orphans`
+    ] as const;
+    }
+
+
+export const getFindOrphanPlacesQueryOptions = <TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFindOrphanPlacesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof findOrphanPlaces>>> = ({ signal }) => findOrphanPlaces({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FindOrphanPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof findOrphanPlaces>>>
+export type FindOrphanPlacesQueryError = ProblemDetails | void
+
+
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof findOrphanPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof findOrphanPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof findOrphanPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof findOrphanPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Live places nothing references — cross-checked against contact addresses, calendar items (live + deleted counted separately), and saved places. Fails 400 when a reference source is unreachable (never declares orphans on partial data).
+ */
+
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFindOrphanPlacesQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getPrunePlacesUrl = () => {
+
+
+
+
+  return `/curation/prune`
+}
+
+/**
+ * @summary Soft-delete orphan places (max 100 per call). References are re-checked per id at prune time; a place referenced since the find returns Referenced and is left alone. Places referenced only by soft-deleted calendar items are never pruned here — use DELETE /places/{id} to override.
+ */
+export const prunePlaces = async (prunePlacesRequest: PrunePlacesRequest, options?: Parameters<typeof customFetchGeo>[1]): Promise<PrunePlaceResultDto[]> => {
+
+  return customFetchGeo<PrunePlaceResultDto[]>(getPrunePlacesUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(prunePlacesRequest)
+  }
+);}
+
+
+
+
+
+export const getPrunePlacesMutationOptions = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof prunePlaces>>, TError,{data: PrunePlacesRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+): UseMutationOptions<Awaited<ReturnType<typeof prunePlaces>>, TError,{data: PrunePlacesRequest}, TContext> => {
+
+const mutationKey = ['prunePlaces'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof prunePlaces>>, {data: PrunePlacesRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  prunePlaces(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PrunePlacesMutationResult = NonNullable<Awaited<ReturnType<typeof prunePlaces>>>
+    export type PrunePlacesMutationBody = PrunePlacesRequest
+    export type PrunePlacesMutationError = ProblemDetails | void
+
+    /**
+ * @summary Soft-delete orphan places (max 100 per call). References are re-checked per id at prune time; a place referenced since the find returns Referenced and is left alone. Places referenced only by soft-deleted calendar items are never pruned here — use DELETE /places/{id} to override.
+ */
+export const usePrunePlaces = <TError = ProblemDetails | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof prunePlaces>>, TError,{data: PrunePlacesRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof prunePlaces>>,
+        TError,
+        {data: PrunePlacesRequest},
+        TContext
+      > => {
+      return useMutation(getPrunePlacesMutationOptions(options), queryClient);
     }
 
 export const getReverseGeocodeUrl = (params: ReverseGeocodeParams,) => {
