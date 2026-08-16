@@ -20,6 +20,14 @@ export default defineConfig({
     // Single-container deploy: emit straight into the BFF's wwwroot.
     outDir: "../LupiraCalWeb/wwwroot",
     emptyOutDir: true,
+    rolldownOptions: {
+      output: {
+        advancedChunks: {
+          // Stable vendor chunk so app-code deploys don't re-download MUI/Emotion.
+          groups: [{ name: "vendor-mui", test: /node_modules[\\/](@mui|@emotion)[\\/]/ }],
+        },
+      },
+    },
   },
   test: {
     environment: "node",
