@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { Feature, FeatureCollection, LineString, Point } from 'geojson';
-import { fmtResidencyPeriod } from '@lupira/cal-domain/fuzzyDate';
+import { fmtFuzzyDate, fmtResidencyPeriod, residencyStatus } from '@lupira/cal-domain/fuzzyDate';
 import { splitTrack } from '@lupira/cal-domain/geo';
 import { useSearchContacts } from '../data/api-contact/lupiraContactApi';
 import { useListSavedPlaces } from '../data/api-geo/lupiraGeoApi';
@@ -96,31 +96,37 @@ export function useContactFeatures(enabled: boolean): {
   );
 
   return useMemo(() => {
-    interface Entry { names: string[]; contactIds: string[]; types: string[]; periods: string[] }
-    const group = (isFormer: boolean) => {
-      const byPlace = new Map<string, Entry>();
+    interface Entry { status: string; names: string[]; contactIds: string[]; types: string[]; periods: string[] }
+    // Active pins group per place; former/future group per (place, status) so a pin carries one status.
+    const group = (wantActive: boolean) => {
+      const byKey = new Map<string, { placeId: string } & Entry>();
       for (const contact of contacts) {
         for (const address of contact.addresses) {
-          if (!!address.movedOut !== isFormer) continue;
+          const status = residencyStatus(address.movedIn, address.movedOut);
+          if ((status === 'active') !== wantActive) continue;
           if (!address.placeId || !places.has(address.placeId)) continue;
-          const entry = byPlace.get(address.placeId) ?? { names: [], contactIds: [], types: [], periods: [] };
+          const key = wantActive ? address.placeId : `${address.placeId}|${status}`;
+          const entry = byKey.get(key) ?? { placeId: address.placeId, status, names: [], contactIds: [], types: [], periods: [] };
           entry.names.push(contact.displayName);
           entry.contactIds.push(contact.id);
           entry.types.push(String(address.type));
-          entry.periods.push(fmtResidencyPeriod(address.movedIn, address.movedOut));
-          byPlace.set(address.placeId, entry);
+          entry.periods.push(status === 'future'
+            ? `from ${fmtFuzzyDate(address.movedIn!)}`
+            : fmtResidencyPeriod(address.movedIn, address.movedOut));
+          byKey.set(key, entry);
         }
       }
-      return byPlace;
+      return byKey;
     };
 
-    const toFeatures = (byPlace: Map<string, Entry>, layer: 'contact' | 'contact-former') =>
-      [...byPlace.entries()].map(([placeId, entry]) => {
-        const place = places.get(placeId)!;
+    const toFeatures = (byKey: Map<string, { placeId: string } & Entry>, layer: 'contact' | 'contact-former') =>
+      [...byKey.values()].map((entry) => {
+        const place = places.get(entry.placeId)!;
         const periods = [...new Set(entry.periods)];
         return point(place.longitude!, place.latitude!, {
           layer,
-          placeId,
+          status: entry.status,
+          placeId: entry.placeId,
           placeName: place.name,
           names: entry.names,
           contactIds: entry.contactIds,
@@ -133,8 +139,8 @@ export function useContactFeatures(enabled: boolean): {
       });
 
     return {
-      features: { type: 'FeatureCollection', features: toFeatures(group(false), 'contact') } satisfies FeatureCollection,
-      former: { type: 'FeatureCollection', features: toFeatures(group(true), 'contact-former') } satisfies FeatureCollection,
+      features: { type: 'FeatureCollection', features: toFeatures(group(true), 'contact') } satisfies FeatureCollection,
+      former: { type: 'FeatureCollection', features: toFeatures(group(false), 'contact-former') } satisfies FeatureCollection,
       isLoading: enabled && (contactsQ.isLoading || hydrating),
     };
   }, [contacts, places, contactsQ.isLoading, hydrating, enabled]);

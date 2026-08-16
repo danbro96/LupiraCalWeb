@@ -52,3 +52,26 @@ export function fuzzyKey(d: FuzzyDate | null | undefined): string {
 function daysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }
+
+export type ResidencyStatus = 'active' | 'former' | 'future';
+
+/** Active = today inside the period; ambiguity resolves toward active ("out 2026" during 2026 = still there). */
+export function residencyStatus(
+  movedIn: FuzzyDate | null | undefined,
+  movedOut: FuzzyDate | null | undefined,
+  today: Date = new Date(),
+): ResidencyStatus {
+  const t = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  if (movedIn && earliest(movedIn) > t) return 'future';
+  if (movedOut && latest(movedOut) < t) return 'former';
+  return 'active';
+}
+
+function earliest(d: FuzzyDate): number {
+  return new Date(d.year, (d.month ?? 1) - 1, d.day ?? 1).getTime();
+}
+
+function latest(d: FuzzyDate): number {
+  const m = d.month ?? 12;
+  return new Date(d.year, m - 1, d.day ?? daysInMonth(d.year, m)).getTime();
+}

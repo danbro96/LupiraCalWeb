@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fmtFuzzyDate, fmtResidencyPeriod, fuzzyToInput, parseFuzzyInput } from './fuzzyDate';
+import { fmtFuzzyDate, fmtResidencyPeriod, fuzzyToInput, parseFuzzyInput, residencyStatus } from './fuzzyDate';
 
 describe('fmtFuzzyDate / fmtResidencyPeriod', () => {
   it('formats each precision', () => {
@@ -42,5 +42,30 @@ describe('parseFuzzyInput / fuzzyToInput', () => {
 
   it('fuzzyToInput of null is empty', () => {
     expect(fuzzyToInput(null)).toBe('');
+  });
+});
+
+describe('residencyStatus', () => {
+  const today = new Date(2026, 7, 16); // 16 Aug 2026
+
+  it('no dates = active', () => {
+    expect(residencyStatus(null, null, today)).toBe('active');
+  });
+
+  it('past move-out = former; future or ambiguous move-out = active', () => {
+    expect(residencyStatus(null, { year: 2015 }, today)).toBe('former');
+    expect(residencyStatus(null, { year: 2026, month: 7 }, today)).toBe('former');
+    expect(residencyStatus(null, { year: 2026, month: 12 }, today)).toBe('active'); // planned move
+    expect(residencyStatus(null, { year: 2026 }, today)).toBe('active');            // could still be ahead
+  });
+
+  it('future move-in = future; ambiguous move-in = active', () => {
+    expect(residencyStatus({ year: 2027 }, null, today)).toBe('future');
+    expect(residencyStatus({ year: 2026 }, null, today)).toBe('active');
+    expect(residencyStatus({ year: 2026, month: 9 }, null, today)).toBe('future');
+  });
+
+  it('future move-in wins over past move-out ordering edge', () => {
+    expect(residencyStatus({ year: 2027 }, { year: 2028 }, today)).toBe('future');
   });
 });

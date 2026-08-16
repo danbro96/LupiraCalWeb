@@ -143,20 +143,22 @@ export default function MapScreen() {
       };
     });
 
-    const formerRows = showHistory
-      ? contacts.former.features.map((f) => {
-          const p = f.properties!;
-          return {
-            key: `cf:${p.placeId}`,
-            primary: ((p.names as string[]) ?? []).join(', '),
-            secondary: `${((p.periods as string[]) ?? []).join(', ')} · ${p.placeName}`,
-            onClick: flyTo(f, p.placeId),
-          };
-        })
-      : [];
+    const historyRow = (f: GeoJSON.Feature) => {
+      const p = f.properties!;
+      return {
+        key: `cf:${p.placeId}:${p.status}`,
+        primary: ((p.names as string[]) ?? []).join(', '),
+        secondary: `${((p.periods as string[]) ?? []).join(', ')} · ${p.placeName}`,
+        onClick: flyTo(f, p.placeId),
+      };
+    };
+    const historyFeatures = showHistory ? contacts.former.features : [];
+    const formerRows = historyFeatures.filter((f) => f.properties!.status === 'former').map(historyRow);
+    const upcomingRows = historyFeatures.filter((f) => f.properties!.status === 'future').map(historyRow);
 
     return [
       ...contactGroups,
+      { title: 'Contacts · Upcoming', rows: upcomingRows },
       { title: 'Contacts · Former', rows: formerRows },
       { title: 'Saved places', rows: savedRows },
       { title: 'Events in range', rows: eventRows },

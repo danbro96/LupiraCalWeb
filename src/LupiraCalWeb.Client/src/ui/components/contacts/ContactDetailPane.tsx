@@ -16,7 +16,12 @@ import {
   useSetMyContact,
 } from '../../../data/api-contact/lupiraContactApi';
 import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
-import { fmtResidencyPeriod } from '@lupira/cal-domain/fuzzyDate';
+import { fmtResidencyPeriod, residencyStatus, type FuzzyDate } from '@lupira/cal-domain/fuzzyDate';
+
+function residencySuffix(movedIn: FuzzyDate | null | undefined, movedOut: FuzzyDate | null | undefined): string {
+  const status = residencyStatus(movedIn, movedOut);
+  return status === 'former' ? ' (former)' : status === 'future' ? ' (upcoming)' : '';
+}
 import { fmtDate } from '@lupira/cal-domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
@@ -109,7 +114,7 @@ export function ContactDetailPane() {
                 <dd>
                   📍 <PlaceLabel placeId={a.placeId} link />
                   {(a.movedIn || a.movedOut) && (
-                    <span className="meta"> · {fmtResidencyPeriod(a.movedIn, a.movedOut)}{a.movedOut ? ' (former)' : ''}</span>
+                    <span className="meta"> · {fmtResidencyPeriod(a.movedIn, a.movedOut)}{residencySuffix(a.movedIn, a.movedOut)}</span>
                   )}
                 </dd>
               </div>

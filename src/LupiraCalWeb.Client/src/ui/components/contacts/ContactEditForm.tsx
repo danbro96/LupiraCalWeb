@@ -29,7 +29,7 @@ import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { PlacePicker } from '../places/PlacePicker';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
-import { fuzzyToInput, parseFuzzyInput } from '@lupira/cal-domain/fuzzyDate';
+import { fuzzyToInput, parseFuzzyInput, residencyStatus } from '@lupira/cal-domain/fuzzyDate';
 import { inputToPartialDate, partialDateKey, partialDateToInput } from '@lupira/cal-domain/partialDate';
 
 // placeId stays null in drafts until a place is picked; save filters those rows out.
@@ -38,6 +38,14 @@ type AddressDraft = Omit<ContactPostalAddress, 'placeId'> & { placeId: string | 
 /** Null-vs-undefined and key-order insensitive shape for the addresses change diff. */
 function normAddr(a: Omit<ContactPostalAddress, 'placeId'> & { placeId?: string | null }) {
   return { placeId: a.placeId ?? null, type: a.type, movedIn: fuzzyToInput(a.movedIn), movedOut: fuzzyToInput(a.movedOut) };
+}
+
+function AddressStatusHint({ movedInText, movedOutText }: { movedInText: string; movedOutText: string }) {
+  const status = residencyStatus(
+    movedInText.trim() ? parseFuzzyInput(movedInText) : null,
+    movedOutText.trim() ? parseFuzzyInput(movedOutText) : null,
+  );
+  return status === 'active' ? null : <span className="meta">{status === 'former' ? 'former' : 'upcoming'}</span>;
 }
 
 const norm = (s?: string | null) => (s ?? '').trim();
@@ -358,7 +366,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 onChange={(e) => setAddressesState(addresses.map((x, j) => (j === i ? { ...x, movedOutText: e.target.value } : x)))}
               />
             </Tooltip>
-            {a.movedOutText.trim() !== '' && <span className="meta">former</span>}
+            <AddressStatusHint movedInText={a.movedInText} movedOutText={a.movedOutText} />
             <Tooltip title="Remove address">
               <IconButton size="small" onClick={() => setAddressesState(addresses.filter((_, j) => j !== i))}>
                 ×
