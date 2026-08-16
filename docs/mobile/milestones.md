@@ -19,6 +19,7 @@ criteria are verifiable commands/observations.
 | M7 | Bridges full two-way | LupiraCalWeb | in-progress |
 | M8 | Hardening + release | LupiraCalWeb | in-progress |
 | M9 | Task deadlines on the calendar | LupiraCalWeb | in-progress |
+| M10 | Material re-skin (Paper + shared tokens) | LupiraCalWeb | in-progress |
 
 Fixed identity: Android package `com.lupira.calendar`, scheme `lupiracalendar`
 (redirect `lupiracalendar://oauthredirect`), Authentik public client `lupira-cal-mobile`,
@@ -222,3 +223,22 @@ lack deadlines while everything else stays.
 
 ### Non-goals
 - No task create/edit/complete from the calendar; no offline cache or sync-engine integration (no migration, no `gridRowsBetween` change, no per-list polling); no `<queries>` manifest / `canOpenURL`
+
+## M10 — Material re-skin (Paper + shared tokens)   [status: in-progress]
+
+react-native-paper 5 (MD3) themed from `@lupira/cal-tokens` — the same token package that feeds the
+web MUI theme. Headline win: real dark mode (`useColorScheme`-driven; OS plumbing was already in place).
+Grids (MonthView/WeekView), the PanResponder day-sheet, and the sync engine are untouched.
+
+### Scope
+- [x] `PaperProvider` + MD3 light/dark themes from tokens; React Navigation themes adapted
+- [x] `ConfirmDialogHost` + `useConfirm()` (Portal + Dialog); confirm-style `Alert.alert` converted (6 screens; `useUnsavedGuard` and informational alerts deliberately stay)
+- [x] Widget sweep: form.tsx (Button/Chip/labels/date triggers), ProgressBar, Banner (sync + bridge prompt), Avatar.Text, FAB, List.Item switch rows, Centered deduped
+- [x] Hex-literal audit → `useTheme()` lookups (white-on-calendar-color text stays literal); `ACCENT` retired — primary is the token teal
+- [x] palette.ts re-exports availability/birthday/fallback colors from tokens (3 availability hues flipped to web-canonical)
+
+### Exit criteria
+- [x] Root `npm run typecheck` / `lint` / `test` green
+- [ ] Device: live light↔dark switch (no restart), StatusBar contrast in both schemes on tab + stack screens
+- [ ] Device: Paper Dialog renders over the nav stack; day-sheet FAB clear of the sheet snap points
+- [ ] Play internal build via the normal EAS path before rollout
