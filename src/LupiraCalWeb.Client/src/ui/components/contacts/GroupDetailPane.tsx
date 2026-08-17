@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   useAddContactGroupMember,
@@ -68,7 +70,9 @@ export function GroupDetailPane() {
         <h3>Members</h3>
         {members.map((c) => (
           <div key={c.id} className="membership-row">
-            <span className="avatar">{(c.displayName[0] ?? '?').toUpperCase()}</span>
+            <Avatar sx={{ width: 30, height: 30, fontSize: 12, fontWeight: 700, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
+              {(c.displayName[0] ?? '?').toUpperCase()}
+            </Avatar>
             <Link className="membership-name" to={{ pathname: `/contacts/${c.id}`, search: backSearch }}>
               {c.displayName}
             </Link>
@@ -77,7 +81,7 @@ export function GroupDetailPane() {
                 size="small"
                 onClick={() => removeMember.mutate({ groupId: group.id, contactId: c.id })}
               >
-                ×
+                <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </div>

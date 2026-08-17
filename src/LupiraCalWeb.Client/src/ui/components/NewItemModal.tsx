@@ -10,6 +10,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import CloseIcon from '@mui/icons-material/Close';
 import { useCreateItem } from '../../data/api/lupiraCalApi';
 import { AvailabilityStatus, type CreateCalendarItemRequest } from '../../data/api/models';
 import { RRULE_PRESETS } from '@lupira/cal-domain/rrule';
@@ -109,7 +110,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
     <Dialog open onClose={onClose} maxWidth="sm" fullWidth fullScreen={isPhone}>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
         <IconButton size="small" onClick={onClose} aria-label="Close">
-          ✕
+          <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
       <form onSubmit={submit}>

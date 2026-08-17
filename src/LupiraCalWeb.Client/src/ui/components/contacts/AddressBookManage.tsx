@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   useDeleteAddressBook,
   useGrantAddressBookOwner,
@@ -67,7 +68,7 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
               disabled={revoke.isPending}
               onClick={() => revoke.mutate({ addressBookId: book.id, params: { email: o.email } })}
             >
-              ×
+              <CloseIcon fontSize="small" />
             </IconButton>
           </Tooltip>
         </div>

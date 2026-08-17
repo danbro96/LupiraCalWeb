@@ -7,6 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import CloseIcon from '@mui/icons-material/Close';
 import { useCreateItem } from '../../data/api/lupiraCalApi';
 import { AvailabilityStatus, type CreateCalendarItemRequest } from '../../data/api/models';
 import { ymd } from '@lupira/cal-domain/time';
@@ -64,7 +65,7 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, py: 1 }}>
         Set availability
         <IconButton size="small" onClick={onClose} aria-label="Close">
-          ✕
+          <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
       <form onSubmit={submit}>

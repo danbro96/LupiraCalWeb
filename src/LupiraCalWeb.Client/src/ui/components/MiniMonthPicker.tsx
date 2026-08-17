@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
+import Popover from '@mui/material/Popover';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { addMonths, fmtMonthTitle, isToday, monthMatrix, sameDay, startOfMonth } from '@lupira/cal-domain/time';
 
 interface Props {
   /** The date to highlight as current. */
   selected: Date;
+  anchorEl: HTMLElement | null;
   onPick: (d: Date) => void;
   onClose: () => void;
 }
@@ -12,21 +16,25 @@ interface Props {
 const DOW = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 /** Small month calendar for jumping the day/week view to any date (keeps the current view). */
-export function MiniMonthPicker({ selected, onPick, onClose }: Props) {
+export function MiniMonthPicker({ selected, anchorEl, onPick, onClose }: Props) {
   const [cursor, setCursor] = useState(() => startOfMonth(selected));
   const weeks = monthMatrix(cursor);
 
   return (
-    <>
-      <div className="picker-backdrop" onClick={onClose} />
-      <div className="date-picker" role="dialog" aria-label="Pick a date">
+    <Popover
+      open={!!anchorEl}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      slotProps={{ paper: { className: 'date-picker', 'aria-label': 'Pick a date' } }}
+    >
         <div className="dp-head">
           <IconButton size="small" onClick={() => setCursor(addMonths(cursor, -1))} aria-label="Previous month">
-            ‹
+            <ChevronLeftIcon fontSize="small" />
           </IconButton>
           <span className="dp-title">{fmtMonthTitle(cursor)}</span>
           <IconButton size="small" onClick={() => setCursor(addMonths(cursor, 1))} aria-label="Next month">
-            ›
+            <ChevronRightIcon fontSize="small" />
           </IconButton>
         </div>
         <div className="dp-grid">
@@ -45,7 +53,6 @@ export function MiniMonthPicker({ selected, onPick, onClose }: Props) {
             </button>
           ))}
         </div>
-      </div>
-    </>
+    </Popover>
   );
 }

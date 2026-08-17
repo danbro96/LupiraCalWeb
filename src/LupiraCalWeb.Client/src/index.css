@@ -16,18 +16,9 @@ button:disabled {
   cursor: default;
   opacity: 0.5;
 }
-code,
-.mono {
+code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.9em;
-}
-select {
-  font: inherit;
-  color: var(--mui-palette-text-primary);
-  background: var(--mui-palette-background-default);
-  border: 1px solid var(--mui-palette-border);
-  border-radius: var(--r-md);
-  padding: 7px 8px;
 }
 
 /* ---- App shell: topbar + sidebar + content. ---- */
@@ -181,44 +172,13 @@ select {
   align-items: center;
   gap: var(--sp-sm);
 }
-.spinner {
-  width: 14px;
-  height: 14px;
-  flex: none;
-  border: 2px solid var(--mui-palette-border);
-  border-top-color: var(--mui-palette-primary-main);
-  border-radius: var(--r-pill);
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .spinner {
-    animation: none;
-  }
-}
 
 /* ---- Date picker popover (tap the title to jump to any date). ---- */
-.picker-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-}
+/* Popover paper owns placement, surface, and elevation. */
 .date-picker {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 21;
   width: 260px;
   max-width: calc(100vw - 2 * var(--sp-lg));
   padding: var(--sp-sm);
-  background: var(--mui-palette-background-default);
-  border: 1px solid var(--mui-palette-border);
-  border-radius: var(--r-lg);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 .dp-head {
   display: flex;
@@ -367,10 +327,6 @@ select {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.more-link {
-  align-self: flex-start;
-  font-size: 12px;
 }
 .ghost {
   opacity: 0.55;
@@ -658,49 +614,6 @@ select {
   font-size: 13px;
   color: var(--mui-palette-text-secondary);
 }
-.text-input {
-  flex: 1;
-  min-width: 90px;
-  font: inherit;
-  color: var(--mui-palette-text-primary);
-  background: var(--mui-palette-background-default);
-  border: 1px solid var(--mui-palette-border);
-  border-radius: var(--r-md);
-  padding: 8px 10px;
-}
-.text-input:focus-visible {
-  outline: 2px solid var(--mui-palette-primary-main);
-  outline-offset: -1px;
-}
-.linklike {
-  border: 0;
-  background: transparent;
-  color: var(--mui-palette-primary-main);
-  font-weight: 600;
-  font-size: 13px;
-  padding: 2px;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.badge {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--mui-palette-text-subtle);
-  border: 1px solid var(--mui-palette-border);
-  border-radius: var(--r-pill);
-  padding: 2px 9px;
-  white-space: nowrap;
-}
-.badge.severity-weak {
-  color: #b45309;
-  border-color: #b45309;
-}
-.badge.severity-absent {
-  color: var(--mui-palette-error-main);
-  border-color: var(--mui-palette-error-main);
-}
 .chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -834,19 +747,6 @@ select {
 }
 .membership-name {
   flex: 1;
-}
-.avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: var(--r-pill);
-  background: var(--mui-palette-primary-main);
-  color: var(--mui-palette-primary-contrastText);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  flex: none;
 }
 .rsvp-accepted {
   color: #16a34a;
@@ -1180,9 +1080,6 @@ select {
   gap: var(--sp-xs);
   font-size: 13px;
 }
-.loc-breadcrumb .linklike {
-  font-size: 13px;
-}
 .loc-breadcrumb .sep {
   color: var(--mui-palette-text-subtle);
 }
@@ -1296,12 +1193,6 @@ select {
 .rel-edge .react-flow__edge-text { font-size: 10px; fill: var(--mui-palette-text-secondary); }
 .rel-edge.inferred .react-flow__edge-path { stroke-dasharray: 5 4; opacity: 0.75; }
 
-.badge.cat-Family { color: var(--cat-family); border-color: var(--cat-family); }
-.badge.cat-Social { color: var(--cat-social); border-color: var(--cat-social); }
-.badge.cat-Professional { color: var(--cat-professional); border-color: var(--cat-professional); }
-.badge.cat-Emergency { color: var(--cat-emergency); border-color: var(--cat-emergency); }
-.badge.cat-Other { color: var(--cat-other); border-color: var(--cat-other); }
-
 .relation-row.incoming { opacity: 0.65; }
 .relation-row.inferred { opacity: 0.75; font-style: italic; }
 .relation-row.ended { opacity: 0.6; text-decoration: line-through; text-decoration-color: var(--mui-palette-text-subtle); }
@@ -1317,10 +1208,6 @@ select {
   align-items: center;
   gap: var(--sp-sm);
   margin: var(--sp-sm) 0;
-}
-.relation-toolbar .text-input {
-  flex: 1;
-  min-width: 160px;
 }
 
 /* Collapsible category sections in the relations list. */
@@ -1386,9 +1273,6 @@ select {
   gap: var(--sp-sm);
   flex: 1;
   flex-wrap: wrap;
-}
-.place-picker .text-input {
-  flex: 1;
 }
 .tree-manage {
   flex: none;
@@ -1469,10 +1353,6 @@ select {
   border-bottom: 1px solid var(--mui-palette-divider);
   flex: none;
 }
-.pane-back .linklike {
-  font-size: 15px;
-  padding: 8px;
-}
 
 /* Phone breakpoint — keep in sync with ui/useIsPhone.ts. */
 @media (max-width: 820px) {
@@ -1520,11 +1400,6 @@ select {
     padding: var(--sp-lg);
   }
 
-  /* Contact editor: text inputs take a full line so multi-control rows wrap predictably. */
-  .contact-edit .form-row > .text-input {
-    flex: 1 1 100%;
-  }
-
   /* Manage table: drop Slug/Kind/Timezone so the rest fits narrow screens. */
   .containers-table th:nth-child(3),
   .containers-table td:nth-child(3),
@@ -1564,10 +1439,6 @@ select {
   .day-number {
     width: 36px;
     height: 36px;
-  }
-  .more-link,
-  .linklike {
-    padding: 6px 2px;
   }
   .rel-expand {
     font-size: 16px;
@@ -1704,11 +1575,6 @@ select {
   position: relative;
   min-width: 220px;
 }
-.map-search .text-input {
-  width: 100%;
-  background: var(--mui-palette-background-default);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-}
 .map-timebar,
 .map-toggles {
   display: flex;
@@ -1720,10 +1586,6 @@ select {
   border-radius: 10px;
   padding: var(--sp-xs) var(--sp-sm);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-}
-.map-date {
-  width: 8.5em;
-  padding: 2px 6px;
 }
 .map-legend {
   display: inline-flex;
@@ -1829,7 +1691,6 @@ select {
 }
 
 @media (prefers-color-scheme: dark) {
-  .map-search .text-input,
   .map-timebar,
   .map-toggles,
   .map-popover,

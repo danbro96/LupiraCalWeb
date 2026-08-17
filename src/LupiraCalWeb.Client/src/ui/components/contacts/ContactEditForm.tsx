@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   useClearContactDeceased,
   useMarkContactDeceased,
@@ -375,7 +376,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
             />
             <Tooltip title="Remove channel">
               <IconButton size="small" onClick={() => removeChannel(i)}>
-                ×
+                <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </div>
@@ -441,7 +442,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
             />
             <Tooltip title="Remove address">
               <IconButton size="small" onClick={() => removeAddress(i)}>
-                ×
+                <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </div>
@@ -484,7 +485,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
             />
             <Tooltip title="Remove profile">
               <IconButton size="small" onClick={() => removeProfile(i)}>
-                ×
+                <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </div>
@@ -510,7 +511,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                     <span className="membership-name">{nameOf(cid)}</span>
                     <Tooltip title="Remove">
                       <IconButton size="small" onClick={() => field.onChange(field.value.filter((x) => x !== cid))}>
-                        ×
+                        <CloseIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </div>

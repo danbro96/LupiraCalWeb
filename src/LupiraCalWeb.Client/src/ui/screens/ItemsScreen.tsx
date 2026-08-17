@@ -7,6 +7,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { useGetItem } from '../../data/api/lupiraCalApi';
 import { useGetContact } from '../../data/api-contact/lupiraContactApi';
 import { ItemCategory, ItemStatus, OriginKind, type CalendarItemOccurrenceDto, type ContainerDto } from '../../data/api/models';
@@ -214,8 +215,8 @@ export function ItemsScreen() {
           rangeControls
         )}
         {isPhone ? (
-          <Button variant="outlined" size="small" onClick={() => setSheetOpen(true)}>
-            ☰ Filters{secondaryCount > 0 ? ` (${secondaryCount})` : ''}
+          <Button variant="outlined" size="small" startIcon={<FilterListIcon />} onClick={() => setSheetOpen(true)}>
+            Filters{secondaryCount > 0 ? ` (${secondaryCount})` : ''}
           </Button>
         ) : (
           filterControls

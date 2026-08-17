@@ -2,9 +2,12 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
+import MuiLink from '@mui/material/Link';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import type { SxProps, Theme } from '@mui/material/styles';
+import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   useAddContactGroupMember,
@@ -33,6 +36,8 @@ import { ContactEditForm } from './ContactEditForm';
 import { ContactEventsPanel } from './ContactEventsPanel';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
 import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
+
+const linkSx: SxProps<Theme> = { fontSize: 13, fontWeight: 600, p: '2px', whiteSpace: 'nowrap', '@media (pointer: coarse)': { p: '6px 2px' } };
 
 /** Right pane for a contact: reach fields, postal addresses, profiles, emergency designation, group membership,
  *  completeness, and relations. Fields edit inline via ContactEditForm; all writes go over REST. */
@@ -102,9 +107,9 @@ export function ContactDetailPane() {
                   {c.preferred && ' ★'}
                 </dt>
                 <dd>
-                  <a className="linklike" href={`${c.medium === 'Phone' ? 'tel' : 'mailto'}:${c.value}`}>
+                  <MuiLink underline="hover" sx={linkSx} href={`${c.medium === 'Phone' ? 'tel' : 'mailto'}:${c.value}`}>
                     {c.value}
-                  </a>
+                  </MuiLink>
                 </dd>
               </div>
             ))}
@@ -127,9 +132,9 @@ export function ContactDetailPane() {
                 </dt>
                 <dd>
                   {p.url ? (
-                    <a className="linklike" href={p.url} target="_blank" rel="noreferrer">
+                    <MuiLink underline="hover" sx={linkSx} href={p.url} target="_blank" rel="noreferrer">
                       {p.handle} ↗
-                    </a>
+                    </MuiLink>
                   ) : (
                     p.handle
                   )}
@@ -175,7 +180,7 @@ export function ContactDetailPane() {
                 size="small"
                 onClick={() => removeMember.mutate({ groupId: g.id, contactId: contact.id })}
               >
-                ×
+                <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </div>

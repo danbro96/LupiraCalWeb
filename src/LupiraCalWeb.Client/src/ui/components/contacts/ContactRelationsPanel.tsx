@@ -5,6 +5,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from '@mui/icons-material/Close';
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import RestoreIcon from '@mui/icons-material/Restore';
 import { Link, useLocation } from 'react-router-dom';
 import {
   useAddContactRelation,
@@ -153,7 +156,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                         disabled={add.isPending}
                         onClick={() => add.mutate({ id: contact.id, data: { toContactId: r.contactId, kind: r.kind as ContactRelationKind, label: r.label ?? null } })}
                       >
-                        ↺
+                        <RestoreIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   ) : (
@@ -163,7 +166,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                         disabled={end.isPending}
                         onClick={() => end.mutate({ id: contact.id, toContactId: r.contactId, data: { kind: r.kind as ContactRelationKind } })}
                       >
-                        ⏻
+                        <PowerSettingsNewIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   )}
@@ -173,7 +176,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                       disabled={remove.isPending}
                       onClick={() => remove.mutate({ id: contact.id, toContactId: r.contactId, params: { kind: r.kind as ContactRelationKind } })}
                     >
-                      ×
+                      <CloseIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 </div>

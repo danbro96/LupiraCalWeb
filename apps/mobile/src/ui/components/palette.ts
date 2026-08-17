@@ -1,10 +1,12 @@
-import { AVAILABILITY_COLORS, BIRTHDAY_COLOR, hashColor } from '@lupira/cal-tokens/kinds';
+import { AVAILABILITY_COLORS, BIRTHDAY_COLOR, hashColor, isAvailabilityStatus } from '@lupira/cal-tokens/kinds';
 import { useCalendars } from '../../state/queries';
 
 export { AVAILABILITY_COLORS, BIRTHDAY_COLOR, hashColor };
 
+const UNKNOWN_AVAILABILITY = '#94a3b8';
+
 export function availabilityColor(status: string | null): string {
-  return (status && (AVAILABILITY_COLORS as Record<string, string>)[status]) || '#94a3b8';
+  return isAvailabilityStatus(status) ? AVAILABILITY_COLORS[status] : UNKNOWN_AVAILABILITY;
 }
 
 /// Calendar color: the container's own color when it set one, else a stable hash — same idea as the web grid.

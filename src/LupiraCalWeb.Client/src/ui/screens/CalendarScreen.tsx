@@ -1,11 +1,16 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import SearchIcon from '@mui/icons-material/Search';
 import { familyKey } from '@lupira/cal-domain/family';
 import { useContainers } from '../../state/useContainers';
 import { useRangeOccurrences } from '../../state/useRangeOccurrences';
@@ -34,7 +39,7 @@ export function CalendarScreen() {
   const [search, setSearch] = useState(q);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [dateOpen, setDateOpen] = useState(false);
+  const [dateAnchor, setDateAnchor] = useState<HTMLElement | null>(null);
 
   const setParam = (key: string, value: string | null) => {
     setSearchParams((prev) => {
@@ -127,33 +132,40 @@ export function CalendarScreen() {
       <div className="cal-toolbar">
         <div className="cal-nav">
           <IconButton size="small" onClick={() => navigate(-1)} aria-label="Previous">
-            ‹
+            <ChevronLeftIcon fontSize="small" />
           </IconButton>
-          <button className="cal-title" onClick={() => setDateOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={dateOpen}>
+          <button
+            className="cal-title"
+            onClick={(e) => {
+              const el = e.currentTarget;
+              setDateAnchor((a) => (a ? null : el));
+            }}
+            aria-haspopup="dialog"
+            aria-expanded={!!dateAnchor}
+          >
             {title}
             <span className="dp-caret" aria-hidden>
               ▾
             </span>
           </button>
           <IconButton size="small" onClick={() => navigate(1)} aria-label="Next">
-            ›
+            <ChevronRightIcon fontSize="small" />
           </IconButton>
           {!todayVisible && (
             <Button variant="outlined" size="small" onClick={() => setDate(null)}>
               Today
             </Button>
           )}
-          {isLoading && <span className="spinner" aria-label="loading" />}
-          {dateOpen && (
-            <MiniMonthPicker
-              selected={date}
-              onPick={(d) => {
-                setDate(d);
-                setDateOpen(false);
-              }}
-              onClose={() => setDateOpen(false)}
-            />
-          )}
+          {isLoading && <CircularProgress size={14} aria-label="loading" sx={{ flex: 'none' }} />}
+          <MiniMonthPicker
+            selected={date}
+            anchorEl={dateAnchor}
+            onPick={(d) => {
+              setDate(d);
+              setDateAnchor(null);
+            }}
+            onClose={() => setDateAnchor(null)}
+          />
         </div>
         <div className="cal-right">
           <div className="cal-actions">
@@ -164,25 +176,23 @@ export function CalendarScreen() {
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
-            <Button
-              variant="outlined"
+            <IconButton
               size="small"
               sx={{ display: { md: 'none' } }}
               onClick={() => setSearchOpen((o) => !o)}
               aria-label="Search"
               aria-pressed={searchOpen}
             >
-              🔍
-            </Button>
-            <Button
-              variant="outlined"
+              <SearchIcon fontSize="small" />
+            </IconButton>
+            <IconButton
               size="small"
               sx={{ display: { md: 'none' } }}
               onClick={() => setSheetOpen(true)}
               aria-label="Calendars"
             >
-              🗂
-            </Button>
+              <FolderOpenIcon fontSize="small" />
+            </IconButton>
           </div>
           <div className={`cal-search ${searchOpen ? 'open' : ''}`}>
             <form

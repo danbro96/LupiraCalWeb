@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { FAB, useTheme } from 'react-native-paper';
+import { FAB, IconButton, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
@@ -101,9 +101,9 @@ export function CalendarScreen() {
       <SyncBanner />
       <BridgePrompt />
       <View style={styles.toolbar}>
-        <Pressable onPress={() => step(-1)} hitSlop={8}><Text style={[styles.nav, { color: theme.colors.primary }]}>‹</Text></Pressable>
+        <IconButton icon="chevron-left" iconColor={theme.colors.primary} style={styles.nav} onPress={() => step(-1)} hitSlop={8} />
         <Text style={styles.title}>{title}</Text>
-        <Pressable onPress={() => step(1)} hitSlop={8}><Text style={[styles.nav, { color: theme.colors.primary }]}>›</Text></Pressable>
+        <IconButton icon="chevron-right" iconColor={theme.colors.primary} style={styles.nav} onPress={() => step(1)} hitSlop={8} />
         <Pressable style={[styles.toolButton, { borderColor: theme.colors.primary }]} onPress={goToday}>
           <Text style={[styles.toolButtonText, { color: theme.colors.primary }]}>Today</Text>
         </Pressable>
@@ -195,7 +195,7 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
 const styles = StyleSheet.create({
   root: { flex: 1 },
   toolbar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, gap: 8 },
-  nav: { fontSize: 22, paddingHorizontal: 6 },
+  nav: { margin: 0 },
   title: { flexGrow: 1, fontSize: 16, fontWeight: '600', textAlign: 'center' },
   toolButton: { borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 5, minWidth: 64, alignItems: 'center' },
   toolButtonText: { fontSize: 13, fontWeight: '600' },

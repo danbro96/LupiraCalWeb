@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useMergeItemMetadata } from '../../../data/api/lupiraCalApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 
@@ -24,8 +26,13 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
   return (
     <section className="drawer-section">
       <h3>
-        <Button variant="text" size="small" onClick={() => setOpen((o) => !o)}>
-          Metadata {open ? '▾' : '▸'}
+        <Button
+          variant="text"
+          size="small"
+          endIcon={open ? <ExpandMoreIcon /> : <ChevronRightIcon />}
+          onClick={() => setOpen((o) => !o)}
+        >
+          Metadata
         </Button>
       </h3>
       {open && (

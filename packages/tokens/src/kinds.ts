@@ -36,6 +36,11 @@ export const AVAILABILITY_COLORS: Record<AvailabilityStatusName, string> = {
   Leave: '#9333ea',
 };
 
+/** Narrows the free-form status strings carried by mirror rows and DTOs. */
+export function isAvailabilityStatus(s: string | null | undefined): s is AvailabilityStatusName {
+  return s != null && s in AVAILABILITY_COLORS;
+}
+
 export const BIRTHDAY_COLOR = '#d97706';
 
 /** Accents for parent/child item families — a separate color channel from calendar colors. */

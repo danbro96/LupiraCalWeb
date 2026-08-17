@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   useConfirmAttendance,
   useGetParticipationSummary,
@@ -75,7 +79,9 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
         const status = a.status ?? 'NeedsAction';
         return (
           <div key={pid} className="attendee-row">
-            <span className="avatar">{initials(contactName(a.contactId))}</span>
+            <Avatar sx={{ width: 30, height: 30, fontSize: 12, fontWeight: 700, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
+              {initials(contactName(a.contactId))}
+            </Avatar>
             <div className="attendee-info">
               <span>{contactName(a.contactId)}</span>
               <span className="meta">
@@ -88,13 +94,13 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
               {status === 'NeedsAction' && (
                 <>
                   <Tooltip title="Accept">
-                    <Chip size="small" variant="outlined" label="✓" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'accepted' } })} />
+                    <Chip size="small" variant="outlined" icon={<CheckIcon />} onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'accepted' } })} />
                   </Tooltip>
                   <Tooltip title="Tentative">
                     <Chip size="small" variant="outlined" label="?" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'tentative' } })} />
                   </Tooltip>
                   <Tooltip title="Decline">
-                    <Chip size="small" variant="outlined" label="✗" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'declined' } })} />
+                    <Chip size="small" variant="outlined" icon={<ClearIcon />} onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'declined' } })} />
                   </Tooltip>
                 </>
               )}
@@ -110,7 +116,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
               )}
               <Tooltip title="Remove">
                 <IconButton size="small" onClick={() => remove.mutate({ id: item.id, participationId: pid })}>
-                  ×
+                  <CloseIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </div>

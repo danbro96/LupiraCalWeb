@@ -3,7 +3,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { HelperText, List, Switch, useTheme } from 'react-native-paper';
+import { HelperText, IconButton, List, Switch, useTheme } from 'react-native-paper';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
@@ -22,6 +22,7 @@ const NAME_FORMAT_OPTIONS = [
   { value: 'NickName', label: 'Nickname' },
 ];
 const CHANNEL_TYPES = [null, 'Home', 'Work', 'Mobile'] as const;
+const STAR_ON_COLOR = '#d97706';
 
 export function ContactEditScreen() {
   const theme = useTheme();
@@ -225,12 +226,22 @@ export function ContactEditScreen() {
           >
             <Text style={[styles.typeChip, { color: theme.colors.primary, borderColor: theme.colors.primary + '66' }]}>{c.type ?? 'type'}</Text>
           </Pressable>
-          <Pressable onPress={() => setChannels((d) => d.map((x, j) => (j === i ? { ...x, preferred: !x.preferred } : x)))} hitSlop={6}>
-            <Text style={[styles.star, { color: theme.colors.outline }, c.preferred && styles.starOn]}>★</Text>
-          </Pressable>
-          <Pressable onPress={() => setChannels((d) => d.filter((_, j) => j !== i))} hitSlop={6}>
-            <Text style={[styles.remove, { color: theme.colors.onSurfaceVariant }]}>✕</Text>
-          </Pressable>
+          <IconButton
+            icon={c.preferred ? 'star' : 'star-outline'}
+            size={18}
+            iconColor={c.preferred ? STAR_ON_COLOR : theme.colors.outline}
+            style={styles.star}
+            onPress={() => setChannels((d) => d.map((x, j) => (j === i ? { ...x, preferred: !x.preferred } : x)))}
+            hitSlop={6}
+          />
+          <IconButton
+            icon="close"
+            size={16}
+            iconColor={theme.colors.onSurfaceVariant}
+            style={styles.remove}
+            onPress={() => setChannels((d) => d.filter((_, j) => j !== i))}
+            hitSlop={6}
+          />
         </View>
       ))}
       {profiles.map((p, i) => (
@@ -244,9 +255,14 @@ export function ContactEditScreen() {
             value={p.handle}
             onChangeText={(v) => setProfiles((d) => d.map((x, j) => (j === i ? { ...x, handle: v } : x)))}
           />
-          <Pressable onPress={() => setProfiles((d) => d.filter((_, j) => j !== i))} hitSlop={6}>
-            <Text style={[styles.remove, { color: theme.colors.onSurfaceVariant }]}>✕</Text>
-          </Pressable>
+          <IconButton
+            icon="close"
+            size={16}
+            iconColor={theme.colors.onSurfaceVariant}
+            style={styles.remove}
+            onPress={() => setProfiles((d) => d.filter((_, j) => j !== i))}
+            hitSlop={6}
+          />
         </View>
       ))}
       <View style={styles.addRow}>
@@ -284,9 +300,8 @@ const styles = StyleSheet.create({
   reachService: { flex: 2, fontSize: 13 },
   reachValue: { flex: 3 },
   typeChip: { fontSize: 11, borderWidth: 1, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3 },
-  star: { fontSize: 18 },
-  starOn: { color: '#d97706' },
-  remove: { fontSize: 14, paddingHorizontal: 4 },
+  star: { margin: 0 },
+  remove: { margin: 0 },
   addRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 },
   addChip: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 },
   addChipText: { fontSize: 13 },

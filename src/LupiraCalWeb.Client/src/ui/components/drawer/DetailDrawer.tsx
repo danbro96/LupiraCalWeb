@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import { useIsPhone } from '../../useIsPhone';
 
 /** Shared shell for the ?item= / ?task= / birthday detail cards: right drawer on desktop, bottom sheet on phones. */
@@ -15,7 +16,7 @@ export function DetailDrawer({ onClose, children }: { onClose: () => void; child
     >
       <div className="drawer-head">
         <IconButton size="small" onClick={onClose} aria-label="Close">
-          ✕
+          <CloseIcon fontSize="small" />
         </IconButton>
       </div>
       {children}

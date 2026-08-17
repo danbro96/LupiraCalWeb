@@ -1,6 +1,7 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text } from 'react-native';
+import type { ComponentProps } from 'react';
 import { useAuth } from '../../state/auth-store';
 import { AvailabilityEditScreen } from '../screens/AvailabilityEditScreen';
 import { BridgeDiagnosticsScreen } from '../screens/BridgeDiagnosticsScreen';
@@ -21,18 +22,18 @@ import type { RootStackParamList, TabParamList } from './types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const tabIcon = (glyph: string) =>
+const tabIcon = (name: ComponentProps<typeof MaterialCommunityIcons>['name']) =>
   function TabIcon({ color }: { color: string }) {
-    return <Text style={{ color, fontSize: 18 }}>{glyph}</Text>;
+    return <MaterialCommunityIcons name={name} color={color} size={24} />;
   };
 
 function Tabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: true }}>
       {/* Calendar + Contacts carry their own toolbars — the native header would just double them. */}
-      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon('📅'), headerShown: false }} />
-      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon('👥'), headerShown: false }} />
-      <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: tabIcon('⚙️') }} />
+      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon('calendar-month'), headerShown: false }} />
+      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon('account-group'), headerShown: false }} />
+      <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: tabIcon('cog') }} />
     </Tab.Navigator>
   );
 }

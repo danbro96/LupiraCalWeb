@@ -4,6 +4,7 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from '@mui/icons-material/Close';
 import { forwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
 import { useCreatePlaceAtPin, useCreatePlaceFromHit } from '../../../state/usePlaces';
@@ -87,7 +88,7 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
         📍 <PlaceLabel placeId={placeId} />
         <Tooltip title="Clear place">
           <IconButton size="small" onClick={() => onChange(null)}>
-            ×
+            <CloseIcon fontSize="small" />
           </IconButton>
         </Tooltip>
       </span>

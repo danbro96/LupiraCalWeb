@@ -1,3 +1,4 @@
+import MuiLink from '@mui/material/Link';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useSearchItems } from '../../../data/api/lupiraCalApi';
 import { fmtWhen } from '@lupira/cal-domain/time';
@@ -32,9 +33,14 @@ export function ContactEventsPanel({ contactId }: { contactId: string }) {
           <span className="meta">{fmtWhen(e.start, e.isAllDay)}</span>
         </Link>
       ))}
-      <Link className="linklike" to={`/items?contact=${contactId}`}>
+      <MuiLink
+        component={Link}
+        to={`/items?contact=${contactId}`}
+        underline="hover"
+        sx={{ fontSize: 13, fontWeight: 600, p: '2px', whiteSpace: 'nowrap', '@media (pointer: coarse)': { p: '6px 2px' } }}
+      >
         open in list
-      </Link>
+      </MuiLink>
     </section>
   );
 }

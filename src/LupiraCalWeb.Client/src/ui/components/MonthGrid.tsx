@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Link from '@mui/material/Link';
 import type { AvailabilitySegment } from '../../state/useAvailability';
 import { familyKey } from '@lupira/cal-domain/family';
 import { fmtTime, isToday, sameDay } from '@lupira/cal-domain/time';
@@ -94,9 +95,22 @@ export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem,
               );
             })}
             {dayEntries.length > shown.length && (
-              <button className="linklike more-link" onClick={() => onOpenDay(day)}>
+              <Link
+                component="button"
+                type="button"
+                underline="hover"
+                onClick={() => onOpenDay(day)}
+                sx={{
+                  alignSelf: 'flex-start',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  p: '2px',
+                  whiteSpace: 'nowrap',
+                  '@media (pointer: coarse)': { p: '6px 2px' },
+                }}
+              >
                 +{dayEntries.length - shown.length} more
-              </button>
+              </Link>
             )}
           </div>
         );

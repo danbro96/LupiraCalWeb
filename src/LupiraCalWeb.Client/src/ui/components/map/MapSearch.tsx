@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
+import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import { useForwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
@@ -83,7 +84,7 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
               <>
                 <span className="location-name">{o.name}</span>
                 {o.context && <span className="meta"> {o.context}</span>}
-                <span className="badge">{o.type === SuggestionType.Place ? o.category ?? 'Place' : 'Area'}</span>
+                <Chip size="small" variant="outlined" label={o.type === SuggestionType.Place ? o.category ?? 'Place' : 'Area'} />
               </>
             )}
           </li>

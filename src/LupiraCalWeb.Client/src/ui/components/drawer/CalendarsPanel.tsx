@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   useAcceptItemIntoCalendar,
   useFileItemToCalendar,
@@ -47,7 +48,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
             )}
             <Tooltip title="Remove from calendar">
               <IconButton size="small" onClick={() => remove.mutate({ itemId: item.id, calendarId: m.calendarId })}>
-                ×
+                <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </div>

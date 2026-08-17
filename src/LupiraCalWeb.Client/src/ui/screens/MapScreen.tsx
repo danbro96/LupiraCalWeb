@@ -1,6 +1,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import ViewListIcon from '@mui/icons-material/ViewList';
 import { addDays, fmtTime, parseYmd } from '@lupira/cal-domain/time';
 import {
   useContactFeatures,
@@ -205,7 +206,7 @@ export default function MapScreen() {
           onToggleHistory={() => setParam('history', showHistory ? undefined : '1')}
         />
         <button className={`chip${showIndex ? ' active' : ''}`} onClick={() => setParam('index', showIndex ? undefined : '1')}>
-          ☰ List
+          <ViewListIcon sx={{ fontSize: 16, verticalAlign: 'text-bottom', mr: 0.5 }} /> List
         </button>
         {anyLoading && <span className="meta">Loading…</span>}
       </div>

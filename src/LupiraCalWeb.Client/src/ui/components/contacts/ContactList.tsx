@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
@@ -123,7 +124,9 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
       >
         ★
       </button>
-      <span className="avatar">{(c.displayName[0] ?? '?').toUpperCase()}</span>
+      <Avatar sx={{ width: 30, height: 30, fontSize: 12, fontWeight: 700, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
+        {(c.displayName[0] ?? '?').toUpperCase()}
+      </Avatar>
       <span className="contact-name">
         {c.displayName}
         {c.nickname && c.nickname !== c.displayName ? <span className="meta"> “{c.nickname}”</span> : null}
