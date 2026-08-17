@@ -107,6 +107,11 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
         getOptionDisabled={(o) => o.type === SuggestionType.Locality}
         value={null}
         inputValue={state.text}
+        // A freeSolo Enter commit isn't defaultPrevented by MUI and would submit a wrapping form
+        // (ContactEditForm), unmounting the picker before the geocode preview can render.
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') e.preventDefault();
+        }}
         onInputChange={(_, v) => dispatch({ type: 'TYPE', text: v })}
         onChange={(_, value) => {
           if (typeof value === 'string') {
