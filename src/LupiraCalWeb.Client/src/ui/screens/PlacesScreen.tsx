@@ -73,8 +73,14 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
     <section className="drawer-section">
       <h3>Unlocated</h3>
       <div className="form-row">
-        <label>Source</label>
-        <TextField select size="small" value={source} onChange={(e) => setSource(e.target.value as '' | PlaceSource)} slotProps={{ select: { displayEmpty: true } }}>
+        <TextField
+          select
+          size="small"
+          label="Source"
+          value={source}
+          onChange={(e) => setSource(e.target.value as '' | PlaceSource)}
+          slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
+        >
           <MenuItem value="">(any)</MenuItem>
           {Object.values(PlaceSource).map((s) => (
             <MenuItem key={s} value={s}>
@@ -82,8 +88,14 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
             </MenuItem>
           ))}
         </TextField>
-        <label>Verified</label>
-        <TextField select size="small" value={verified} onChange={(e) => setVerified(e.target.value as VerifiedFilter)} slotProps={{ select: { displayEmpty: true } }}>
+        <TextField
+          select
+          size="small"
+          label="Verified"
+          value={verified}
+          onChange={(e) => setVerified(e.target.value as VerifiedFilter)}
+          slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
+        >
           <MenuItem value="">(any)</MenuItem>
           <MenuItem value="true">Verified</MenuItem>
           <MenuItem value="false">Unverified</MenuItem>

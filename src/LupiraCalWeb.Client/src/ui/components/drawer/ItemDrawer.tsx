@@ -84,8 +84,14 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       </div>
 
       <div className="form-row">
-        <label>Status</label>
-        <TextField select size="small" value={item.status ?? ''} onChange={(e) => patch({ status: e.target.value || null })} slotProps={{ select: { displayEmpty: true } }}>
+        <TextField
+          select
+          size="small"
+          label="Status"
+          value={item.status ?? ''}
+          onChange={(e) => patch({ status: e.target.value || null })}
+          slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
+        >
           <MenuItem value="">(none)</MenuItem>
           {Object.values(ItemStatus).map((s) => (
             <MenuItem key={s} value={s}>
@@ -94,23 +100,21 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
           ))}
         </TextField>
         {item.details?.presence && (
-          <>
-            <label>Availability</label>
-            <TextField
-              select
-              size="small"
-              value={item.details.presence.status ?? ''}
-              onChange={(e) => e.target.value && patch({ availability: e.target.value as AvailabilityStatus })}
-              slotProps={{ select: { displayEmpty: true } }}
-            >
-              <MenuItem value="">(set…)</MenuItem>
-              {Object.values(AvailabilityStatus).map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s}
-                </MenuItem>
-              ))}
-            </TextField>
-          </>
+          <TextField
+            select
+            size="small"
+            label="Availability"
+            value={item.details.presence.status ?? ''}
+            onChange={(e) => e.target.value && patch({ availability: e.target.value as AvailabilityStatus })}
+            slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
+          >
+            <MenuItem value="">(set…)</MenuItem>
+            {Object.values(AvailabilityStatus).map((s) => (
+              <MenuItem key={s} value={s}>
+                {s}
+              </MenuItem>
+            ))}
+          </TextField>
         )}
       </div>
 
@@ -145,10 +149,10 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
           </div>
         )}
         <div className="form-row">
-          <label>Repeats</label>
           <TextField
             select
             size="small"
+            label="Repeats"
             value={RRULE_PRESETS.some((p) => p.rrule === rrule) ? rrule : rrule ? 'custom' : ''}
             onChange={(e) => {
               if (e.target.value && e.target.value !== 'custom') {
@@ -156,7 +160,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
                 patch({ recurrenceRule: e.target.value });
               }
             }}
-            slotProps={{ select: { displayEmpty: true } }}
+            slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
           >
             <MenuItem value="">never</MenuItem>
             {RRULE_PRESETS.map((p) => (

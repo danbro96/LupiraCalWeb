@@ -653,7 +653,8 @@ select {
   flex-wrap: wrap;
   margin: var(--sp-sm) 0;
 }
-.form-row label {
+/* Direct child only — MUI's floating InputLabel keeps its own styling. */
+.form-row > label {
   font-size: 13px;
   color: var(--mui-palette-text-secondary);
 }
@@ -1126,17 +1127,6 @@ select {
   padding: var(--sp-sm);
   background: var(--mui-palette-background-paper);
   border-radius: var(--r-md);
-}
-.modal-head {
-  display: flex;
-  justify-content: flex-end;
-  padding: var(--sp-sm) var(--sp-sm) 0;
-  position: sticky;
-  top: 0;
-  background: var(--mui-palette-background-default);
-}
-.modal-body {
-  padding: 0 var(--sp-lg) calc(var(--sp-xl) + env(safe-area-inset-bottom));
 }
 
 /* ---- Centered states. ---- */

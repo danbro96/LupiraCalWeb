@@ -242,28 +242,23 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   return (
     <form className="contact-edit" onSubmit={save}>
       <div className="edit-field">
-        <label>Given name</label>
-        <Controller name="givenName" control={control} render={({ field }) => <TextField size="small" {...field} />} />
+        <Controller name="givenName" control={control} render={({ field }) => <TextField size="small" label="Given name" {...field} />} />
       </div>
       <div className="edit-field">
-        <label>Middle name</label>
-        <Controller name="middleName" control={control} render={({ field }) => <TextField size="small" {...field} />} />
+        <Controller name="middleName" control={control} render={({ field }) => <TextField size="small" label="Middle name" {...field} />} />
       </div>
       <div className="edit-field">
-        <label>Family name</label>
-        <Controller name="familyName" control={control} render={({ field }) => <TextField size="small" {...field} />} />
+        <Controller name="familyName" control={control} render={({ field }) => <TextField size="small" label="Family name" {...field} />} />
       </div>
       <div className="edit-field">
-        <label>Nickname</label>
-        <Controller name="nickname" control={control} render={({ field }) => <TextField size="small" {...field} />} />
+        <Controller name="nickname" control={control} render={({ field }) => <TextField size="small" label="Nickname" {...field} />} />
       </div>
       <div className="edit-field">
-        <label>Display as</label>
         <Controller
           name="displayNameFormat"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" {...field}>
+            <TextField select size="small" label="Display as" {...field}>
               {Object.values(DisplayNameFormat).map((f) => (
                 <MenuItem key={f} value={f}>
                   {DISPLAY_NAME_FORMAT_LABELS[f]}

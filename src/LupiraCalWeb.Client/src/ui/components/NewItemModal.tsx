@@ -3,6 +3,9 @@ import { Controller, useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
@@ -104,12 +107,13 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
 
   return (
     <Dialog open onClose={onClose} maxWidth="sm" fullWidth fullScreen={isPhone}>
-      <div className="modal-head">
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
         <IconButton size="small" onClick={onClose} aria-label="Close">
           ✕
         </IconButton>
-      </div>
-      <form className="modal-body" onSubmit={submit}>
+      </DialogTitle>
+      <form onSubmit={submit}>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pt: 0 }}>
         <Controller
           name="title"
           control={control}
@@ -125,12 +129,17 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
           )}
         />
         <div className="form-row">
-          <label>Calendar</label>
           <Controller
             name="calendarId"
             control={control}
             render={({ field }) => (
-              <TextField select size="small" {...field} slotProps={{ select: { displayEmpty: true } }}>
+              <TextField
+                select
+                size="small"
+                label="Calendar"
+                {...field}
+                slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
+              >
                 {calendars.map((c) => (
                   <MenuItem key={c.id} value={c.id}>
                     {calendarLabel(c)}
@@ -174,12 +183,17 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
           </div>
         )}
         <div className="form-row">
-          <label>Repeats</label>
           <Controller
             name="rrule"
             control={control}
             render={({ field }) => (
-              <TextField select size="small" {...field} slotProps={{ select: { displayEmpty: true } }}>
+              <TextField
+                select
+                size="small"
+                label="Repeats"
+                {...field}
+                slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
+              >
                 <MenuItem value="">never</MenuItem>
                 {RRULE_PRESETS.map((p) => (
                   <MenuItem key={p.rrule} value={p.rrule}>
@@ -190,23 +204,26 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             )}
           />
           {(isAvailabilityCalendar || availability) && (
-            <>
-              <label>Availability</label>
-              <Controller
-                name="availability"
-                control={control}
-                render={({ field }) => (
-                  <TextField select size="small" {...field} slotProps={{ select: { displayEmpty: true } }}>
-                    <MenuItem value="">(status…)</MenuItem>
-                    {Object.values(AvailabilityStatus).map((s) => (
-                      <MenuItem key={s} value={s}>
-                        {s}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                )}
-              />
-            </>
+            <Controller
+              name="availability"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  select
+                  size="small"
+                  label="Availability"
+                  {...field}
+                  slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
+                >
+                  <MenuItem value="">(status…)</MenuItem>
+                  {Object.values(AvailabilityStatus).map((s) => (
+                    <MenuItem key={s} value={s}>
+                      {s}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
           )}
         </div>
         <Controller
@@ -224,14 +241,15 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
           control={control}
           render={({ field }) => <TextField size="small" multiline minRows={3} placeholder="Description" {...field} />}
         />
-        <div className="chip-row">
-          <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
-            Create
-          </Button>
+        </DialogContent>
+        <DialogActions>
           <Button variant="outlined" size="small" type="button" onClick={onClose}>
             Cancel
           </Button>
-        </div>
+          <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
+            Create
+          </Button>
+        </DialogActions>
       </form>
     </Dialog>
   );

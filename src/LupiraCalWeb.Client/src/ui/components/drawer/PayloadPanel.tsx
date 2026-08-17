@@ -105,8 +105,13 @@ function prettyJson(raw: string): string {
 function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: PromptFire) => void }) {
   return (
     <div className="form-row">
-      <label>Fires</label>
-      <TextField select size="small" value={fire.kind} onChange={(e) => onChange({ ...fire, kind: e.target.value as PromptFire['kind'] })}>
+      <TextField
+        select
+        size="small"
+        label="Fires"
+        value={fire.kind}
+        onChange={(e) => onChange({ ...fire, kind: e.target.value as PromptFire['kind'] })}
+      >
         {Object.values(PromptFireKind).map((k) => (
           <MenuItem key={k} value={k}>
             {k}
@@ -188,12 +193,11 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
   return (
     <form className="payload-form" onSubmit={submit}>
       <div className="form-row">
-        <label>Intent</label>
         <Controller
           name="intent"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" {...field}>
+            <TextField select size="small" label="Intent" {...field}>
               {Object.values(PromptIntent).map((v) => (
                 <MenuItem key={v} value={v}>
                   {v}
@@ -202,12 +206,11 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
             </TextField>
           )}
         />
-        <label>Output</label>
         <Controller
           name="output"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" {...field}>
+            <TextField select size="small" label="Output" {...field}>
               {Object.values(OutputKind).map((v) => (
                 <MenuItem key={v} value={v}>
                   {v}
@@ -225,12 +228,17 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
         )}
       />
       <div className="form-row">
-        <label>Tier</label>
         <Controller
           name="tier"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" {...field} slotProps={{ select: { displayEmpty: true } }}>
+            <TextField
+              select
+              size="small"
+              label="Tier"
+              {...field}
+              slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
+            >
               <MenuItem value="">(default)</MenuItem>
               {Object.values(ModelTier).map((v) => (
                 <MenuItem key={v} value={v}>
@@ -240,12 +248,11 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
             </TextField>
           )}
         />
-        <label>On miss</label>
         <Controller
           name="onMiss"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" {...field}>
+            <TextField select size="small" label="On miss" {...field}>
               {Object.values(FallbackMode).map((v) => (
                 <MenuItem key={v} value={v}>
                   {v}
@@ -332,12 +339,11 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
   return (
     <form className="payload-form" onSubmit={submit}>
       <div className="form-row">
-        <label>Kind</label>
         <Controller
           name="kind"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" {...field}>
+            <TextField select size="small" label="Kind" {...field}>
               {Object.values(ActionKind).map((v) => (
                 <MenuItem key={v} value={v}>
                   {v}

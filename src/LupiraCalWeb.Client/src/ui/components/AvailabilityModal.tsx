@@ -1,6 +1,9 @@
 import { Controller, useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
@@ -58,21 +61,21 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
 
   return (
     <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
-      <div className="modal-head">
-        <strong>Set availability</strong>
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, py: 1 }}>
+        Set availability
         <IconButton size="small" onClick={onClose} aria-label="Close">
           ✕
         </IconButton>
-      </div>
-      <form className="modal-body" onSubmit={submit}>
-        {!availabilityCalendar && <p className="meta">No availability calendar — bootstrap the standard set first.</p>}
+      </DialogTitle>
+      <form onSubmit={submit}>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pt: 0 }}>
+          {!availabilityCalendar && <p className="meta">No availability calendar — bootstrap the standard set first.</p>}
         <div className="form-row">
-          <label>Status</label>
           <Controller
             name="status"
             control={control}
             render={({ field }) => (
-              <TextField select size="small" {...field}>
+              <TextField select size="small" label="Status" {...field}>
                 {Object.values(AvailabilityStatus).map((s) => (
                   <MenuItem key={s} value={s}>
                     {s}
@@ -83,32 +86,39 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
           />
         </div>
         <div className="form-row">
-          <label>From</label>
           <Controller
             name="startDate"
             control={control}
             rules={{ required: true }}
-            render={({ field }) => <TextField type="date" size="small" {...field} required />}
+            render={({ field }) => (
+              <TextField type="date" size="small" label="From" slotProps={{ inputLabel: { shrink: true } }} {...field} required />
+            )}
           />
         </div>
         <div className="form-row">
-          <label>Until (exclusive)</label>
           <Controller
             name="endDate"
             control={control}
             render={({ field }) => (
-              <TextField type="date" size="small" {...field} slotProps={{ htmlInput: { min: startDate } }} />
+              <TextField
+                type="date"
+                size="small"
+                label="Until (exclusive)"
+                {...field}
+                slotProps={{ htmlInput: { min: startDate }, inputLabel: { shrink: true } }}
+              />
             )}
           />
         </div>
-        <div className="modal-actions">
-          <Button variant="contained" size="small" type="submit" disabled={!availabilityCalendar || create.isPending}>
-            Save
-          </Button>
+        </DialogContent>
+        <DialogActions>
           <Button variant="outlined" size="small" type="button" onClick={onClose}>
             Cancel
           </Button>
-        </div>
+          <Button variant="contained" size="small" type="submit" disabled={!availabilityCalendar || create.isPending}>
+            Save
+          </Button>
+        </DialogActions>
       </form>
     </Dialog>
   );
