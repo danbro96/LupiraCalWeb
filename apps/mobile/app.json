@@ -19,7 +19,8 @@
     "plugins": [
       "expo-secure-store",
       "expo-web-browser",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "@maplibre/maplibre-react-native"
     ],
     "owner": "danbro96",
     "extra": {

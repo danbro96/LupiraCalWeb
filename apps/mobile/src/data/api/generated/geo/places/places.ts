@@ -8,12 +8,17 @@
 import type {
   AddAliasRequest,
   AddExternalIdRequest,
+  CreatePlaceFromGeocodeRequest,
   CreatePlaceRequest,
+  CurationEventDto,
   ExternalScheme,
+  LookupPlacesRequest,
   MergePlaceRequest,
   PlaceDto,
+  PlaceLookupItemDto,
   PlaceSuggestionDto,
   ProblemDetails,
+  RegeocodePlaceParams,
   ResolvePlaceRequest,
   ResolvePlaceResponse,
   ResolvePlacesBatchRequest,
@@ -72,7 +77,7 @@ export const getSearchPlacesUrl = (params?: SearchPlacesParams,) => {
 }
 
 /**
- * @summary Search the gazetteer: text (q, trigram), category/kind, containment (withinAreaId), and spatial — proximity (nearLat+nearLon[+radiusM], returns distanceM) or viewport (bbox=minLon&bbox=minLat&bbox=maxLon&bbox=maxLat).
+ * @summary Search the gazetteer: text (q, trigram), category/kind, containment (withinAreaId), curation state (hasCoordinates/source/verified — hasCoordinates=false lists unlocated stubs), and spatial — proximity (nearLat+nearLon[+radiusM], returns distanceM) or viewport (bbox=minLon&bbox=minLat&bbox=maxLon&bbox=maxLat).
  */
 export const searchPlaces = async (params?: SearchPlacesParams, options?: Parameters<typeof apiFetch>[1]): Promise<searchPlacesResponse> => {
 
@@ -232,6 +237,53 @@ export const getPlaceByExternalId = async (scheme: ExternalScheme,
     value: string, options?: Parameters<typeof apiFetch>[1]): Promise<getPlaceByExternalIdResponse> => {
 
   return apiFetch<getPlaceByExternalIdResponse>(getGetPlaceByExternalIdUrl(scheme,value),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+export type getPlaceHistoryResponse200 = {
+  data: CurationEventDto[]
+  status: 200
+}
+
+export type getPlaceHistoryResponse401 = {
+  data: void
+  status: 401
+}
+
+export type getPlaceHistoryResponse404 = {
+  data: void
+  status: 404
+}
+
+export type getPlaceHistoryResponseSuccess = (getPlaceHistoryResponse200) & {
+  headers: Headers;
+};
+export type getPlaceHistoryResponseError = (getPlaceHistoryResponse401 | getPlaceHistoryResponse404) & {
+  headers: Headers;
+};
+
+export type getPlaceHistoryResponse = (getPlaceHistoryResponseSuccess | getPlaceHistoryResponseError)
+
+export const getGetPlaceHistoryUrl = (id: string,) => {
+
+
+
+
+  return `/geo-api/places/${id}/history`
+}
+
+/**
+ * @summary The append-only curation log for a place, oldest first. Readable for tombstoned/merged places; 404 only for unknown ids.
+ */
+export const getPlaceHistory = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<getPlaceHistoryResponse> => {
+
+  return apiFetch<getPlaceHistoryResponse>(getGetPlaceHistoryUrl(id),
   {
     ...options,
     method: 'GET'
@@ -696,25 +748,81 @@ export type regeocodePlaceResponseError = (regeocodePlaceResponse400 | regeocode
 
 export type regeocodePlaceResponse = (regeocodePlaceResponseSuccess | regeocodePlaceResponseError)
 
-export const getRegeocodePlaceUrl = (id: string,) => {
+export const getRegeocodePlaceUrl = (id: string,
+    params?: RegeocodePlaceParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/geo-api/places/${id}/regeocode`
+  return stringifiedParams.length > 0 ? `/geo-api/places/${id}/regeocode?${stringifiedParams}` : `/geo-api/places/${id}/regeocode`
 }
 
 /**
- * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. 400 on a no-hit or transient geocoder outage; the place is left unchanged.
+ * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. force=true bypasses and overwrites the frozen geocode cache (heals a frozen empty answer). 400 on a no-hit or transient geocoder outage; the place is left unchanged.
  */
-export const regeocodePlace = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<regeocodePlaceResponse> => {
+export const regeocodePlace = async (id: string,
+    params?: RegeocodePlaceParams, options?: Parameters<typeof apiFetch>[1]): Promise<regeocodePlaceResponse> => {
 
-  return apiFetch<regeocodePlaceResponse>(getRegeocodePlaceUrl(id),
+  return apiFetch<regeocodePlaceResponse>(getRegeocodePlaceUrl(id,params),
   {
     ...options,
     method: 'POST'
 
 
+  }
+);}
+
+
+export type lookupPlacesResponse200 = {
+  data: PlaceLookupItemDto[]
+  status: 200
+}
+
+export type lookupPlacesResponse400 = {
+  data: ProblemDetails
+  status: 400
+}
+
+export type lookupPlacesResponse401 = {
+  data: void
+  status: 401
+}
+
+export type lookupPlacesResponseSuccess = (lookupPlacesResponse200) & {
+  headers: Headers;
+};
+export type lookupPlacesResponseError = (lookupPlacesResponse400 | lookupPlacesResponse401) & {
+  headers: Headers;
+};
+
+export type lookupPlacesResponse = (lookupPlacesResponseSuccess | lookupPlacesResponseError)
+
+export const getLookupPlacesUrl = () => {
+
+
+
+
+  return `/geo-api/places/lookup`
+}
+
+/**
+ * @summary Bulk get-by-ids (max 200) — hydrate stored place ids into coordinates in one call. Responses align index-for-index; a null place means unknown or deleted, a merged id returns the survivor. Containment is omitted (use GET /places/{id} for detail).
+ */
+export const lookupPlaces = async (lookupPlacesRequest: LookupPlacesRequest, options?: Parameters<typeof apiFetch>[1]): Promise<lookupPlacesResponse> => {
+
+  return apiFetch<lookupPlacesResponse>(getLookupPlacesUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(lookupPlacesRequest)
   }
 );}
 
@@ -809,6 +917,58 @@ export const resolvePlacesBatch = async (resolvePlacesBatchRequest: ResolvePlace
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(resolvePlacesBatchRequest)
+  }
+);}
+
+
+export type createPlaceFromGeocodeResponse200 = {
+  data: ResolvePlaceResponse
+  status: 200
+}
+
+export type createPlaceFromGeocodeResponse400 = {
+  data: ProblemDetails
+  status: 400
+}
+
+export type createPlaceFromGeocodeResponse401 = {
+  data: void
+  status: 401
+}
+
+export type createPlaceFromGeocodeResponse409 = {
+  data: ProblemDetails
+  status: 409
+}
+
+export type createPlaceFromGeocodeResponseSuccess = (createPlaceFromGeocodeResponse200) & {
+  headers: Headers;
+};
+export type createPlaceFromGeocodeResponseError = (createPlaceFromGeocodeResponse400 | createPlaceFromGeocodeResponse401 | createPlaceFromGeocodeResponse409) & {
+  headers: Headers;
+};
+
+export type createPlaceFromGeocodeResponse = (createPlaceFromGeocodeResponseSuccess | createPlaceFromGeocodeResponseError)
+
+export const getCreatePlaceFromGeocodeUrl = () => {
+
+
+
+
+  return `/geo-api/places/from-geocode`
+}
+
+/**
+ * @summary Create/dedupe a place from one specific forward-geocode hit the user picked (query + OSM identity). Reuses the frozen geocode cache — no extra geocoder call. 400 if the hit is not among the query's geocode results.
+ */
+export const createPlaceFromGeocode = async (createPlaceFromGeocodeRequest: CreatePlaceFromGeocodeRequest, options?: Parameters<typeof apiFetch>[1]): Promise<createPlaceFromGeocodeResponse> => {
+
+  return apiFetch<createPlaceFromGeocodeResponse>(getCreatePlaceFromGeocodeUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createPlaceFromGeocodeRequest)
   }
 );}
 

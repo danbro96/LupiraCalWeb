@@ -160,6 +160,31 @@ export async function gridRowsBetween(tx: Tx, fromDay: string, toDay: string, in
   );
 }
 
+export type MapEventRow = {
+  source_id: string;
+  start_utc: string;
+  title: string | null;
+  place_id: string;
+  calendar_id: string | null;
+};
+
+/// Map pins: one row per placed item with an occurrence in range. Recurring items repeat occurrence
+/// rows but share one place — GROUP BY collapses them to the earliest occurrence in the window.
+export async function mapEventRowsBetween(tx: Tx, fromDay: string, toDay: string): Promise<MapEventRow[]> {
+  return tx.all<MapEventRow>(
+    `SELECT o.source_id, MIN(o.start_utc) AS start_utc, i.title,
+            json_extract(i.doc, '$.placeId') AS place_id,
+            (SELECT ic.calendar_id FROM item_calendars ic WHERE ic.item_id = o.source_id
+             ORDER BY CASE ic.status WHEN 'Accepted' THEN 0 ELSE 1 END, ic.calendar_id LIMIT 1) AS calendar_id
+     FROM occurrences o
+     JOIN items i ON o.source = 'item' AND i.id = o.source_id AND i.deleted = 0
+     WHERE o.start_day >= ? AND o.start_day <= ? AND json_extract(i.doc, '$.placeId') IS NOT NULL
+     GROUP BY o.source_id
+     ORDER BY start_utc`,
+    [fromDay, toDay],
+  );
+}
+
 export type ContactListRow = { id: string; displayName: string; doc: ContactDoc };
 
 export async function listContacts(tx: Tx): Promise<ContactListRow[]> {

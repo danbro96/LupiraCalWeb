@@ -15,6 +15,7 @@ import { ItemDetailScreen } from '../screens/ItemDetailScreen';
 import { TaskDetailScreen } from '../screens/TaskDetailScreen';
 import { ItemEditScreen } from '../screens/ItemEditScreen';
 import { LoginScreen } from '../screens/LoginScreen';
+import { MapScreen } from '../screens/MapScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { SyncIssuesScreen } from '../screens/SyncIssuesScreen';
 import type { RootStackParamList, TabParamList } from './types';
@@ -33,6 +34,7 @@ function Tabs() {
       {/* Calendar + Contacts carry their own toolbars — the native header would just double them. */}
       <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon('calendar-month'), headerShown: false }} />
       <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon('account-group'), headerShown: false }} />
+      <Tab.Screen name="Map" component={MapScreen} options={{ tabBarIcon: tabIcon('map') }} />
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: tabIcon('cog') }} />
     </Tab.Navigator>
   );

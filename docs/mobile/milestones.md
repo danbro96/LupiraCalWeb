@@ -242,3 +242,29 @@ Grids (MonthView/WeekView), the PanResponder day-sheet, and the sync engine are 
 - [ ] Device: live light↔dark switch (no restart), StatusBar contrast in both schemes on tab + stack screens
 - [ ] Device: Paper Dialog renders over the nav stack; day-sheet FAB clear of the sheet snap points
 - [ ] Play internal build via the normal EAS path before rollout
+
+## M11 — Map tab (basemap + events/saved layers)   [status: in-progress]
+
+Fourth bottom tab rendering the self-hosted basemap via `@maplibre/maplibre-react-native` (MapLibre
+Native Android 13.x — reads `pmtiles://https://` sources natively with Range requests). First phase of
+the Lupira Photos program: the photos layer lands here once lupira-photo-api exists.
+
+### Scope
+- [x] `@maplibre/maplibre-react-native` (^11.3.6) + `@types/geojson`; app.json plugin; prebuild = no android/ diff (autolinked)
+- [x] `data/mapStyle.ts` — RN port of the web loader (BFF `/geo-api` prefix, bearer fetch, absolute-URL rewrite, pmtiles Range probe, fallback wash)
+- [x] `data/mirror.ts` `mapEventRowsBetween` — placed items with occurrences in range, one pin per item (GROUP BY), calendar for color
+- [x] `state/map-queries.ts` — `useMapStyle`, `useEventFeatures` (mirror + `lookupPlaces` hydration, ≤200/chunk), `useSavedPlaceFeatures`; network queries gated on `serverReachable` with staleTime/retry overrides (task-deadlines pattern)
+- [x] `ui/screens/MapScreen.tsx` — Map/Camera/GeoJSONSource/Layer, clustered events (radius 48 / maxZoom 14, step-sized cluster circles + counts), saved-place pins + labels, tap pin → ItemDetail, tap cluster → expansion zoom, layer chips, dark/light style via `useColorScheme`
+- [x] Bearer on native tile requests: `TransformRequestManager.addHeader` with stable id (in-place token rotation) and `match` scoped to the BFF origin — presigned/third-party URLs never see the header
+- [x] Palette copied web-canonical into `ui/map/mapTokens.ts` (saved/eventFallback/ring/ink only)
+- [x] Mobile orval regen (picked up `lookupPlaces`)
+
+### Exit criteria
+- [x] Root `npm run typecheck` / `lint` / `test` green
+- [ ] Device: basemap renders both themes off-LAN (bearer header on tiles/glyphs/sprite proven); fallback wash + banner when assets unprovisioned
+- [ ] Device: event pins colored by calendar, cluster expand on tap, pin tap opens ItemDetail; saved places labeled
+- [ ] Device: token expiry mid-pan — tiles keep loading after refresh (header updated in place)
+- [ ] EAS dev-client build (new native module — OTA can't deliver this)
+
+### Non-goals
+- Movement/contacts layers (need `lupira-location-aud` scope + re-login — bundle with `lupira-photo-aud` when the photos phase adds scopes); time-range control; photos layer (needs lupira-photo-api)
