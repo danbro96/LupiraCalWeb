@@ -7,16 +7,16 @@
  */
 import type { ContactRelationKind } from './contactRelationKind';
 
-export interface ContactRelation {
-  toContactId?: string;
-  kind?: ContactRelationKind;
+export interface ContactRelationDto {
+  toContactId: string;
+  kind: ContactRelationKind;
   /** @nullable */
-  label?: string | null;
+  label: string | null;
   /** @nullable */
-  since?: string | null;
+  since: string | null;
   /** @nullable */
-  note?: string | null;
-  ended?: boolean;
+  note: string | null;
+  ended: boolean;
   /** @nullable */
-  until?: string | null;
+  until: string | null;
 }

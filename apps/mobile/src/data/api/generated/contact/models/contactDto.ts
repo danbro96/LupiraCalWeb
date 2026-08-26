@@ -9,8 +9,8 @@ import type { CompletenessScore } from './completenessScore';
 import type { ContactKind } from './contactKind';
 import type { ContactPostalAddress } from './contactPostalAddress';
 import type { ContactReachChannel } from './contactReachChannel';
-import type { ContactRelation } from './contactRelation';
-import type { ContactSocialProfile } from './contactSocialProfile';
+import type { ContactRelationDto } from './contactRelationDto';
+import type { ContactSocialProfileDto } from './contactSocialProfileDto';
 import type { DisplayNameFormat } from './displayNameFormat';
 import type { JsonNode } from './jsonNode';
 import type { PartialDate } from './partialDate';
@@ -44,9 +44,9 @@ export interface ContactDto {
   /** @nullable */
   avatarRef?: string | null;
   addresses: ContactPostalAddress[];
-  profiles: ContactSocialProfile[];
+  profiles: ContactSocialProfileDto[];
   emergencyContactIds: string[];
-  relations: ContactRelation[];
+  relations: ContactRelationDto[];
   metadata?: null | JsonNode;
   completeness?: null | CompletenessScore;
   createdAt?: string;

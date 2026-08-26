@@ -6,10 +6,10 @@
  * OpenAPI spec version: v1
  */
 
-export interface ContactSocialProfile {
-  service?: string;
-  handle?: string;
+export interface ContactSocialProfileDto {
+  service: string;
+  handle: string;
   /** @nullable */
-  url?: string | null;
-  preferred?: boolean;
+  url: string | null;
+  preferred: boolean;
 }

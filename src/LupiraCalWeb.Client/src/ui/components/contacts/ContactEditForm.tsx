@@ -24,7 +24,7 @@ import type {
   ContactDto,
   ContactPostalAddress,
   ContactReachChannel,
-  ContactSocialProfile,
+  ContactSocialProfileInput,
   ReviseContactRequest,
 } from '../../../data/api-contact/models';
 import { ContactAddressType, DisplayNameFormat, ReachMedium } from '../../../data/api-contact/models';
@@ -53,7 +53,7 @@ type ContactFormValues = {
   channels: ContactReachChannel[];
   tags: string[];
   addresses: AddressDraft[];
-  profiles: ContactSocialProfile[];
+  profiles: ContactSocialProfileInput[];
   emergency: string[];
   deceased: boolean;
   deathDate: string;

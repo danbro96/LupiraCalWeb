@@ -9,7 +9,7 @@ import type { CalendarMembershipDto } from './calendarMembershipDto';
 import type { CompletenessScore } from './completenessScore';
 import type { DatePrecision } from './datePrecision';
 import type { ItemAction } from './itemAction';
-import type { ItemAttendee } from './itemAttendee';
+import type { ItemAttendeeDto } from './itemAttendeeDto';
 import type { ItemCategory } from './itemCategory';
 import type { ItemDetails } from './itemDetails';
 import type { ItemPrompt } from './itemPrompt';
@@ -51,7 +51,7 @@ export interface CalendarItemDto {
   prompt?: null | ItemPrompt;
   action?: null | ItemAction;
   completeness?: null | CompletenessScore;
-  attendees: ItemAttendee[];
+  attendees: ItemAttendeeDto[];
   calendars: CalendarMembershipDto[];
   etag: string;
   createdAt: string;

@@ -8,17 +8,17 @@
 import type { ParticipationRole } from './participationRole';
 import type { ParticipationStatus } from './participationStatus';
 
-export interface ItemAttendee {
-  participationId?: string;
-  contactId?: string;
-  role?: ParticipationRole;
-  status?: ParticipationStatus;
+export interface ItemAttendeeDto {
+  participationId: string;
+  contactId: string;
+  role: ParticipationRole;
+  status: ParticipationStatus;
   /** @nullable */
-  invitedAt?: string | null;
+  invitedAt: string | null;
   /** @nullable */
-  respondedAt?: string | null;
+  respondedAt: string | null;
   /** @nullable */
-  attendedAt?: string | null;
+  attendedAt: string | null;
   /** @nullable */
-  leftAt?: string | null;
+  leftAt: string | null;
 }

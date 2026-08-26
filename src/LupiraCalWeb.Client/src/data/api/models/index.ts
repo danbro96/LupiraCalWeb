@@ -37,7 +37,7 @@ export * from './getThinItemsParams';
 export * from './grantOwnerRequest';
 export * from './inviteParticipantParams';
 export * from './itemAction';
-export * from './itemAttendee';
+export * from './itemAttendeeDto';
 export * from './itemBatchResult';
 export * from './itemCategory';
 export * from './itemDetails';
