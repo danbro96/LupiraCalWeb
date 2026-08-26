@@ -618,18 +618,6 @@ code {
 }
 
 /* ---- Forms & shared bits. ---- */
-.form-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-sm);
-  flex-wrap: wrap;
-  margin: var(--sp-sm) 0;
-}
-/* Direct child only — MUI's floating InputLabel keeps its own styling. */
-.form-row > label {
-  font-size: 13px;
-  color: var(--mui-palette-text-secondary);
-}
 .chip-row {
   display: flex;
   flex-wrap: wrap;

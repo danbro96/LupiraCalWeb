@@ -30,6 +30,7 @@ import { describeFire } from '@lupira/cal-domain/fire';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
+import { FormRow } from '../FormRow';
 
 /**
  * The event-bound payload (⚡): at most one of prompt/action per item (server-enforced XOR — a 409
@@ -105,7 +106,7 @@ function prettyJson(raw: string): string {
 
 function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: PromptFire) => void }) {
   return (
-    <div className="form-row">
+    <FormRow>
       <TextField
         select
         label="Fires"
@@ -134,7 +135,7 @@ function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: Prompt
           onChange={(e) => onChange({ ...fire, allDayAt: `${e.target.value}:00` })}
         />
       )}
-    </div>
+    </FormRow>
   );
 }
 
@@ -190,7 +191,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
 
   return (
     <form className="payload-form" onSubmit={submit}>
-      <div className="form-row">
+      <FormRow>
         <Controller
           name="intent"
           control={control}
@@ -217,7 +218,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
             </TextField>
           )}
         />
-      </div>
+      </FormRow>
       <Controller
         name="instruction"
         control={control}
@@ -225,7 +226,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           <TextField multiline minRows={3} placeholder="Instruction for the agent…" {...field} required />
         )}
       />
-      <div className="form-row">
+      <FormRow>
         <Controller
           name="tier"
           control={control}
@@ -258,7 +259,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
             </TextField>
           )}
         />
-      </div>
+      </FormRow>
       <Controller
         name="tools"
         control={control}
@@ -335,7 +336,7 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
 
   return (
     <form className="payload-form" onSubmit={submit}>
-      <div className="form-row">
+      <FormRow>
         <Controller
           name="kind"
           control={control}
@@ -349,7 +350,7 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
             </TextField>
           )}
         />
-      </div>
+      </FormRow>
       <Controller
         name="paramsJson"
         control={control}

@@ -37,6 +37,7 @@ import { ContactEditForm } from './ContactEditForm';
 import { ContactEventsPanel } from './ContactEventsPanel';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
 import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
+import { FormRow } from '../FormRow';
 
 const linkSx: SxProps<Theme> = { fontSize: 13, fontWeight: 600, p: '2px', whiteSpace: 'nowrap', '@media (pointer: coarse)': { p: '6px 2px' } };
 
@@ -185,7 +186,7 @@ export function ContactDetailPane() {
             </Tooltip>
           </div>
         ))}
-        <div className="form-row">
+        <FormRow>
           <TextField select value={groupId} onChange={(e) => setGroupId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
             <MenuItem value="">Add to group…</MenuItem>
             {joinable.map((g) => (
@@ -204,7 +205,7 @@ export function ContactDetailPane() {
           >
             Add
           </Button>
-        </div>
+        </FormRow>
       </section>
 
       <ContactEventsPanel contactId={contact.id} />

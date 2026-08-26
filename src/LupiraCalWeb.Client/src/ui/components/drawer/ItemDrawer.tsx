@@ -28,6 +28,7 @@ import { PlacePicker } from '../places/PlacePicker';
 import { RelationsPanel } from './RelationsPanel';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
+import { FormRow } from '../FormRow';
 
 /** The item detail drawer (?item=<id>): every field the REST read model exposes, editable where the API allows. */
 export function ItemDrawer({ itemId, onClose }: { itemId: string; onClose: () => void }) {
@@ -84,7 +85,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         <CompletenessBadge score={item.completeness} />
       </div>
 
-      <div className="form-row">
+      <FormRow>
         <TextField
           select
           label="Status"
@@ -115,7 +116,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             ))}
           </TextField>
         )}
-      </div>
+      </FormRow>
 
       <section className="drawer-section">
         <h3>When</h3>
@@ -125,7 +126,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             {item.endDate && item.endDate !== item.startDate ? ` – ${fmtDate(parseYmd(item.endDate))}` : ''}
           </p>
         ) : (
-          <div className="form-row">
+          <FormRow>
             <TextField
               type="datetime-local"
               defaultValue={isoToLocalInput(item.startsAt)}
@@ -143,9 +144,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
                 if (iso && iso !== item.endsAt) patch({ endsAt: iso });
               }}
             />
-          </div>
+          </FormRow>
         )}
-        <div className="form-row">
+        <FormRow>
           <TextField
             select
             label="Repeats"
@@ -173,7 +174,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             onChange={(e) => setRrule(e.target.value)}
             onBlur={() => rrule && rrule !== (item.recurrenceRule ?? '') && patch({ recurrenceRule: rrule })}
           />
-        </div>
+        </FormRow>
         {item.recurrenceRule && <Typography variant="caption" color="text.secondary" component="p">{describeRrule(item.recurrenceRule)}</Typography>}
       </section>
 

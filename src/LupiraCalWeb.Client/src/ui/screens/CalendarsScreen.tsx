@@ -17,6 +17,7 @@ import { useInvalidateAddressBooks, useInvalidateContainers } from '../../state/
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
+import { FormRow } from '../components/FormRow';
 
 /** Container management: calendars (class/kind/color/tz, from cal-api) and address books (from
  *  contact-api), with creation and per-owner sharing. */
@@ -246,16 +247,16 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
         }
       }}
     >
-      <div className="form-row">
+      <FormRow>
         <TextField select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
           <MenuItem value="calendar">Calendar</MenuItem>
           <MenuItem value="addressbook">Address book</MenuItem>
         </TextField>
         <TextField placeholder="slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} required />
         <TextField placeholder="Display name" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
-      </div>
+      </FormRow>
       {!isBook && (
-        <div className="form-row">
+        <FormRow>
           <input type="color" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} title="Color" />
           <TextField placeholder="IANA timezone" value={form.defaultTimezone} onChange={(e) => setForm({ ...form, defaultTimezone: e.target.value })} />
           <TextField select value={form.class} onChange={(e) => setForm({ ...form, class: e.target.value as CalendarClass })}>
@@ -272,7 +273,7 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
               </MenuItem>
             ))}
           </TextField>
-        </div>
+        </FormRow>
       )}
       <div className="chip-row">
         <Button variant="contained" type="submit" disabled={pending}>

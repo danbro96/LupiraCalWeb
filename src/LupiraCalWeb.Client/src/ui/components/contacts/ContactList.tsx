@@ -18,6 +18,7 @@ import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { inputToPartialDate, partialDateBadge } from '@lupira/cal-domain/partialDate';
 import { useGroup } from './useGroup';
+import { FormRow } from '../FormRow';
 
 /** Split a comma-separated input into reach channels of one medium (create-form convenience). */
 function toChannels(raw: string, medium: ReachMedium): ContactReachChannel[] {
@@ -184,7 +185,7 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
         });
       }}
     >
-      <div className="form-row">
+      <FormRow>
         <TextField select value={form.addressBookId} onChange={(e) => setForm({ ...form, addressBookId: e.target.value })} required slotProps={{ select: { displayEmpty: true } }}>
           <MenuItem value="">Address book…</MenuItem>
           {addressBooks.map((b) => (
@@ -193,12 +194,12 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
             </MenuItem>
           ))}
         </TextField>
-      </div>
-      <div className="form-row">
+      </FormRow>
+      <FormRow>
         <TextField placeholder="Given name" value={form.givenName} onChange={(e) => setForm({ ...form, givenName: e.target.value })} />
         <TextField placeholder="Family name" value={form.familyName} onChange={(e) => setForm({ ...form, familyName: e.target.value })} />
-      </div>
-      <div className="form-row">
+      </FormRow>
+      <FormRow>
         <TextField placeholder="Nickname" value={form.nickname} onChange={(e) => setForm({ ...form, nickname: e.target.value })} />
         <Typography variant="caption" color="text.secondary" component="label">
           <input
@@ -218,11 +219,11 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
             <TextField type="number" slotProps={{ htmlInput: { min: 1, max: 31 } }} placeholder="Birth day" value={form.birthdayDay} onChange={(e) => setForm({ ...form, birthdayDay: e.target.value })} />
           </>
         )}
-      </div>
-      <div className="form-row">
+      </FormRow>
+      <FormRow>
         <TextField placeholder="Emails (comma-separated)" value={form.emails} onChange={(e) => setForm({ ...form, emails: e.target.value })} />
         <TextField placeholder="Phones (comma-separated)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} />
-      </div>
+      </FormRow>
       <div className="chip-row">
         <Button variant="contained" type="submit" disabled={create.isPending}>
           Create

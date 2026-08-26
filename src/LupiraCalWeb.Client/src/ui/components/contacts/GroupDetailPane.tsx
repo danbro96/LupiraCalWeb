@@ -18,6 +18,7 @@ import {
 } from '../../../data/api-contact/lupiraContactApi';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useGroup } from './useGroup';
+import { FormRow } from '../FormRow';
 
 /** Right pane for a group/org: members with add/remove, inline rename, delete. */
 export function GroupDetailPane() {
@@ -86,7 +87,7 @@ export function GroupDetailPane() {
           </div>
         ))}
         {members.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No members yet.</Typography>}
-        <div className="form-row">
+        <FormRow>
           <TextField select value={addId} onChange={(e) => setAddId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
             <MenuItem value="">Add member…</MenuItem>
             {nonMembers.map((c) => (
@@ -105,7 +106,7 @@ export function GroupDetailPane() {
           >
             Add
           </Button>
-        </div>
+        </FormRow>
       </section>
 
       <div className="drawer-footer">

@@ -22,6 +22,7 @@ import { localInputToIso } from './drawer/inputs';
 import { errText } from './errText';
 import { useSnackbar } from './SnackbarHost';
 import { useIsPhone } from '../useIsPhone';
+import { FormRow } from './FormRow';
 
 type FormValues = {
   title: string;
@@ -130,7 +131,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             />
           )}
         />
-        <div className="form-row">
+        <FormRow>
           <Controller
             name="calendarId"
             control={control}
@@ -161,9 +162,9 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               />
             )}
           />
-        </div>
+        </FormRow>
         {isAllDay ? (
-          <div className="form-row">
+          <FormRow>
             <Controller
               name="startDate"
               control={control}
@@ -171,9 +172,9 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             />
             <Typography variant="caption" color="text.secondary">→</Typography>
             <Controller name="endDate" control={control} render={({ field }) => <TextField type="date" {...field} />} />
-          </div>
+          </FormRow>
         ) : (
-          <div className="form-row">
+          <FormRow>
             <Controller
               name="start"
               control={control}
@@ -181,9 +182,9 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             />
             <Typography variant="caption" color="text.secondary">→</Typography>
             <Controller name="end" control={control} render={({ field }) => <TextField type="datetime-local" {...field} />} />
-          </div>
+          </FormRow>
         )}
-        <div className="form-row">
+        <FormRow>
           <Controller
             name="rrule"
             control={control}
@@ -224,7 +225,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               )}
             />
           )}
-        </div>
+        </FormRow>
         <Controller
           name="location"
           control={control}

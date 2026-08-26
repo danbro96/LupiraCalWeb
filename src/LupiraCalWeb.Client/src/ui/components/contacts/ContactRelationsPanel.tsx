@@ -24,6 +24,7 @@ import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { ContactRelationGraph } from './ContactRelationGraph';
+import { FormRow } from '../FormRow';
 
 /** Sections with more rows than this start collapsed. */
 const OPEN_THRESHOLD = 8;
@@ -199,8 +200,8 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
           );
         })}
 
-      <form
-        className="form-row"
+      <FormRow
+        component="form"
         onSubmit={(e) => {
           e.preventDefault();
           if (!toContactId) return;
@@ -232,7 +233,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
         <Button variant="outlined" type="submit" disabled={!toContactId || add.isPending}>
           Add
         </Button>
-      </form>
+      </FormRow>
     </section>
   );
 }

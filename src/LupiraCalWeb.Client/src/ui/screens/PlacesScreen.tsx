@@ -30,6 +30,7 @@ import {
 } from '../../state/usePlaceCuration';
 import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
+import { FormRow } from '../components/FormRow';
 
 const MapPinDialog = lazy(() => import('../components/map/MapPinDialog'));
 
@@ -73,7 +74,7 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
   return (
     <section className="drawer-section">
       <h3>Unlocated</h3>
-      <div className="form-row">
+      <FormRow>
         <TextField
           select
           label="Source"
@@ -99,7 +100,7 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
           <MenuItem value="true">Verified</MenuItem>
           <MenuItem value="false">Unverified</MenuItem>
         </TextField>
-      </div>
+      </FormRow>
       {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
       {error != null && <Alert severity="error">{errText(error) ?? 'Failed to load places.'}</Alert>}
       {places && places.length === 0 && <Typography variant="caption" color="text.secondary" component="p">Every place has coordinates.</Typography>}
@@ -221,10 +222,10 @@ function ManualCoordsDialog({ place, pending, onSave, onCancel }: {
     <Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
       <DialogTitle>Coordinates for “{place.name}”</DialogTitle>
       <DialogContent>
-        <div className="form-row">
+        <FormRow>
           <TextField label="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} autoFocus />
           <TextField label="Longitude" value={lon} onChange={(e) => setLon(e.target.value)} />
-        </div>
+        </FormRow>
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel}>

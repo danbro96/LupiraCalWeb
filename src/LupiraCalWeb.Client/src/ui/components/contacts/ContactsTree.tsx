@@ -16,6 +16,7 @@ import type { AddressBookDto } from '../../../data/api-contact/models';
 import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateAddressBooks, useInvalidateContacts } from '../../../state/useInvalidate';
 import { AddressBookManage } from './AddressBookManage';
+import { FormRow } from '../FormRow';
 
 /** Left rail: address books → their groups/orgs, with contact and member counts.
  *  Book click filters the list (?book); group click opens the group pane + filters to members. */
@@ -192,14 +193,14 @@ function NewGroupForm({ addressBookId, onDone }: { addressBookId: string; onDone
         <MenuItem value="group">Group</MenuItem>
         <MenuItem value="organization">Organization</MenuItem>
       </TextField>
-      <div className="form-row">
+      <FormRow>
         <Button variant="outlined" type="submit" disabled={!name || create.isPending}>
           Add
         </Button>
         <Button variant="outlined" onClick={onDone}>
           Cancel
         </Button>
-      </div>
+      </FormRow>
     </form>
   );
 }
@@ -220,14 +221,14 @@ function NewBookForm({ onDone }: { onDone: () => void }) {
     >
       <TextField placeholder="slug" value={slug} autoFocus onChange={(e) => setSlug(e.target.value)} />
       <TextField placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-      <div className="form-row">
+      <FormRow>
         <Button variant="outlined" type="submit" disabled={!slug || create.isPending}>
           Add
         </Button>
         <Button variant="outlined" onClick={onDone}>
           Cancel
         </Button>
-      </div>
+      </FormRow>
     </form>
   );
 }

@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useCreateItemRelation, useListItemRelations } from '../../../data/api/lupiraCalApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
+import { FormRow } from '../FormRow';
 
 /** Opaque cross-API edges (e.g. → a LupiraTasks item). Kind/ref/type are free-form by design. */
 export function RelationsPanel({ itemId }: { itemId: string }) {
@@ -24,8 +25,8 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
           </Typography>
         </div>
       ))}
-      <form
-        className="form-row"
+      <FormRow
+        component="form"
         onSubmit={(e) => {
           e.preventDefault();
           create.mutate({ id: itemId, data: form });
@@ -38,7 +39,7 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
         <Button variant="outlined" type="submit" disabled={create.isPending}>
           Link
         </Button>
-      </form>
+      </FormRow>
     </section>
   );
 }

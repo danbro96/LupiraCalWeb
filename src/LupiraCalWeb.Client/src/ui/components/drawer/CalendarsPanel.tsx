@@ -15,6 +15,7 @@ import type { CalendarItemDto } from '../../../data/api/models';
 import { calendarLabel, useContainers } from '../../../state/useContainers';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { calendarColor } from '../../theme/kinds';
+import { FormRow } from '../FormRow';
 
 /** The item's calendar memberships (Proposed/Accepted) + curation actions and file-to-calendar. */
 export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
@@ -54,7 +55,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
           </div>
         );
       })}
-      <div className="form-row">
+      <FormRow>
         <TextField select value={target} onChange={(e) => setTarget(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
           <MenuItem value="">File into calendar…</MenuItem>
           {fileable.map((c) => (
@@ -73,7 +74,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
         >
           File
         </Button>
-      </div>
+      </FormRow>
     </section>
   );
 }
