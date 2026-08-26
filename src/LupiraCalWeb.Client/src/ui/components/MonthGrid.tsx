@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
+import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import type { AvailabilitySegment } from '../../state/useAvailability';
 import { familyKey } from '@lupira/cal-domain/family';
@@ -7,6 +10,36 @@ import { AVAILABILITY_COLORS, familyAccent } from '../theme/kinds';
 import type { GridEntry } from './entries';
 
 const MAX_PER_CELL = 4;
+
+const DOT = { borderRadius: '999px', flex: 'none' } as const;
+
+/** Chip styling, spread in cascade order: a ghost's dashed border must beat a deadline's solid one,
+ *  and a dimmed family's opacity must beat a ghost's. Order here is what used to be !important. */
+function chipSx(e: GridEntry, accent: string | undefined, fam: 'hi' | 'dim' | null) {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    border: 0,
+    borderLeft: '3px solid',
+    borderColor: e.color,
+    borderRadius: '3px',
+    bgcolor: 'background.paper',
+    color: 'text.primary',
+    fontSize: 12,
+    p: '1px 4px',
+    textAlign: 'left',
+    minWidth: 0,
+    justifyContent: 'flex-start',
+    ...(e.task && { borderWidth: 1, borderStyle: 'solid', borderLeftWidth: 3 }),
+    ...(e.ghost && { opacity: 0.55, borderStyle: 'dashed' }),
+    ...(fam === 'hi' && accent && { boxShadow: `0 0 0 2px ${accent}` }),
+    ...(fam === 'dim' && { opacity: 0.35 }),
+    '@media (prefers-reduced-motion: no-preference)': {
+      transition: 'opacity 120ms ease, box-shadow 120ms ease',
+    },
+  };
+}
 
 interface Props {
   date: Date;
@@ -23,15 +56,45 @@ interface Props {
 export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem, onOpenDay, selectedFamilyKey }: Props) {
   const [hoverFamily, setHoverFamily] = useState<string | null>(null);
   const activeFamily = hoverFamily ?? selectedFamilyKey ?? null;
-  const famClass = (key: string | undefined) =>
-    activeFamily ? (key === activeFamily ? 'family-hi' : 'family-dim') : '';
+  const fam = (key: string | undefined): 'hi' | 'dim' | null =>
+    activeFamily ? (key === activeFamily ? 'hi' : 'dim') : null;
 
   return (
-    <div className={`month-grid ${compact ? 'compact' : ''}`}>
+    <Box
+      sx={{
+        flex: 1,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(7, 1fr)',
+        // 'auto' rather than the minmax the cells' own min-height already enforces.
+        gridAutoRows: compact ? 'minmax(52px, 1fr)' : 'auto',
+        ...(compact && { gridTemplateRows: 'max-content' }),
+        borderTop: 1,
+        borderLeft: 1,
+        borderColor: 'divider',
+        minHeight: 0,
+        overflowY: 'auto',
+      }}
+    >
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
-        <div key={d} className="month-head">
+        <Box
+          key={d}
+          sx={{
+            gridRow: 1,
+            p: '4px 8px',
+            fontSize: 12,
+            fontWeight: 700,
+            color: 'text.subtle',
+            borderRight: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            position: 'sticky',
+            top: 0,
+            zIndex: 1,
+          }}
+        >
           {d}
-        </div>
+        </Box>
       ))}
       {weeks.flat().map((day) => {
         const dayEntries = entries
@@ -39,59 +102,96 @@ export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem,
           .sort((a, b) => Number(b.isAllDay) - Number(a.isAllDay) || a.start.getTime() - b.start.getTime());
         const shown = dayEntries.slice(0, MAX_PER_CELL);
         const daySegments = segments.filter((s) => spansDay({ start: new Date(s.start), end: s.end ? new Date(s.end) : null, isAllDay: s.isAllDay }, day));
-        const otherMonth = day.getMonth() !== date.getMonth() ? 'other-month' : '';
+        const otherMonth = day.getMonth() !== date.getMonth();
+        const cellSx = {
+          borderRight: 1,
+          borderBottom: 1,
+          borderColor: 'divider',
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0,
+          ...(otherMonth && { bgcolor: 'background.paper', opacity: 0.75 }),
+        };
+
         if (compact)
           return (
-            <button key={day.toISOString()} className={`month-cell compact-cell ${otherMonth}`} onClick={() => onOpenDay(day)}>
-              <span className={`day-number ${isToday(day) ? 'today' : ''}`}>{day.getDate()}</span>
-              <span className="dot-row">
+            <ButtonBase
+              key={day.toISOString()}
+              onClick={() => onOpenDay(day)}
+              sx={{ ...cellSx, alignItems: 'center', gap: '4px', p: '4px 2px 6px', minHeight: 52 }}
+            >
+              <DayNumber day={day} />
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '3px', minHeight: 7 }}>
                 {shown.map((e) => (
-                  <span key={e.key} className={`chip-dot ${e.ghost ? 'ghost' : ''} ${e.task ? 'task-deadline' : ''}`} style={{ background: e.color }} />
+                  <Box
+                    key={e.key}
+                    component="span"
+                    sx={{
+                      ...DOT,
+                      width: 7,
+                      height: 7,
+                      // Square dot = deadline in the compact cells.
+                      ...(e.task && { borderRadius: '2px' }),
+                      ...(e.ghost && { opacity: 0.55 }),
+                    }}
+                    style={{ background: e.color }}
+                  />
                 ))}
-                {dayEntries.length > shown.length && <span className="dot-more">+{dayEntries.length - shown.length}</span>}
-              </span>
-              {daySegments.length > 0 && (
-                <span className="avail-dots">
-                  {daySegments.map((s, i) => (
-                    <span key={i} className="avail-dot" style={{ background: AVAILABILITY_COLORS[s.status] }} />
-                  ))}
-                </span>
-              )}
-            </button>
+                {dayEntries.length > shown.length && (
+                  <Box component="span" sx={{ fontSize: 10, color: 'text.subtle', lineHeight: 1 }}>
+                    +{dayEntries.length - shown.length}
+                  </Box>
+                )}
+              </Box>
+              {daySegments.length > 0 && <AvailDots segments={daySegments} />}
+            </ButtonBase>
           );
+
         return (
-          <div key={day.toISOString()} className={`month-cell ${otherMonth}`}>
-            <div className="month-cell-head">
-              <button className={`day-number ${isToday(day) ? 'today' : ''}`} onClick={() => onOpenDay(day)}>
-                {day.getDate()}
-              </button>
-              <span className="avail-dots">
-                {daySegments.map((s, i) => (
-                  <span key={i} className="avail-dot" title={s.status} style={{ background: AVAILABILITY_COLORS[s.status] }} />
-                ))}
-              </span>
-            </div>
+          <Box key={day.toISOString()} sx={{ ...cellSx, gap: '2px', p: '2px 4px 6px', minHeight: 110 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <DayNumber day={day} onClick={() => onOpenDay(day)} />
+              <AvailDots segments={daySegments} titled />
+            </Box>
             {shown.map((e) => {
               const fk = familyKey(e);
+              const accent = fk ? familyAccent(fk) : undefined;
               return (
-                <button
+                <ButtonBase
                   key={e.key}
-                  className={`month-chip ${e.ghost ? 'ghost' : ''} ${e.task ? 'task-deadline' : ''} ${e.task?.overdue ? 'overdue' : ''} ${famClass(fk)}`}
-                  style={{ borderColor: e.color, ['--family-accent' as string]: fk ? familyAccent(fk) : undefined }}
+                  sx={chipSx(e, accent, fam(fk))}
                   onClick={() => onOpenItem(e.itemId)}
                   onMouseEnter={fk ? () => setHoverFamily(fk) : undefined}
                   onMouseLeave={fk ? () => setHoverFamily(null) : undefined}
                   title={e.ghost ? `${e.title} (proposed)` : e.task ? `${e.title} — due ${fmtTime(e.task.dueAt)}` : e.title}
                 >
-                  <span className="chip-dot" style={{ background: e.color }} />
-                  {!e.isAllDay && <span className="chip-time">{fmtTime(e.start)}</span>}
-                  <span className="chip-title">
+                  <Box component="span" sx={{ ...DOT, width: 7, height: 7 }} style={{ background: e.color }} />
+                  {!e.isAllDay && (
+                    <Box component="span" sx={{ color: 'text.subtle', flex: 'none' }}>
+                      {fmtTime(e.start)}
+                    </Box>
+                  )}
+                  <Box
+                    component="span"
+                    sx={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      ...(e.task?.overdue && { color: 'error.main' }),
+                    }}
+                  >
                     {e.icon ? `${e.icon} ` : ''}
                     {e.title}
                     {e.ghost ? ' (proposed)' : ''}
-                  </span>
-                  {fk && <span className="family-dot" style={{ background: familyAccent(fk) }} />}
-                </button>
+                  </Box>
+                  {accent && (
+                    <Box
+                      component="span"
+                      sx={{ ...DOT, width: 6, height: 6, ml: 'auto' }}
+                      style={{ background: accent }}
+                    />
+                  )}
+                </ButtonBase>
               );
             })}
             {dayEntries.length > shown.length && (
@@ -112,10 +212,49 @@ export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem,
                 +{dayEntries.length - shown.length} more
               </Link>
             )}
-          </div>
+          </Box>
         );
       })}
-    </div>
+    </Box>
+  );
+}
+
+/** The date, circled when it's today. Grows on touch, where 26px is under the target size. */
+function DayNumber({ day, onClick }: { day: Date; onClick?: () => void }) {
+  const today = isToday(day);
+  return (
+    <IconButton
+      component={onClick ? 'button' : 'span'}
+      onClick={onClick}
+      disableRipple={!onClick}
+      sx={{
+        width: 26,
+        height: 26,
+        fontSize: 13,
+        fontWeight: 600,
+        color: today ? 'primary.contrastText' : 'text.secondary',
+        ...(today && { bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.main' } }),
+        '@media (pointer: coarse)': { width: 36, height: 36 },
+      }}
+    >
+      {day.getDate()}
+    </IconButton>
+  );
+}
+
+function AvailDots({ segments, titled }: { segments: AvailabilitySegment[]; titled?: boolean }) {
+  return (
+    <Box component="span" sx={{ display: 'inline-flex', gap: '3px' }}>
+      {segments.map((s, i) => (
+        <Box
+          key={i}
+          component="span"
+          title={titled ? s.status : undefined}
+          sx={{ ...DOT, width: 8, height: 8 }}
+          style={{ background: AVAILABILITY_COLORS[s.status] }}
+        />
+      ))}
+    </Box>
   );
 }
 
