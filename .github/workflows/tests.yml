@@ -25,6 +25,7 @@ jobs:
           node-version-file: .node-version
           cache: npm
           cache-dependency-path: package-lock.json
+      - run: npm i -g npm@12
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
