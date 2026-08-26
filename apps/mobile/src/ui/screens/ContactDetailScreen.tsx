@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { Alert, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Avatar, Button, Chip, List, Text, useTheme } from 'react-native-paper';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
@@ -212,7 +212,6 @@ function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; decease
 /// Address rows are place refs — resolving to something mappable needs the geo API (online). Tap-to-open
 /// keeps the offline path clean: nothing is fetched until asked.
 function AddressRow({ placeId, type }: { placeId: string | null; type: string }) {
-  const theme = useTheme<AppTheme>();
   const [busy, setBusy] = useState(false);
 
   const open = async () => {
@@ -236,12 +235,12 @@ function AddressRow({ placeId, type }: { placeId: string | null; type: string })
   };
 
   return (
-    <Pressable onPress={() => void open()} disabled={!placeId}>
-      <Text style={styles.row}>
-        <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{type}  </Text>
-        {placeId ? (busy ? 'Opening map…' : 'Open in Google Maps ↗') : '(no place linked)'}
-      </Text>
-    </Pressable>
+    <List.Item
+      onPress={() => void open()}
+      disabled={!placeId}
+      description={type}
+      title={placeId ? (busy ? 'Opening map…' : 'Open in Google Maps ↗') : '(no place linked)'}
+    />
   );
 }
 
@@ -250,7 +249,6 @@ function ResolvedName({ contactId, prefix, navigation }: {
   prefix: string;
   navigation: NativeStackNavigationProp<RootStackParamList>;
 }) {
-  const theme = useTheme<AppTheme>();
   const [name, setName] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -264,12 +262,11 @@ function ResolvedName({ contactId, prefix, navigation }: {
   }, [contactId]);
 
   return (
-    <Pressable onPress={() => name && navigation.push('ContactDetail', { contactId })}>
-      <Text style={styles.row}>
-        <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{prefix}</Text>
-        {name ?? '(not in mirror)'}
-      </Text>
-    </Pressable>
+    <List.Item
+      onPress={() => name && navigation.push('ContactDetail', { contactId })}
+      description={prefix}
+      title={name ?? '(not in mirror)'}
+    />
   );
 }
 

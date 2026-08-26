@@ -267,10 +267,15 @@ export function ContactEditScreen() {
       ))}
       <View style={styles.addRow}>
         {REACH_KINDS.map((k) => (
-          <Pressable key={k.key} style={[styles.addChip, { borderColor: theme.colors.outline }]} onPress={() => addReach(k.key)}>
-            <ReachIcon kind={k.key} size={13} />
-            <Text style={styles.addChipText}>{k.key}</Text>
-          </Pressable>
+          <Chip
+            key={k.key}
+            mode="outlined"
+            compact
+            icon={() => <ReachIcon kind={k.key} size={13} />}
+            onPress={() => addReach(k.key)}
+          >
+            {k.key}
+          </Chip>
         ))}
       </View>
 
@@ -302,8 +307,6 @@ const styles = StyleSheet.create({
   star: { margin: 0 },
   remove: { margin: 0 },
   addRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 },
-  addChip: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 },
-  addChipText: { fontSize: 13 },
 });
 
 function snapshot(form: ContactForm, channels: ReachChannel[], profiles: SocialProfile[], tagsCsv: string): string {
