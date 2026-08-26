@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import MuiLink from '@mui/material/Link';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
@@ -18,7 +19,7 @@ import {
 } from '../../../data/api-contact/lupiraContactApi';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useGroup } from './useGroup';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 
 /** Right pane for a group/org: members with add/remove, inline rename, delete. */
@@ -40,9 +41,9 @@ export function GroupDetailPane() {
   if (!group) {
     return (
       <div className="contacts-detail-pane">
-        <p className="empty">
+        <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>
           {bookId ? 'Group not found.' : 'Open this group from its address book.'}
-        </p>
+        </Typography>
       </div>
     );
   }
@@ -74,9 +75,9 @@ export function GroupDetailPane() {
             <Avatar sx={{ width: 30, height: 30, fontSize: 12, fontWeight: 700, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
               {(c.displayName[0] ?? '?').toUpperCase()}
             </Avatar>
-            <Link className="membership-name" to={{ pathname: `/contacts/${c.id}`, search: backSearch }}>
+            <MuiLink component={Link} sx={{ flex: 1 }} to={{ pathname: `/contacts/${c.id}`, search: backSearch }}>
               {c.displayName}
-            </Link>
+            </MuiLink>
             <Tooltip title="Remove from group">
               <IconButton
                 onClick={() => removeMember.mutate({ groupId: group.id, contactId: c.id })}
@@ -87,7 +88,7 @@ export function GroupDetailPane() {
           </div>
         ))}
         {members.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No members yet.</Typography>}
-        <FormRow>
+        <WrapRow>
           <TextField select value={addId} onChange={(e) => setAddId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
             <MenuItem value="">Add member…</MenuItem>
             {nonMembers.map((c) => (
@@ -106,7 +107,7 @@ export function GroupDetailPane() {
           >
             Add
           </Button>
-        </FormRow>
+        </WrapRow>
       </DrawerSection>
 
       <div className="drawer-footer">

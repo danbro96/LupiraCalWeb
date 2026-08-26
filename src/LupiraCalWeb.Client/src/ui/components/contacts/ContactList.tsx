@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-dom';
 import { useCreateContact, useSetContactTags } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto, ContactReachChannel } from '../../../data/api-contact/models';
@@ -18,7 +19,7 @@ import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { inputToPartialDate, partialDateBadge } from '@lupira/cal-domain/partialDate';
 import { useGroup } from './useGroup';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 
 /** Split a comma-separated input into reach channels of one medium (create-form convenience). */
 function toChannels(raw: string, medium: ReachMedium): ContactReachChannel[] {
@@ -77,14 +78,14 @@ export function ContactList() {
             {flatRows.map((c) => (
               <ContactRow key={c.id} contact={c} search={location.search} />
             ))}
-            {flatRows.length === 0 && <p className="empty">No contacts.</p>}
+            {flatRows.length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>No contacts.</Typography>}
           </>
         ) : (
           <>
             {active.map((c) => (
               <ContactRow key={c.id} contact={c} search={location.search} />
             ))}
-            {active.length === 0 && dormant.length === 0 && !isLoading && <p className="empty">No contacts.</p>}
+            {active.length === 0 && dormant.length === 0 && !isLoading && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>No contacts.</Typography>}
             {dormant.length > 0 && (
               <div className="contact-section">
                 <button className="contact-section-head" onClick={() => setShowDormant((s) => !s)}>
@@ -164,8 +165,7 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
   });
 
   return (
-    <form
-      className="card"
+    <Paper variant="outlined" component="form" sx={{ p: '12px 16px', my: 1.5 }}
       onSubmit={(e) => {
         e.preventDefault();
         const channels = [...toChannels(form.emails, ReachMedium.Email), ...toChannels(form.phones, ReachMedium.Phone)];
@@ -185,7 +185,7 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
         });
       }}
     >
-      <FormRow>
+      <WrapRow>
         <TextField select value={form.addressBookId} onChange={(e) => setForm({ ...form, addressBookId: e.target.value })} required slotProps={{ select: { displayEmpty: true } }}>
           <MenuItem value="">Address book…</MenuItem>
           {addressBooks.map((b) => (
@@ -194,12 +194,12 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
             </MenuItem>
           ))}
         </TextField>
-      </FormRow>
-      <FormRow>
+      </WrapRow>
+      <WrapRow>
         <TextField placeholder="Given name" value={form.givenName} onChange={(e) => setForm({ ...form, givenName: e.target.value })} />
         <TextField placeholder="Family name" value={form.familyName} onChange={(e) => setForm({ ...form, familyName: e.target.value })} />
-      </FormRow>
-      <FormRow>
+      </WrapRow>
+      <WrapRow>
         <TextField placeholder="Nickname" value={form.nickname} onChange={(e) => setForm({ ...form, nickname: e.target.value })} />
         <Typography variant="caption" sx={{ color: 'text.secondary' }} component="label">
           <input
@@ -219,19 +219,19 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
             <TextField type="number" slotProps={{ htmlInput: { min: 1, max: 31 } }} placeholder="Birth day" value={form.birthdayDay} onChange={(e) => setForm({ ...form, birthdayDay: e.target.value })} />
           </>
         )}
-      </FormRow>
-      <FormRow>
+      </WrapRow>
+      <WrapRow>
         <TextField placeholder="Emails (comma-separated)" value={form.emails} onChange={(e) => setForm({ ...form, emails: e.target.value })} />
         <TextField placeholder="Phones (comma-separated)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} />
-      </FormRow>
-      <div className="chip-row">
+      </WrapRow>
+      <WrapRow>
         <Button variant="contained" type="submit" disabled={create.isPending}>
           Create
         </Button>
         <Button variant="outlined" onClick={onDone}>
           Cancel
         </Button>
-      </div>
-    </form>
+      </WrapRow>
+    </Paper>
   );
 }

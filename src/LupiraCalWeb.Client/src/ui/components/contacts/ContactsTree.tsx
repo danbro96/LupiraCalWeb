@@ -16,7 +16,7 @@ import type { AddressBookDto } from '../../../data/api-contact/models';
 import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateAddressBooks, useInvalidateContacts } from '../../../state/useInvalidate';
 import { AddressBookManage } from './AddressBookManage';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 
 /** Left rail: address books → their groups/orgs, with contact and member counts.
  *  Book click filters the list (?book); group click opens the group pane + filters to members. */
@@ -51,7 +51,7 @@ export function ContactsTree() {
           </div>
         )
       )}
-      <div className="section-label">Address books</div>
+      <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>Address books</Typography>
       <button
         className={`tree-node ${!activeBookId && !activeGroupId ? 'active' : ''}`}
         onClick={() => navigate('/contacts?pane=list')}
@@ -193,14 +193,14 @@ function NewGroupForm({ addressBookId, onDone }: { addressBookId: string; onDone
         <MenuItem value="group">Group</MenuItem>
         <MenuItem value="organization">Organization</MenuItem>
       </TextField>
-      <FormRow>
+      <WrapRow>
         <Button variant="outlined" type="submit" disabled={!name || create.isPending}>
           Add
         </Button>
         <Button variant="outlined" onClick={onDone}>
           Cancel
         </Button>
-      </FormRow>
+      </WrapRow>
     </form>
   );
 }
@@ -221,14 +221,14 @@ function NewBookForm({ onDone }: { onDone: () => void }) {
     >
       <TextField placeholder="slug" value={slug} autoFocus onChange={(e) => setSlug(e.target.value)} />
       <TextField placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-      <FormRow>
+      <WrapRow>
         <Button variant="outlined" type="submit" disabled={!slug || create.isPending}>
           Add
         </Button>
         <Button variant="outlined" onClick={onDone}>
           Cancel
         </Button>
-      </FormRow>
+      </WrapRow>
     </form>
   );
 }

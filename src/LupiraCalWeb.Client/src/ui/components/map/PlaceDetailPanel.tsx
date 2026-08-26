@@ -2,6 +2,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
 import { formatCoords, osmUrl } from '@lupira/cal-domain/places';
@@ -18,10 +19,10 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
     <aside className="map-detail">
       <button className="map-popover-close" onClick={onClose} aria-label="Close">×</button>
       {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
-      {!isLoading && !place && <p className="empty">Place not found.</p>}
+      {!isLoading && !place && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Place not found.</Typography>}
       {place && (
         <>
-          <section className="card">
+          <Paper variant="outlined" component="section" sx={{ p: '12px 16px', my: 1.5 }}>
             <div className="drawer-title-row">
               <h3 style={{ margin: 0, flex: 1 }}>{place.name}</h3>
               <Chip variant="outlined" label={place.category} />
@@ -36,9 +37,9 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
                 ))}
               </div>
             )}
-            {place.formattedAddress && <p className="field-value">{place.formattedAddress}</p>}
+            {place.formattedAddress && <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>{place.formattedAddress}</Typography>}
             {formatCoords(place.latitude, place.longitude) && (
-              <p className="field-value">
+              <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>
                 📍 {formatCoords(place.latitude, place.longitude)}
                 {osmUrl(place.latitude, place.longitude) && (
                   <>
@@ -53,9 +54,9 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
                     </Button>
                   </>
                 )}
-              </p>
+              </Typography>
             )}
-          </section>
+          </Paper>
           <ItemsPanel placeId={placeId} />
           <ContactsPanel placeId={placeId} />
         </>
@@ -77,7 +78,7 @@ function ItemsPanel({ placeId }: { placeId: string }) {
   return (
     <DrawerSection title="Items here">
       {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
-      {!isLoading && (items ?? []).length === 0 && <p className="empty">No items reference this place.</p>}
+      {!isLoading && (items ?? []).length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>No items reference this place.</Typography>}
       {(items ?? []).map((item) => (
         <Link key={item.id} to={itemHref(item.id)} className="location-row">
           {item.category && ITEM_CATEGORY_ICONS[item.category] && (

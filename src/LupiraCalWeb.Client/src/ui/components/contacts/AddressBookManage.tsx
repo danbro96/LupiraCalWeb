@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   useDeleteAddressBook,
@@ -57,7 +58,7 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
         </Button>
       </form>
 
-      <div className="section-label">Shared with</div>
+      <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>Shared with</Typography>
       {(owners ?? []).map((o) => (
         <div key={o.principalId} className="membership-row">
           <Chip variant="outlined" label={o.access} />

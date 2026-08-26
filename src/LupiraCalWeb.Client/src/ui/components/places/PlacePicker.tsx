@@ -141,7 +141,7 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
         sx={{ flex: 1 }}
       />
       {state.error && phase.kind !== 'previewing' && phase.kind !== 'creating' && (
-        <span className="error-text">{state.error}</span>
+        <Typography variant="body2" component="span" sx={{ my: 0.5, color: 'error.main' }}>{state.error}</Typography>
       )}
       {(phase.kind === 'previewing' || phase.kind === 'creating') && (
         <GeocodePreview

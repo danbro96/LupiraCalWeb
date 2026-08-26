@@ -17,7 +17,7 @@ export function MapIndexPanel({ groups, onClose }: { groups: IndexGroup[]; onClo
   return (
     <aside className="map-index">
       <button className="map-popover-close" onClick={onClose} aria-label="Close">×</button>
-      {nonEmpty.length === 0 && <p className="empty">Nothing on the map yet.</p>}
+      {nonEmpty.length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Nothing on the map yet.</Typography>}
       {nonEmpty.map((group) => (
         <section key={group.title}>
           <h4>{group.title}</h4>

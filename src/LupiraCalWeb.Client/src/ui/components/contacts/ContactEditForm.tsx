@@ -34,7 +34,7 @@ import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { fuzzyToInput, parseFuzzyInput, residencyStatus } from '@lupira/cal-domain/fuzzyDate';
 import { inputToPartialDate, partialDateKey, partialDateToInput } from '@lupira/cal-domain/partialDate';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 
 // placeId stays null in drafts until a place is picked; save filters those rows out.
 type AddressDraft = Omit<ContactPostalAddress, 'placeId'> & { placeId: string | null; movedInText: string; movedOutText: string };
@@ -98,13 +98,13 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
     <div className="edit-field">
       <label>{label}</label>
       {values.length > 0 && (
-        <div className="chip-row">
+        <WrapRow>
           {values.map((v, i) => (
             <Chip key={`${v}-${i}`} label={v} onDelete={() => onChange(values.filter((_, j) => j !== i))} />
           ))}
-        </div>
+        </WrapRow>
       )}
-      <FormRow>
+      <WrapRow>
         <TextField
           type={inputType}
           value={draft}
@@ -120,7 +120,7 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
         <Button variant="outlined" onClick={commit} disabled={!draft.trim()}>
           Add
         </Button>
-      </FormRow>
+      </WrapRow>
     </div>
   );
 }
@@ -294,7 +294,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         {birthdayYearKnown ? (
           <Controller name="birthday" control={control} render={({ field }) => <TextField type="date" {...field} />} />
         ) : (
-          <FormRow>
+          <WrapRow>
             <Controller
               name="birthdayMonth"
               control={control}
@@ -309,14 +309,14 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 <TextField type="number" slotProps={{ htmlInput: { min: 1, max: 31 } }} placeholder="Day" {...field} />
               )}
             />
-          </FormRow>
+          </WrapRow>
         )}
       </div>
 
       <div className="edit-field">
         <label>Reach channels</label>
         {channelFields.map((f, i) => (
-          <FormRow key={f.id}>
+          <WrapRow key={f.id}>
             <Controller
               name={`channels.${i}.medium`}
               control={control}
@@ -378,7 +378,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          </FormRow>
+          </WrapRow>
         ))}
         <Button
           variant="text"
@@ -397,7 +397,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       <div className="edit-field">
         <label>Addresses</label>
         {addressFields.map((f, i) => (
-          <FormRow key={f.id}>
+          <WrapRow key={f.id}>
             <Controller
               name={`addresses.${i}.type`}
               control={control}
@@ -443,7 +443,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          </FormRow>
+          </WrapRow>
         ))}
         <Button
           variant="text"
@@ -456,7 +456,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       <div className="edit-field">
         <label>Social profiles</label>
         {profileFields.map((f, i) => (
-          <FormRow key={f.id}>
+          <WrapRow key={f.id}>
             <Controller
               name={`profiles.${i}.service`}
               control={control}
@@ -485,7 +485,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          </FormRow>
+          </WrapRow>
         ))}
         <Button variant="text" onClick={() => appendProfile({ service: '', handle: '', preferred: false })}>
           + Add profile
@@ -551,7 +551,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         )}
       </div>
 
-      {errors.root && <p className="error-text">{errors.root.message}</p>}
+      {errors.root && <Typography variant="body2" component="p" sx={{ my: 0.5, color: 'error.main' }}>{errors.root.message}</Typography>}
       <div className="edit-actions">
         <Button variant="contained" type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Saving…' : 'Save'}

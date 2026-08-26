@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import MuiLink from '@mui/material/Link';
 import CloseIcon from '@mui/icons-material/Close';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -24,7 +25,7 @@ import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { ContactRelationGraph } from './ContactRelationGraph';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 
 /** Sections with more rows than this start collapsed. */
@@ -146,9 +147,9 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
               {open && outgoing.map((r) => (
                 <div key={`out-${r.contactId}-${r.kind}`} className={rowClass(r, r.ended ? ' ended' : '')} onClick={rowSelect(r.contactId)}>
                   <Chip variant="outlined" label={r.kind} sx={{ color: `var(--cat-${g.category.toLowerCase()})`, borderColor: `var(--cat-${g.category.toLowerCase()})` }} />
-                  <Link className="membership-name" to={link(r.contactId)}>
+                  <MuiLink component={Link} sx={{ flex: 1 }} to={link(r.contactId)}>
                     {r.displayName}
-                  </Link>
+                  </MuiLink>
                   {r.label && <Typography variant="caption" sx={{ color: 'text.secondary' }}>“{r.label}”</Typography>}
                   {r.ended && <Typography variant="caption" sx={{ color: 'text.secondary' }}>· ended{r.until ? ` ${r.until}` : ''}</Typography>}
                   {r.ended ? (
@@ -183,18 +184,18 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
               {open && incoming.map((r) => (
                 <div key={`in-${r.contactId}-${r.kind}`} className={rowClass(r, ' incoming')} onClick={rowSelect(r.contactId)}>
                   <Chip variant="outlined" label={r.kind} sx={{ color: `var(--cat-${g.category.toLowerCase()})`, borderColor: `var(--cat-${g.category.toLowerCase()})` }} />
-                  <Link className="membership-name" to={link(r.contactId)}>
+                  <MuiLink component={Link} sx={{ flex: 1 }} to={link(r.contactId)}>
                     {r.displayName}
-                  </Link>
+                  </MuiLink>
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>· managed on their card</Typography>
                 </div>
               ))}
               {open && inferred.map((r) => (
                 <div key={`kin-${r.contactId}-${r.kind}`} className={rowClass(r, ' inferred')} onClick={rowSelect(r.contactId)}>
                   <Chip variant="outlined" label={r.kind} sx={{ color: `var(--cat-${g.category.toLowerCase()})`, borderColor: `var(--cat-${g.category.toLowerCase()})` }} />
-                  <Link className="membership-name" to={link(r.contactId)}>
+                  <MuiLink component={Link} sx={{ flex: 1 }} to={link(r.contactId)}>
                     {r.displayName}
-                  </Link>
+                  </MuiLink>
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>· derived</Typography>
                 </div>
               ))}
@@ -202,7 +203,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
           );
         })}
 
-      <FormRow
+      <WrapRow
         component="form"
         onSubmit={(e) => {
           e.preventDefault();
@@ -235,7 +236,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
         <Button variant="outlined" type="submit" disabled={!toContactId || add.isPending}>
           Add
         </Button>
-      </FormRow>
+      </WrapRow>
     </DrawerSection>
   );
 }

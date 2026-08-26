@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { useAcceptItemIntoCalendar, useRemoveItemFromCalendar } from '../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../data/api/models';
 import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
@@ -35,16 +36,16 @@ export function InboxScreen() {
     <div className="page">
       <h2>Inbox</h2>
       <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Items proposed into your calendars, awaiting curation.</Typography>
-      {groups.length === 0 && <p className="empty">Nothing to curate. 🎉</p>}
+      {groups.length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Nothing to curate. 🎉</Typography>}
       {groups.map(({ calendar, items }) => (
         <section key={calendar.id} className="inbox-group">
-          <div className="section-label">
-            <span className="color-dot" style={{ background: calendarColor(calendar) }} /> {calendarLabel(calendar)}
-          </div>
+          <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>
+            <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: calendarColor(calendar) }} /> {calendarLabel(calendar)}
+          </Typography>
           {items.map((item) => (
             <div key={item.id} className="inbox-row">
               <button className="inbox-body" onClick={() => open(item.id)}>
-                <span className="title">{item.title || '(untitled)'}</span>
+                <Typography component="span">{item.title || '(untitled)'}</Typography>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>{itemWhen(item)}</Typography>
               </button>
               <Button variant="outlined" onClick={() => accept.mutate({ itemId: item.id, calendarId: calendar.id })}>

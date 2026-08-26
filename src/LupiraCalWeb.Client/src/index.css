@@ -605,13 +605,6 @@ code {
 }
 
 /* ---- Forms & shared bits. ---- */
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-sm);
-  align-items: center;
-  margin: var(--sp-sm) 0;
-}
 .chip {
   border: 1px solid var(--mui-palette-border);
   background: var(--mui-palette-background-paper);
@@ -620,48 +613,9 @@ code {
   padding: 5px 12px;
   font-size: 13px;
 }
-.color-dot {
-  width: 13px;
-  height: 13px;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--mui-palette-border);
-  flex: none;
-  display: inline-block;
-}
-.section-label {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-sm);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  color: var(--mui-palette-text-subtle);
-  padding: var(--sp-lg) var(--sp-lg) var(--sp-sm);
-}
 .meta {
   font-size: 12px;
   color: var(--mui-palette-text-secondary);
-}
-.empty {
-  text-align: center;
-  color: var(--mui-palette-text-subtle);
-  margin-top: 48px;
-}
-.error-text {
-  color: var(--mui-palette-error-main);
-  font-size: 13px;
-  margin: var(--sp-xs) 0;
-}
-.field-value {
-  margin: 0 0 var(--sp-sm);
-  color: var(--mui-palette-text-secondary);
-}
-.card {
-  border: 1px solid var(--mui-palette-border);
-  border-radius: var(--r-lg);
-  padding: var(--sp-md) var(--sp-lg);
-  margin: var(--sp-md) 0;
-  background: var(--mui-palette-background-paper);
 }
 
 /* ---- Detail grid (kind details, contact card). ---- */
@@ -730,9 +684,6 @@ code {
 .attendee-actions {
   display: flex;
   gap: 4px;
-}
-.membership-name {
-  flex: 1;
 }
 .rsvp-accepted {
   color: var(--mui-palette-success-main);
@@ -824,9 +775,6 @@ code {
   color: var(--mui-palette-text-primary);
   text-align: left;
   padding: 0;
-}
-.title {
-  font-size: 15px;
 }
 
 /* ---- Contacts three-pane (tree | list | detail). ---- */

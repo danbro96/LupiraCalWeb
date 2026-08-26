@@ -30,32 +30,32 @@ function TaskBody({ task }: { task: ItemResponse }) {
         <span className="kind-icon" title="Task">
           ⏰
         </span>
-        <h2 className="field-value">{task.title}</h2>
+        <Typography component="h2" sx={{ mb: 1, color: 'text.secondary' }}>{task.title}</Typography>
       </div>
 
       <DrawerSection title="Due">
         {due ? (
-          <p className="field-value" style={overdue ? { color: 'var(--mui-palette-error-main)' } : undefined}>
+          <Typography component="p" sx={{ mb: 1, color: overdue ? 'error.main' : 'text.secondary' }}>
             {fmtDate(due)} {fmtTime(due)}
             {overdue ? ' — overdue' : ''}
-          </p>
+          </Typography>
         ) : (
           <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No deadline.</Typography>
         )}
       </DrawerSection>
 
       <DrawerSection title="Status">
-        <p className="field-value">
+        <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>
           {task.status}
           {task.statusReason ? ` — ${task.statusReason}` : ''}
-        </p>
+        </Typography>
         {task.priority > 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Priority {task.priority}</Typography>}
         {task.assignee && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Assigned to {task.assignee.displayName || task.assignee.email}</Typography>}
       </DrawerSection>
 
       {task.notes && (
         <DrawerSection title="Notes">
-          <p className="field-value">{task.notes}</p>
+          <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>{task.notes}</Typography>
         </DrawerSection>
       )}
 

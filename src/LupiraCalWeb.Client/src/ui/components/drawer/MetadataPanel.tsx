@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useMergeItemMetadata } from '../../../data/api/lupiraCalApi';
@@ -47,7 +48,7 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
             value={patch}
             onChange={(e) => setPatch(e.target.value)}
           />
-          {jsonError && <p className="error-text">{jsonError}</p>}
+          {jsonError && <Typography variant="body2" component="p" sx={{ my: 0.5, color: 'error.main' }}>{jsonError}</Typography>}
           <Button
             variant="outlined"
             disabled={!patch || merge.isPending}

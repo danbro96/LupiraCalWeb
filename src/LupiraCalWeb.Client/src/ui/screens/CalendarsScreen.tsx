@@ -5,6 +5,8 @@ import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 import { logout } from '../../data/session';
 import { useSession } from '../../state/useSession';
 import { useCreateCalendar, useGrantCalendarOwner, useRevokeCalendarOwner } from '../../data/api/lupiraCalApi';
@@ -17,7 +19,7 @@ import { useInvalidateAddressBooks, useInvalidateContainers } from '../../state/
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
-import { FormRow } from '../components/FormRow';
+import { WrapRow } from '../components/WrapRow';
 
 /** Container management: calendars (class/kind/color/tz, from cal-api) and address books (from
  *  contact-api), with creation and per-owner sharing. */
@@ -82,7 +84,7 @@ function CalendarRow({ c }: { c: ContainerDto }) {
     <>
       <tr>
         <td>
-          <span className="color-dot" style={{ background: calendarColor(c) }} />
+          <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: calendarColor(c) }} />
         </td>
         <td>
           {c.kind ? `${CALENDAR_KIND_ICONS[c.kind]} ` : ''}
@@ -120,7 +122,7 @@ function BookRow({ b }: { b: AddressBookDto }) {
     <>
       <tr>
         <td>
-          <span className="color-dot" style={{ background: 'var(--mui-palette-border)' }} />
+          <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: 'var(--mui-palette-border)' }} />
         </td>
         <td>📇 {addressBookLabel(b)}</td>
         <td>
@@ -226,8 +228,7 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
   const pending = createCal.isPending || createBook.isPending;
 
   return (
-    <form
-      className="card"
+    <Paper variant="outlined" component="form" sx={{ p: '12px 16px', my: 1.5 }}
       onSubmit={(e) => {
         e.preventDefault();
         if (isBook) {
@@ -247,16 +248,16 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
         }
       }}
     >
-      <FormRow>
+      <WrapRow>
         <TextField select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
           <MenuItem value="calendar">Calendar</MenuItem>
           <MenuItem value="addressbook">Address book</MenuItem>
         </TextField>
         <TextField placeholder="slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} required />
         <TextField placeholder="Display name" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
-      </FormRow>
+      </WrapRow>
       {!isBook && (
-        <FormRow>
+        <WrapRow>
           <input type="color" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} title="Color" />
           <TextField placeholder="IANA timezone" value={form.defaultTimezone} onChange={(e) => setForm({ ...form, defaultTimezone: e.target.value })} />
           <TextField select value={form.class} onChange={(e) => setForm({ ...form, class: e.target.value as CalendarClass })}>
@@ -273,16 +274,16 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
               </MenuItem>
             ))}
           </TextField>
-        </FormRow>
+        </WrapRow>
       )}
-      <div className="chip-row">
+      <WrapRow>
         <Button variant="contained" type="submit" disabled={pending}>
           Create
         </Button>
         <Button variant="outlined" type="button" onClick={onDone}>
           Cancel
         </Button>
-      </div>
-    </form>
+      </WrapRow>
+    </Paper>
   );
 }

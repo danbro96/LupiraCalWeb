@@ -37,7 +37,7 @@ import { ContactEditForm } from './ContactEditForm';
 import { ContactEventsPanel } from './ContactEventsPanel';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
 import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 
 const linkSx: SxProps<Theme> = { fontSize: 13, fontWeight: 600, p: '2px', whiteSpace: 'nowrap', '@media (pointer: coarse)': { p: '6px 2px' } };
@@ -62,7 +62,7 @@ export function ContactDetailPane() {
   const [showCircles, setShowCircles] = useState(false);
 
   if (isLoading) return <div className="contacts-detail-pane"><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></div>;
-  if (!contact) return <div className="contacts-detail-pane"><p className="empty">Contact not found.</p></div>;
+  if (!contact) return <div className="contacts-detail-pane"><Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Contact not found.</Typography></div>;
 
   const memberOf = (groups ?? []).filter((g) => g.members.some((m) => m.contactId === contact.id));
   const joinable = (groups ?? []).filter((g) => !g.members.some((m) => m.contactId === contact.id));
@@ -147,11 +147,11 @@ export function ContactDetailPane() {
           </dl>
 
           {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).length > 0 && (
-            <div className="chip-row">
+            <WrapRow>
               {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).map((t) => (
                 <Chip key={t} label={t} />
               ))}
-            </div>
+            </WrapRow>
           )}
 
           {contact.emergencyContactIds.length > 0 && (
@@ -159,9 +159,9 @@ export function ContactDetailPane() {
               {contact.emergencyContactIds.map((cid, i) => (
                 <div key={cid} className="membership-row">
                   <Chip variant="outlined" label={i + 1} />
-                  <Link className="membership-name" to={link(cid)}>
+                  <MuiLink component={Link} sx={{ flex: 1 }} to={link(cid)}>
                     {nameOf(cid)}
-                  </Link>
+                  </MuiLink>
                 </div>
               ))}
             </DrawerSection>
@@ -173,9 +173,9 @@ export function ContactDetailPane() {
         {memberOf.map((g) => (
           <div key={g.id} className="membership-row">
             <Chip variant="outlined" label={g.kind === 'Organization' ? '🏢' : '👥'} />
-            <Link className="membership-name" to={{ pathname: `/contacts/groups/${g.id}`, search: groupSearch }}>
+            <MuiLink component={Link} sx={{ flex: 1 }} to={{ pathname: `/contacts/groups/${g.id}`, search: groupSearch }}>
               {g.name}
-            </Link>
+            </MuiLink>
             <Tooltip title="Remove from group">
               <IconButton
                 onClick={() => removeMember.mutate({ groupId: g.id, contactId: contact.id })}
@@ -185,7 +185,7 @@ export function ContactDetailPane() {
             </Tooltip>
           </div>
         ))}
-        <FormRow>
+        <WrapRow>
           <TextField select value={groupId} onChange={(e) => setGroupId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
             <MenuItem value="">Add to group…</MenuItem>
             {joinable.map((g) => (
@@ -204,7 +204,7 @@ export function ContactDetailPane() {
           >
             Add
           </Button>
-        </FormRow>
+        </WrapRow>
       </DrawerSection>
 
       <ContactEventsPanel contactId={contact.id} />

@@ -22,7 +22,7 @@ import { localInputToIso } from './drawer/inputs';
 import { errText } from './errText';
 import { useSnackbar } from './SnackbarHost';
 import { useIsPhone } from '../useIsPhone';
-import { FormRow } from './FormRow';
+import { WrapRow } from './WrapRow';
 
 type FormValues = {
   title: string;
@@ -131,7 +131,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             />
           )}
         />
-        <FormRow>
+        <WrapRow>
           <Controller
             name="calendarId"
             control={control}
@@ -162,9 +162,9 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               />
             )}
           />
-        </FormRow>
+        </WrapRow>
         {isAllDay ? (
-          <FormRow>
+          <WrapRow>
             <Controller
               name="startDate"
               control={control}
@@ -172,9 +172,9 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             />
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>→</Typography>
             <Controller name="endDate" control={control} render={({ field }) => <TextField type="date" {...field} />} />
-          </FormRow>
+          </WrapRow>
         ) : (
-          <FormRow>
+          <WrapRow>
             <Controller
               name="start"
               control={control}
@@ -182,9 +182,9 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             />
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>→</Typography>
             <Controller name="end" control={control} render={({ field }) => <TextField type="datetime-local" {...field} />} />
-          </FormRow>
+          </WrapRow>
         )}
-        <FormRow>
+        <WrapRow>
           <Controller
             name="rrule"
             control={control}
@@ -225,7 +225,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               )}
             />
           )}
-        </FormRow>
+        </WrapRow>
         <Controller
           name="location"
           control={control}

@@ -16,7 +16,7 @@ import { useContainers } from '../../state/useContainers';
 import { useInvalidateItems } from '../../state/useInvalidate';
 import { errText } from './errText';
 import { useSnackbar } from './SnackbarHost';
-import { FormRow } from './FormRow';
+import { WrapRow } from './WrapRow';
 
 type FormValues = {
   status: AvailabilityStatus;
@@ -73,7 +73,7 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
       <form onSubmit={submit}>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pt: 0 }}>
           {!availabilityCalendar && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No availability calendar — bootstrap the standard set first.</Typography>}
-        <FormRow>
+        <WrapRow>
           <Controller
             name="status"
             control={control}
@@ -87,8 +87,8 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
               </TextField>
             )}
           />
-        </FormRow>
-        <FormRow>
+        </WrapRow>
+        <WrapRow>
           <Controller
             name="startDate"
             control={control}
@@ -97,8 +97,8 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
               <TextField type="date" label="From" slotProps={{ inputLabel: { shrink: true } }} {...field} required />
             )}
           />
-        </FormRow>
-        <FormRow>
+        </WrapRow>
+        <WrapRow>
           <Controller
             name="endDate"
             control={control}
@@ -111,7 +111,7 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
               />
             )}
           />
-        </FormRow>
+        </WrapRow>
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" type="button" onClick={onClose}>

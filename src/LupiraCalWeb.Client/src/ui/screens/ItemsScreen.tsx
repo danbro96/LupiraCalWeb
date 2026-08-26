@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useGetItem } from '../../data/api/lupiraCalApi';
 import { useGetContact } from '../../data/api-contact/lupiraContactApi';
@@ -238,8 +239,8 @@ export function ItemsScreen() {
             </Fragment>
           );
         })}
-        {!isLoading && occurrences.length === 0 && !error && <p className="empty">No items match.</p>}
-        {error && <p className="empty">{errText(error) ?? 'Search failed.'}</p>}
+        {!isLoading && occurrences.length === 0 && !error && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>No items match.</Typography>}
+        {error && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>{errText(error) ?? 'Search failed.'}</Typography>}
       </div>
       {hasNextPage && (
         <Button variant="outlined" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
@@ -314,7 +315,7 @@ function ItemRow({
       )}
       {first && (
         <span className="meta items-cal">
-          <span className="color-dot" style={{ background: calendarColor(first) }} />
+          <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: calendarColor(first) }} />
           {calendarLabel(first)}
           {containers.length > 1 ? ` +${containers.length - 1}` : ''}
         </span>

@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   useAcceptItemIntoCalendar,
@@ -15,7 +16,7 @@ import type { CalendarItemDto } from '../../../data/api/models';
 import { calendarLabel, useContainers } from '../../../state/useContainers';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { calendarColor } from '../../theme/kinds';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 
 /** The item's calendar memberships (Proposed/Accepted) + curation actions and file-to-calendar. */
@@ -37,7 +38,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
         const cal = calendars.find((c) => c.id === m.calendarId);
         return (
           <div key={m.calendarId} className="membership-row">
-            <span className="color-dot" style={{ background: cal ? calendarColor(cal) : 'var(--mui-palette-border)' }} />
+            <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: cal ? calendarColor(cal) : 'var(--mui-palette-border)' }} />
             <span className="membership-name">{cal ? calendarLabel(cal) : m.calendarId.slice(0, 8)}</span>
             {m.status === 'Proposed' ? (
               <Chip variant="outlined" label="proposed" />
@@ -55,7 +56,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
           </div>
         );
       })}
-      <FormRow>
+      <WrapRow>
         <TextField select value={target} onChange={(e) => setTarget(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
           <MenuItem value="">File into calendar…</MenuItem>
           {fileable.map((c) => (
@@ -74,7 +75,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
         >
           File
         </Button>
-      </FormRow>
+      </WrapRow>
     </DrawerSection>
   );
 }

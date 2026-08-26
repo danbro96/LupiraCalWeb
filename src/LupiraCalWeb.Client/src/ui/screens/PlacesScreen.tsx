@@ -30,7 +30,7 @@ import {
 } from '../../state/usePlaceCuration';
 import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
-import { FormRow } from '../components/FormRow';
+import { WrapRow } from '../components/WrapRow';
 import { DrawerSection } from '../components/DrawerSection';
 
 const MapPinDialog = lazy(() => import('../components/map/MapPinDialog'));
@@ -74,7 +74,7 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
 
   return (
     <DrawerSection title="Unlocated">
-      <FormRow>
+      <WrapRow>
         <TextField
           select
           label="Source"
@@ -100,7 +100,7 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
           <MenuItem value="true">Verified</MenuItem>
           <MenuItem value="false">Unverified</MenuItem>
         </TextField>
-      </FormRow>
+      </WrapRow>
       {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
       {error != null && <Alert severity="error">{errText(error) ?? 'Failed to load places.'}</Alert>}
       {places && places.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Every place has coordinates.</Typography>}
@@ -175,7 +175,7 @@ function UnlocatedRow({ place, onFixOnMap, onManualCoords, onVerify, onHistory }
         {regeocode.data && regeocode.data.latitude != null && (
           <Chip color="success" sx={{ ml: 1 }} label={`${regeocode.data.latitude.toFixed(5)}, ${regeocode.data.longitude?.toFixed(5)}`} />
         )}
-        {regeocode.error != null && <span className="error-text"> {errText(regeocode.error) ?? 'Regeocode failed.'}</span>}
+        {regeocode.error != null && <Typography variant="body2" component="span" sx={{ my: 0.5, color: 'error.main' }}> {errText(regeocode.error) ?? 'Regeocode failed.'}</Typography>}
       </TableCell>
       <TableCell sx={{ color: 'text.secondary' }}>{place.kind}</TableCell>
       <TableCell sx={{ color: 'text.secondary' }}>{place.category}</TableCell>
@@ -222,10 +222,10 @@ function ManualCoordsDialog({ place, pending, onSave, onCancel }: {
     <Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
       <DialogTitle>Coordinates for “{place.name}”</DialogTitle>
       <DialogContent>
-        <FormRow>
+        <WrapRow>
           <TextField label="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} autoFocus />
           <TextField label="Longitude" value={lon} onChange={(e) => setLon(e.target.value)} />
-        </FormRow>
+        </WrapRow>
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel}>
@@ -315,7 +315,7 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
               ))}
             </TableBody>
           </Table>
-          <div className="chip-row">
+          <WrapRow>
             <Button
               variant="contained"
               color="error"
@@ -324,7 +324,7 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
             >
               {prune.isPending ? 'Pruning…' : `Prune ${selected.size} selected`}
             </Button>
-          </div>
+          </WrapRow>
         </>
       )}
       <Dialog open={confirming} onClose={() => setConfirming(false)}>
@@ -398,10 +398,10 @@ function HistoryDrawer({ placeId, name, onClose }: { placeId: string; name: stri
         {events && events.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No curation events.</Typography>}
         {events?.map((e) => (
           <DrawerSection key={e.seq}>
-            <p className="field-value">
+            <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>
               #{e.seq} {e.action}
               <Typography variant="caption" sx={{ color: 'text.secondary' }}> · {new Date(e.at).toLocaleString()}</Typography>
-            </p>
+            </Typography>
             {e.detail && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">{e.detail}</Typography>}
             {e.relatedPlaceId && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">related: {e.relatedPlaceId}</Typography>}
             {e.actorPrincipalId && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">by {e.actorPrincipalId}</Typography>}

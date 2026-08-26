@@ -28,7 +28,7 @@ import { PlacePicker } from '../places/PlacePicker';
 import { RelationsPanel } from './RelationsPanel';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 
 /** The item detail drawer (?item=<id>): every field the REST read model exposes, editable where the API allows. */
@@ -86,7 +86,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         <CompletenessBadge score={item.completeness} />
       </div>
 
-      <FormRow>
+      <WrapRow>
         <TextField
           select
           label="Status"
@@ -117,16 +117,16 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             ))}
           </TextField>
         )}
-      </FormRow>
+      </WrapRow>
 
       <DrawerSection title="When">
         {item.isAllDay ? (
-          <p className="field-value">
+          <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>
             All day · {item.startDate ? fmtDate(parseYmd(item.startDate)) : '?'}
             {item.endDate && item.endDate !== item.startDate ? ` – ${fmtDate(parseYmd(item.endDate))}` : ''}
-          </p>
+          </Typography>
         ) : (
-          <FormRow>
+          <WrapRow>
             <TextField
               type="datetime-local"
               defaultValue={isoToLocalInput(item.startsAt)}
@@ -144,9 +144,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
                 if (iso && iso !== item.endsAt) patch({ endsAt: iso });
               }}
             />
-          </FormRow>
+          </WrapRow>
         )}
-        <FormRow>
+        <WrapRow>
           <TextField
             select
             label="Repeats"
@@ -174,7 +174,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             onChange={(e) => setRrule(e.target.value)}
             onBlur={() => rrule && rrule !== (item.recurrenceRule ?? '') && patch({ recurrenceRule: rrule })}
           />
-        </FormRow>
+        </WrapRow>
         {item.recurrenceRule && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">{describeRrule(item.recurrenceRule)}</Typography>}
       </DrawerSection>
 
@@ -202,7 +202,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       </DrawerSection>
 
       <DrawerSection title="Tags">
-        <div className="chip-row">
+        <WrapRow>
           {(item.tags ?? []).map((t) => (
             <Chip key={t} label={t} onDelete={() => patch({ tags: (item.tags ?? []).filter((x) => x !== t) })} />
           ))}
@@ -217,7 +217,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
               }
             }}
           />
-        </div>
+        </WrapRow>
       </DrawerSection>
 
       <KindDetailsCard details={item.details} />

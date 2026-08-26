@@ -30,7 +30,7 @@ import { describeFire } from '@lupira/cal-domain/fire';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 
 /**
@@ -61,10 +61,10 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             {item.prompt.tier ? ` · ${item.prompt.tier} model` : ''} · on miss: {item.prompt.onMiss}
             {item.prompt.tools?.length ? ` · tools: ${item.prompt.tools.join(', ')}` : ''}
           </Typography>
-          <div className="chip-row">
+          <WrapRow>
             <Chip variant="outlined" label="Edit" onClick={() => setEditing('prompt')} />
             <Chip variant="outlined" color="error" label="Remove" onClick={() => clearPrompt.mutate({ id: item.id })} />
-          </div>
+          </WrapRow>
         </div>
       )}
       {item.action && editing !== 'action' && (
@@ -78,17 +78,17 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
           <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
             Fires {describeFire(item.action.fire.kind, item.action.fire.offsetMinutes, item.action.fire.allDayAt)}
           </Typography>
-          <div className="chip-row">
+          <WrapRow>
             <Chip variant="outlined" label="Edit" onClick={() => setEditing('action')} />
             <Chip variant="outlined" color="error" label="Remove" onClick={() => clearAction.mutate({ id: item.id })} />
-          </div>
+          </WrapRow>
         </div>
       )}
       {!item.prompt && !item.action && editing === null && (
-        <div className="chip-row">
+        <WrapRow>
           <Chip variant="outlined" label="+ LLM prompt" onClick={() => setEditing('prompt')} />
           <Chip variant="outlined" label="+ Action" onClick={() => setEditing('action')} />
-        </div>
+        </WrapRow>
       )}
       {editing === 'prompt' && <PromptForm item={item} onDone={() => setEditing(null)} />}
       {editing === 'action' && <ActionForm item={item} onDone={() => setEditing(null)} />}
@@ -106,7 +106,7 @@ function prettyJson(raw: string): string {
 
 function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: PromptFire) => void }) {
   return (
-    <FormRow>
+    <WrapRow>
       <TextField
         select
         label="Fires"
@@ -135,7 +135,7 @@ function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: Prompt
           onChange={(e) => onChange({ ...fire, allDayAt: `${e.target.value}:00` })}
         />
       )}
-    </FormRow>
+    </WrapRow>
   );
 }
 
@@ -191,7 +191,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
 
   return (
     <form className="payload-form" onSubmit={submit}>
-      <FormRow>
+      <WrapRow>
         <Controller
           name="intent"
           control={control}
@@ -218,7 +218,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
             </TextField>
           )}
         />
-      </FormRow>
+      </WrapRow>
       <Controller
         name="instruction"
         control={control}
@@ -226,7 +226,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           <TextField multiline minRows={3} placeholder="Instruction for the agent…" {...field} required />
         )}
       />
-      <FormRow>
+      <WrapRow>
         <Controller
           name="tier"
           control={control}
@@ -259,7 +259,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
             </TextField>
           )}
         />
-      </FormRow>
+      </WrapRow>
       <Controller
         name="tools"
         control={control}
@@ -280,14 +280,14 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           />
         )}
       />
-      <div className="chip-row">
+      <WrapRow>
         <Button variant="contained" type="submit" disabled={set.isPending}>
           Save prompt
         </Button>
         <Button variant="outlined" type="button" onClick={onDone}>
           Cancel
         </Button>
-      </div>
+      </WrapRow>
     </form>
   );
 }
@@ -336,7 +336,7 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
 
   return (
     <form className="payload-form" onSubmit={submit}>
-      <FormRow>
+      <WrapRow>
         <Controller
           name="kind"
           control={control}
@@ -350,7 +350,7 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
             </TextField>
           )}
         />
-      </FormRow>
+      </WrapRow>
       <Controller
         name="paramsJson"
         control={control}
@@ -385,15 +385,15 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           />
         )}
       />
-      {errors.paramsJson && <p className="error-text">{errors.paramsJson.message}</p>}
-      <div className="chip-row">
+      {errors.paramsJson && <Typography variant="body2" component="p" sx={{ my: 0.5, color: 'error.main' }}>{errors.paramsJson.message}</Typography>}
+      <WrapRow>
         <Button variant="contained" type="submit" disabled={set.isPending}>
           Save action
         </Button>
         <Button variant="outlined" type="button" onClick={onDone}>
           Cancel
         </Button>
-      </div>
+      </WrapRow>
     </form>
   );
 }

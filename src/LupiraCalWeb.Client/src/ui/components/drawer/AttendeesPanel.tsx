@@ -24,7 +24,7 @@ import { rankByInteraction } from '@lupira/cal-domain/contactRank';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
-import { FormRow } from '../FormRow';
+import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 
 const ROLE_OPTIONS = [
@@ -125,7 +125,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
           </div>
         );
       })}
-      <FormRow>
+      <WrapRow>
         <TextField select value={contactId} onChange={(e) => setContactId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
           <MenuItem value="">Invite a contact…</MenuItem>
           {invitable.map((c) => (
@@ -151,7 +151,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
         >
           Invite
         </Button>
-      </FormRow>
+      </WrapRow>
     </DrawerSection>
   );
 }

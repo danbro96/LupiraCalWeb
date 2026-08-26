@@ -1,4 +1,6 @@
 import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import type { ContainerDto } from '../../data/api/models';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
@@ -16,10 +18,10 @@ export function Sidebar() {
       <CalendarGroup title="Agenda" calendars={agenda} />
       <CalendarGroup title="System" calendars={system} />
       <div className="cal-group">
-        <div className="section-label">Tasks</div>
+        <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>Tasks</Typography>
         <label className="cal-toggle" title="Deadlines from Lupira Tasks">
           <Checkbox size="small" sx={{ p: 0 }} checked={tasksVisible} onChange={toggleTasks} />
-          <span className="color-dot" style={{ background: 'var(--mui-palette-text-secondary)' }} />
+          <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: 'var(--mui-palette-text-secondary)' }} />
           <span className="cal-toggle-name">⏰ Deadlines</span>
         </label>
       </div>
@@ -32,11 +34,11 @@ function CalendarGroup({ title, calendars }: { title: string; calendars: Contain
   if (calendars.length === 0) return null;
   return (
     <div className="cal-group">
-      <div className="section-label">{title}</div>
+      <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>{title}</Typography>
       {calendars.map((c) => (
         <label key={c.id} className="cal-toggle" title={`${c.kind ?? ''} · ${c.access}`}>
           <Checkbox size="small" sx={{ p: 0 }} checked={isVisible(c)} onChange={() => toggle(c)} />
-          <span className="color-dot" style={{ background: calendarColor(c) }} />
+          <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: calendarColor(c) }} />
           <span className="cal-toggle-name">
             {c.kind ? `${CALENDAR_KIND_ICONS[c.kind]} ` : ''}
             {calendarLabel(c)}

@@ -43,15 +43,15 @@ function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | n
         <span className="kind-icon" title="Birthday">
           🎂
         </span>
-        <h2 className="field-value">{contact.displayName}</h2>
+        <Typography component="h2" sx={{ mb: 1, color: 'text.secondary' }}>{contact.displayName}</Typography>
       </div>
 
       <DrawerSection title="Birthday">
-        {b ? <p className="field-value">{fmtPartialDate(b)}</p> : <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Unknown.</Typography>}
+        {b ? <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>{fmtPartialDate(b)}</Typography> : <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Unknown.</Typography>}
         {age != null && onDate && (
-          <p className="field-value">
+          <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>
             {verb} {age} on {fmtDate(onDate)}
-          </p>
+          </Typography>
         )}
       </DrawerSection>
 
