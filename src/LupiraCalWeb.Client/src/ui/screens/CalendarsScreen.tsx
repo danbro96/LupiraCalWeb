@@ -7,6 +7,11 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import { logout } from '../../data/session';
 import { useSession } from '../../state/useSession';
 import { useCreateCalendar, useGrantCalendarOwner, useRevokeCalendarOwner } from '../../data/api/lupiraCalApi';
@@ -59,28 +64,28 @@ export function CalendarsScreen() {
         </Button>
       </PageHead>
       {creating && <NewContainerForm onDone={() => setCreating(false)} />}
-      <table className="containers-table">
-        <thead>
-          <tr>
-            <th />
-            <th>Name</th>
-            <th>Slug</th>
-            <th>Class</th>
-            <th>Kind</th>
-            <th>Timezone</th>
-            <th>Access</th>
-            <th>Sharing</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table sx={{ mt: 1.5 }}>
+        <TableHead>
+          <TableRow>
+            <TableCell />
+            <TableCell>Name</TableCell>
+            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Slug</TableCell>
+            <TableCell>Class</TableCell>
+            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Kind</TableCell>
+            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Timezone</TableCell>
+            <TableCell>Access</TableCell>
+            <TableCell>Sharing</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {calendars.map((c) => (
             <CalendarRow key={c.id} c={c} />
           ))}
           {addressBooks.map((b) => (
             <BookRow key={b.id} b={b} />
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </Page>
   );
 }
@@ -89,35 +94,35 @@ function CalendarRow({ c }: { c: ContainerDto }) {
   const [sharing, setSharing] = useState(false);
   return (
     <>
-      <tr>
-        <td>
+      <TableRow>
+        <TableCell>
           <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: calendarColor(c) }} />
-        </td>
-        <td>
+        </TableCell>
+        <TableCell>
           {c.kind ? `${CALENDAR_KIND_ICONS[c.kind]} ` : ''}
           {calendarLabel(c)}
-        </td>
-        <td>
+        </TableCell>
+        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
           <code>{c.slug}</code>
-        </td>
-        <td>{c.class && <Chip variant="outlined" label={c.class} />}</td>
-        <td className="meta">{c.kind ?? '—'}</td>
-        <td className="meta">{c.defaultTimezone ?? '—'}</td>
-        <td className="meta">{c.access}</td>
-        <td>
+        </TableCell>
+        <TableCell>{c.class && <Chip variant="outlined" label={c.class} />}</TableCell>
+        <TableCell sx={{ color: 'text.secondary', display: { xs: 'none', md: 'table-cell' } }}>{c.kind ?? '—'}</TableCell>
+        <TableCell sx={{ color: 'text.secondary', display: { xs: 'none', md: 'table-cell' } }}>{c.defaultTimezone ?? '—'}</TableCell>
+        <TableCell sx={{ color: 'text.secondary' }}>{c.access}</TableCell>
+        <TableCell>
           {c.access === 'Owner' && (
             <Button variant="text" onClick={() => setSharing((s) => !s)}>
               {sharing ? 'close' : 'share…'}
             </Button>
           )}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
       {sharing && (
-        <tr>
-          <td colSpan={8}>
+        <TableRow>
+          <TableCell colSpan={8}>
             <SharePanel kind="calendar" id={c.id} />
-          </td>
-        </tr>
+          </TableCell>
+        </TableRow>
       )}
     </>
   );
@@ -127,32 +132,32 @@ function BookRow({ b }: { b: AddressBookDto }) {
   const [sharing, setSharing] = useState(false);
   return (
     <>
-      <tr>
-        <td>
+      <TableRow>
+        <TableCell>
           <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: 'var(--mui-palette-border)' }} />
-        </td>
-        <td>📇 {addressBookLabel(b)}</td>
-        <td>
+        </TableCell>
+        <TableCell>📇 {addressBookLabel(b)}</TableCell>
+        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
           <code>{b.slug}</code>
-        </td>
-        <td className="meta">—</td>
-        <td className="meta">—</td>
-        <td className="meta">—</td>
-        <td className="meta">{b.access}</td>
-        <td>
+        </TableCell>
+        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>—</TableCell>
+        <TableCell sx={{ color: 'text.secondary', display: { xs: 'none', md: 'table-cell' } }}>—</TableCell>
+        <TableCell sx={{ color: 'text.secondary', display: { xs: 'none', md: 'table-cell' } }}>—</TableCell>
+        <TableCell sx={{ color: 'text.secondary' }}>{b.access}</TableCell>
+        <TableCell>
           {b.access === 'Owner' && (
             <Button variant="text" onClick={() => setSharing((s) => !s)}>
               {sharing ? 'close' : 'share…'}
             </Button>
           )}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
       {sharing && (
-        <tr>
-          <td colSpan={8}>
+        <TableRow>
+          <TableCell colSpan={8}>
             <SharePanel kind="book" id={b.id} />
-          </td>
-        </tr>
+          </TableCell>
+        </TableRow>
       )}
     </>
   );
@@ -179,7 +184,7 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
   const revoke = isCalendar ? revokeCal : revokeBook;
 
   return (
-    <div className="share-panel">
+    <WrapRow sx={{ p: 1, my: 0, bgcolor: 'background.paper', borderRadius: 1 }}>
       <TextField type="email" placeholder="member@email" value={email} onChange={(e) => setEmail(e.target.value)} />
       <TextField select value={access} onChange={(e) => setAccess(e.target.value)}>
         <MenuItem value="owner">Owner</MenuItem>
@@ -210,7 +215,7 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
         Revoke
       </Button>
       {(grant.isPending || revoke.isPending) && <Typography variant="caption" sx={{ color: 'text.secondary' }}>…</Typography>}
-    </div>
+    </WrapRow>
   );
 }
 

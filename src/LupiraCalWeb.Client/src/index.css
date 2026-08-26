@@ -844,33 +844,6 @@ code {
 }
 
 /* ---- Containers table. ---- */
-.containers-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: var(--sp-md);
-}
-.containers-table th {
-  text-align: left;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--mui-palette-text-subtle);
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--mui-palette-border);
-}
-.containers-table td {
-  padding: 8px;
-  border-bottom: 1px solid var(--mui-palette-divider);
-}
-.share-panel {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--sp-sm);
-  padding: var(--sp-sm);
-  background: var(--mui-palette-background-paper);
-  border-radius: var(--r-md);
-}
 
 /* ---- Centered states. ---- */
 .location-list {
@@ -1187,16 +1160,6 @@ code {
   }
   .contacts-detail-pane {
     padding: var(--sp-lg);
-  }
-
-  /* Manage table: drop Slug/Kind/Timezone so the rest fits narrow screens. */
-  .containers-table th:nth-child(3),
-  .containers-table td:nth-child(3),
-  .containers-table th:nth-child(5),
-  .containers-table td:nth-child(5),
-  .containers-table th:nth-child(6),
-  .containers-table td:nth-child(6) {
-    display: none;
   }
 
   .relation-graph.fullscreen {
