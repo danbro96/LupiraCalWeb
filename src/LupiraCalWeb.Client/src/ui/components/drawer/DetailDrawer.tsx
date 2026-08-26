@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import { useIsPhone } from '../../useIsPhone';
 
@@ -14,11 +15,11 @@ export function DetailDrawer({ onClose, children }: { onClose: () => void; child
       onClose={onClose}
       slotProps={{ paper: { sx: isPhone ? { maxHeight: '85dvh' } : { width: 'min(480px, 100vw)' } } }}
     >
-      <div className="drawer-head">
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1, position: 'sticky', top: 0, bgcolor: 'background.default', zIndex: 1 }}>
         <IconButton onClick={onClose} aria-label="Close">
           <CloseIcon fontSize="small" />
         </IconButton>
-      </div>
+      </Box>
       {children}
     </Drawer>
   );

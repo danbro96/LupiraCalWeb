@@ -8,6 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-dom';
 import { useCreateContact, useSetContactTags } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto, ContactReachChannel } from '../../../data/api-contact/models';
@@ -149,9 +150,12 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
       </span>
       {c.birthday && <Chip variant="outlined" label={`🎂 ${partialDateBadge(c.birthday)}`} />}
       {c.completeness && (
-        <span className="completeness-bar" title={`Completeness ${Math.round(c.completeness.score * 100)}%`}>
-          <span style={{ width: `${Math.round(c.completeness.score * 100)}%` }} />
-        </span>
+        <LinearProgress
+          variant="determinate"
+          value={Math.round(c.completeness.score * 100)}
+          title={`Completeness ${Math.round(c.completeness.score * 100)}%`}
+          sx={{ width: 60, height: 6, borderRadius: '999px', flex: 'none' }}
+        />
       )}
     </NavLink>
   );

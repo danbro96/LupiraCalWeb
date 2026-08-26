@@ -11,6 +11,7 @@ import { useGeoPlace, usePlaceItems } from '../../../state/usePlaces';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 import { DrawerSection } from '../DrawerSection';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 
 /** The ?place= detail pane (extracted from the former LocationsScreen): containment, items, contacts. */
@@ -43,10 +44,10 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
       {place && (
         <>
           <Paper variant="outlined" component="section" sx={{ p: '12px 16px', my: 1.5 }}>
-            <div className="drawer-title-row">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <h3 style={{ margin: 0, flex: 1 }}>{place.name}</h3>
               <Chip variant="outlined" label={place.category} />
-            </div>
+            </Box>
             {(place.containment ?? []).length > 0 && (
               <div className="loc-breadcrumb">
                 {(place.containment ?? []).map((a, i) => (
@@ -102,7 +103,7 @@ function ItemsPanel({ placeId }: { placeId: string }) {
       {(items ?? []).map((item) => (
         <Link key={item.id} to={itemHref(item.id)} className="location-row">
           {item.category && ITEM_CATEGORY_ICONS[item.category] && (
-            <span className="kind-icon">{ITEM_CATEGORY_ICONS[item.category]}</span>
+            <Box component="span" sx={{ fontSize: 22 }}>{ITEM_CATEGORY_ICONS[item.category]}</Box>
           )}
           <span className="location-name">{item.title || '(untitled)'}</span>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>{whenOf(item)}</Typography>

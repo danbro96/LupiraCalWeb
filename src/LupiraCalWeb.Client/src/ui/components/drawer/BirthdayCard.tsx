@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { useGetContact } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto } from '../../../data/api-contact/models';
 import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
@@ -16,8 +17,8 @@ export function BirthdayCard({ contactId, year, onClose }: { contactId: string; 
 
   return (
     <DetailDrawer onClose={onClose}>
-      {isLoading && <p className="meta drawer-pad">Loading…</p>}
-      {!isLoading && !contact && <p className="meta drawer-pad">Contact not found (or no access).</p>}
+      {isLoading && <Typography variant="caption" component="p" sx={{ color: 'text.secondary', pl: 2, pr: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>Loading…</Typography>}
+      {!isLoading && !contact && <Typography variant="caption" component="p" sx={{ color: 'text.secondary', pl: 2, pr: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>Contact not found (or no access).</Typography>}
       {contact && <BirthdayBody contact={contact} year={year} />}
     </DetailDrawer>
   );
@@ -38,13 +39,13 @@ function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | n
   const verb = contact.deceased ? 'Would have turned' : 'Turning';
 
   return (
-    <div className="drawer-pad">
-      <div className="drawer-title-row">
-        <span className="kind-icon" title="Birthday">
+    <Box sx={{ px: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box component="span" title="Birthday" sx={{ fontSize: 22 }}>
           🎂
-        </span>
+        </Box>
         <Typography component="h2" sx={{ mb: 1, color: 'text.secondary' }}>{contact.displayName}</Typography>
-      </div>
+      </Box>
 
       <DrawerSection title="Birthday">
         {b ? <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>{fmtPartialDate(b)}</Typography> : <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Unknown.</Typography>}
@@ -58,6 +59,6 @@ function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | n
       <Button variant="text" component={Link} to={`/contacts/${contact.id}`}>
         View contact →
       </Button>
-    </div>
+    </Box>
   );
 }

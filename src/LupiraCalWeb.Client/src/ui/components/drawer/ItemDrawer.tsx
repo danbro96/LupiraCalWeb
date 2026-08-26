@@ -4,6 +4,7 @@ import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { useDeleteItem, useGetItem, useUpdateItem } from '../../../data/api/lupiraCalApi';
 import {
   AvailabilityStatus,
@@ -37,8 +38,8 @@ export function ItemDrawer({ itemId, onClose }: { itemId: string; onClose: () =>
 
   return (
     <DetailDrawer onClose={onClose}>
-      {isLoading && <p className="meta drawer-pad">Loading…</p>}
-      {!isLoading && !item && <p className="meta drawer-pad">Item not found (or no access).</p>}
+      {isLoading && <Typography variant="caption" component="p" sx={{ color: 'text.secondary', pl: 2, pr: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>Loading…</Typography>}
+      {!isLoading && !item && <Typography variant="caption" component="p" sx={{ color: 'text.secondary', pl: 2, pr: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>Item not found (or no access).</Typography>}
       {item && <DrawerBody key={item.etag} item={item} onClose={onClose} />}
     </DetailDrawer>
   );
@@ -66,12 +67,12 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
   const [newTag, setNewTag] = useState('');
 
   return (
-    <div className="drawer-pad">
-      <div className="drawer-title-row">
+    <Box sx={{ px: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {item.category && item.category !== 'General' && (
-          <span className="kind-icon" title={item.category}>
+          <Box component="span" title={item.category} sx={{ fontSize: 22 }}>
             {ITEM_CATEGORY_ICONS[item.category] ?? ''}
-          </span>
+          </Box>
         )}
         <TextField
           variant="standard"
@@ -84,7 +85,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
           onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
         />
         <CompletenessBadge score={item.completeness} />
-      </div>
+      </Box>
 
       <WrapRow>
         <TextField
@@ -228,14 +229,14 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <RelationsPanel itemId={item.id} />
       <MetadataPanel itemId={item.id} metadata={item.metadata} />
 
-      <div className="drawer-footer">
+      <Box sx={{ mt: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="caption" sx={{ color: 'text.secondary' }} title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
           {item.category ?? 'General'} item
         </Typography>
         <Button variant="outlined" color="error" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>
           Delete item
         </Button>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

@@ -1,6 +1,7 @@
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import MuiLink from '@mui/material/Link';
+import Box from '@mui/material/Box';
 import { Link, useLocation } from 'react-router-dom';
 import { useGetContactCircles } from '../../../data/api-contact/lupiraContactApi';
 import type { CircleKind } from '../../../data/api-contact/models';
@@ -28,12 +29,12 @@ export function ContactCircles({ focusId }: { focusId: string }) {
         <div key={c.kind}>
           <Typography variant="overline" component="p" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>{CIRCLE_LABEL[c.kind]}</Typography>
           {c.members.map((m) => (
-            <div key={m.contactId} className="membership-row">
+            <Box key={m.contactId} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
               {m.kind && <Chip variant="outlined" label={m.kind} />}
               <MuiLink component={Link} sx={{ flex: 1 }} to={{ pathname: `/contacts/${m.contactId}`, search: location.search }}>
                 {m.displayName}
               </MuiLink>
-            </div>
+            </Box>
           ))}
         </div>
       ))}

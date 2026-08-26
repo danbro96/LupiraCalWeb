@@ -16,6 +16,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { classifyOrphan, defaultPruneSelection, type OrphanClass } from '@lupira/cal-domain/placeCuration';
 import { useUpdatePlace } from '../../data/api-geo/lupiraGeoApi';
 import { PlaceSource, type OrphanCandidateDto, type PlaceDto } from '../../data/api-geo/models';
@@ -388,7 +389,14 @@ function HistoryDrawer({ placeId, name, onClose }: { placeId: string; name: stri
 
   return (
     <Drawer anchor="right" open onClose={onClose}>
-      <div className="drawer-pad" style={{ width: 360, maxWidth: '90vw' }}>
+      <Box
+        sx={{
+          width: 360,
+          maxWidth: '90vw',
+          px: 2,
+          pb: 'calc(24px + env(safe-area-inset-bottom))',
+        }}
+      >
         <h3>History — {name}</h3>
         {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
         {error != null &&
@@ -409,7 +417,7 @@ function HistoryDrawer({ placeId, name, onClose }: { placeId: string; name: stri
             {e.actorPrincipalId && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">by {e.actorPrincipalId}</Typography>}
           </DrawerSection>
         ))}
-      </div>
+      </Box>
     </Drawer>
   );
 }

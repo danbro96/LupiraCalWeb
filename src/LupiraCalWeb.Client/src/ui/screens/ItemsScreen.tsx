@@ -298,7 +298,7 @@ function ItemRow({
           {open ? '▾' : '▸'}
         </button>
       )}
-      <span className="kind-icon">{(o.category && ITEM_CATEGORY_ICONS[o.category]) || '📅'}</span>
+      <Box component="span" sx={{ fontSize: 22 }}>{(o.category && ITEM_CATEGORY_ICONS[o.category]) || '📅'}</Box>
       <span className="location-name">{o.title || '(untitled)'}</span>
       {!indent && o.parentItemId && !drilled && (
         <button className="items-parent-chip" onClick={(e) => stop(e, () => onDrill?.(o.parentItemId!))}>

@@ -37,7 +37,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
       {memberships.map((m) => {
         const cal = calendars.find((c) => c.id === m.calendarId);
         return (
-          <div key={m.calendarId} className="membership-row">
+          <Box key={m.calendarId} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
             <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: cal ? calendarColor(cal) : 'var(--mui-palette-border)' }} />
             <span className="membership-name">{cal ? calendarLabel(cal) : m.calendarId.slice(0, 8)}</span>
             {m.status === 'Proposed' ? (
@@ -53,7 +53,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          </div>
+          </Box>
         );
       })}
       <WrapRow>

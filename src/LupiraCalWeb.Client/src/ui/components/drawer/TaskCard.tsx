@@ -1,5 +1,6 @@
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { useGetListsListIdItemsItemId } from '../../../data/api-tasks/lupiraTasksApi';
 import type { ItemResponse } from '../../../data/api-tasks/models';
 import { fmtDate, fmtTime } from '@lupira/cal-domain/time';
@@ -13,8 +14,8 @@ export function TaskCard({ listId, itemId, onClose }: { listId: string; itemId: 
 
   return (
     <DetailDrawer onClose={onClose}>
-      {isLoading && <p className="meta drawer-pad">Loading…</p>}
-      {!isLoading && !task && <p className="meta drawer-pad">Task not found (or no access).</p>}
+      {isLoading && <Typography variant="caption" component="p" sx={{ color: 'text.secondary', pl: 2, pr: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>Loading…</Typography>}
+      {!isLoading && !task && <Typography variant="caption" component="p" sx={{ color: 'text.secondary', pl: 2, pr: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>Task not found (or no access).</Typography>}
       {task && <TaskBody task={task} />}
     </DetailDrawer>
   );
@@ -25,13 +26,13 @@ function TaskBody({ task }: { task: ItemResponse }) {
   const overdue = due != null && due < new Date() && !task.completed;
 
   return (
-    <div className="drawer-pad">
-      <div className="drawer-title-row">
-        <span className="kind-icon" title="Task">
+    <Box sx={{ px: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box component="span" title="Task" sx={{ fontSize: 22 }}>
           ⏰
-        </span>
+        </Box>
         <Typography component="h2" sx={{ mb: 1, color: 'text.secondary' }}>{task.title}</Typography>
-      </div>
+      </Box>
 
       <DrawerSection title="Due">
         {due ? (
@@ -67,6 +68,6 @@ function TaskBody({ task }: { task: ItemResponse }) {
       <Button variant="text" href={`https://tasks.lupira.com/lists/${task.listId}`} target="_blank" rel="noreferrer">
         Open list on the web →
       </Button>
-    </div>
+    </Box>
   );
 }

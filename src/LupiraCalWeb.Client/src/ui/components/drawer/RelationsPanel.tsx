@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { useCreateItemRelation, useListItemRelations } from '../../../data/api/lupiraCalApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { WrapRow } from '../WrapRow';
@@ -18,12 +19,12 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
   return (
     <DrawerSection title="Relations">
       {(relations ?? []).map((r) => (
-        <div key={r.id} className="relation-row">
+        <Box key={r.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
           <Chip variant="outlined" label={r.relationType} />
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             {r.toKind}: <code>{r.toRef}</code>
           </Typography>
-        </div>
+        </Box>
       ))}
       <WrapRow
         component="form"

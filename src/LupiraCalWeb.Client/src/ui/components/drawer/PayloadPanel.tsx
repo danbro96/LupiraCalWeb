@@ -8,6 +8,8 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 import {
   useClearItemAction,
   useClearItemPrompt,
@@ -48,14 +50,14 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
   return (
     <DrawerSection title="⚡ Payload">
       {item.prompt && editing !== 'prompt' && (
-        <div className="payload-card">
-          <div className="payload-head">
+        <Paper variant="outlined" sx={{ p: '8px 12px', mb: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Chip variant="outlined" label="LLM prompt" />
             <Chip variant="outlined" label={item.prompt.intent} />
             <Chip variant="outlined" label={`→ ${item.prompt.output}`} />
             {!item.prompt.enabled && <Chip variant="outlined" label="disabled" />}
-          </div>
-          <p className="payload-instruction">{item.prompt.instruction}</p>
+          </Box>
+          <Typography component="p" sx={{ my: 1 }}>{item.prompt.instruction}</Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
             Fires {describeFire(item.prompt.fire.kind, item.prompt.fire.offsetMinutes, item.prompt.fire.allDayAt)}
             {item.prompt.tier ? ` · ${item.prompt.tier} model` : ''} · on miss: {item.prompt.onMiss}
@@ -65,16 +67,16 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             <Chip variant="outlined" label="Edit" onClick={() => setEditing('prompt')} />
             <Chip variant="outlined" color="error" label="Remove" onClick={() => clearPrompt.mutate({ id: item.id })} />
           </WrapRow>
-        </div>
+        </Paper>
       )}
       {item.action && editing !== 'action' && (
-        <div className="payload-card">
-          <div className="payload-head">
+        <Paper variant="outlined" sx={{ p: '8px 12px', mb: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Chip variant="outlined" label="Action" />
             <Chip variant="outlined" label={item.action.kind} />
             {!item.action.enabled && <Chip variant="outlined" label="disabled" />}
-          </div>
-          <pre className="json-view">{prettyJson(item.action.paramsJson)}</pre>
+          </Box>
+          <Box component="pre" sx={{ bgcolor: 'background.paper', borderRadius: 1, p: '8px 12px', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 12, overflowX: 'auto', maxHeight: 240 }}>{prettyJson(item.action.paramsJson)}</Box>
           <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
             Fires {describeFire(item.action.fire.kind, item.action.fire.offsetMinutes, item.action.fire.allDayAt)}
           </Typography>
@@ -82,7 +84,7 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             <Chip variant="outlined" label="Edit" onClick={() => setEditing('action')} />
             <Chip variant="outlined" color="error" label="Remove" onClick={() => clearAction.mutate({ id: item.id })} />
           </WrapRow>
-        </div>
+        </Paper>
       )}
       {!item.prompt && !item.action && editing === null && (
         <WrapRow>
@@ -190,7 +192,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
   });
 
   return (
-    <form className="payload-form" onSubmit={submit}>
+    <Paper component="form" onSubmit={submit} variant="outlined" sx={{ p: '8px 12px', borderStyle: 'dashed' }}>
       <WrapRow>
         <Controller
           name="intent"
@@ -288,7 +290,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           Cancel
         </Button>
       </WrapRow>
-    </form>
+    </Paper>
   );
 }
 
@@ -335,7 +337,7 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
   });
 
   return (
-    <form className="payload-form" onSubmit={submit}>
+    <Paper component="form" onSubmit={submit} variant="outlined" sx={{ p: '8px 12px', borderStyle: 'dashed' }}>
       <WrapRow>
         <Controller
           name="kind"
@@ -394,6 +396,6 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           Cancel
         </Button>
       </WrapRow>
-    </form>
+    </Paper>
   );
 }

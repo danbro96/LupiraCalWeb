@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -98,7 +99,17 @@ export function ContactDetailPane() {
         <ContactEditForm contact={contact} onDone={() => setEditing(false)} />
       ) : (
         <>
-          <dl className="detail-grid">
+          <Box
+      component="dl"
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+        gap: '8px 16px',
+        m: 0,
+        '& dt': { fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'text.subtle' },
+        '& dd': { m: 0, overflowWrap: 'anywhere' },
+      }}
+    >
             {contact.birthday && (
               <div>
                 <dt>Birthday</dt>
@@ -146,7 +157,7 @@ export function ContactDetailPane() {
                 </dd>
               </div>
             ))}
-          </dl>
+          </Box>
 
           {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).length > 0 && (
             <WrapRow>
@@ -159,12 +170,12 @@ export function ContactDetailPane() {
           {contact.emergencyContactIds.length > 0 && (
             <DrawerSection title="Emergency contacts">
               {contact.emergencyContactIds.map((cid, i) => (
-                <div key={cid} className="membership-row">
+                <Box key={cid} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
                   <Chip variant="outlined" label={i + 1} />
                   <MuiLink component={Link} sx={{ flex: 1 }} to={link(cid)}>
                     {nameOf(cid)}
                   </MuiLink>
-                </div>
+                </Box>
               ))}
             </DrawerSection>
           )}
@@ -173,7 +184,7 @@ export function ContactDetailPane() {
 
       <DrawerSection title="Groups">
         {memberOf.map((g) => (
-          <div key={g.id} className="membership-row">
+          <Box key={g.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
             <Chip variant="outlined" label={g.kind === 'Organization' ? '🏢' : '👥'} />
             <MuiLink component={Link} sx={{ flex: 1 }} to={{ pathname: `/contacts/groups/${g.id}`, search: groupSearch }}>
               {g.name}
@@ -185,7 +196,7 @@ export function ContactDetailPane() {
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          </div>
+          </Box>
         ))}
         <WrapRow>
           <TextField select value={groupId} onChange={(e) => setGroupId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>

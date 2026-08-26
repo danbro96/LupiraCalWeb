@@ -1,4 +1,5 @@
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import type { ItemDetails } from '../../../data/api/models';
 import { fmtDateTime } from '@lupira/cal-domain/time';
 import { DrawerSection } from '../DrawerSection';
@@ -35,14 +36,24 @@ export function KindDetailsCard({ details }: { details?: ItemDetails | null }) {
 
   return (
     <DrawerSection title="Details">
-      <dl className="detail-grid">
+      <Box
+      component="dl"
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+        gap: '8px 16px',
+        m: 0,
+        '& dt': { fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'text.subtle' },
+        '& dd': { m: 0, overflowWrap: 'anywhere' },
+      }}
+    >
         {visible.map(([label, value]) => (
           <div key={label}>
             <dt>{label}</dt>
             <dd>{value}</dd>
           </div>
         ))}
-      </dl>
+      </Box>
       {details.booking?.url && (
         <Button variant="text" href={details.booking.url} target="_blank" rel="noreferrer">
           Booking ↗

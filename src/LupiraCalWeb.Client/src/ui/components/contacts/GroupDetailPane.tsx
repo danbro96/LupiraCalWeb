@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import MuiLink from '@mui/material/Link';
+import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
@@ -73,7 +74,7 @@ export function GroupDetailPane() {
 
       <DrawerSection title="Members">
         {members.map((c) => (
-          <div key={c.id} className="membership-row">
+          <Box key={c.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
             <Avatar sx={{ width: 30, height: 30, fontSize: 12, fontWeight: 700, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
               {(c.displayName[0] ?? '?').toUpperCase()}
             </Avatar>
@@ -87,7 +88,7 @@ export function GroupDetailPane() {
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          </div>
+          </Box>
         ))}
         {members.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No members yet.</Typography>}
         <WrapRow>
@@ -112,11 +113,11 @@ export function GroupDetailPane() {
         </WrapRow>
       </DrawerSection>
 
-      <div className="drawer-footer">
+      <Box sx={{ mt: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Button variant="outlined" color="error" onClick={() => del.mutate({ groupId: group.id })} disabled={del.isPending}>
           Delete {group.kind === 'Organization' ? 'organization' : 'group'}
         </Button>
-      </div>
+      </Box>
     </DetailPane>
   );
 }

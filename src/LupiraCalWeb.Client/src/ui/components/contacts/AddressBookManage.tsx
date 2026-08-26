@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   useDeleteAddressBook,
@@ -60,7 +61,7 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
 
       <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>Shared with</Typography>
       {(owners ?? []).map((o) => (
-        <div key={o.principalId} className="membership-row">
+        <Box key={o.principalId} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
           <Chip variant="outlined" label={o.access} />
           <span className="membership-name">{o.displayName ?? o.email}</span>
           <Tooltip title="Revoke access">
@@ -71,7 +72,7 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
               <CloseIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-        </div>
+        </Box>
       ))}
       <form
         className="tree-add"

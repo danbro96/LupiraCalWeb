@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useMergeItemMetadata } from '../../../data/api/lupiraCalApi';
@@ -39,7 +40,7 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
     >
       {open && (
         <>
-          <pre className="json-view">{isEmpty ? '{}' : JSON.stringify(metadata, null, 2)}</pre>
+          <Box component="pre" sx={{ bgcolor: 'background.paper', borderRadius: 1, p: '8px 12px', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 12, overflowX: 'auto', maxHeight: 240 }}>{isEmpty ? '{}' : JSON.stringify(metadata, null, 2)}</Box>
           <TextField
             multiline
             minRows={3}
