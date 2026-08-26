@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Per-place outcome of an orphan prune: soft-deleted (or already was), skipped because something still
+ *             references it, or the id is unknown/merged.
+ */
 export type PruneStatus = typeof PruneStatus[keyof typeof PruneStatus];
 
 

@@ -9,6 +9,9 @@ import type { ActionKind } from './actionKind';
 import type { PromptFire } from './promptFire';
 import type { Ref } from './ref';
 
+/**
+ * A deterministic payload executed directly (no LLM). `ParamsJson` carries the frozen params (e.g. a SendCheckIn message).
+ */
 export interface ItemAction {
   kind: ActionKind;
   target: null | Ref;

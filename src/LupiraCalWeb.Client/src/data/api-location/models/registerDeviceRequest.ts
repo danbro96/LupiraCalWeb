@@ -7,6 +7,9 @@
  */
 import type { DeviceKind } from './deviceKind';
 
+/**
+ * Register a device that will feed location telemetry.
+ */
 export interface RegisterDeviceRequest {
   kind: DeviceKind;
   label: string;

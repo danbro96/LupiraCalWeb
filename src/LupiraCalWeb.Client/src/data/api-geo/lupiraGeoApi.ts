@@ -117,7 +117,7 @@ export const getPingQueryKey = () => {
     }
 
 
-export const getPingQueryOptions = <TData = Awaited<ReturnType<typeof ping>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getPingQueryOptions = <TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -136,10 +136,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type PingQueryResult = NonNullable<Awaited<ReturnType<typeof ping>>>
-export type PingQueryError = void
+export type PingQueryError = ProblemDetails
 
 
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof ping>>,
@@ -149,7 +149,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof ping>>,
@@ -159,7 +159,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -167,7 +167,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
  * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
  */
 
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -185,7 +185,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
 
 
 
-export const getGetMeUrl = () => {
+export const getWhoAmIUrl = () => {
 
 
 
@@ -196,9 +196,9 @@ export const getGetMeUrl = () => {
 /**
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
-export const getMe = async ( options?: Parameters<typeof customFetchGeo>[1]): Promise<MeDto> => {
+export const whoAmI = async ( options?: Parameters<typeof customFetchGeo>[1]): Promise<MeDto> => {
 
-  return customFetchGeo<MeDto>(getGetMeUrl(),
+  return customFetchGeo<MeDto>(getWhoAmIUrl(),
   {
     ...options,
     method: 'GET'
@@ -211,69 +211,69 @@ export const getMe = async ( options?: Parameters<typeof customFetchGeo>[1]): Pr
 
 
 
-export const getGetMeQueryKey = () => {
+export const getWhoAmIQueryKey = () => {
     return [
     `/me`
     ] as const;
     }
 
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getWhoAmIQueryOptions = <TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetMeQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getWhoAmIQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMe>>> = ({ signal }) => getMe({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof whoAmI>>> = ({ signal }) => whoAmI({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
-export type GetMeQueryError = void
+export type WhoAmIQueryResult = NonNullable<Awaited<ReturnType<typeof whoAmI>>>
+export type WhoAmIQueryError = ProblemDetails
 
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
+export function useWhoAmI<TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMe>>,
+          Awaited<ReturnType<typeof whoAmI>>,
           TError,
-          Awaited<ReturnType<typeof getMe>>
+          Awaited<ReturnType<typeof whoAmI>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
+export function useWhoAmI<TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMe>>,
+          Awaited<ReturnType<typeof whoAmI>>,
           TError,
-          Awaited<ReturnType<typeof getMe>>
+          Awaited<ReturnType<typeof whoAmI>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export function useWhoAmI<TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export function useWhoAmI<TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetMeQueryOptions(options)
+  const queryOptions = getWhoAmIQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -334,7 +334,7 @@ export const getSearchPlacesQueryKey = (params?: SearchPlacesParams,) => {
     }
 
 
-export const getSearchPlacesQueryOptions = <TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails | void>(params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getSearchPlacesQueryOptions = <TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -353,10 +353,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SearchPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof searchPlaces>>>
-export type SearchPlacesQueryError = ProblemDetails | void
+export type SearchPlacesQueryError = ProblemDetails
 
 
-export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails | void>(
+export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(
  params: undefined |  SearchPlacesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof searchPlaces>>,
@@ -366,7 +366,7 @@ export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails | void>(
+export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(
  params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof searchPlaces>>,
@@ -376,7 +376,7 @@ export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails | void>(
+export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(
  params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -384,7 +384,7 @@ export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>
  * @summary Search the gazetteer: text (q, trigram), category/kind, containment (withinAreaId), curation state (hasCoordinates/source/verified — hasCoordinates=false lists unlocated stubs), and spatial — proximity (nearLat+nearLon[+radiusM], returns distanceM) or viewport (bbox=minLon&bbox=minLat&bbox=maxLon&bbox=maxLat).
  */
 
-export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails | void>(
+export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(
  params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -434,7 +434,7 @@ return customFetchGeo<PlaceDto>(getCreatePlaceUrl(),
 
 
 
-export const getCreatePlaceMutationOptions = <TError = ProblemDetails | void,
+export const getCreatePlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlace>>, TError,{data: CreatePlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createPlace>>, TError,{data: CreatePlaceRequest}, TContext> => {
 
@@ -463,12 +463,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreatePlaceMutationResult = NonNullable<Awaited<ReturnType<typeof createPlace>>>
     export type CreatePlaceMutationBody = CreatePlaceRequest
-    export type CreatePlaceMutationError = ProblemDetails | void
+    export type CreatePlaceMutationError = ProblemDetails
 
     /**
  * @summary Create a user place directly (name + optional coordinates/category).
  */
-export const useCreatePlace = <TError = ProblemDetails | void,
+export const useCreatePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlace>>, TError,{data: CreatePlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createPlace>>,
@@ -519,7 +519,7 @@ export const getSuggestPlacesQueryKey = (params?: SuggestPlacesParams,) => {
     }
 
 
-export const getSuggestPlacesQueryOptions = <TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails | void>(params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getSuggestPlacesQueryOptions = <TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -538,10 +538,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SuggestPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof suggestPlaces>>>
-export type SuggestPlacesQueryError = ProblemDetails | void
+export type SuggestPlacesQueryError = ProblemDetails
 
 
-export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails | void>(
+export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(
  params: SuggestPlacesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof suggestPlaces>>,
@@ -551,7 +551,7 @@ export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails | void>(
+export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(
  params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof suggestPlaces>>,
@@ -561,7 +561,7 @@ export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails | void>(
+export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(
  params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -569,7 +569,7 @@ export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces
  * @summary Typeahead: trigram-ranked suggestions over places (names + aliases) and AdminArea localities, discriminated by type.
  */
 
-export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails | void>(
+export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(
  params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -623,7 +623,7 @@ export const getGetPlaceByExternalIdQueryKey = (scheme: ExternalScheme,
     }
 
 
-export const getGetPlaceByExternalIdQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails | void>(scheme: ExternalScheme,
+export const getGetPlaceByExternalIdQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(scheme: ExternalScheme,
     value: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
@@ -643,10 +643,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetPlaceByExternalIdQueryResult = NonNullable<Awaited<ReturnType<typeof getPlaceByExternalId>>>
-export type GetPlaceByExternalIdQueryError = ProblemDetails | void
+export type GetPlaceByExternalIdQueryError = ProblemDetails
 
 
-export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails | void>(
+export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(
  scheme: ExternalScheme,
     value: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
@@ -657,7 +657,7 @@ export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPla
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails | void>(
+export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(
  scheme: ExternalScheme,
     value: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
@@ -668,7 +668,7 @@ export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPla
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails | void>(
+export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(
  scheme: ExternalScheme,
     value: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
@@ -677,7 +677,7 @@ export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPla
  * @summary Look a place up by an external gazetteer key, e.g. /places/by-external/Osm/node/123.
  */
 
-export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails | void>(
+export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(
  scheme: ExternalScheme,
     value: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
@@ -729,7 +729,7 @@ export const getGetPlaceHistoryQueryKey = (id: string,) => {
     }
 
 
-export const getGetPlaceHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getGetPlaceHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -748,10 +748,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetPlaceHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getPlaceHistory>>>
-export type GetPlaceHistoryQueryError = void
+export type GetPlaceHistoryQueryError = ProblemDetails
 
 
-export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPlaceHistory>>,
@@ -761,7 +761,7 @@ export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHis
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPlaceHistory>>,
@@ -771,7 +771,7 @@ export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHis
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -779,7 +779,7 @@ export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHis
  * @summary The append-only curation log for a place, oldest first. Readable for tombstoned/merged places; 404 only for unknown ids.
  */
 
-export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = void>(
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -830,7 +830,7 @@ export const getGetPlaceQueryKey = (id: string,) => {
     }
 
 
-export const getGetPlaceQueryOptions = <TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getGetPlaceQueryOptions = <TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -849,10 +849,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetPlaceQueryResult = NonNullable<Awaited<ReturnType<typeof getPlace>>>
-export type GetPlaceQueryError = void
+export type GetPlaceQueryError = ProblemDetails
 
 
-export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(
+export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPlace>>,
@@ -862,7 +862,7 @@ export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(
+export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPlace>>,
@@ -872,7 +872,7 @@ export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(
+export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -880,7 +880,7 @@ export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError
  * @summary A single place with its aliases, external ids, and containment chain (outermost→innermost). Follows merge redirects.
  */
 
-export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = void>(
+export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -931,7 +931,7 @@ return customFetchGeo<PlaceDto>(getUpdatePlaceUrl(id),
 
 
 
-export const getUpdatePlaceMutationOptions = <TError = ProblemDetails | void,
+export const getUpdatePlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePlace>>, TError,{id: string;data: UpdatePlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updatePlace>>, TError,{id: string;data: UpdatePlaceRequest}, TContext> => {
 
@@ -960,12 +960,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdatePlaceMutationResult = NonNullable<Awaited<ReturnType<typeof updatePlace>>>
     export type UpdatePlaceMutationBody = UpdatePlaceRequest
-    export type UpdatePlaceMutationError = ProblemDetails | void
+    export type UpdatePlaceMutationError = ProblemDetails
 
     /**
  * @summary Curate a place: rename, recategorize, or verify.
  */
-export const useUpdatePlace = <TError = ProblemDetails | void,
+export const useUpdatePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePlace>>, TError,{id: string;data: UpdatePlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updatePlace>>,
@@ -1002,7 +1002,7 @@ export const deletePlace = async (id: string, options?: Parameters<typeof custom
 
 
 
-export const getDeletePlaceMutationOptions = <TError = void,
+export const getDeletePlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deletePlace>>, TError,{id: string}, TContext> => {
 
@@ -1031,12 +1031,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeletePlaceMutationResult = NonNullable<Awaited<ReturnType<typeof deletePlace>>>
 
-    export type DeletePlaceMutationError = void
+    export type DeletePlaceMutationError = ProblemDetails
 
     /**
  * @summary Soft-delete a bad entry (e.g. a wrong geocode) with no valid survivor to merge into: tombstoned, so reads 404 and search/resolve exclude it, but the row stays for the audit trail. Idempotent.
  */
-export const useDeletePlace = <TError = void,
+export const useDeletePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deletePlace>>,
@@ -1080,7 +1080,7 @@ return customFetchGeo<PlaceDto>(getAddPlaceAliasUrl(id),
 
 
 
-export const getAddPlaceAliasMutationOptions = <TError = ProblemDetails | void,
+export const getAddPlaceAliasMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addPlaceAlias>>, TError,{id: string;data: AddAliasRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof addPlaceAlias>>, TError,{id: string;data: AddAliasRequest}, TContext> => {
 
@@ -1109,12 +1109,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AddPlaceAliasMutationResult = NonNullable<Awaited<ReturnType<typeof addPlaceAlias>>>
     export type AddPlaceAliasMutationBody = AddAliasRequest
-    export type AddPlaceAliasMutationError = ProblemDetails | void
+    export type AddPlaceAliasMutationError = ProblemDetails
 
     /**
  * @summary Add an alternate name (optional language tag) to a place; resolve and suggest match aliases.
  */
-export const useAddPlaceAlias = <TError = ProblemDetails | void,
+export const useAddPlaceAlias = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addPlaceAlias>>, TError,{id: string;data: AddAliasRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addPlaceAlias>>,
@@ -1153,7 +1153,7 @@ export const removePlaceAlias = async (id: string,
 
 
 
-export const getRemovePlaceAliasMutationOptions = <TError = void,
+export const getRemovePlaceAliasMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePlaceAlias>>, TError,{id: string;aliasId: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removePlaceAlias>>, TError,{id: string;aliasId: string}, TContext> => {
 
@@ -1182,12 +1182,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RemovePlaceAliasMutationResult = NonNullable<Awaited<ReturnType<typeof removePlaceAlias>>>
 
-    export type RemovePlaceAliasMutationError = void
+    export type RemovePlaceAliasMutationError = ProblemDetails
 
     /**
  * @summary Remove an alias from a place.
  */
-export const useRemovePlaceAlias = <TError = void,
+export const useRemovePlaceAlias = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePlaceAlias>>, TError,{id: string;aliasId: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removePlaceAlias>>,
@@ -1231,7 +1231,7 @@ return customFetchGeo<PlaceDto>(getAddPlaceExternalIdUrl(id),
 
 
 
-export const getAddPlaceExternalIdMutationOptions = <TError = ProblemDetails | void,
+export const getAddPlaceExternalIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addPlaceExternalId>>, TError,{id: string;data: AddExternalIdRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof addPlaceExternalId>>, TError,{id: string;data: AddExternalIdRequest}, TContext> => {
 
@@ -1260,12 +1260,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AddPlaceExternalIdMutationResult = NonNullable<Awaited<ReturnType<typeof addPlaceExternalId>>>
     export type AddPlaceExternalIdMutationBody = AddExternalIdRequest
-    export type AddPlaceExternalIdMutationError = ProblemDetails | void
+    export type AddPlaceExternalIdMutationError = ProblemDetails
 
     /**
  * @summary Attach an external gazetteer id (scheme+value) to a place; multiple ids per scheme are allowed. 409 if the id already belongs to another place (merge those instead) or is already on this place.
  */
-export const useAddPlaceExternalId = <TError = ProblemDetails | void,
+export const useAddPlaceExternalId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addPlaceExternalId>>, TError,{id: string;data: AddExternalIdRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addPlaceExternalId>>,
@@ -1306,7 +1306,7 @@ export const removePlaceExternalId = async (id: string,
 
 
 
-export const getRemovePlaceExternalIdMutationOptions = <TError = ProblemDetails | void,
+export const getRemovePlaceExternalIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePlaceExternalId>>, TError,{id: string;scheme: ExternalScheme;value: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removePlaceExternalId>>, TError,{id: string;scheme: ExternalScheme;value: string}, TContext> => {
 
@@ -1335,12 +1335,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RemovePlaceExternalIdMutationResult = NonNullable<Awaited<ReturnType<typeof removePlaceExternalId>>>
 
-    export type RemovePlaceExternalIdMutationError = ProblemDetails | void
+    export type RemovePlaceExternalIdMutationError = ProblemDetails
 
     /**
  * @summary Detach an external id (scheme + full value, e.g. /external-ids/Osm/way/6601741) from a place.
  */
-export const useRemovePlaceExternalId = <TError = ProblemDetails | void,
+export const useRemovePlaceExternalId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePlaceExternalId>>, TError,{id: string;scheme: ExternalScheme;value: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removePlaceExternalId>>,
@@ -1384,7 +1384,7 @@ return customFetchGeo<PlaceDto>(getMergePlaceUrl(id),
 
 
 
-export const getMergePlaceMutationOptions = <TError = ProblemDetails | void,
+export const getMergePlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergePlace>>, TError,{id: string;data: MergePlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof mergePlace>>, TError,{id: string;data: MergePlaceRequest}, TContext> => {
 
@@ -1413,12 +1413,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type MergePlaceMutationResult = NonNullable<Awaited<ReturnType<typeof mergePlace>>>
     export type MergePlaceMutationBody = MergePlaceRequest
-    export type MergePlaceMutationError = ProblemDetails | void
+    export type MergePlaceMutationError = ProblemDetails
 
     /**
  * @summary Merge a duplicate into the survivor (intoPlaceId): names become aliases, external ids and saved places move over, and the duplicate id keeps resolving via a tombstone redirect.
  */
-export const useMergePlace = <TError = ProblemDetails | void,
+export const useMergePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergePlace>>, TError,{id: string;data: MergePlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof mergePlace>>,
@@ -1464,7 +1464,7 @@ export const regeocodePlace = async (id: string,
 
 
 
-export const getRegeocodePlaceMutationOptions = <TError = ProblemDetails | void,
+export const getRegeocodePlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string;params?: RegeocodePlaceParams}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string;params?: RegeocodePlaceParams}, TContext> => {
 
@@ -1493,12 +1493,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RegeocodePlaceMutationResult = NonNullable<Awaited<ReturnType<typeof regeocodePlace>>>
 
-    export type RegeocodePlaceMutationError = ProblemDetails | void
+    export type RegeocodePlaceMutationError = ProblemDetails
 
     /**
  * @summary Re-geocode a place from its address/name and attach coordinates, containment, and OSM id — heals a coordinate-less stub or refreshes a stale fix. force=true bypasses and overwrites the frozen geocode cache (heals a frozen empty answer). 400 on a no-hit or transient geocoder outage; the place is left unchanged.
  */
-export const useRegeocodePlace = <TError = ProblemDetails | void,
+export const useRegeocodePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string;params?: RegeocodePlaceParams}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof regeocodePlace>>,
@@ -1541,7 +1541,7 @@ return customFetchGeo<PlaceLookupItemDto[]>(getLookupPlacesUrl(),
 
 
 
-export const getLookupPlacesMutationOptions = <TError = ProblemDetails | void,
+export const getLookupPlacesMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupPlaces>>, TError,{data: LookupPlacesRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof lookupPlaces>>, TError,{data: LookupPlacesRequest}, TContext> => {
 
@@ -1570,12 +1570,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type LookupPlacesMutationResult = NonNullable<Awaited<ReturnType<typeof lookupPlaces>>>
     export type LookupPlacesMutationBody = LookupPlacesRequest
-    export type LookupPlacesMutationError = ProblemDetails | void
+    export type LookupPlacesMutationError = ProblemDetails
 
     /**
  * @summary Bulk get-by-ids (max 200) — hydrate stored place ids into coordinates in one call. Responses align index-for-index; a null place means unknown or deleted, a merged id returns the survivor. Containment is omitted (use GET /places/{id} for detail).
  */
-export const useLookupPlaces = <TError = ProblemDetails | void,
+export const useLookupPlaces = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupPlaces>>, TError,{data: LookupPlacesRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof lookupPlaces>>,
@@ -1618,7 +1618,7 @@ return customFetchGeo<ResolvePlaceResponse>(getResolvePlaceUrl(),
 
 
 
-export const getResolvePlaceMutationOptions = <TError = ProblemDetails | void,
+export const getResolvePlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolvePlace>>, TError,{data: ResolvePlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof resolvePlace>>, TError,{data: ResolvePlaceRequest}, TContext> => {
 
@@ -1647,12 +1647,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ResolvePlaceMutationResult = NonNullable<Awaited<ReturnType<typeof resolvePlace>>>
     export type ResolvePlaceMutationBody = ResolvePlaceRequest
-    export type ResolvePlaceMutationError = ProblemDetails | void
+    export type ResolvePlaceMutationError = ProblemDetails
 
     /**
  * @summary Resolve free-text to a place id — match an existing entry, geocode, or provisionally create. Used by upstream services (e.g. LupiraCalApi) to anchor a location string.
  */
-export const useResolvePlace = <TError = ProblemDetails | void,
+export const useResolvePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolvePlace>>, TError,{data: ResolvePlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resolvePlace>>,
@@ -1695,7 +1695,7 @@ return customFetchGeo<ResolvePlaceResponse[]>(getResolvePlacesBatchUrl(),
 
 
 
-export const getResolvePlacesBatchMutationOptions = <TError = ProblemDetails | void,
+export const getResolvePlacesBatchMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolvePlacesBatch>>, TError,{data: ResolvePlacesBatchRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof resolvePlacesBatch>>, TError,{data: ResolvePlacesBatchRequest}, TContext> => {
 
@@ -1724,12 +1724,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ResolvePlacesBatchMutationResult = NonNullable<Awaited<ReturnType<typeof resolvePlacesBatch>>>
     export type ResolvePlacesBatchMutationBody = ResolvePlacesBatchRequest
-    export type ResolvePlacesBatchMutationError = ProblemDetails | void
+    export type ResolvePlacesBatchMutationError = ProblemDetails
 
     /**
  * @summary Bulk resolve (max 50 texts); responses align index-for-index with the input.
  */
-export const useResolvePlacesBatch = <TError = ProblemDetails | void,
+export const useResolvePlacesBatch = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolvePlacesBatch>>, TError,{data: ResolvePlacesBatchRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resolvePlacesBatch>>,
@@ -1772,7 +1772,7 @@ return customFetchGeo<ResolvePlaceResponse>(getCreatePlaceFromGeocodeUrl(),
 
 
 
-export const getCreatePlaceFromGeocodeMutationOptions = <TError = ProblemDetails | void,
+export const getCreatePlaceFromGeocodeMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlaceFromGeocode>>, TError,{data: CreatePlaceFromGeocodeRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createPlaceFromGeocode>>, TError,{data: CreatePlaceFromGeocodeRequest}, TContext> => {
 
@@ -1801,12 +1801,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreatePlaceFromGeocodeMutationResult = NonNullable<Awaited<ReturnType<typeof createPlaceFromGeocode>>>
     export type CreatePlaceFromGeocodeMutationBody = CreatePlaceFromGeocodeRequest
-    export type CreatePlaceFromGeocodeMutationError = ProblemDetails | void
+    export type CreatePlaceFromGeocodeMutationError = ProblemDetails
 
     /**
  * @summary Create/dedupe a place from one specific forward-geocode hit the user picked (query + OSM identity). Reuses the frozen geocode cache — no extra geocoder call. 400 if the hit is not among the query's geocode results.
  */
-export const useCreatePlaceFromGeocode = <TError = ProblemDetails | void,
+export const useCreatePlaceFromGeocode = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlaceFromGeocode>>, TError,{data: CreatePlaceFromGeocodeRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createPlaceFromGeocode>>,
@@ -1850,7 +1850,7 @@ export const getFindOrphanPlacesQueryKey = () => {
     }
 
 
-export const getFindOrphanPlacesQueryOptions = <TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getFindOrphanPlacesQueryOptions = <TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1869,10 +1869,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type FindOrphanPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof findOrphanPlaces>>>
-export type FindOrphanPlacesQueryError = ProblemDetails | void
+export type FindOrphanPlacesQueryError = ProblemDetails
 
 
-export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>(
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof findOrphanPlaces>>,
@@ -1882,7 +1882,7 @@ export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphan
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>(
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof findOrphanPlaces>>,
@@ -1892,7 +1892,7 @@ export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphan
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>(
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1900,7 +1900,7 @@ export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphan
  * @summary Live places nothing references — cross-checked against contact addresses, calendar items (live + deleted counted separately), and saved places. Fails 400 when a reference source is unreachable (never declares orphans on partial data).
  */
 
-export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails | void>(
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1950,7 +1950,7 @@ return customFetchGeo<PrunePlaceResultDto[]>(getPrunePlacesUrl(),
 
 
 
-export const getPrunePlacesMutationOptions = <TError = ProblemDetails | void,
+export const getPrunePlacesMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof prunePlaces>>, TError,{data: PrunePlacesRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof prunePlaces>>, TError,{data: PrunePlacesRequest}, TContext> => {
 
@@ -1979,12 +1979,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PrunePlacesMutationResult = NonNullable<Awaited<ReturnType<typeof prunePlaces>>>
     export type PrunePlacesMutationBody = PrunePlacesRequest
-    export type PrunePlacesMutationError = ProblemDetails | void
+    export type PrunePlacesMutationError = ProblemDetails
 
     /**
  * @summary Soft-delete orphan places (max 100 per call). References are re-checked per id at prune time; a place referenced since the find returns Referenced and is left alone. Places referenced only by soft-deleted calendar items are never pruned here — use DELETE /places/{id} to override.
  */
-export const usePrunePlaces = <TError = ProblemDetails | void,
+export const usePrunePlaces = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof prunePlaces>>, TError,{data: PrunePlacesRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof prunePlaces>>,
@@ -2035,7 +2035,7 @@ export const getReverseGeocodeQueryKey = (params?: ReverseGeocodeParams,) => {
     }
 
 
-export const getReverseGeocodeQueryOptions = <TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = void>(params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getReverseGeocodeQueryOptions = <TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2054,10 +2054,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ReverseGeocodeQueryResult = NonNullable<Awaited<ReturnType<typeof reverseGeocode>>>
-export type ReverseGeocodeQueryError = void
+export type ReverseGeocodeQueryError = ProblemDetails
 
 
-export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = void>(
+export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(
  params: ReverseGeocodeParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof reverseGeocode>>,
@@ -2067,7 +2067,7 @@ export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeoco
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = void>(
+export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(
  params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof reverseGeocode>>,
@@ -2077,7 +2077,7 @@ export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeoco
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = void>(
+export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(
  params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -2085,7 +2085,7 @@ export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeoco
  * @summary Coordinate → coarse label + structured address (cached; coordinates quantized to a ~100 m grid).
  */
 
-export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = void>(
+export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(
  params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -2143,7 +2143,7 @@ export const getForwardGeocodeQueryKey = (params?: ForwardGeocodeParams,) => {
     }
 
 
-export const getForwardGeocodeQueryOptions = <TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = void>(params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getForwardGeocodeQueryOptions = <TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2162,10 +2162,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ForwardGeocodeQueryResult = NonNullable<Awaited<ReturnType<typeof forwardGeocode>>>
-export type ForwardGeocodeQueryError = void
+export type ForwardGeocodeQueryError = ProblemDetails
 
 
-export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = void>(
+export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(
  params: ForwardGeocodeParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof forwardGeocode>>,
@@ -2175,7 +2175,7 @@ export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeoco
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = void>(
+export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(
  params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof forwardGeocode>>,
@@ -2185,7 +2185,7 @@ export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeoco
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = void>(
+export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(
  params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -2193,7 +2193,7 @@ export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeoco
  * @summary Text → candidate coordinates + structured address (cached).
  */
 
-export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = void>(
+export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(
  params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -2251,7 +2251,7 @@ export const getListAdminAreasQueryKey = (params?: ListAdminAreasParams,) => {
     }
 
 
-export const getListAdminAreasQueryOptions = <TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = void>(params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getListAdminAreasQueryOptions = <TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2270,10 +2270,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ListAdminAreasQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminAreas>>>
-export type ListAdminAreasQueryError = void
+export type ListAdminAreasQueryError = ProblemDetails
 
 
-export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = void>(
+export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(
  params: undefined |  ListAdminAreasParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listAdminAreas>>,
@@ -2283,7 +2283,7 @@ export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAre
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = void>(
+export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(
  params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listAdminAreas>>,
@@ -2293,7 +2293,7 @@ export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAre
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = void>(
+export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(
  params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -2301,7 +2301,7 @@ export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAre
  * @summary Browse the administrative containment tree: filter by level (Country/Region/Locality), parent (withinAreaId), or name (q).
  */
 
-export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = void>(
+export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(
  params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -2352,7 +2352,7 @@ export const getGetAdminAreaQueryKey = (id: string,) => {
     }
 
 
-export const getGetAdminAreaQueryOptions = <TData = Awaited<ReturnType<typeof getAdminArea>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getGetAdminAreaQueryOptions = <TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2371,10 +2371,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetAdminAreaQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminArea>>>
-export type GetAdminAreaQueryError = void
+export type GetAdminAreaQueryError = ProblemDetails
 
 
-export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = void>(
+export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAdminArea>>,
@@ -2384,7 +2384,7 @@ export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = void>(
+export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAdminArea>>,
@@ -2394,7 +2394,7 @@ export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = void>(
+export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -2402,7 +2402,7 @@ export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>
  * @summary A single administrative area.
  */
 
-export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = void>(
+export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -2453,7 +2453,7 @@ export const getListSavedPlacesQueryKey = () => {
     }
 
 
-export const getListSavedPlacesQueryOptions = <TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
+export const getListSavedPlacesQueryOptions = <TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2472,10 +2472,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ListSavedPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof listSavedPlaces>>>
-export type ListSavedPlacesQueryError = void
+export type ListSavedPlacesQueryError = ProblemDetails
 
 
-export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = void>(
+export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listSavedPlaces>>,
@@ -2485,7 +2485,7 @@ export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPl
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = void>(
+export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listSavedPlaces>>,
@@ -2495,7 +2495,7 @@ export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPl
       >, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = void>(
+export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -2503,7 +2503,7 @@ export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPl
  * @summary The caller's saved places / personal labels (favorites first).
  */
 
-export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = void>(
+export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -2553,7 +2553,7 @@ return customFetchGeo<SavedPlaceDto>(getCreateSavedPlaceUrl(),
 
 
 
-export const getCreateSavedPlaceMutationOptions = <TError = ProblemDetails | void,
+export const getCreateSavedPlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createSavedPlace>>, TError,{data: CreateSavedPlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createSavedPlace>>, TError,{data: CreateSavedPlaceRequest}, TContext> => {
 
@@ -2582,12 +2582,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateSavedPlaceMutationResult = NonNullable<Awaited<ReturnType<typeof createSavedPlace>>>
     export type CreateSavedPlaceMutationBody = CreateSavedPlaceRequest
-    export type CreateSavedPlaceMutationError = ProblemDetails | void
+    export type CreateSavedPlaceMutationError = ProblemDetails
 
     /**
  * @summary Save a place with a personal label (references a gazetteer place, or a raw coordinate).
  */
-export const useCreateSavedPlace = <TError = ProblemDetails | void,
+export const useCreateSavedPlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createSavedPlace>>, TError,{data: CreateSavedPlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createSavedPlace>>,
@@ -2631,7 +2631,7 @@ return customFetchGeo<SavedPlaceDto>(getUpdateSavedPlaceUrl(id),
 
 
 
-export const getUpdateSavedPlaceMutationOptions = <TError = ProblemDetails | void,
+export const getUpdateSavedPlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateSavedPlace>>, TError,{id: string;data: UpdateSavedPlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateSavedPlace>>, TError,{id: string;data: UpdateSavedPlaceRequest}, TContext> => {
 
@@ -2660,12 +2660,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateSavedPlaceMutationResult = NonNullable<Awaited<ReturnType<typeof updateSavedPlace>>>
     export type UpdateSavedPlaceMutationBody = UpdateSavedPlaceRequest
-    export type UpdateSavedPlaceMutationError = ProblemDetails | void
+    export type UpdateSavedPlaceMutationError = ProblemDetails
 
     /**
  * @summary Rename, re-icon, annotate, or (un)favorite a saved place.
  */
-export const useUpdateSavedPlace = <TError = ProblemDetails | void,
+export const useUpdateSavedPlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateSavedPlace>>, TError,{id: string;data: UpdateSavedPlaceRequest}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateSavedPlace>>,
@@ -2702,7 +2702,7 @@ export const deleteSavedPlace = async (id: string, options?: Parameters<typeof c
 
 
 
-export const getDeleteSavedPlaceMutationOptions = <TError = void,
+export const getDeleteSavedPlaceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteSavedPlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteSavedPlace>>, TError,{id: string}, TContext> => {
 
@@ -2731,12 +2731,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteSavedPlaceMutationResult = NonNullable<Awaited<ReturnType<typeof deleteSavedPlace>>>
 
-    export type DeleteSavedPlaceMutationError = void
+    export type DeleteSavedPlaceMutationError = ProblemDetails
 
     /**
  * @summary Remove a saved place.
  */
-export const useDeleteSavedPlace = <TError = void,
+export const useDeleteSavedPlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteSavedPlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchGeo>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteSavedPlace>>,

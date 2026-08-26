@@ -8,6 +8,9 @@
 import type { ContactDto } from './contactDto';
 import type { SectionGuardsDto } from './sectionGuardsDto';
 
+/**
+ * A changed contact: the full DTO plus its section guards.
+ */
 export interface SyncChangeDto {
   contact: ContactDto;
   guards: SectionGuardsDto;

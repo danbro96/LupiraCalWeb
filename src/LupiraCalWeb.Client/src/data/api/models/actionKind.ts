@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A deterministic, no-LLM action executed directly at fire time.
+ */
 export type ActionKind = typeof ActionKind[keyof typeof ActionKind];
 
 

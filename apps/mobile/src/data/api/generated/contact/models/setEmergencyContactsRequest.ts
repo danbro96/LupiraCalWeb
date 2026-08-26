@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Wholesale replacement of a contact's emergency-contact designation; order = priority, empty clears.
+ */
 export interface SetEmergencyContactsRequest {
   contactIds: string[];
 }

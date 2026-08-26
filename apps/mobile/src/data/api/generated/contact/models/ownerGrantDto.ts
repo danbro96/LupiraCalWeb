@@ -7,6 +7,9 @@
  */
 import type { Access } from './access';
 
+/**
+ * The result of granting a member access to a container: who now has what access on which container.
+ */
 export interface OwnerGrantDto {
   containerId: string;
   principalId: string;

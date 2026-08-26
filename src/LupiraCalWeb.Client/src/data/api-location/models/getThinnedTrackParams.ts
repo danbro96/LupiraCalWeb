@@ -6,7 +6,9 @@
  * OpenAPI spec version: v1
  */
 
-export type GetLocationTripsParams = {
+export type GetThinnedTrackParams = {
 from?: string;
 to?: string;
+bucketSeconds?: number;
+deviceId?: string;
 };

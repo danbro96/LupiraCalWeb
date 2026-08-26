@@ -7,6 +7,12 @@
  */
 import type { TransportMode } from './transportMode';
 
+/**
+ * One leg of a `Trip`. Mode-agnostic: `DeparturePoint`/`ArrivalPoint` generalize gate/platform/stop,
+ *             `Carrier` the airline/operator, `ServiceNumber` the flight/train/service number. `ToPlaceId`/`FromPlaceId`
+ *             are LupiraGeoApi place ids with denormalized `ToLabel`/`FromLabel`; `DriverContactId` names the driver
+ *             for a TransportMode.Car leg.
+ */
 export interface TravelLeg {
   mode: TransportMode;
   /** @nullable */

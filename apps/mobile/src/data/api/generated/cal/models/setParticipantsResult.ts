@@ -7,6 +7,10 @@
  */
 import type { ParticipationRef } from './participationRef';
 
+/**
+ * Slim result of `set_participants` — the additions and how many were already present. Deliberately not the
+ *             full item DTO (which would echo the whole, growing attendee list on every call).
+ */
 export interface SetParticipantsResult {
   itemId: string;
   added: ParticipationRef[];

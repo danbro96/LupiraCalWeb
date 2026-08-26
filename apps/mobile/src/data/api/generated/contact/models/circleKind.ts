@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * An inferred social cohort around a focus contact (computed on read, never stored).
+ */
 export type CircleKind = typeof CircleKind[keyof typeof CircleKind];
 
 

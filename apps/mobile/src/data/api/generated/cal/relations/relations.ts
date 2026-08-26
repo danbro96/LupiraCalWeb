@@ -9,6 +9,7 @@ import type {
   CalendarItemDto,
   CreateRelationRequest,
   FindRelatedItemsParams,
+  ProblemDetails,
   RelationDto
 } from '../models';
 
@@ -20,19 +21,24 @@ export type createItemRelationResponse200 = {
 }
 
 export type createItemRelationResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type createItemRelationResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type createItemRelationResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type createItemRelationResponseSuccess = (createItemRelationResponse200) & {
   headers: Headers;
 };
-export type createItemRelationResponseError = (createItemRelationResponse401 | createItemRelationResponse404) & {
+export type createItemRelationResponseError = (createItemRelationResponse401 | createItemRelationResponse404 | createItemRelationResponse500) & {
   headers: Headers;
 };
 
@@ -74,19 +80,24 @@ export type listItemRelationsResponse200 = {
 }
 
 export type listItemRelationsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type listItemRelationsResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type listItemRelationsResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type listItemRelationsResponseSuccess = (listItemRelationsResponse200) & {
   headers: Headers;
 };
-export type listItemRelationsResponseError = (listItemRelationsResponse401 | listItemRelationsResponse404) & {
+export type listItemRelationsResponseError = (listItemRelationsResponse401 | listItemRelationsResponse404 | listItemRelationsResponse500) & {
   headers: Headers;
 };
 
@@ -121,14 +132,19 @@ export type findRelatedItemsResponse200 = {
 }
 
 export type findRelatedItemsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type findRelatedItemsResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type findRelatedItemsResponseSuccess = (findRelatedItemsResponse200) & {
   headers: Headers;
 };
-export type findRelatedItemsResponseError = (findRelatedItemsResponse401) & {
+export type findRelatedItemsResponseError = (findRelatedItemsResponse401 | findRelatedItemsResponse500) & {
   headers: Headers;
 };
 

@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Provenance of a gazetteer entry: created by a user (may be unverified), derived from geocoding, or imported from a gazetteer.
+ */
 export type PlaceSource = typeof PlaceSource[keyof typeof PlaceSource];
 
 

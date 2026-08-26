@@ -7,6 +7,11 @@
  */
 import type { ExternalScheme } from './externalScheme';
 
+/**
+ * Attach an external gazetteer id to a place. Multiple ids per scheme are allowed (e.g. an OSM `way/`
+ *             and `node/`). The `(Scheme, Value)` pair is globally unique — attaching one that already belongs to
+ *             another place is a conflict (merge those places instead).
+ */
 export interface AddExternalIdRequest {
   scheme: ExternalScheme;
   value: string;

@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * iCalendar `ROLE`.
+ */
 export type ParticipationRole = typeof ParticipationRole[keyof typeof ParticipationRole];
 
 

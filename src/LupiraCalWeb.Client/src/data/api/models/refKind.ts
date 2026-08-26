@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * What a Ref points at.
+ */
 export type RefKind = typeof RefKind[keyof typeof RefKind];
 
 

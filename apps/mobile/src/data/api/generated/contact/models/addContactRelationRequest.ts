@@ -7,13 +7,25 @@
  */
 import type { ContactRelationKind } from './contactRelationKind';
 
+/**
+ * Upserts a directed relation edge on a contact: "Guid AddContactRelationRequest.ToContactId is this contact's ContactRelationKind AddContactRelationRequest.Kind".
+ */
 export interface AddContactRelationRequest {
   toContactId: string;
   kind: ContactRelationKind;
-  /** @nullable */
+  /**
+     * Free-text refinement of the kind, e.g. "dad".
+     * @nullable
+     */
   label?: string | null;
-  /** @nullable */
+  /**
+     * When the relationship began, if a precise date is known.
+     * @nullable
+     */
   since?: string | null;
-  /** @nullable */
+  /**
+     * Free-text note about the edge (how/where it started); fuzzy periods that aren't a precise date go here.
+     * @nullable
+     */
   note?: string | null;
 }

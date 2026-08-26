@@ -54,6 +54,10 @@ export interface CalendarItemDto {
   attendees: ItemAttendeeDto[];
   calendars: CalendarMembershipDto[];
   etag: string;
+  /**
+     * Server-side timestamps (from the event timeline) + stream version — the ordering/versioning
+     *             surface offline clients key on. `Etag` stays content-derived and is orthogonal.
+     */
   createdAt: string;
   updatedAt: string;
   version: number;

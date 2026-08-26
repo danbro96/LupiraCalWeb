@@ -127,7 +127,7 @@ export const getPingQueryKey = () => {
     }
 
 
-export const getPingQueryOptions = <TData = Awaited<ReturnType<typeof ping>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getPingQueryOptions = <TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -146,10 +146,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type PingQueryResult = NonNullable<Awaited<ReturnType<typeof ping>>>
-export type PingQueryError = void
+export type PingQueryError = ProblemDetails
 
 
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof ping>>,
@@ -159,7 +159,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof ping>>,
@@ -169,7 +169,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -177,7 +177,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
  * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
  */
 
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -228,7 +228,7 @@ export const getGetMeQueryKey = () => {
     }
 
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -247,10 +247,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
-export type GetMeQueryError = void
+export type GetMeQueryError = ProblemDetails
 
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMe>>,
@@ -260,7 +260,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMe>>,
@@ -270,7 +270,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -278,7 +278,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -322,7 +322,7 @@ export const bootstrapMe = async ( options?: Parameters<typeof customFetchContac
 
 
 
-export const getBootstrapMeMutationOptions = <TError = void,
+export const getBootstrapMeMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bootstrapMe>>, TError,void, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof bootstrapMe>>, TError,void, TContext> => {
 
@@ -351,12 +351,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type BootstrapMeMutationResult = NonNullable<Awaited<ReturnType<typeof bootstrapMe>>>
 
-    export type BootstrapMeMutationError = void
+    export type BootstrapMeMutationError = ProblemDetails
 
     /**
  * @summary Idempotently ensure the caller has a personal address book; returns all accessible books.
  */
-export const useBootstrapMe = <TError = void,
+export const useBootstrapMe = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bootstrapMe>>, TError,void, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof bootstrapMe>>,
@@ -399,7 +399,7 @@ return customFetchContact<void>(getSetMyContactUrl(),
 
 
 
-export const getSetMyContactMutationOptions = <TError = void | ProblemDetails,
+export const getSetMyContactMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setMyContact>>, TError,{data: SetMyContactRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setMyContact>>, TError,{data: SetMyContactRequest}, TContext> => {
 
@@ -428,12 +428,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetMyContactMutationResult = NonNullable<Awaited<ReturnType<typeof setMyContact>>>
     export type SetMyContactMutationBody = SetMyContactRequest
-    export type SetMyContactMutationError = void | ProblemDetails
+    export type SetMyContactMutationError = ProblemDetails
 
     /**
  * @summary Link the caller's identity to its own contact ("this card is me") — the default focus for contact circles.
  */
-export const useSetMyContact = <TError = void | ProblemDetails,
+export const useSetMyContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setMyContact>>, TError,{data: SetMyContactRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setMyContact>>,
@@ -477,7 +477,7 @@ export const getListAddressBooksQueryKey = () => {
     }
 
 
-export const getListAddressBooksQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getListAddressBooksQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -496,10 +496,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ListAddressBooksQueryResult = NonNullable<Awaited<ReturnType<typeof listAddressBooks>>>
-export type ListAddressBooksQueryError = void
+export type ListAddressBooksQueryError = ProblemDetails
 
 
-export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = void>(
+export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listAddressBooks>>,
@@ -509,7 +509,7 @@ export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddres
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = void>(
+export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listAddressBooks>>,
@@ -519,7 +519,7 @@ export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddres
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = void>(
+export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -527,7 +527,7 @@ export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddres
  * @summary List the address books the caller can access.
  */
 
-export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = void>(
+export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -577,7 +577,7 @@ return customFetchContact<AddressBookDto>(getCreateAddressBookUrl(),
 
 
 
-export const getCreateAddressBookMutationOptions = <TError = void,
+export const getCreateAddressBookMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAddressBook>>, TError,{data: CreateAddressBookRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createAddressBook>>, TError,{data: CreateAddressBookRequest}, TContext> => {
 
@@ -606,12 +606,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateAddressBookMutationResult = NonNullable<Awaited<ReturnType<typeof createAddressBook>>>
     export type CreateAddressBookMutationBody = CreateAddressBookRequest
-    export type CreateAddressBookMutationError = void
+    export type CreateAddressBookMutationError = ProblemDetails
 
     /**
  * @summary Create an address book; the caller becomes its owner.
  */
-export const useCreateAddressBook = <TError = void,
+export const useCreateAddressBook = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAddressBook>>, TError,{data: CreateAddressBookRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createAddressBook>>,
@@ -655,7 +655,7 @@ return customFetchContact<AddressBookDto>(getUpdateAddressBookUrl(addressBookId)
 
 
 
-export const getUpdateAddressBookMutationOptions = <TError = ProblemDetails | void,
+export const getUpdateAddressBookMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAddressBook>>, TError,{addressBookId: string;data: UpdateAddressBookRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateAddressBook>>, TError,{addressBookId: string;data: UpdateAddressBookRequest}, TContext> => {
 
@@ -684,12 +684,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateAddressBookMutationResult = NonNullable<Awaited<ReturnType<typeof updateAddressBook>>>
     export type UpdateAddressBookMutationBody = UpdateAddressBookRequest
-    export type UpdateAddressBookMutationError = ProblemDetails | void
+    export type UpdateAddressBookMutationError = ProblemDetails
 
     /**
  * @summary Rename an address book or change its display name (owner only; merge — omitted fields are kept).
  */
-export const useUpdateAddressBook = <TError = ProblemDetails | void,
+export const useUpdateAddressBook = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAddressBook>>, TError,{addressBookId: string;data: UpdateAddressBookRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateAddressBook>>,
@@ -726,7 +726,7 @@ export const deleteAddressBook = async (addressBookId: string, options?: Paramet
 
 
 
-export const getDeleteAddressBookMutationOptions = <TError = ProblemDetails | void,
+export const getDeleteAddressBookMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAddressBook>>, TError,{addressBookId: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteAddressBook>>, TError,{addressBookId: string}, TContext> => {
 
@@ -755,12 +755,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteAddressBookMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAddressBook>>>
 
-    export type DeleteAddressBookMutationError = ProblemDetails | void
+    export type DeleteAddressBookMutationError = ProblemDetails
 
     /**
  * @summary Delete an empty address book (owner only). 409 if it still holds contacts or groups, or is the personal book.
  */
-export const useDeleteAddressBook = <TError = ProblemDetails | void,
+export const useDeleteAddressBook = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAddressBook>>, TError,{addressBookId: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteAddressBook>>,
@@ -804,7 +804,7 @@ export const getListAddressBookOwnersQueryKey = (addressBookId: string,) => {
     }
 
 
-export const getListAddressBookOwnersQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getListAddressBookOwnersQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -823,10 +823,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ListAddressBookOwnersQueryResult = NonNullable<Awaited<ReturnType<typeof listAddressBookOwners>>>
-export type ListAddressBookOwnersQueryError = ProblemDetails | void
+export type ListAddressBookOwnersQueryError = ProblemDetails
 
 
-export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(
  addressBookId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listAddressBookOwners>>,
@@ -836,7 +836,7 @@ export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listA
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(
  addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listAddressBookOwners>>,
@@ -846,7 +846,7 @@ export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listA
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(
  addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -854,7 +854,7 @@ export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listA
  * @summary List who has access to an address book and at what level (owner only).
  */
 
-export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails | void>(
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(
  addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -905,7 +905,7 @@ return customFetchContact<OwnerGrantDto>(getGrantAddressBookOwnerUrl(addressBook
 
 
 
-export const getGrantAddressBookOwnerMutationOptions = <TError = ProblemDetails | void,
+export const getGrantAddressBookOwnerMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof grantAddressBookOwner>>, TError,{addressBookId: string;data: GrantOwnerRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof grantAddressBookOwner>>, TError,{addressBookId: string;data: GrantOwnerRequest}, TContext> => {
 
@@ -934,12 +934,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type GrantAddressBookOwnerMutationResult = NonNullable<Awaited<ReturnType<typeof grantAddressBookOwner>>>
     export type GrantAddressBookOwnerMutationBody = GrantOwnerRequest
-    export type GrantAddressBookOwnerMutationError = ProblemDetails | void
+    export type GrantAddressBookOwnerMutationError = ProblemDetails
 
     /**
  * @summary Grant a member access to an address book (access = owner|read-write|read; default owner).
  */
-export const useGrantAddressBookOwner = <TError = ProblemDetails | void,
+export const useGrantAddressBookOwner = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof grantAddressBookOwner>>, TError,{addressBookId: string;data: GrantOwnerRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof grantAddressBookOwner>>,
@@ -985,7 +985,7 @@ export const revokeAddressBookOwner = async (addressBookId: string,
 
 
 
-export const getRevokeAddressBookOwnerMutationOptions = <TError = ProblemDetails | void,
+export const getRevokeAddressBookOwnerMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeAddressBookOwner>>, TError,{addressBookId: string;params: RevokeAddressBookOwnerParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof revokeAddressBookOwner>>, TError,{addressBookId: string;params: RevokeAddressBookOwnerParams}, TContext> => {
 
@@ -1014,12 +1014,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RevokeAddressBookOwnerMutationResult = NonNullable<Awaited<ReturnType<typeof revokeAddressBookOwner>>>
 
-    export type RevokeAddressBookOwnerMutationError = ProblemDetails | void
+    export type RevokeAddressBookOwnerMutationError = ProblemDetails
 
     /**
  * @summary Revoke a member's access to an address book (by email). 409 if it would remove the last owner.
  */
-export const useRevokeAddressBookOwner = <TError = ProblemDetails | void,
+export const useRevokeAddressBookOwner = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeAddressBookOwner>>, TError,{addressBookId: string;params: RevokeAddressBookOwnerParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof revokeAddressBookOwner>>,
@@ -1070,7 +1070,7 @@ export const getSearchContactsQueryKey = (params?: SearchContactsParams,) => {
     }
 
 
-export const getSearchContactsQueryOptions = <TData = Awaited<ReturnType<typeof searchContacts>>, TError = void | ProblemDetails>(params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getSearchContactsQueryOptions = <TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1089,10 +1089,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SearchContactsQueryResult = NonNullable<Awaited<ReturnType<typeof searchContacts>>>
-export type SearchContactsQueryError = void | ProblemDetails
+export type SearchContactsQueryError = ProblemDetails
 
 
-export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = void | ProblemDetails>(
+export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(
  params: undefined |  SearchContactsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof searchContacts>>,
@@ -1102,7 +1102,7 @@ export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContac
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = void | ProblemDetails>(
+export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(
  params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof searchContacts>>,
@@ -1112,7 +1112,7 @@ export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContac
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = void | ProblemDetails>(
+export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(
  params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1120,7 +1120,7 @@ export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContac
  * @summary Search contacts (full-text + fuzzy name match).
  */
 
-export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = void | ProblemDetails>(
+export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(
  params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1170,7 +1170,7 @@ return customFetchContact<ContactDto>(getCreateContactUrl(),
 
 
 
-export const getCreateContactMutationOptions = <TError = void | ProblemDetails,
+export const getCreateContactMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContact>>, TError,{data: CreateContactRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createContact>>, TError,{data: CreateContactRequest}, TContext> => {
 
@@ -1199,12 +1199,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateContactMutationResult = NonNullable<Awaited<ReturnType<typeof createContact>>>
     export type CreateContactMutationBody = CreateContactRequest
-    export type CreateContactMutationError = void | ProblemDetails
+    export type CreateContactMutationError = ProblemDetails
 
     /**
  * @summary Create a contact.
  */
-export const useCreateContact = <TError = void | ProblemDetails,
+export const useCreateContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContact>>, TError,{data: CreateContactRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createContact>>,
@@ -1255,7 +1255,7 @@ export const getGetThinContactsQueryKey = (params?: GetThinContactsParams,) => {
     }
 
 
-export const getGetThinContactsQueryOptions = <TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails | void>(params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getGetThinContactsQueryOptions = <TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1274,10 +1274,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetThinContactsQueryResult = NonNullable<Awaited<ReturnType<typeof getThinContacts>>>
-export type GetThinContactsQueryError = ProblemDetails | void
+export type GetThinContactsQueryError = ProblemDetails
 
 
-export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails | void>(
+export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(
  params: undefined |  GetThinContactsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getThinContacts>>,
@@ -1287,7 +1287,7 @@ export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinCont
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails | void>(
+export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(
  params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getThinContacts>>,
@@ -1297,7 +1297,7 @@ export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinCont
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails | void>(
+export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(
  params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1305,7 +1305,7 @@ export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinCont
  * @summary Check-in worklist: contacts ranked thinnest-first by completeness score (< maxScore, default 1 = any contact with gaps). Kind-aware (person vs organisation card). Acknowledge an inapplicable gap field by merging metadata {"completeness":{"na":["organisation"]}} so it stops counting.
  */
 
-export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails | void>(
+export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(
  params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1355,7 +1355,7 @@ return customFetchContact<ContactDto[]>(getCreateContactsBatchUrl(),
 
 
 
-export const getCreateContactsBatchMutationOptions = <TError = ProblemDetails | void,
+export const getCreateContactsBatchMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContactsBatch>>, TError,{data: CreateContactsBatchRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createContactsBatch>>, TError,{data: CreateContactsBatchRequest}, TContext> => {
 
@@ -1384,12 +1384,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateContactsBatchMutationResult = NonNullable<Awaited<ReturnType<typeof createContactsBatch>>>
     export type CreateContactsBatchMutationBody = CreateContactsBatchRequest
-    export type CreateContactsBatchMutationError = ProblemDetails | void
+    export type CreateContactsBatchMutationError = ProblemDetails
 
     /**
  * @summary Create many contacts in one transaction (each carries its AddressBookId); returned index-for-index with the request.
  */
-export const useCreateContactsBatch = <TError = ProblemDetails | void,
+export const useCreateContactsBatch = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContactsBatch>>, TError,{data: CreateContactsBatchRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createContactsBatch>>,
@@ -1432,7 +1432,7 @@ return customFetchContact<ContactNameMatch[]>(getResolveContactsByNameUrl(),
 
 
 
-export const getResolveContactsByNameMutationOptions = <TError = ProblemDetails | void,
+export const getResolveContactsByNameMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolveContactsByName>>, TError,{data: ResolveContactsByNameRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof resolveContactsByName>>, TError,{data: ResolveContactsByNameRequest}, TContext> => {
 
@@ -1461,12 +1461,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ResolveContactsByNameMutationResult = NonNullable<Awaited<ReturnType<typeof resolveContactsByName>>>
     export type ResolveContactsByNameMutationBody = ResolveContactsByNameRequest
-    export type ResolveContactsByNameMutationError = ProblemDetails | void
+    export type ResolveContactsByNameMutationError = ProblemDetails
 
     /**
  * @summary Batch-match a list of names to contacts for imports: per name Matched (→contactId) / Ambiguous / NotFound, with candidate refs. Substring + normalized-name match, not phonetic.
  */
-export const useResolveContactsByName = <TError = ProblemDetails | void,
+export const useResolveContactsByName = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolveContactsByName>>, TError,{data: ResolveContactsByNameRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resolveContactsByName>>,
@@ -1510,7 +1510,7 @@ export const getGetContactQueryKey = (id: string,) => {
     }
 
 
-export const getGetContactQueryOptions = <TData = Awaited<ReturnType<typeof getContact>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getGetContactQueryOptions = <TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1529,10 +1529,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetContactQueryResult = NonNullable<Awaited<ReturnType<typeof getContact>>>
-export type GetContactQueryError = void
+export type GetContactQueryError = ProblemDetails
 
 
-export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = void>(
+export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getContact>>,
@@ -1542,7 +1542,7 @@ export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TE
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = void>(
+export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getContact>>,
@@ -1552,7 +1552,7 @@ export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TE
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = void>(
+export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1560,7 +1560,7 @@ export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TE
  * @summary Get a single contact.
  */
 
-export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = void>(
+export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1611,7 +1611,7 @@ return customFetchContact<ContactDto>(getReviseContactUrl(id),
 
 
 
-export const getReviseContactMutationOptions = <TError = void | ProblemDetails,
+export const getReviseContactMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviseContact>>, TError,{id: string;data: ReviseContactRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof reviseContact>>, TError,{id: string;data: ReviseContactRequest}, TContext> => {
 
@@ -1640,12 +1640,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ReviseContactMutationResult = NonNullable<Awaited<ReturnType<typeof reviseContact>>>
     export type ReviseContactMutationBody = ReviseContactRequest
-    export type ReviseContactMutationError = void | ProblemDetails
+    export type ReviseContactMutationError = ProblemDetails
 
     /**
  * @summary Update a contact (merge — provided fields overwrite/append, unmentioned fields are kept).
  */
-export const useReviseContact = <TError = void | ProblemDetails,
+export const useReviseContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviseContact>>, TError,{id: string;data: ReviseContactRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof reviseContact>>,
@@ -1682,7 +1682,7 @@ export const deleteContact = async (id: string, options?: Parameters<typeof cust
 
 
 
-export const getDeleteContactMutationOptions = <TError = void,
+export const getDeleteContactMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContact>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteContact>>, TError,{id: string}, TContext> => {
 
@@ -1711,12 +1711,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteContactMutationResult = NonNullable<Awaited<ReturnType<typeof deleteContact>>>
 
-    export type DeleteContactMutationError = void
+    export type DeleteContactMutationError = ProblemDetails
 
     /**
  * @summary Delete a contact (soft delete + tombstone).
  */
-export const useDeleteContact = <TError = void,
+export const useDeleteContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContact>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteContact>>,
@@ -1769,7 +1769,7 @@ return customFetchContact<ContactDto>(getMergeContactMetadataUrl(id,params),
 
 
 
-export const getMergeContactMetadataMutationOptions = <TError = void,
+export const getMergeContactMetadataMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode;params?: MergeContactMetadataParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode;params?: MergeContactMetadataParams}, TContext> => {
 
@@ -1798,12 +1798,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type MergeContactMetadataMutationResult = NonNullable<Awaited<ReturnType<typeof mergeContactMetadata>>>
     export type MergeContactMetadataMutationBody = JsonNode
-    export type MergeContactMetadataMutationError = void
+    export type MergeContactMetadataMutationError = ProblemDetails
 
     /**
  * @summary Merge arbitrary JSON metadata into a contact (top-level keys overwrite). Also the channel for completeness N/A acknowledgments: {"completeness":{"na":["organisation"]}}.
  */
-export const useMergeContactMetadata = <TError = void,
+export const useMergeContactMetadata = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode;params?: MergeContactMetadataParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof mergeContactMetadata>>,
@@ -1854,7 +1854,7 @@ export const getGetContactCirclesQueryKey = (params?: GetContactCirclesParams,) 
     }
 
 
-export const getGetContactCirclesQueryOptions = <TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getGetContactCirclesQueryOptions = <TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1873,10 +1873,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetContactCirclesQueryResult = NonNullable<Awaited<ReturnType<typeof getContactCircles>>>
-export type GetContactCirclesQueryError = ProblemDetails | void
+export type GetContactCirclesQueryError = ProblemDetails
 
 
-export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(
  params: undefined |  GetContactCirclesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getContactCircles>>,
@@ -1886,7 +1886,7 @@ export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContac
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(
  params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getContactCircles>>,
@@ -1896,7 +1896,7 @@ export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContac
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(
  params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1904,7 +1904,7 @@ export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContac
  * @summary Computed social circles (close family, extended family, friends, colleagues, household) around a focus contact — the caller's own linked contact unless focusId overrides. Degree is a closeness bucket (1 immediate, 2 two-generation kin, 3 cousin). Ended relations are excluded.
  */
 
-export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails | void>(
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(
  params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1955,7 +1955,7 @@ return customFetchContact<ContactDto>(getMarkContactDeceasedUrl(id),
 
 
 
-export const getMarkContactDeceasedMutationOptions = <TError = void | ProblemDetails,
+export const getMarkContactDeceasedMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markContactDeceased>>, TError,{id: string;data: SetDeceasedRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof markContactDeceased>>, TError,{id: string;data: SetDeceasedRequest}, TContext> => {
 
@@ -1984,12 +1984,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type MarkContactDeceasedMutationResult = NonNullable<Awaited<ReturnType<typeof markContactDeceased>>>
     export type MarkContactDeceasedMutationBody = SetDeceasedRequest
-    export type MarkContactDeceasedMutationError = void | ProblemDetails
+    export type MarkContactDeceasedMutationError = ProblemDetails
 
     /**
  * @summary Mark a contact as deceased (idempotent; the date may be unknown). Deceased contacts stay in the kinship graph — death is not deletion.
  */
-export const useMarkContactDeceased = <TError = void | ProblemDetails,
+export const useMarkContactDeceased = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markContactDeceased>>, TError,{id: string;data: SetDeceasedRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof markContactDeceased>>,
@@ -2035,7 +2035,7 @@ export const clearContactDeceased = async (id: string,
 
 
 
-export const getClearContactDeceasedMutationOptions = <TError = void | ProblemDetails,
+export const getClearContactDeceasedMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string;params?: ClearContactDeceasedParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string;params?: ClearContactDeceasedParams}, TContext> => {
 
@@ -2064,12 +2064,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ClearContactDeceasedMutationResult = NonNullable<Awaited<ReturnType<typeof clearContactDeceased>>>
 
-    export type ClearContactDeceasedMutationError = void | ProblemDetails
+    export type ClearContactDeceasedMutationError = ProblemDetails
 
     /**
  * @summary Undo a deceased marking recorded in error. (CardDAV can set but never clear deceased — clearing is API-only.)
  */
-export const useClearContactDeceased = <TError = void | ProblemDetails,
+export const useClearContactDeceased = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string;params?: ClearContactDeceasedParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof clearContactDeceased>>,
@@ -2113,7 +2113,7 @@ return customFetchContact<ContactDto>(getSetContactProfilesUrl(id),
 
 
 
-export const getSetContactProfilesMutationOptions = <TError = ProblemDetails | void,
+export const getSetContactProfilesMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactProfiles>>, TError,{id: string;data: SetContactProfilesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setContactProfiles>>, TError,{id: string;data: SetContactProfilesRequest}, TContext> => {
 
@@ -2142,12 +2142,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetContactProfilesMutationResult = NonNullable<Awaited<ReturnType<typeof setContactProfiles>>>
     export type SetContactProfilesMutationBody = SetContactProfilesRequest
-    export type SetContactProfilesMutationError = ProblemDetails | void
+    export type SetContactProfilesMutationError = ProblemDetails
 
     /**
  * @summary Replace the contact's social/IM handles wholesale. Service names are canonicalized; well-known services (telegram, messenger, whatsapp…) get the profile URL derived from the handle. At most one preferred handle per service.
  */
-export const useSetContactProfiles = <TError = ProblemDetails | void,
+export const useSetContactProfiles = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactProfiles>>, TError,{id: string;data: SetContactProfilesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactProfiles>>,
@@ -2191,7 +2191,7 @@ return customFetchContact<ContactDto>(getSetContactAvatarUrl(id),
 
 
 
-export const getSetContactAvatarMutationOptions = <TError = void | ProblemDetails,
+export const getSetContactAvatarMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAvatar>>, TError,{id: string;data: SetContactAvatarRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setContactAvatar>>, TError,{id: string;data: SetContactAvatarRequest}, TContext> => {
 
@@ -2220,12 +2220,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetContactAvatarMutationResult = NonNullable<Awaited<ReturnType<typeof setContactAvatar>>>
     export type SetContactAvatarMutationBody = SetContactAvatarRequest
-    export type SetContactAvatarMutationError = void | ProblemDetails
+    export type SetContactAvatarMutationError = ProblemDetails
 
     /**
  * @summary Set (or clear, with an empty value) the contact's avatar — a URL/media id, never image bytes.
  */
-export const useSetContactAvatar = <TError = void | ProblemDetails,
+export const useSetContactAvatar = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAvatar>>, TError,{id: string;data: SetContactAvatarRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactAvatar>>,
@@ -2269,7 +2269,7 @@ return customFetchContact<ContactDto>(getSetContactAddressesUrl(id),
 
 
 
-export const getSetContactAddressesMutationOptions = <TError = ProblemDetails | void,
+export const getSetContactAddressesMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAddresses>>, TError,{id: string;data: SetContactAddressesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setContactAddresses>>, TError,{id: string;data: SetContactAddressesRequest}, TContext> => {
 
@@ -2298,12 +2298,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetContactAddressesMutationResult = NonNullable<Awaited<ReturnType<typeof setContactAddresses>>>
     export type SetContactAddressesMutationBody = SetContactAddressesRequest
-    export type SetContactAddressesMutationError = ProblemDetails | void
+    export type SetContactAddressesMutationError = ProblemDetails
 
     /**
  * @summary Replace the contact's postal addresses wholesale; each entry needs a LupiraGeoApi place id (resolve the address there first — no free-text).
  */
-export const useSetContactAddresses = <TError = ProblemDetails | void,
+export const useSetContactAddresses = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAddresses>>, TError,{id: string;data: SetContactAddressesRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactAddresses>>,
@@ -2347,7 +2347,7 @@ return customFetchContact<ContactDto>(getSetEmergencyContactsUrl(id),
 
 
 
-export const getSetEmergencyContactsMutationOptions = <TError = ProblemDetails | void,
+export const getSetEmergencyContactsMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setEmergencyContacts>>, TError,{id: string;data: SetEmergencyContactsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setEmergencyContacts>>, TError,{id: string;data: SetEmergencyContactsRequest}, TContext> => {
 
@@ -2376,12 +2376,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetEmergencyContactsMutationResult = NonNullable<Awaited<ReturnType<typeof setEmergencyContacts>>>
     export type SetEmergencyContactsMutationBody = SetEmergencyContactsRequest
-    export type SetEmergencyContactsMutationError = ProblemDetails | void
+    export type SetEmergencyContactsMutationError = ProblemDetails
 
     /**
  * @summary Replace the contact's emergency-contact designation wholesale (order = priority, empty clears). A designation, not a relation kind — your emergency contact is usually also a spouse or friend.
  */
-export const useSetEmergencyContacts = <TError = ProblemDetails | void,
+export const useSetEmergencyContacts = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setEmergencyContacts>>, TError,{id: string;data: SetEmergencyContactsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setEmergencyContacts>>,
@@ -2425,7 +2425,7 @@ return customFetchContact<ContactDto>(getSetContactChannelsUrl(id),
 
 
 
-export const getSetContactChannelsMutationOptions = <TError = ProblemDetails | void,
+export const getSetContactChannelsMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactChannels>>, TError,{id: string;data: SetContactChannelsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setContactChannels>>, TError,{id: string;data: SetContactChannelsRequest}, TContext> => {
 
@@ -2454,12 +2454,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetContactChannelsMutationResult = NonNullable<Awaited<ReturnType<typeof setContactChannels>>>
     export type SetContactChannelsMutationBody = SetContactChannelsRequest
-    export type SetContactChannelsMutationError = ProblemDetails | void
+    export type SetContactChannelsMutationError = ProblemDetails
 
     /**
  * @summary Replace the contact's reach channels (emails + phones) wholesale (empty clears). Unlike the merge update, this can remove a channel; values are trimmed, type tokens lowercased, duplicates dropped, at most one preferred per medium.
  */
-export const useSetContactChannels = <TError = ProblemDetails | void,
+export const useSetContactChannels = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactChannels>>, TError,{id: string;data: SetContactChannelsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactChannels>>,
@@ -2503,7 +2503,7 @@ return customFetchContact<ContactDto>(getSetContactTagsUrl(id),
 
 
 
-export const getSetContactTagsMutationOptions = <TError = void | ProblemDetails,
+export const getSetContactTagsMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactTags>>, TError,{id: string;data: SetContactTagsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setContactTags>>, TError,{id: string;data: SetContactTagsRequest}, TContext> => {
 
@@ -2532,12 +2532,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetContactTagsMutationResult = NonNullable<Awaited<ReturnType<typeof setContactTags>>>
     export type SetContactTagsMutationBody = SetContactTagsRequest
-    export type SetContactTagsMutationError = void | ProblemDetails
+    export type SetContactTagsMutationError = ProblemDetails
 
     /**
  * @summary Replace the contact's tags wholesale (empty clears). Unlike the merge update, this can remove a tag; entries are trimmed and de-duplicated case-insensitively.
  */
-export const useSetContactTags = <TError = void | ProblemDetails,
+export const useSetContactTags = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactTags>>, TError,{id: string;data: SetContactTagsRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactTags>>,
@@ -2591,7 +2591,7 @@ export const getListContactRelationsQueryKey = (id: string,
     }
 
 
-export const getListContactRelationsQueryOptions = <TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(id: string,
+export const getListContactRelationsQueryOptions = <TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(id: string,
     params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
@@ -2611,10 +2611,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ListContactRelationsQueryResult = NonNullable<Awaited<ReturnType<typeof listContactRelations>>>
-export type ListContactRelationsQueryError = void | ProblemDetails
+export type ListContactRelationsQueryError = ProblemDetails
 
 
-export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(
  id: string,
     params: undefined |  ListContactRelationsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
@@ -2625,7 +2625,7 @@ export function useListContactRelations<TData = Awaited<ReturnType<typeof listCo
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(
  id: string,
     params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
@@ -2636,7 +2636,7 @@ export function useListContactRelations<TData = Awaited<ReturnType<typeof listCo
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(
  id: string,
     params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
@@ -2645,7 +2645,7 @@ export function useListContactRelations<TData = Awaited<ReturnType<typeof listCo
  * @summary Resolved relations, both directions: each entry's kind is the other contact's role relative to this one (incoming = derived inverse). Set includeInferred=true to also return kin derived from the parent/child graph (siblings, grandparents/-children, aunts/uncles, cousins, nieces/nephews), tagged Provenance=Inferred.
  */
 
-export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = void | ProblemDetails>(
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(
  id: string,
     params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
@@ -2697,7 +2697,7 @@ return customFetchContact<ContactDto>(getAddContactRelationUrl(id),
 
 
 
-export const getAddContactRelationMutationOptions = <TError = ProblemDetails | void,
+export const getAddContactRelationMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactRelation>>, TError,{id: string;data: AddContactRelationRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof addContactRelation>>, TError,{id: string;data: AddContactRelationRequest}, TContext> => {
 
@@ -2726,12 +2726,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AddContactRelationMutationResult = NonNullable<Awaited<ReturnType<typeof addContactRelation>>>
     export type AddContactRelationMutationBody = AddContactRelationRequest
-    export type AddContactRelationMutationError = ProblemDetails | void
+    export type AddContactRelationMutationError = ProblemDetails
 
     /**
  * @summary Upsert a relation: 'toContactId is this contact's kind' (re-adding the same target+kind revises the label).
  */
-export const useAddContactRelation = <TError = ProblemDetails | void,
+export const useAddContactRelation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactRelation>>, TError,{id: string;data: AddContactRelationRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addContactRelation>>,
@@ -2779,7 +2779,7 @@ export const removeContactRelation = async (id: string,
 
 
 
-export const getRemoveContactRelationMutationOptions = <TError = void | ProblemDetails,
+export const getRemoveContactRelationMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactRelation>>, TError,{id: string;toContactId: string;params: RemoveContactRelationParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removeContactRelation>>, TError,{id: string;toContactId: string;params: RemoveContactRelationParams}, TContext> => {
 
@@ -2808,12 +2808,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RemoveContactRelationMutationResult = NonNullable<Awaited<ReturnType<typeof removeContactRelation>>>
 
-    export type RemoveContactRelationMutationError = void | ProblemDetails
+    export type RemoveContactRelationMutationError = ProblemDetails
 
     /**
  * @summary Remove the relation edge to a contact with the given kind — for edges entered by mistake. A relationship that ran its course should be ended instead.
  */
-export const useRemoveContactRelation = <TError = void | ProblemDetails,
+export const useRemoveContactRelation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactRelation>>, TError,{id: string;toContactId: string;params: RemoveContactRelationParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeContactRelation>>,
@@ -2859,7 +2859,7 @@ return customFetchContact<ContactDto>(getEndContactRelationUrl(id,toContactId),
 
 
 
-export const getEndContactRelationMutationOptions = <TError = void | ProblemDetails,
+export const getEndContactRelationMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endContactRelation>>, TError,{id: string;toContactId: string;data: EndContactRelationRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof endContactRelation>>, TError,{id: string;toContactId: string;data: EndContactRelationRequest}, TContext> => {
 
@@ -2888,12 +2888,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type EndContactRelationMutationResult = NonNullable<Awaited<ReturnType<typeof endContactRelation>>>
     export type EndContactRelationMutationBody = EndContactRelationRequest
-    export type EndContactRelationMutationError = void | ProblemDetails
+    export type EndContactRelationMutationError = ProblemDetails
 
     /**
  * @summary Mark a relation as ended (ex-spouse, falling-out): the edge stays, flagged with an optional end date, and no longer asserts current kinship. Re-adding the same relation revives it.
  */
-export const useEndContactRelation = <TError = void | ProblemDetails,
+export const useEndContactRelation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endContactRelation>>, TError,{id: string;toContactId: string;data: EndContactRelationRequest}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof endContactRelation>>,
@@ -3120,7 +3120,7 @@ export const renameContactGroup = async (groupId: string,
 
 
 
-export const getRenameContactGroupMutationOptions = <TError = void,
+export const getRenameContactGroupMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof renameContactGroup>>, TError,{groupId: string;params: RenameContactGroupParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof renameContactGroup>>, TError,{groupId: string;params: RenameContactGroupParams}, TContext> => {
 
@@ -3149,12 +3149,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RenameContactGroupMutationResult = NonNullable<Awaited<ReturnType<typeof renameContactGroup>>>
 
-    export type RenameContactGroupMutationError = void
+    export type RenameContactGroupMutationError = ProblemDetails
 
     /**
  * @summary Rename a group.
  */
-export const useRenameContactGroup = <TError = void,
+export const useRenameContactGroup = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof renameContactGroup>>, TError,{groupId: string;params: RenameContactGroupParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof renameContactGroup>>,
@@ -3191,7 +3191,7 @@ export const deleteContactGroup = async (groupId: string, options?: Parameters<t
 
 
 
-export const getDeleteContactGroupMutationOptions = <TError = void,
+export const getDeleteContactGroupMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContactGroup>>, TError,{groupId: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteContactGroup>>, TError,{groupId: string}, TContext> => {
 
@@ -3220,12 +3220,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteContactGroupMutationResult = NonNullable<Awaited<ReturnType<typeof deleteContactGroup>>>
 
-    export type DeleteContactGroupMutationError = void
+    export type DeleteContactGroupMutationError = ProblemDetails
 
     /**
  * @summary Delete a group.
  */
-export const useDeleteContactGroup = <TError = void,
+export const useDeleteContactGroup = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContactGroup>>, TError,{groupId: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteContactGroup>>,
@@ -3271,7 +3271,7 @@ export const addContactGroupMember = async (groupId: string,
 
 
 
-export const getAddContactGroupMemberMutationOptions = <TError = void,
+export const getAddContactGroupMemberMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactGroupMember>>, TError,{groupId: string;params: AddContactGroupMemberParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof addContactGroupMember>>, TError,{groupId: string;params: AddContactGroupMemberParams}, TContext> => {
 
@@ -3300,12 +3300,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AddContactGroupMemberMutationResult = NonNullable<Awaited<ReturnType<typeof addContactGroupMember>>>
 
-    export type AddContactGroupMemberMutationError = void
+    export type AddContactGroupMemberMutationError = ProblemDetails
 
     /**
  * @summary Add a contact to a group; for an organization, role is the title held there (re-adding updates it).
  */
-export const useAddContactGroupMember = <TError = void,
+export const useAddContactGroupMember = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactGroupMember>>, TError,{groupId: string;params: AddContactGroupMemberParams}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addContactGroupMember>>,
@@ -3344,7 +3344,7 @@ export const removeContactGroupMember = async (groupId: string,
 
 
 
-export const getRemoveContactGroupMemberMutationOptions = <TError = void,
+export const getRemoveContactGroupMemberMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactGroupMember>>, TError,{groupId: string;contactId: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removeContactGroupMember>>, TError,{groupId: string;contactId: string}, TContext> => {
 
@@ -3373,12 +3373,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RemoveContactGroupMemberMutationResult = NonNullable<Awaited<ReturnType<typeof removeContactGroupMember>>>
 
-    export type RemoveContactGroupMemberMutationError = void
+    export type RemoveContactGroupMemberMutationError = ProblemDetails
 
     /**
  * @summary Remove a contact from a group.
  */
-export const useRemoveContactGroupMember = <TError = void,
+export const useRemoveContactGroupMember = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactGroupMember>>, TError,{groupId: string;contactId: string}, TContext>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeContactGroupMember>>,
@@ -3429,7 +3429,7 @@ export const getGetChangesQueryKey = (params?: GetChangesParams,) => {
     }
 
 
-export const getGetChangesQueryOptions = <TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getGetChangesQueryOptions = <TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3448,10 +3448,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetChangesQueryResult = NonNullable<Awaited<ReturnType<typeof getChanges>>>
-export type GetChangesQueryError = ProblemDetails | void
+export type GetChangesQueryError = ProblemDetails
 
 
-export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(
  params: undefined |  GetChangesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getChanges>>,
@@ -3461,7 +3461,7 @@ export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TE
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(
  params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getChanges>>,
@@ -3471,7 +3471,7 @@ export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TE
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(
  params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -3479,7 +3479,7 @@ export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TE
  * @summary Delta feed for offline mirrors: every contact the caller can read that changed past the cursor, plus tombstone ids for contacts deleted or no longer visible (incl. moved to an unreadable address book). Omit since for a full sync; loop while hasMore, persisting cursor between calls.
  */
 
-export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(
  params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -3530,7 +3530,7 @@ export const getGetSyncContainersQueryKey = () => {
     }
 
 
-export const getGetSyncContainersQueryOptions = <TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
+export const getGetSyncContainersQueryOptions = <TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3549,10 +3549,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetSyncContainersQueryResult = NonNullable<Awaited<ReturnType<typeof getSyncContainers>>>
-export type GetSyncContainersQueryError = void
+export type GetSyncContainersQueryError = ProblemDetails
 
 
-export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getSyncContainers>>,
@@ -3562,7 +3562,7 @@ export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncCo
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getSyncContainers>>,
@@ -3572,7 +3572,7 @@ export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncCo
       >, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -3580,7 +3580,7 @@ export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncCo
  * @summary Snapshot of the caller's address books + contact groups for mirror reconciliation (no cursor — fetch once per sync cycle and diff locally).
  */
 
-export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetchContact>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

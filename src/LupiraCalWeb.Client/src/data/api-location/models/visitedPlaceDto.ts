@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A place visited on a day, with dwell minutes.
+ */
 export interface VisitedPlaceDto {
   /** @nullable */
   label?: string | null;

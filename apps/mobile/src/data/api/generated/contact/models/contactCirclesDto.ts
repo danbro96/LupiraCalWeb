@@ -7,6 +7,10 @@
  */
 import type { ContactCircleDto } from './contactCircleDto';
 
+/**
+ * Computed social circles around a focus contact. Always contains every CircleKind, possibly empty;
+ *             a contact may appear in several circles.
+ */
 export interface ContactCirclesDto {
   focusContactId: string;
   circles: ContactCircleDto[];

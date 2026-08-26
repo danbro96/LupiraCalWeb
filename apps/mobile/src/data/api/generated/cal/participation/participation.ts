@@ -24,14 +24,19 @@ export type getParticipationSummaryResponse200 = {
 }
 
 export type getParticipationSummaryResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type getParticipationSummaryResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getParticipationSummaryResponseSuccess = (getParticipationSummaryResponse200) & {
   headers: Headers;
 };
-export type getParticipationSummaryResponseError = (getParticipationSummaryResponse401) & {
+export type getParticipationSummaryResponseError = (getParticipationSummaryResponse401 | getParticipationSummaryResponse500) & {
   headers: Headers;
 };
 
@@ -72,15 +77,25 @@ export type inviteParticipantResponse200 = {
   status: 200
 }
 
+export type inviteParticipantResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type inviteParticipantResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type inviteParticipantResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type inviteParticipantResponseSuccess = (inviteParticipantResponse200) & {
   headers: Headers;
 };
-export type inviteParticipantResponseError = (inviteParticipantResponse404) & {
+export type inviteParticipantResponseError = (inviteParticipantResponse401 | inviteParticipantResponse404 | inviteParticipantResponse500) & {
   headers: Headers;
 };
 
@@ -128,15 +143,25 @@ export type setParticipantsResponse400 = {
   status: 400
 }
 
+export type setParticipantsResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type setParticipantsResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type setParticipantsResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type setParticipantsResponseSuccess = (setParticipantsResponse200) & {
   headers: Headers;
 };
-export type setParticipantsResponseError = (setParticipantsResponse400 | setParticipantsResponse404) & {
+export type setParticipantsResponseError = (setParticipantsResponse400 | setParticipantsResponse401 | setParticipantsResponse404 | setParticipantsResponse500) & {
   headers: Headers;
 };
 
@@ -177,15 +202,25 @@ export type respondToInvitationResponse200 = {
   status: 200
 }
 
+export type respondToInvitationResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type respondToInvitationResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type respondToInvitationResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type respondToInvitationResponseSuccess = (respondToInvitationResponse200) & {
   headers: Headers;
 };
-export type respondToInvitationResponseError = (respondToInvitationResponse404) & {
+export type respondToInvitationResponseError = (respondToInvitationResponse401 | respondToInvitationResponse404 | respondToInvitationResponse500) & {
   headers: Headers;
 };
 
@@ -230,15 +265,25 @@ export type confirmAttendanceResponse200 = {
   status: 200
 }
 
+export type confirmAttendanceResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type confirmAttendanceResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type confirmAttendanceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type confirmAttendanceResponseSuccess = (confirmAttendanceResponse200) & {
   headers: Headers;
 };
-export type confirmAttendanceResponseError = (confirmAttendanceResponse404) & {
+export type confirmAttendanceResponseError = (confirmAttendanceResponse401 | confirmAttendanceResponse404 | confirmAttendanceResponse500) & {
   headers: Headers;
 };
 
@@ -274,15 +319,25 @@ export type leaveItemResponse200 = {
   status: 200
 }
 
+export type leaveItemResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type leaveItemResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type leaveItemResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type leaveItemResponseSuccess = (leaveItemResponse200) & {
   headers: Headers;
 };
-export type leaveItemResponseError = (leaveItemResponse404) & {
+export type leaveItemResponseError = (leaveItemResponse401 | leaveItemResponse404 | leaveItemResponse500) & {
   headers: Headers;
 };
 
@@ -318,15 +373,25 @@ export type removeParticipantResponse200 = {
   status: 200
 }
 
+export type removeParticipantResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type removeParticipantResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type removeParticipantResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type removeParticipantResponseSuccess = (removeParticipantResponse200) & {
   headers: Headers;
 };
-export type removeParticipantResponseError = (removeParticipantResponse404) & {
+export type removeParticipantResponseError = (removeParticipantResponse401 | removeParticipantResponse404 | removeParticipantResponse500) & {
   headers: Headers;
 };
 

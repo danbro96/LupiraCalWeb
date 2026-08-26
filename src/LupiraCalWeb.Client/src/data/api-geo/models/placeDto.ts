@@ -12,6 +12,10 @@ import type { PlaceExternalIdDto } from './placeExternalIdDto';
 import type { PlaceKind } from './placeKind';
 import type { PlaceSource } from './placeSource';
 
+/**
+ * A gazetteer place. Coordinates are plain lat/lon on the wire; `Containment` is the AdminArea chain
+ *             outermost→innermost. `DistanceM` is populated only on proximity (`near=`) searches.
+ */
 export interface PlaceDto {
   id: string;
   name: string;

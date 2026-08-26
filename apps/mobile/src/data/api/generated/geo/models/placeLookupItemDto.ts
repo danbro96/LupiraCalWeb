@@ -7,6 +7,10 @@
  */
 import type { PlaceDto } from './placeDto';
 
+/**
+ * `Place` is null when the id is unknown or soft-deleted; on a merge redirect it is the survivor
+ *         (`Place.Id != RequestedId`). Containment is omitted — `GET /places/{id}` remains the detail call.
+ */
 export interface PlaceLookupItemDto {
   requestedId: string;
   place?: null | PlaceDto;

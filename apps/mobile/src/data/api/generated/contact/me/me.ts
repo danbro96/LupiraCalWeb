@@ -20,14 +20,19 @@ export type getMeResponse200 = {
 }
 
 export type getMeResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type getMeResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getMeResponseSuccess = (getMeResponse200) & {
   headers: Headers;
 };
-export type getMeResponseError = (getMeResponse401) & {
+export type getMeResponseError = (getMeResponse401 | getMeResponse500) & {
   headers: Headers;
 };
 
@@ -62,14 +67,19 @@ export type bootstrapMeResponse200 = {
 }
 
 export type bootstrapMeResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type bootstrapMeResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type bootstrapMeResponseSuccess = (bootstrapMeResponse200) & {
   headers: Headers;
 };
-export type bootstrapMeResponseError = (bootstrapMeResponse401) & {
+export type bootstrapMeResponseError = (bootstrapMeResponse401 | bootstrapMeResponse500) & {
   headers: Headers;
 };
 
@@ -104,7 +114,7 @@ export type setMyContactResponse204 = {
 }
 
 export type setMyContactResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -114,14 +124,19 @@ export type setMyContactResponse403 = {
 }
 
 export type setMyContactResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type setMyContactResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type setMyContactResponseSuccess = (setMyContactResponse204) & {
   headers: Headers;
 };
-export type setMyContactResponseError = (setMyContactResponse401 | setMyContactResponse403 | setMyContactResponse404) & {
+export type setMyContactResponseError = (setMyContactResponse401 | setMyContactResponse403 | setMyContactResponse404 | setMyContactResponse500) & {
   headers: Headers;
 };
 

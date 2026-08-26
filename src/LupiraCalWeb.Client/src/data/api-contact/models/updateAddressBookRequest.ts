@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Update an address book by merge: a provided slug or display name overwrites, null keeps the current value.
+ */
 export interface UpdateAddressBookRequest {
   /** @nullable */
   slug?: string | null;

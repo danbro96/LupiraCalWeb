@@ -6,6 +6,8 @@
  * OpenAPI spec version: v1
  */
 
-export type DeleteListsListIdItemsItemIdParams = {
-occurredAt?: string;
+export type DeleteRelationParams = {
+toKind: string;
+toRef: string;
+relationType: string;
 };

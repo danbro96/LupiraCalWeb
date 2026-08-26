@@ -6,6 +6,6 @@
  * OpenAPI spec version: v1
  */
 
-export type GetLocationSummaryParams = {
+export type GetDailySummaryParams = {
 date: string;
 };

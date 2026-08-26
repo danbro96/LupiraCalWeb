@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * How a contact's DisplayName renders. Rendering-only — excluded from the content hash. `Full` is ordinal 0 so old events replay to today's behavior.
+ */
 export type DisplayNameFormat = typeof DisplayNameFormat[keyof typeof DisplayNameFormat];
 
 

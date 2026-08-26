@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A curation decision recorded on a Place in the append-only `curation_log`. Stable names —
+ *             they are the future event-type names, so never rename a member (add new ones; keep old ones readable).
+ */
 export type CurationAction = typeof CurationAction[keyof typeof CurationAction];
 
 

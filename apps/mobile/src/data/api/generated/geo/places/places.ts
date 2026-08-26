@@ -40,14 +40,19 @@ export type searchPlacesResponse400 = {
 }
 
 export type searchPlacesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type searchPlacesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type searchPlacesResponseSuccess = (searchPlacesResponse200) & {
   headers: Headers;
 };
-export type searchPlacesResponseError = (searchPlacesResponse400 | searchPlacesResponse401) & {
+export type searchPlacesResponseError = (searchPlacesResponse400 | searchPlacesResponse401 | searchPlacesResponse500) & {
   headers: Headers;
 };
 
@@ -102,14 +107,19 @@ export type createPlaceResponse400 = {
 }
 
 export type createPlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type createPlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type createPlaceResponseSuccess = (createPlaceResponse200) & {
   headers: Headers;
 };
-export type createPlaceResponseError = (createPlaceResponse400 | createPlaceResponse401) & {
+export type createPlaceResponseError = (createPlaceResponse400 | createPlaceResponse401 | createPlaceResponse500) & {
   headers: Headers;
 };
 
@@ -155,14 +165,19 @@ export type suggestPlacesResponse400 = {
 }
 
 export type suggestPlacesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type suggestPlacesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type suggestPlacesResponseSuccess = (suggestPlacesResponse200) & {
   headers: Headers;
 };
-export type suggestPlacesResponseError = (suggestPlacesResponse400 | suggestPlacesResponse401) & {
+export type suggestPlacesResponseError = (suggestPlacesResponse400 | suggestPlacesResponse401 | suggestPlacesResponse500) & {
   headers: Headers;
 };
 
@@ -209,19 +224,24 @@ export type getPlaceByExternalIdResponse400 = {
 }
 
 export type getPlaceByExternalIdResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type getPlaceByExternalIdResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type getPlaceByExternalIdResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getPlaceByExternalIdResponseSuccess = (getPlaceByExternalIdResponse200) & {
   headers: Headers;
 };
-export type getPlaceByExternalIdResponseError = (getPlaceByExternalIdResponse400 | getPlaceByExternalIdResponse401 | getPlaceByExternalIdResponse404) & {
+export type getPlaceByExternalIdResponseError = (getPlaceByExternalIdResponse400 | getPlaceByExternalIdResponse401 | getPlaceByExternalIdResponse404 | getPlaceByExternalIdResponse500) & {
   headers: Headers;
 };
 
@@ -258,19 +278,24 @@ export type getPlaceHistoryResponse200 = {
 }
 
 export type getPlaceHistoryResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type getPlaceHistoryResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type getPlaceHistoryResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getPlaceHistoryResponseSuccess = (getPlaceHistoryResponse200) & {
   headers: Headers;
 };
-export type getPlaceHistoryResponseError = (getPlaceHistoryResponse401 | getPlaceHistoryResponse404) & {
+export type getPlaceHistoryResponseError = (getPlaceHistoryResponse401 | getPlaceHistoryResponse404 | getPlaceHistoryResponse500) & {
   headers: Headers;
 };
 
@@ -305,19 +330,24 @@ export type getPlaceResponse200 = {
 }
 
 export type getPlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type getPlaceResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type getPlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getPlaceResponseSuccess = (getPlaceResponse200) & {
   headers: Headers;
 };
-export type getPlaceResponseError = (getPlaceResponse401 | getPlaceResponse404) & {
+export type getPlaceResponseError = (getPlaceResponse401 | getPlaceResponse404 | getPlaceResponse500) & {
   headers: Headers;
 };
 
@@ -357,19 +387,24 @@ export type updatePlaceResponse400 = {
 }
 
 export type updatePlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type updatePlaceResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type updatePlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type updatePlaceResponseSuccess = (updatePlaceResponse200) & {
   headers: Headers;
 };
-export type updatePlaceResponseError = (updatePlaceResponse400 | updatePlaceResponse401 | updatePlaceResponse404) & {
+export type updatePlaceResponseError = (updatePlaceResponse400 | updatePlaceResponse401 | updatePlaceResponse404 | updatePlaceResponse500) & {
   headers: Headers;
 };
 
@@ -411,19 +446,24 @@ export type deletePlaceResponse204 = {
 }
 
 export type deletePlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type deletePlaceResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type deletePlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type deletePlaceResponseSuccess = (deletePlaceResponse204) & {
   headers: Headers;
 };
-export type deletePlaceResponseError = (deletePlaceResponse401 | deletePlaceResponse404) & {
+export type deletePlaceResponseError = (deletePlaceResponse401 | deletePlaceResponse404 | deletePlaceResponse500) & {
   headers: Headers;
 };
 
@@ -463,12 +503,12 @@ export type addPlaceAliasResponse400 = {
 }
 
 export type addPlaceAliasResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type addPlaceAliasResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -477,10 +517,15 @@ export type addPlaceAliasResponse409 = {
   status: 409
 }
 
+export type addPlaceAliasResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type addPlaceAliasResponseSuccess = (addPlaceAliasResponse200) & {
   headers: Headers;
 };
-export type addPlaceAliasResponseError = (addPlaceAliasResponse400 | addPlaceAliasResponse401 | addPlaceAliasResponse404 | addPlaceAliasResponse409) & {
+export type addPlaceAliasResponseError = (addPlaceAliasResponse400 | addPlaceAliasResponse401 | addPlaceAliasResponse404 | addPlaceAliasResponse409 | addPlaceAliasResponse500) & {
   headers: Headers;
 };
 
@@ -522,19 +567,24 @@ export type removePlaceAliasResponse204 = {
 }
 
 export type removePlaceAliasResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type removePlaceAliasResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type removePlaceAliasResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type removePlaceAliasResponseSuccess = (removePlaceAliasResponse204) & {
   headers: Headers;
 };
-export type removePlaceAliasResponseError = (removePlaceAliasResponse401 | removePlaceAliasResponse404) & {
+export type removePlaceAliasResponseError = (removePlaceAliasResponse401 | removePlaceAliasResponse404 | removePlaceAliasResponse500) & {
   headers: Headers;
 };
 
@@ -576,12 +626,12 @@ export type addPlaceExternalIdResponse400 = {
 }
 
 export type addPlaceExternalIdResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type addPlaceExternalIdResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -590,10 +640,15 @@ export type addPlaceExternalIdResponse409 = {
   status: 409
 }
 
+export type addPlaceExternalIdResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type addPlaceExternalIdResponseSuccess = (addPlaceExternalIdResponse200) & {
   headers: Headers;
 };
-export type addPlaceExternalIdResponseError = (addPlaceExternalIdResponse400 | addPlaceExternalIdResponse401 | addPlaceExternalIdResponse404 | addPlaceExternalIdResponse409) & {
+export type addPlaceExternalIdResponseError = (addPlaceExternalIdResponse400 | addPlaceExternalIdResponse401 | addPlaceExternalIdResponse404 | addPlaceExternalIdResponse409 | addPlaceExternalIdResponse500) & {
   headers: Headers;
 };
 
@@ -640,19 +695,24 @@ export type removePlaceExternalIdResponse400 = {
 }
 
 export type removePlaceExternalIdResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type removePlaceExternalIdResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type removePlaceExternalIdResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type removePlaceExternalIdResponseSuccess = (removePlaceExternalIdResponse204) & {
   headers: Headers;
 };
-export type removePlaceExternalIdResponseError = (removePlaceExternalIdResponse400 | removePlaceExternalIdResponse401 | removePlaceExternalIdResponse404) & {
+export type removePlaceExternalIdResponseError = (removePlaceExternalIdResponse400 | removePlaceExternalIdResponse401 | removePlaceExternalIdResponse404 | removePlaceExternalIdResponse500) & {
   headers: Headers;
 };
 
@@ -696,12 +756,12 @@ export type mergePlaceResponse400 = {
 }
 
 export type mergePlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type mergePlaceResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -710,10 +770,15 @@ export type mergePlaceResponse409 = {
   status: 409
 }
 
+export type mergePlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type mergePlaceResponseSuccess = (mergePlaceResponse200) & {
   headers: Headers;
 };
-export type mergePlaceResponseError = (mergePlaceResponse400 | mergePlaceResponse401 | mergePlaceResponse404 | mergePlaceResponse409) & {
+export type mergePlaceResponseError = (mergePlaceResponse400 | mergePlaceResponse401 | mergePlaceResponse404 | mergePlaceResponse409 | mergePlaceResponse500) & {
   headers: Headers;
 };
 
@@ -760,19 +825,24 @@ export type regeocodePlaceResponse400 = {
 }
 
 export type regeocodePlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type regeocodePlaceResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type regeocodePlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type regeocodePlaceResponseSuccess = (regeocodePlaceResponse200) & {
   headers: Headers;
 };
-export type regeocodePlaceResponseError = (regeocodePlaceResponse400 | regeocodePlaceResponse401 | regeocodePlaceResponse404) & {
+export type regeocodePlaceResponseError = (regeocodePlaceResponse400 | regeocodePlaceResponse401 | regeocodePlaceResponse404 | regeocodePlaceResponse500) & {
   headers: Headers;
 };
 
@@ -821,14 +891,19 @@ export type lookupPlacesResponse400 = {
 }
 
 export type lookupPlacesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type lookupPlacesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type lookupPlacesResponseSuccess = (lookupPlacesResponse200) & {
   headers: Headers;
 };
-export type lookupPlacesResponseError = (lookupPlacesResponse400 | lookupPlacesResponse401) & {
+export type lookupPlacesResponseError = (lookupPlacesResponse400 | lookupPlacesResponse401 | lookupPlacesResponse500) & {
   headers: Headers;
 };
 
@@ -874,14 +949,19 @@ export type resolvePlaceResponse400 = {
 }
 
 export type resolvePlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type resolvePlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type resolvePlaceResponseSuccess = (resolvePlaceResponse200) & {
   headers: Headers;
 };
-export type resolvePlaceResponseError = (resolvePlaceResponse400 | resolvePlaceResponse401) & {
+export type resolvePlaceResponseError = (resolvePlaceResponse400 | resolvePlaceResponse401 | resolvePlaceResponse500) & {
   headers: Headers;
 };
 
@@ -927,14 +1007,19 @@ export type resolvePlacesBatchResponse400 = {
 }
 
 export type resolvePlacesBatchResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type resolvePlacesBatchResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type resolvePlacesBatchResponseSuccess = (resolvePlacesBatchResponse200) & {
   headers: Headers;
 };
-export type resolvePlacesBatchResponseError = (resolvePlacesBatchResponse400 | resolvePlacesBatchResponse401) & {
+export type resolvePlacesBatchResponseError = (resolvePlacesBatchResponse400 | resolvePlacesBatchResponse401 | resolvePlacesBatchResponse500) & {
   headers: Headers;
 };
 
@@ -980,7 +1065,7 @@ export type createPlaceFromGeocodeResponse400 = {
 }
 
 export type createPlaceFromGeocodeResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -989,10 +1074,15 @@ export type createPlaceFromGeocodeResponse409 = {
   status: 409
 }
 
+export type createPlaceFromGeocodeResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type createPlaceFromGeocodeResponseSuccess = (createPlaceFromGeocodeResponse200) & {
   headers: Headers;
 };
-export type createPlaceFromGeocodeResponseError = (createPlaceFromGeocodeResponse400 | createPlaceFromGeocodeResponse401 | createPlaceFromGeocodeResponse409) & {
+export type createPlaceFromGeocodeResponseError = (createPlaceFromGeocodeResponse400 | createPlaceFromGeocodeResponse401 | createPlaceFromGeocodeResponse409 | createPlaceFromGeocodeResponse500) & {
   headers: Headers;
 };
 

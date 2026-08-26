@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Mode of a TravelLeg. Rail split: `Train` = mainline/commuter, `Metro` = rapid transit,
+ *             `Tram` = light/narrow-gauge rail; `Coach` = long-distance bus vs local `Bus`.
+ */
 export type TransportMode = typeof TransportMode[keyof typeof TransportMode];
 
 

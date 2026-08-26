@@ -7,7 +7,8 @@
  */
 import type {
   ContainerDto,
-  MeDto
+  MeDto,
+  ProblemDetails
 } from '../models';
 
 import { apiFetch } from '../../../mutator';
@@ -18,14 +19,19 @@ export type getMeResponse200 = {
 }
 
 export type getMeResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type getMeResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getMeResponseSuccess = (getMeResponse200) & {
   headers: Headers;
 };
-export type getMeResponseError = (getMeResponse401) & {
+export type getMeResponseError = (getMeResponse401 | getMeResponse500) & {
   headers: Headers;
 };
 
@@ -60,14 +66,19 @@ export type bootstrapMeResponse200 = {
 }
 
 export type bootstrapMeResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type bootstrapMeResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type bootstrapMeResponseSuccess = (bootstrapMeResponse200) & {
   headers: Headers;
 };
-export type bootstrapMeResponseError = (bootstrapMeResponse401) & {
+export type bootstrapMeResponseError = (bootstrapMeResponse401 | bootstrapMeResponse500) & {
   headers: Headers;
 };
 

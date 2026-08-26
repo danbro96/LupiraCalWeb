@@ -7,7 +7,8 @@
  */
 import type {
   ContainerDto,
-  CreateCalendarRequest
+  CreateCalendarRequest,
+  ProblemDetails
 } from '../models';
 
 import { apiFetch } from '../../../mutator';
@@ -18,14 +19,19 @@ export type listContainersResponse200 = {
 }
 
 export type listContainersResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type listContainersResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type listContainersResponseSuccess = (listContainersResponse200) & {
   headers: Headers;
 };
-export type listContainersResponseError = (listContainersResponse401) & {
+export type listContainersResponseError = (listContainersResponse401 | listContainersResponse500) & {
   headers: Headers;
 };
 
@@ -60,14 +66,19 @@ export type createCalendarResponse200 = {
 }
 
 export type createCalendarResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type createCalendarResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type createCalendarResponseSuccess = (createCalendarResponse200) & {
   headers: Headers;
 };
-export type createCalendarResponseError = (createCalendarResponse401) & {
+export type createCalendarResponseError = (createCalendarResponse401 | createCalendarResponse500) & {
   headers: Headers;
 };
 

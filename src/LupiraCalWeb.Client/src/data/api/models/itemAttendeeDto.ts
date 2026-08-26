@@ -8,6 +8,9 @@
 import type { ParticipationRole } from './participationRole';
 import type { ParticipationStatus } from './participationStatus';
 
+/**
+ * One attendee's participation, composed from the participation events.
+ */
 export interface ItemAttendeeDto {
   participationId: string;
   contactId: string;

@@ -6,6 +6,11 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * The claims a caller's token resolved to, echoed for cross-service auth-seam probes.
+ *             Returning the audiences (not a bare 200) lets a failing consumer see which half of the seam
+ *             is misconfigured.
+ */
 export interface PingDto {
   subject: string;
   audiences: string[];

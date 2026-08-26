@@ -25,14 +25,19 @@ export type getChangesResponse400 = {
 }
 
 export type getChangesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type getChangesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getChangesResponseSuccess = (getChangesResponse200) & {
   headers: Headers;
 };
-export type getChangesResponseError = (getChangesResponse400 | getChangesResponse401) & {
+export type getChangesResponseError = (getChangesResponse400 | getChangesResponse401 | getChangesResponse500) & {
   headers: Headers;
 };
 
@@ -74,14 +79,19 @@ export type getSyncContainersResponse200 = {
 }
 
 export type getSyncContainersResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type getSyncContainersResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getSyncContainersResponseSuccess = (getSyncContainersResponse200) & {
   headers: Headers;
 };
-export type getSyncContainersResponseError = (getSyncContainersResponse401) & {
+export type getSyncContainersResponseError = (getSyncContainersResponse401 | getSyncContainersResponse500) & {
   headers: Headers;
 };
 

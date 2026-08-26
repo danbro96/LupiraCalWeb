@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Level of an AdminArea in the containment tree (Locality → Region → Country).
+ */
 export type AdminLevel = typeof AdminLevel[keyof typeof AdminLevel];
 
 

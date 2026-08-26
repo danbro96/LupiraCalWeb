@@ -6,7 +6,8 @@
  * OpenAPI spec version: v1
  */
 
-export type GetLocationVisitsParams = {
+export type GetMovementStatsParams = {
 from?: string;
 to?: string;
+deviceId?: string;
 };

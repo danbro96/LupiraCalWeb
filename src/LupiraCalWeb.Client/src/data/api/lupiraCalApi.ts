@@ -122,7 +122,7 @@ export const getPingQueryKey = () => {
     }
 
 
-export const getPingQueryOptions = <TData = Awaited<ReturnType<typeof ping>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getPingQueryOptions = <TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -141,10 +141,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type PingQueryResult = NonNullable<Awaited<ReturnType<typeof ping>>>
-export type PingQueryError = void
+export type PingQueryError = ProblemDetails
 
 
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof ping>>,
@@ -154,7 +154,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof ping>>,
@@ -164,7 +164,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -172,7 +172,7 @@ export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>
  * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
  */
 
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = void>(
+export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -223,7 +223,7 @@ export const getGetMeQueryKey = () => {
     }
 
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -242,10 +242,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
-export type GetMeQueryError = void
+export type GetMeQueryError = ProblemDetails
 
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMe>>,
@@ -255,7 +255,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMe>>,
@@ -265,7 +265,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -273,7 +273,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -317,7 +317,7 @@ export const bootstrapMe = async ( options?: Parameters<typeof customFetch>[1]):
 
 
 
-export const getBootstrapMeMutationOptions = <TError = void,
+export const getBootstrapMeMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bootstrapMe>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof bootstrapMe>>, TError,void, TContext> => {
 
@@ -346,12 +346,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type BootstrapMeMutationResult = NonNullable<Awaited<ReturnType<typeof bootstrapMe>>>
 
-    export type BootstrapMeMutationError = void
+    export type BootstrapMeMutationError = ProblemDetails
 
     /**
  * @summary Idempotently ensure the caller has the standard calendar set; returns it.
  */
-export const useBootstrapMe = <TError = void,
+export const useBootstrapMe = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bootstrapMe>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof bootstrapMe>>,
@@ -402,7 +402,7 @@ export const getGetParticipationSummaryQueryKey = (params?: GetParticipationSumm
     }
 
 
-export const getGetParticipationSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetParticipationSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = ProblemDetails>(params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -421,10 +421,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetParticipationSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getParticipationSummary>>>
-export type GetParticipationSummaryQueryError = void
+export type GetParticipationSummaryQueryError = ProblemDetails
 
 
-export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(
+export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = ProblemDetails>(
  params: undefined |  GetParticipationSummaryParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getParticipationSummary>>,
@@ -434,7 +434,7 @@ export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof get
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(
+export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = ProblemDetails>(
  params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getParticipationSummary>>,
@@ -444,7 +444,7 @@ export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof get
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(
+export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = ProblemDetails>(
  params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -452,7 +452,7 @@ export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof get
  * @summary Per-contact participation across your readable calendars (contactId, item count, most recent occurrence start), ordered most-interacted first. Optional from/to restricts the window. A ranking signal for contact pickers/resolvers.
  */
 
-export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = void>(
+export function useGetParticipationSummary<TData = Awaited<ReturnType<typeof getParticipationSummary>>, TError = ProblemDetails>(
  params?: GetParticipationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParticipationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -503,7 +503,7 @@ export const getListContainersQueryKey = () => {
     }
 
 
-export const getListContainersQueryOptions = <TData = Awaited<ReturnType<typeof listContainers>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getListContainersQueryOptions = <TData = Awaited<ReturnType<typeof listContainers>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -522,10 +522,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ListContainersQueryResult = NonNullable<Awaited<ReturnType<typeof listContainers>>>
-export type ListContainersQueryError = void
+export type ListContainersQueryError = ProblemDetails
 
 
-export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = void>(
+export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContainers>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listContainers>>,
@@ -535,7 +535,7 @@ export function useListContainers<TData = Awaited<ReturnType<typeof listContaine
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = void>(
+export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContainers>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listContainers>>,
@@ -545,7 +545,7 @@ export function useListContainers<TData = Awaited<ReturnType<typeof listContaine
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = void>(
+export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -553,7 +553,7 @@ export function useListContainers<TData = Awaited<ReturnType<typeof listContaine
  * @summary List the calendars the caller can access.
  */
 
-export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = void>(
+export function useListContainers<TData = Awaited<ReturnType<typeof listContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -603,7 +603,7 @@ return customFetch<ContainerDto>(getCreateCalendarUrl(),
 
 
 
-export const getCreateCalendarMutationOptions = <TError = void,
+export const getCreateCalendarMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCalendar>>, TError,{data: CreateCalendarRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createCalendar>>, TError,{data: CreateCalendarRequest}, TContext> => {
 
@@ -632,12 +632,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateCalendarMutationResult = NonNullable<Awaited<ReturnType<typeof createCalendar>>>
     export type CreateCalendarMutationBody = CreateCalendarRequest
-    export type CreateCalendarMutationError = void
+    export type CreateCalendarMutationError = ProblemDetails
 
     /**
  * @summary Create a calendar. (Address books are managed by LupiraContactApi.)
  */
-export const useCreateCalendar = <TError = void,
+export const useCreateCalendar = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCalendar>>, TError,{data: CreateCalendarRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createCalendar>>,
@@ -681,7 +681,7 @@ return customFetch<OwnerGrantDto>(getGrantCalendarOwnerUrl(calendarId),
 
 
 
-export const getGrantCalendarOwnerMutationOptions = <TError = ProblemDetails | void,
+export const getGrantCalendarOwnerMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof grantCalendarOwner>>, TError,{calendarId: string;data: GrantOwnerRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof grantCalendarOwner>>, TError,{calendarId: string;data: GrantOwnerRequest}, TContext> => {
 
@@ -710,12 +710,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type GrantCalendarOwnerMutationResult = NonNullable<Awaited<ReturnType<typeof grantCalendarOwner>>>
     export type GrantCalendarOwnerMutationBody = GrantOwnerRequest
-    export type GrantCalendarOwnerMutationError = ProblemDetails | void
+    export type GrantCalendarOwnerMutationError = ProblemDetails
 
     /**
  * @summary Grant a member access to a calendar (access = owner|read-write|read; default owner).
  */
-export const useGrantCalendarOwner = <TError = ProblemDetails | void,
+export const useGrantCalendarOwner = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof grantCalendarOwner>>, TError,{calendarId: string;data: GrantOwnerRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof grantCalendarOwner>>,
@@ -761,7 +761,7 @@ export const revokeCalendarOwner = async (calendarId: string,
 
 
 
-export const getRevokeCalendarOwnerMutationOptions = <TError = ProblemDetails | void,
+export const getRevokeCalendarOwnerMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeCalendarOwner>>, TError,{calendarId: string;params: RevokeCalendarOwnerParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof revokeCalendarOwner>>, TError,{calendarId: string;params: RevokeCalendarOwnerParams}, TContext> => {
 
@@ -790,12 +790,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RevokeCalendarOwnerMutationResult = NonNullable<Awaited<ReturnType<typeof revokeCalendarOwner>>>
 
-    export type RevokeCalendarOwnerMutationError = ProblemDetails | void
+    export type RevokeCalendarOwnerMutationError = ProblemDetails
 
     /**
  * @summary Revoke a member's access to a calendar (by email). 409 if it would remove the last owner.
  */
-export const useRevokeCalendarOwner = <TError = ProblemDetails | void,
+export const useRevokeCalendarOwner = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeCalendarOwner>>, TError,{calendarId: string;params: RevokeCalendarOwnerParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof revokeCalendarOwner>>,
@@ -846,7 +846,7 @@ export const getSearchItemsQueryKey = (params?: SearchItemsParams,) => {
     }
 
 
-export const getSearchItemsQueryOptions = <TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getSearchItemsQueryOptions = <TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails>(params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -865,10 +865,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SearchItemsQueryResult = NonNullable<Awaited<ReturnType<typeof searchItems>>>
-export type SearchItemsQueryError = ProblemDetails | void
+export type SearchItemsQueryError = ProblemDetails
 
 
-export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
+export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails>(
  params: undefined |  SearchItemsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof searchItems>>,
@@ -878,7 +878,7 @@ export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, 
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
+export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails>(
  params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof searchItems>>,
@@ -888,7 +888,7 @@ export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, 
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
+export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails>(
  params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -896,7 +896,7 @@ export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, 
  * @summary Search calendar items (text + tag + parent + attendee contact + category/status filter; recurrence expanded in-window). Text queries and parent/contact filters with no from/to match all-time; otherwise the window defaults to ±1 year. skip/take page over occurrences sorted by start (desc=true for newest first). Only items accepted into a calendar you can read.
  */
 
-export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails | void>(
+export function useSearchItems<TData = Awaited<ReturnType<typeof searchItems>>, TError = ProblemDetails>(
  params?: SearchItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -946,7 +946,7 @@ return customFetch<CalendarItemDto>(getCreateItemUrl(),
 
 
 
-export const getCreateItemMutationOptions = <TError = void | ProblemDetails,
+export const getCreateItemMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItem>>, TError,{data: CreateCalendarItemRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createItem>>, TError,{data: CreateCalendarItemRequest}, TContext> => {
 
@@ -975,12 +975,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateItemMutationResult = NonNullable<Awaited<ReturnType<typeof createItem>>>
     export type CreateItemMutationBody = CreateCalendarItemRequest
-    export type CreateItemMutationError = void | ProblemDetails
+    export type CreateItemMutationError = ProblemDetails
 
     /**
  * @summary Create a calendar item (filed into CalendarId if given, else unfiled for later curation). A location must be a resolved PlaceId (free text is CalDAV-only).
  */
-export const useCreateItem = <TError = void | ProblemDetails,
+export const useCreateItem = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItem>>, TError,{data: CreateCalendarItemRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createItem>>,
@@ -1023,7 +1023,7 @@ return customFetch<ItemBatchResult[]>(getCreateItemsBatchUrl(),
 
 
 
-export const getCreateItemsBatchMutationOptions = <TError = ProblemDetails | void,
+export const getCreateItemsBatchMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext> => {
 
@@ -1052,12 +1052,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateItemsBatchMutationResult = NonNullable<Awaited<ReturnType<typeof createItemsBatch>>>
     export type CreateItemsBatchMutationBody = CreateCalendarItemsBatchRequest
-    export type CreateItemsBatchMutationError = ProblemDetails | void
+    export type CreateItemsBatchMutationError = ProblemDetails
 
     /**
  * @summary Create many items in one call (idempotent per item on SourceKey; children reference parents by ParentSourceKey in any order). Returns a per-item result (created|existed|invalid) in input order.
  */
-export const useCreateItemsBatch = <TError = ProblemDetails | void,
+export const useCreateItemsBatch = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createItemsBatch>>,
@@ -1101,7 +1101,7 @@ export const getGetItemQueryKey = (id: string,) => {
     }
 
 
-export const getGetItemQueryOptions = <TData = Awaited<ReturnType<typeof getItem>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItem>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetItemQueryOptions = <TData = Awaited<ReturnType<typeof getItem>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItem>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1120,10 +1120,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetItemQueryResult = NonNullable<Awaited<ReturnType<typeof getItem>>>
-export type GetItemQueryError = void
+export type GetItemQueryError = ProblemDetails
 
 
-export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError = void>(
+export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError = ProblemDetails>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItem>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getItem>>,
@@ -1133,7 +1133,7 @@ export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError =
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError = void>(
+export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItem>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getItem>>,
@@ -1143,7 +1143,7 @@ export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError =
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError = void>(
+export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItem>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1151,7 +1151,7 @@ export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError =
  * @summary Get a single calendar item.
  */
 
-export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError = void>(
+export function useGetItem<TData = Awaited<ReturnType<typeof getItem>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItem>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1202,7 +1202,7 @@ return customFetch<CalendarItemDto>(getUpdateItemUrl(id),
 
 
 
-export const getUpdateItemMutationOptions = <TError = void,
+export const getUpdateItemMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateItem>>, TError,{id: string;data: UpdateCalendarItemRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateItem>>, TError,{id: string;data: UpdateCalendarItemRequest}, TContext> => {
 
@@ -1231,12 +1231,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateItemMutationResult = NonNullable<Awaited<ReturnType<typeof updateItem>>>
     export type UpdateItemMutationBody = UpdateCalendarItemRequest
-    export type UpdateItemMutationError = void
+    export type UpdateItemMutationError = ProblemDetails
 
     /**
  * @summary Update a calendar item. Plain fields: omitted = kept; fields paired with a *Provided sentinel are written verbatim when it is true (enables clearing recurrence, switching all-day, editing timezones). Offline clients send Idempotency-Key (their command id) + body OccurredAt for replay-safe, last-writer-wins updates.
  */
-export const useUpdateItem = <TError = void,
+export const useUpdateItem = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateItem>>, TError,{id: string;data: UpdateCalendarItemRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateItem>>,
@@ -1273,7 +1273,7 @@ export const deleteItem = async (id: string, options?: Parameters<typeof customF
 
 
 
-export const getDeleteItemMutationOptions = <TError = void,
+export const getDeleteItemMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteItem>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteItem>>, TError,{id: string}, TContext> => {
 
@@ -1302,12 +1302,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteItemMutationResult = NonNullable<Awaited<ReturnType<typeof deleteItem>>>
 
-    export type DeleteItemMutationError = void
+    export type DeleteItemMutationError = ProblemDetails
 
     /**
  * @summary Delete a calendar item (soft delete + tombstone). A replay bearing the same Idempotency-Key succeeds instead of 404ing.
  */
-export const useDeleteItem = <TError = void,
+export const useDeleteItem = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteItem>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteItem>>,
@@ -1358,7 +1358,7 @@ export const getGetThinItemsQueryKey = (params?: GetThinItemsParams,) => {
     }
 
 
-export const getGetThinItemsQueryOptions = <TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails | void>(params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetThinItemsQueryOptions = <TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1377,10 +1377,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetThinItemsQueryResult = NonNullable<Awaited<ReturnType<typeof getThinItems>>>
-export type GetThinItemsQueryError = ProblemDetails | void
+export type GetThinItemsQueryError = ProblemDetails
 
 
-export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails | void>(
+export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(
  params: undefined |  GetThinItemsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getThinItems>>,
@@ -1390,7 +1390,7 @@ export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails | void>(
+export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(
  params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getThinItems>>,
@@ -1400,7 +1400,7 @@ export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails | void>(
+export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(
  params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1408,7 +1408,7 @@ export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>
  * @summary Check-in worklist: items ranked thinnest-first by completeness score (< maxScore, default 1 = any item with gaps). Item-granular (no recurrence expansion); exempt items (system/Birthdays/Availability calendars, cancelled) are excluded. Acknowledge an inapplicable gap field by merging metadata {"completeness":{"na":["booking"]}} so it stops counting.
  */
 
-export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails | void>(
+export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(
  params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1459,7 +1459,7 @@ export const getGetItemsByPlaceQueryKey = (placeId: string,) => {
     }
 
 
-export const getGetItemsByPlaceQueryOptions = <TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetItemsByPlaceQueryOptions = <TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = ProblemDetails>(placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1478,10 +1478,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetItemsByPlaceQueryResult = NonNullable<Awaited<ReturnType<typeof getItemsByPlace>>>
-export type GetItemsByPlaceQueryError = void
+export type GetItemsByPlaceQueryError = ProblemDetails
 
 
-export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(
+export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = ProblemDetails>(
  placeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getItemsByPlace>>,
@@ -1491,7 +1491,7 @@ export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByP
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(
+export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = ProblemDetails>(
  placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getItemsByPlace>>,
@@ -1501,7 +1501,7 @@ export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByP
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(
+export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = ProblemDetails>(
  placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1509,7 +1509,7 @@ export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByP
  * @summary Calendar items anchored to a LupiraGeoApi place (its location, or a travel endpoint). Only items in a calendar you can read.
  */
 
-export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = void>(
+export function useGetItemsByPlace<TData = Awaited<ReturnType<typeof getItemsByPlace>>, TError = ProblemDetails>(
  placeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsByPlace>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1569,7 +1569,7 @@ return customFetch<CalendarItemDto>(getMergeItemMetadataUrl(id,params),
 
 
 
-export const getMergeItemMetadataMutationOptions = <TError = void,
+export const getMergeItemMetadataMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeItemMetadata>>, TError,{id: string;data: JsonNode;params?: MergeItemMetadataParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof mergeItemMetadata>>, TError,{id: string;data: JsonNode;params?: MergeItemMetadataParams}, TContext> => {
 
@@ -1598,12 +1598,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type MergeItemMetadataMutationResult = NonNullable<Awaited<ReturnType<typeof mergeItemMetadata>>>
     export type MergeItemMetadataMutationBody = JsonNode
-    export type MergeItemMetadataMutationError = void
+    export type MergeItemMetadataMutationError = ProblemDetails
 
     /**
  * @summary Merge arbitrary JSON metadata into a calendar item. Offline clients pass ?occurredAt= + Idempotency-Key for replay-safe, last-writer-wins merges.
  */
-export const useMergeItemMetadata = <TError = void,
+export const useMergeItemMetadata = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeItemMetadata>>, TError,{id: string;data: JsonNode;params?: MergeItemMetadataParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof mergeItemMetadata>>,
@@ -1647,7 +1647,7 @@ return customFetch<CalendarItemDto>(getSetItemPromptUrl(id),
 
 
 
-export const getSetItemPromptMutationOptions = <TError = void | ProblemDetails,
+export const getSetItemPromptMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setItemPrompt>>, TError,{id: string;data: SetItemPromptRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setItemPrompt>>, TError,{id: string;data: SetItemPromptRequest}, TContext> => {
 
@@ -1676,12 +1676,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetItemPromptMutationResult = NonNullable<Awaited<ReturnType<typeof setItemPrompt>>>
     export type SetItemPromptMutationBody = SetItemPromptRequest
-    export type SetItemPromptMutationError = void | ProblemDetails
+    export type SetItemPromptMutationError = ProblemDetails
 
     /**
  * @summary Set the LLM-interpreted payload on an item (server-side only; never in the export). 409 if the item carries an action.
  */
-export const useSetItemPrompt = <TError = void | ProblemDetails,
+export const useSetItemPrompt = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setItemPrompt>>, TError,{id: string;data: SetItemPromptRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setItemPrompt>>,
@@ -1727,7 +1727,7 @@ export const clearItemPrompt = async (id: string,
 
 
 
-export const getClearItemPromptMutationOptions = <TError = void,
+export const getClearItemPromptMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearItemPrompt>>, TError,{id: string;params?: ClearItemPromptParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof clearItemPrompt>>, TError,{id: string;params?: ClearItemPromptParams}, TContext> => {
 
@@ -1756,12 +1756,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ClearItemPromptMutationResult = NonNullable<Awaited<ReturnType<typeof clearItemPrompt>>>
 
-    export type ClearItemPromptMutationError = void
+    export type ClearItemPromptMutationError = ProblemDetails
 
     /**
  * @summary Clear the item's LLM payload.
  */
-export const useClearItemPrompt = <TError = void,
+export const useClearItemPrompt = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearItemPrompt>>, TError,{id: string;params?: ClearItemPromptParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof clearItemPrompt>>,
@@ -1805,7 +1805,7 @@ return customFetch<CalendarItemDto>(getSetItemActionUrl(id),
 
 
 
-export const getSetItemActionMutationOptions = <TError = void | ProblemDetails,
+export const getSetItemActionMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setItemAction>>, TError,{id: string;data: SetItemActionRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setItemAction>>, TError,{id: string;data: SetItemActionRequest}, TContext> => {
 
@@ -1834,12 +1834,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetItemActionMutationResult = NonNullable<Awaited<ReturnType<typeof setItemAction>>>
     export type SetItemActionMutationBody = SetItemActionRequest
-    export type SetItemActionMutationError = void | ProblemDetails
+    export type SetItemActionMutationError = ProblemDetails
 
     /**
  * @summary Set the deterministic payload on an item (server-side only; never in the export). 409 if the item carries a prompt.
  */
-export const useSetItemAction = <TError = void | ProblemDetails,
+export const useSetItemAction = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setItemAction>>, TError,{id: string;data: SetItemActionRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setItemAction>>,
@@ -1885,7 +1885,7 @@ export const clearItemAction = async (id: string,
 
 
 
-export const getClearItemActionMutationOptions = <TError = void,
+export const getClearItemActionMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearItemAction>>, TError,{id: string;params?: ClearItemActionParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof clearItemAction>>, TError,{id: string;params?: ClearItemActionParams}, TContext> => {
 
@@ -1914,12 +1914,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ClearItemActionMutationResult = NonNullable<Awaited<ReturnType<typeof clearItemAction>>>
 
-    export type ClearItemActionMutationError = void
+    export type ClearItemActionMutationError = ProblemDetails
 
     /**
  * @summary Clear the item's deterministic payload.
  */
-export const useClearItemAction = <TError = void,
+export const useClearItemAction = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearItemAction>>, TError,{id: string;params?: ClearItemActionParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof clearItemAction>>,
@@ -1963,7 +1963,7 @@ return customFetch<RelationDto>(getCreateItemRelationUrl(id),
 
 
 
-export const getCreateItemRelationMutationOptions = <TError = void,
+export const getCreateItemRelationMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItemRelation>>, TError,{id: string;data: CreateRelationRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createItemRelation>>, TError,{id: string;data: CreateRelationRequest}, TContext> => {
 
@@ -1992,12 +1992,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateItemRelationMutationResult = NonNullable<Awaited<ReturnType<typeof createItemRelation>>>
     export type CreateItemRelationMutationBody = CreateRelationRequest
-    export type CreateItemRelationMutationError = void
+    export type CreateItemRelationMutationError = ProblemDetails
 
     /**
  * @summary Link a calendar item to an external reference (e.g. a LupiraTasks item, or an Activity-API engagement/project).
  */
-export const useCreateItemRelation = <TError = void,
+export const useCreateItemRelation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItemRelation>>, TError,{id: string;data: CreateRelationRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createItemRelation>>,
@@ -2041,7 +2041,7 @@ export const getListItemRelationsQueryKey = (id: string,) => {
     }
 
 
-export const getListItemRelationsQueryOptions = <TData = Awaited<ReturnType<typeof listItemRelations>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listItemRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getListItemRelationsQueryOptions = <TData = Awaited<ReturnType<typeof listItemRelations>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listItemRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2060,10 +2060,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ListItemRelationsQueryResult = NonNullable<Awaited<ReturnType<typeof listItemRelations>>>
-export type ListItemRelationsQueryError = void
+export type ListItemRelationsQueryError = ProblemDetails
 
 
-export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemRelations>>, TError = void>(
+export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemRelations>>, TError = ProblemDetails>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listItemRelations>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listItemRelations>>,
@@ -2073,7 +2073,7 @@ export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemR
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemRelations>>, TError = void>(
+export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemRelations>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listItemRelations>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listItemRelations>>,
@@ -2083,7 +2083,7 @@ export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemR
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemRelations>>, TError = void>(
+export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemRelations>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listItemRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -2091,7 +2091,7 @@ export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemR
  * @summary List a calendar item's relations.
  */
 
-export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemRelations>>, TError = void>(
+export function useListItemRelations<TData = Awaited<ReturnType<typeof listItemRelations>>, TError = ProblemDetails>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listItemRelations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -2149,7 +2149,7 @@ export const getFindRelatedItemsQueryKey = (params?: FindRelatedItemsParams,) =>
     }
 
 
-export const getFindRelatedItemsQueryOptions = <TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = void>(params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getFindRelatedItemsQueryOptions = <TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2168,10 +2168,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type FindRelatedItemsQueryResult = NonNullable<Awaited<ReturnType<typeof findRelatedItems>>>
-export type FindRelatedItemsQueryError = void
+export type FindRelatedItemsQueryError = ProblemDetails
 
 
-export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = void>(
+export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(
  params: FindRelatedItemsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof findRelatedItems>>,
@@ -2181,7 +2181,7 @@ export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelate
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = void>(
+export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(
  params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof findRelatedItems>>,
@@ -2191,7 +2191,7 @@ export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelate
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = void>(
+export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(
  params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -2199,7 +2199,7 @@ export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelate
  * @summary Reverse lookup: calendar items linked to a given external reference.
  */
 
-export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = void>(
+export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(
  params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -2355,7 +2355,7 @@ export const acceptItemIntoCalendar = async (itemId: string,
 
 
 
-export const getAcceptItemIntoCalendarMutationOptions = <TError = void,
+export const getAcceptItemIntoCalendarMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptItemIntoCalendar>>, TError,{itemId: string;calendarId: string;params?: AcceptItemIntoCalendarParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof acceptItemIntoCalendar>>, TError,{itemId: string;calendarId: string;params?: AcceptItemIntoCalendarParams}, TContext> => {
 
@@ -2384,12 +2384,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AcceptItemIntoCalendarMutationResult = NonNullable<Awaited<ReturnType<typeof acceptItemIntoCalendar>>>
 
-    export type AcceptItemIntoCalendarMutationError = void
+    export type AcceptItemIntoCalendarMutationError = ProblemDetails
 
     /**
  * @summary Accept a proposed item into a calendar. Offline clients pass ?occurredAt= + Idempotency-Key for replay-safe, last-writer-wins filing.
  */
-export const useAcceptItemIntoCalendar = <TError = void,
+export const useAcceptItemIntoCalendar = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptItemIntoCalendar>>, TError,{itemId: string;calendarId: string;params?: AcceptItemIntoCalendarParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof acceptItemIntoCalendar>>,
@@ -2437,7 +2437,7 @@ export const fileItemToCalendar = async (itemId: string,
 
 
 
-export const getFileItemToCalendarMutationOptions = <TError = void,
+export const getFileItemToCalendarMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof fileItemToCalendar>>, TError,{itemId: string;calendarId: string;params?: FileItemToCalendarParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof fileItemToCalendar>>, TError,{itemId: string;calendarId: string;params?: FileItemToCalendarParams}, TContext> => {
 
@@ -2466,12 +2466,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type FileItemToCalendarMutationResult = NonNullable<Awaited<ReturnType<typeof fileItemToCalendar>>>
 
-    export type FileItemToCalendarMutationError = void
+    export type FileItemToCalendarMutationError = ProblemDetails
 
     /**
  * @summary File an existing item into a calendar (status=proposed|accepted, default proposed). Offline clients pass ?occurredAt= + Idempotency-Key.
  */
-export const useFileItemToCalendar = <TError = void,
+export const useFileItemToCalendar = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof fileItemToCalendar>>, TError,{itemId: string;calendarId: string;params?: FileItemToCalendarParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof fileItemToCalendar>>,
@@ -2519,7 +2519,7 @@ export const removeItemFromCalendar = async (itemId: string,
 
 
 
-export const getRemoveItemFromCalendarMutationOptions = <TError = void,
+export const getRemoveItemFromCalendarMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeItemFromCalendar>>, TError,{itemId: string;calendarId: string;params?: RemoveItemFromCalendarParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removeItemFromCalendar>>, TError,{itemId: string;calendarId: string;params?: RemoveItemFromCalendarParams}, TContext> => {
 
@@ -2548,12 +2548,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RemoveItemFromCalendarMutationResult = NonNullable<Awaited<ReturnType<typeof removeItemFromCalendar>>>
 
-    export type RemoveItemFromCalendarMutationError = void
+    export type RemoveItemFromCalendarMutationError = ProblemDetails
 
     /**
  * @summary Remove an item from a calendar (reject / unfile). Offline clients pass ?occurredAt= + Idempotency-Key.
  */
-export const useRemoveItemFromCalendar = <TError = void,
+export const useRemoveItemFromCalendar = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeItemFromCalendar>>, TError,{itemId: string;calendarId: string;params?: RemoveItemFromCalendarParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeItemFromCalendar>>,
@@ -2599,7 +2599,7 @@ export const inviteParticipant = async (id: string,
 
 
 
-export const getInviteParticipantMutationOptions = <TError = void,
+export const getInviteParticipantMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof inviteParticipant>>, TError,{id: string;params: InviteParticipantParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof inviteParticipant>>, TError,{id: string;params: InviteParticipantParams}, TContext> => {
 
@@ -2628,12 +2628,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type InviteParticipantMutationResult = NonNullable<Awaited<ReturnType<typeof inviteParticipant>>>
 
-    export type InviteParticipantMutationError = void
+    export type InviteParticipantMutationError = ProblemDetails
 
     /**
  * @summary Invite a contact (must be a Contact id). role = chair|req-participant|opt-participant|non-participant.
  */
-export const useInviteParticipant = <TError = void,
+export const useInviteParticipant = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof inviteParticipant>>, TError,{id: string;params: InviteParticipantParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof inviteParticipant>>,
@@ -2677,7 +2677,7 @@ return customFetch<SetParticipantsResult>(getSetParticipantsUrl(id),
 
 
 
-export const getSetParticipantsMutationOptions = <TError = ProblemDetails | void,
+export const getSetParticipantsMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext> => {
 
@@ -2706,12 +2706,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetParticipantsMutationResult = NonNullable<Awaited<ReturnType<typeof setParticipants>>>
     export type SetParticipantsMutationBody = SetParticipantsRequest
-    export type SetParticipantsMutationError = ProblemDetails | void
+    export type SetParticipantsMutationError = ProblemDetails
 
     /**
  * @summary Add a set of contacts as attendees in one call (add-only). Attended=true also marks them attended (historical backfill). Slim result (additions + already-present count), not the full item.
  */
-export const useSetParticipants = <TError = ProblemDetails | void,
+export const useSetParticipants = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setParticipants>>,
@@ -2759,7 +2759,7 @@ export const respondToInvitation = async (id: string,
 
 
 
-export const getRespondToInvitationMutationOptions = <TError = void,
+export const getRespondToInvitationMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof respondToInvitation>>, TError,{id: string;participationId: string;params?: RespondToInvitationParams}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof respondToInvitation>>, TError,{id: string;participationId: string;params?: RespondToInvitationParams}, TContext> => {
 
@@ -2788,12 +2788,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RespondToInvitationMutationResult = NonNullable<Awaited<ReturnType<typeof respondToInvitation>>>
 
-    export type RespondToInvitationMutationError = void
+    export type RespondToInvitationMutationError = ProblemDetails
 
     /**
  * @summary Record an RSVP. status = needs-action|accepted|declined|tentative|delegated.
  */
-export const useRespondToInvitation = <TError = void,
+export const useRespondToInvitation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof respondToInvitation>>, TError,{id: string;participationId: string;params?: RespondToInvitationParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof respondToInvitation>>,
@@ -2832,7 +2832,7 @@ export const confirmAttendance = async (id: string,
 
 
 
-export const getConfirmAttendanceMutationOptions = <TError = void,
+export const getConfirmAttendanceMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmAttendance>>, TError,{id: string;participationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof confirmAttendance>>, TError,{id: string;participationId: string}, TContext> => {
 
@@ -2861,12 +2861,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ConfirmAttendanceMutationResult = NonNullable<Awaited<ReturnType<typeof confirmAttendance>>>
 
-    export type ConfirmAttendanceMutationError = void
+    export type ConfirmAttendanceMutationError = ProblemDetails
 
     /**
  * @summary Confirm attendance.
  */
-export const useConfirmAttendance = <TError = void,
+export const useConfirmAttendance = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmAttendance>>, TError,{id: string;participationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof confirmAttendance>>,
@@ -2905,7 +2905,7 @@ export const leaveItem = async (id: string,
 
 
 
-export const getLeaveItemMutationOptions = <TError = void,
+export const getLeaveItemMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof leaveItem>>, TError,{id: string;participationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof leaveItem>>, TError,{id: string;participationId: string}, TContext> => {
 
@@ -2934,12 +2934,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type LeaveItemMutationResult = NonNullable<Awaited<ReturnType<typeof leaveItem>>>
 
-    export type LeaveItemMutationError = void
+    export type LeaveItemMutationError = ProblemDetails
 
     /**
  * @summary Record that the participant left.
  */
-export const useLeaveItem = <TError = void,
+export const useLeaveItem = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof leaveItem>>, TError,{id: string;participationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof leaveItem>>,
@@ -2978,7 +2978,7 @@ export const removeParticipant = async (id: string,
 
 
 
-export const getRemoveParticipantMutationOptions = <TError = void,
+export const getRemoveParticipantMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeParticipant>>, TError,{id: string;participationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removeParticipant>>, TError,{id: string;participationId: string}, TContext> => {
 
@@ -3007,12 +3007,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RemoveParticipantMutationResult = NonNullable<Awaited<ReturnType<typeof removeParticipant>>>
 
-    export type RemoveParticipantMutationError = void
+    export type RemoveParticipantMutationError = ProblemDetails
 
     /**
  * @summary Remove an attendee.
  */
-export const useRemoveParticipant = <TError = void,
+export const useRemoveParticipant = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeParticipant>>, TError,{id: string;participationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeParticipant>>,
@@ -3063,7 +3063,7 @@ export const getGetChangesQueryKey = (params?: GetChangesParams,) => {
     }
 
 
-export const getGetChangesQueryOptions = <TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetChangesQueryOptions = <TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3082,10 +3082,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetChangesQueryResult = NonNullable<Awaited<ReturnType<typeof getChanges>>>
-export type GetChangesQueryError = ProblemDetails | void
+export type GetChangesQueryError = ProblemDetails
 
 
-export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(
  params: undefined |  GetChangesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getChanges>>,
@@ -3095,7 +3095,7 @@ export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TE
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(
  params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getChanges>>,
@@ -3105,7 +3105,7 @@ export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TE
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(
  params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -3113,7 +3113,7 @@ export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TE
  * @summary Delta feed for offline mirrors: everything the caller can read that changed past the cursor, plus tombstone ids for items deleted or no longer visible. Omit since for a full sync (tombstones suppressed — replace the mirror wholesale); loop while hasMore, persisting cursor between calls.
  */
 
-export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails | void>(
+export function useGetChanges<TData = Awaited<ReturnType<typeof getChanges>>, TError = ProblemDetails>(
  params?: GetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getChanges>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -3164,7 +3164,7 @@ export const getGetSyncContainersQueryKey = () => {
     }
 
 
-export const getGetSyncContainersQueryOptions = <TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetSyncContainersQueryOptions = <TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3183,10 +3183,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetSyncContainersQueryResult = NonNullable<Awaited<ReturnType<typeof getSyncContainers>>>
-export type GetSyncContainersQueryError = void
+export type GetSyncContainersQueryError = ProblemDetails
 
 
-export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getSyncContainers>>,
@@ -3196,7 +3196,7 @@ export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncCo
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getSyncContainers>>,
@@ -3206,7 +3206,7 @@ export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncCo
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -3214,7 +3214,7 @@ export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncCo
  * @summary Snapshot of the caller's calendars for mirror reconciliation. Containers are plain documents with no event history (no cursor) — fetch once per sync cycle and diff locally.
  */
 
-export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = void>(
+export function useGetSyncContainers<TData = Awaited<ReturnType<typeof getSyncContainers>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

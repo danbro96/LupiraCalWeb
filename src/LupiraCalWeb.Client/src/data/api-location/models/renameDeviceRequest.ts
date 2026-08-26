@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Rename a device.
+ */
 export interface RenameDeviceRequest {
   label: string;
 }

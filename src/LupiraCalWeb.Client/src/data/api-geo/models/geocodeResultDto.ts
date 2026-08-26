@@ -7,6 +7,10 @@
  */
 import type { PlaceCategory } from './placeCategory';
 
+/**
+ * A geocoding hit — a coordinate + display label + best-effort structured address and category. Coarse by
+ *             design (coordinates are quantized to the cache grid).
+ */
 export interface GeocodeResultDto {
   displayName: string;
   latitude: number;
@@ -20,7 +24,10 @@ export interface GeocodeResultDto {
   region?: string | null;
   /** @nullable */
   locality?: string | null;
-  /** @nullable */
+  /**
+     * OSM identity of the hit (e.g. "way" + 175761024) — the key for `POST /places/from-geocode`.
+     * @nullable
+     */
   osmType?: string | null;
   /** @nullable */
   osmId?: number | null;

@@ -8,6 +8,9 @@
 import type { ContactGroupKind } from './contactGroupKind';
 import type { GroupMemberDto } from './groupMemberDto';
 
+/**
+ * A contact group (personal grouping or organization) and its current members.
+ */
 export interface ContactGroupDto {
   id: string;
   addressBookId: string;

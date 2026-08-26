@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * What a typeahead suggestion points at: a gazetteer SuggestionType.Place or an AdminArea locality.
+ */
 export type SuggestionType = typeof SuggestionType[keyof typeof SuggestionType];
 
 

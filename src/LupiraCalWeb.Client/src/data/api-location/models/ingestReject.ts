@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A per-row rejection within an otherwise-accepted batch (permanent — the uploader should drop + log it).
+ */
 export interface IngestReject {
   /** @nullable */
   seq?: number | null;

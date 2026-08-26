@@ -7,6 +7,10 @@
  */
 import type { SectionGuardDto } from './sectionGuardDto';
 
+/**
+ * Per-section guards for a contact. `Core` covers the whole ContactFields (name/channels/tags/
+ *             notes… — channel and tag writes ride the same revision event); the rest map 1:1 to their write endpoints.
+ */
 export interface SectionGuardsDto {
   core: SectionGuardDto;
   addresses: SectionGuardDto;

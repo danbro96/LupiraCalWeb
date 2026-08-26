@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * The ProposedAction kind a run is contracted to yield (assistant-api validates against it; cal-api only stores it).
+ */
 export type OutputKind = typeof OutputKind[keyof typeof OutputKind];
 
 

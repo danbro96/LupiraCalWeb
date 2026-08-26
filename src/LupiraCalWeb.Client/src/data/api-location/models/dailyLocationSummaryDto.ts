@@ -7,6 +7,9 @@
  */
 import type { VisitedPlaceDto } from './visitedPlaceDto';
 
+/**
+ * Per-day location rollup.
+ */
 export interface DailyLocationSummaryDto {
   date: string;
   distanceM: number;

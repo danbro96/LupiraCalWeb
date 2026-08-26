@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * iCalendar `PARTSTAT` (attendee RSVP).
+ */
 export type ParticipationStatus = typeof ParticipationStatus[keyof typeof ParticipationStatus];
 
 

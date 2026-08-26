@@ -6,6 +6,11 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * The resolved local identity of the caller: the stable Guid MeDto.PrincipalId plus
+ *             current email/display name. Same identity shape (`principalId`/`email`/`displayName`)
+ *             the platform uses everywhere it returns a person.
+ */
 export interface MeDto {
   principalId: string;
   email: string;

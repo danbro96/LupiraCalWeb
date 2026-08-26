@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A contact's social/IM handle as published. Service and handle are guaranteed non-empty —
+ *             `SetProfilesAsync` rejects the write otherwise.
+ */
 export interface ContactSocialProfileDto {
   service: string;
   handle: string;

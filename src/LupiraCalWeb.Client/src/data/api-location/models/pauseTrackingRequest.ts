@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Pause tracking for a device (optional human-readable reason).
+ */
 export interface PauseTrackingRequest {
   /** @nullable */
   reason?: string | null;

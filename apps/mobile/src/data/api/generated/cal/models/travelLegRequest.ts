@@ -7,13 +7,20 @@
  */
 import type { TransportMode } from './transportMode';
 
+/**
+ * `ToPlace`/`FromPlace` are free-text labels resolved to a LupiraGeoApi place id + label; `DriverContactId` is a <see cref="!:Contact" /> id.
+ */
 export interface TravelLegRequest {
   mode?: TransportMode;
   /** @nullable */
   toPlace?: string | null;
   /** @nullable */
   fromPlace?: string | null;
-  /** @nullable */
+  /**
+     * Pre-resolved place ids (places-first imports). When set, used directly instead of resolving
+     *             string? TravelLegRequest.ToPlace/string? TravelLegRequest.FromPlace text; the text, if any, is kept as the label.
+     * @nullable
+     */
   toPlaceId?: string | null;
   /** @nullable */
   fromPlaceId?: string | null;

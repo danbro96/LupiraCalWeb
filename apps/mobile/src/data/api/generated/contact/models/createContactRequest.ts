@@ -10,9 +10,17 @@ import type { ContactReachChannel } from './contactReachChannel';
 import type { DisplayNameFormat } from './displayNameFormat';
 import type { PartialDate } from './partialDate';
 
+/**
+ * Create a contact via REST/MCP. No `FullName` — the display name is composed from the structured parts.
+ *             An employer is set separately as membership in an `organization`-kind contact group.
+ */
 export interface CreateContactRequest {
   addressBookId: string;
-  /** @nullable */
+  /**
+     * Client-chosen stable key that pins the contact's identity (offline clients mint a UUIDv7): a
+     *             replayed create with the same key returns the existing contact instead of duplicating it.
+     * @nullable
+     */
   sourceKey?: string | null;
   kind?: null | ContactKind;
   /** @nullable */

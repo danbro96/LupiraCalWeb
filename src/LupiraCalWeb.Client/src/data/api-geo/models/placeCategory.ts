@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Semantic type of a place — drives filtering and iconography. Kept vendor-neutral and coarse; extend as needed.
+ */
 export type PlaceCategory = typeof PlaceCategory[keyof typeof PlaceCategory];
 
 

@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * The resume cursor for a device: the highest accepted seq + its timestamp (from the latest-snapshot table).
+ */
 export interface LocationCursor {
   deviceId: string;
   /** @nullable */

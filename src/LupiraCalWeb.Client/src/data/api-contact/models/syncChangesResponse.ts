@@ -7,9 +7,18 @@
  */
 import type { SyncChangeDto } from './syncChangeDto';
 
+/**
+ * One page of the changes feed. `Cursor` is opaque — hand it back as `?since=`; loop while
+ *             `HasMore`. A full sync (no `since`) streams every live visible contact; tombstone ids may reference
+ *             contacts the client never saw (ignore unknown ids).
+ */
 export interface SyncChangesResponse {
   cursor: string;
   hasMore: boolean;
   changed: SyncChangeDto[];
+  /**
+     * Ids no longer visible to the caller: soft-deleted, or moved into an address book the caller
+     *             can't read. Unknown ids are safe to ignore.
+     */
   deleted: string[];
 }

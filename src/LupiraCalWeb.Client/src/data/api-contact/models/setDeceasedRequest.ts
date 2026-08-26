@@ -6,9 +6,15 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Marks a contact as deceased; the date may be unknown.
+ */
 export interface SetDeceasedRequest {
   /** @nullable */
   deathDate?: string | null;
-  /** @nullable */
+  /**
+     * Client wall-clock of the edit, for last-writer-wins conflict resolution. Omitted ⇒ server receive time.
+     * @nullable
+     */
   occurredAt?: string | null;
 }

@@ -6,7 +6,8 @@
  * OpenAPI spec version: v1
  */
 import type {
-  PingDto
+  PingDto,
+  ProblemDetails
 } from '../models';
 
 import { apiFetch } from '../../../mutator';
@@ -17,14 +18,19 @@ export type pingResponse200 = {
 }
 
 export type pingResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type pingResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type pingResponseSuccess = (pingResponse200) & {
   headers: Headers;
 };
-export type pingResponseError = (pingResponse401) & {
+export type pingResponseError = (pingResponse401 | pingResponse500) & {
   headers: Headers;
 };
 

@@ -7,6 +7,10 @@
  */
 import type { DeviceDto } from './deviceDto';
 
+/**
+ * Result of registering a device. string RegisterDeviceResponse.ApiKey is the one-time plaintext ingest credential
+ *             (`{keyId:N}.{secret}`) — it is shown only here and never retrievable again; only its hash is stored.
+ */
 export interface RegisterDeviceResponse {
   device: DeviceDto;
   keyId: string;

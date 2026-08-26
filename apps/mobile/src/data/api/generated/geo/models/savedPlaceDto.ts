@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A caller's saved place / personal label. References a gazetteer place, or carries a raw coordinate.
+ */
 export interface SavedPlaceDto {
   id: string;
   /** @nullable */

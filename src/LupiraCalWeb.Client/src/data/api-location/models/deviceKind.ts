@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Kind of registered device that feeds location telemetry.
+ */
 export type DeviceKind = typeof DeviceKind[keyof typeof DeviceKind];
 
 

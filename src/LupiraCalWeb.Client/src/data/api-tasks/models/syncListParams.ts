@@ -6,6 +6,6 @@
  * OpenAPI spec version: v1
  */
 
-export type DeleteSharedTokenItemsItemIdParams = {
-occurredAt?: string;
+export type SyncListParams = {
+since?: number;
 };

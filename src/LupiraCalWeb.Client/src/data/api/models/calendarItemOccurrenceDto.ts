@@ -10,6 +10,9 @@ import type { ItemCategory } from './itemCategory';
 import type { ItemStatus } from './itemStatus';
 import type { OccurrenceOrigin } from './occurrenceOrigin';
 
+/**
+ * A single concrete occurrence of an item within a search window (recurrences expanded).
+ */
 export interface CalendarItemOccurrenceDto {
   id: string;
   /** @nullable */
@@ -22,15 +25,20 @@ export interface CalendarItemOccurrenceDto {
   start: string;
   /** @nullable */
   end?: string | null;
+  /** Accepted calendar memberships, limited to calendars the caller can read. */
   calendarIds: string[];
   category?: null | ItemCategory;
   status?: null | ItemStatus;
   /** @nullable */
   tags?: string[] | null;
-  /** @nullable */
+  /**
+     * Hierarchy link (e.g. the trip a leg belongs to). Title only when the caller can read the parent.
+     * @nullable
+     */
   parentItemId?: string | null;
   /** @nullable */
   parentTitle?: string | null;
+  /** Direct children visible to the caller, independent of the current filters. */
   childCount: number;
   completeness?: null | CompletenessScore;
   origin?: null | OccurrenceOrigin;

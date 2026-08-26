@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A presence/availability segment's status. A day may hold several segments (whole-day or timed).
+ */
 export type AvailabilityStatus = typeof AvailabilityStatus[keyof typeof AvailabilityStatus];
 
 

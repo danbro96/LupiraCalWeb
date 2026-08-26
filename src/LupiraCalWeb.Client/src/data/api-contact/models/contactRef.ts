@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A lightweight contact reference (id + display name) — a resolve candidate.
+ */
 export interface ContactRef {
   contactId: string;
   displayName: string;

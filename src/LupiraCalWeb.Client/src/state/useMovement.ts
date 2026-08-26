@@ -1,9 +1,9 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import {
-  useGetLocationCurrent,
-  useGetLocationTrackThinned,
-  useGetLocationTrips,
-  useGetLocationVisits,
+  useGetCurrentLocation,
+  useGetThinnedTrack,
+  useListTrips,
+  useListVisits,
 } from '../data/api-location/lupiraLocationApi';
 
 /**
@@ -23,14 +23,14 @@ function staleTimeFor(to: string): number {
 }
 
 export function useVisits(from: string, to: string, enabled: boolean) {
-  return useGetLocationVisits(
+  return useListVisits(
     { from, to },
     { query: { enabled, staleTime: staleTimeFor(to), placeholderData: keepPreviousData } },
   );
 }
 
 export function useTrips(from: string, to: string, enabled: boolean) {
-  return useGetLocationTrips(
+  return useListTrips(
     { from, to },
     { query: { enabled, staleTime: staleTimeFor(to), placeholderData: keepPreviousData } },
   );
@@ -38,7 +38,7 @@ export function useTrips(from: string, to: string, enabled: boolean) {
 
 /** One best-accuracy fix per bucket — the drawable form of a track (raw /location/track caps at 50k). */
 export function useThinnedTrack(from: string, to: string, enabled: boolean, bucketSeconds = 30) {
-  return useGetLocationTrackThinned(
+  return useGetThinnedTrack(
     { from, to, bucketSeconds },
     { query: { enabled, staleTime: staleTimeFor(to), placeholderData: keepPreviousData } },
   );
@@ -46,7 +46,7 @@ export function useThinnedTrack(from: string, to: string, enabled: boolean, buck
 
 /** Latest fix per device, polled while the movement layer is visible. */
 export function useCurrentFixes(enabled: boolean) {
-  return useGetLocationCurrent(undefined, {
+  return useGetCurrentLocation(undefined, {
     query: { enabled, refetchInterval: 30_000, staleTime: 15_000 },
   });
 }

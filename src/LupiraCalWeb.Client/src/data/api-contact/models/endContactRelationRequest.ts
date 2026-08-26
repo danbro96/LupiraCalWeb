@@ -7,6 +7,9 @@
  */
 import type { ContactRelationKind } from './contactRelationKind';
 
+/**
+ * Ends a relation (relationship ran its course — the edge stays, flagged). Removal is for edges entered by mistake.
+ */
 export interface EndContactRelationRequest {
   kind: ContactRelationKind;
   /** @nullable */

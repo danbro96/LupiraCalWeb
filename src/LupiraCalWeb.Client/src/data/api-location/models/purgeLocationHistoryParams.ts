@@ -6,9 +6,8 @@
  * OpenAPI spec version: v1
  */
 
-export type GetLocationTrackThinnedParams = {
+export type PurgeLocationHistoryParams = {
 from?: string;
 to?: string;
-bucketSeconds?: number;
 deviceId?: string;
 };

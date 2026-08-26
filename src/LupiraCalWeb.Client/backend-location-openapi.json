@@ -12,6 +12,7 @@
           "Me"
         ],
         "summary": "The caller's resolved local identity (JIT-provisioned on first login).",
+        "operationId": "WhoAmI",
         "responses": {
           "200": {
             "description": "OK",
@@ -24,7 +25,24 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -40,6 +58,7 @@
           "Devices"
         ],
         "summary": "List the caller's registered location-tracking devices.",
+        "operationId": "ListDevices",
         "responses": {
           "200": {
             "description": "OK",
@@ -55,7 +74,24 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -69,6 +105,7 @@
           "Devices"
         ],
         "summary": "Register a device; returns the one-time ingest API key.",
+        "operationId": "RegisterDevice",
         "requestBody": {
           "content": {
             "application/json": {
@@ -101,7 +138,24 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -117,6 +171,7 @@
           "Devices"
         ],
         "summary": "Rename a device.",
+        "operationId": "RenameDevice",
         "parameters": [
           {
             "name": "id",
@@ -150,7 +205,14 @@
             }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -173,7 +235,24 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -187,6 +266,7 @@
           "Devices"
         ],
         "summary": "Retire a device (revokes its ingest keys).",
+        "operationId": "RetireDevice",
         "parameters": [
           {
             "name": "id",
@@ -203,7 +283,14 @@
             "description": "No Content"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -216,7 +303,24 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -232,6 +336,7 @@
           "Ingest"
         ],
         "summary": "Ingest a batch of GPS fixes (NDJSON, one fix per line).",
+        "operationId": "IngestLocation",
         "requestBody": {
           "content": {
             "application/x-ndjson": {
@@ -252,6 +357,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -267,6 +392,7 @@
           "Ingest"
         ],
         "summary": "The device's resume cursor (last accepted seq + ts).",
+        "operationId": "GetIngestCursor",
         "responses": {
           "200": {
             "description": "OK",
@@ -274,6 +400,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LocationCursor"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -292,6 +438,7 @@
           "Ingest"
         ],
         "summary": "Whether tracking is paused for this device (the uploader should stop collecting if so).",
+        "operationId": "GetIngestState",
         "responses": {
           "200": {
             "description": "OK",
@@ -299,6 +446,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TrackingStateDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -317,6 +484,7 @@
           "Location"
         ],
         "summary": "Latest known location per device.",
+        "operationId": "GetCurrentLocation",
         "parameters": [
           {
             "name": "deviceId",
@@ -340,6 +508,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -355,6 +543,7 @@
           "Location"
         ],
         "summary": "Raw track over a time range (capped).",
+        "operationId": "GetTrack",
         "parameters": [
           {
             "name": "from",
@@ -394,6 +583,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -409,6 +618,7 @@
           "Location"
         ],
         "summary": "Server-downsampled track (one best-accuracy fix per time bucket).",
+        "operationId": "GetThinnedTrack",
         "parameters": [
           {
             "name": "from",
@@ -456,6 +666,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -471,6 +701,7 @@
           "Location"
         ],
         "summary": "Distance + speed stats over a time range.",
+        "operationId": "GetMovementStats",
         "parameters": [
           {
             "name": "from",
@@ -507,6 +738,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -522,6 +773,7 @@
           "Location"
         ],
         "summary": "Fixes within a lat/lon rectangle over a time range.",
+        "operationId": "GetBoundingBox",
         "parameters": [
           {
             "name": "minLat",
@@ -597,6 +849,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -612,6 +884,7 @@
           "Location"
         ],
         "summary": "Coarse place label at a time (synergy-safe — never the raw fix).",
+        "operationId": "GetLocationAt",
         "parameters": [
           {
             "name": "ts",
@@ -633,6 +906,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -648,6 +941,7 @@
           "Location"
         ],
         "summary": "Materialized stay-points over a time range.",
+        "operationId": "ListVisits",
         "parameters": [
           {
             "name": "from",
@@ -679,6 +973,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -694,6 +1008,7 @@
           "Location"
         ],
         "summary": "Materialized trips over a time range.",
+        "operationId": "ListTrips",
         "parameters": [
           {
             "name": "from",
@@ -725,6 +1040,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -740,6 +1075,7 @@
           "Location"
         ],
         "summary": "Per-day location rollup.",
+        "operationId": "GetDailySummary",
         "parameters": [
           {
             "name": "date",
@@ -761,6 +1097,26 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -776,6 +1132,7 @@
           "Location"
         ],
         "summary": "Purge raw fixes + derived docs in a time range (owner erase).",
+        "operationId": "PurgeLocationHistory",
         "parameters": [
           {
             "name": "from",
@@ -805,6 +1162,26 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -820,6 +1197,7 @@
           "Location"
         ],
         "summary": "Pause tracking for a device (ingest is discarded while paused).",
+        "operationId": "PauseTracking",
         "parameters": [
           {
             "name": "deviceId",
@@ -850,6 +1228,26 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -865,6 +1263,7 @@
           "Location"
         ],
         "summary": "Resume tracking for a device.",
+        "operationId": "ResumeTracking",
         "parameters": [
           {
             "name": "deviceId",
@@ -879,6 +1278,26 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -894,6 +1313,7 @@
           "Location"
         ],
         "summary": "Tracking state for a device.",
+        "operationId": "GetTrackingState",
         "parameters": [
           {
             "name": "deviceId",
@@ -912,6 +1332,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TrackingStateDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -983,7 +1423,8 @@
             ],
             "format": "int32"
           }
-        }
+        },
+        "description": "Latest-known location for a device."
       },
       "DailyLocationSummaryDto": {
         "required": [
@@ -1022,7 +1463,8 @@
               "$ref": "#/components/schemas/VisitedPlaceDto"
             }
           }
-        }
+        },
+        "description": "Per-day location rollup."
       },
       "DeviceDto": {
         "required": [
@@ -1060,7 +1502,8 @@
             ],
             "format": "date-time"
           }
-        }
+        },
+        "description": "A registered device."
       },
       "DeviceKind": {
         "enum": [
@@ -1068,7 +1511,8 @@
           "Watch",
           "Tracker",
           "Other"
-        ]
+        ],
+        "description": "Kind of registered device that feeds location telemetry."
       },
       "IngestReject": {
         "required": [
@@ -1086,7 +1530,8 @@
           "reason": {
             "type": "string"
           }
-        }
+        },
+        "description": "A per-row rejection within an otherwise-accepted batch (permanent — the uploader should drop + log it)."
       },
       "LocationCursor": {
         "required": [
@@ -1112,7 +1557,8 @@
             ],
             "format": "date-time"
           }
-        }
+        },
+        "description": "The resume cursor for a device: the highest accepted seq + its timestamp (from the latest-snapshot table)."
       },
       "LocationIngestReceipt": {
         "required": [
@@ -1156,7 +1602,8 @@
           "paused": {
             "type": "boolean"
           }
-        }
+        },
+        "description": "The outcome of a location ingest batch. Idempotent re-uploads show up as int LocationIngestReceipt.Duplicates; the\n            uploader advances past long? LocationIngestReceipt.HighWaterSeq. When tracking is paused the body is discarded and\n            bool LocationIngestReceipt.Paused is true."
       },
       "LocationProvider": {
         "enum": [
@@ -1223,6 +1670,7 @@
               "null",
               "string"
             ],
+            "description": "Endpoint visits (when the trip started/ended at a detected stay-point) — lets a client join trips to\n            visit markers without time-window heuristics. The trip carries no geometry; fetch the polyline via\n            GET /location/track/thinned for [StartTs, EndTs].",
             "format": "uuid"
           },
           "toVisitId": {
@@ -1232,7 +1680,8 @@
             ],
             "format": "uuid"
           }
-        }
+        },
+        "description": "A materialized trip between stays."
       },
       "LocationVisitDto": {
         "required": [
@@ -1280,7 +1729,8 @@
               "string"
             ]
           }
-        }
+        },
+        "description": "A materialized stay-point."
       },
       "MeDto": {
         "required": [
@@ -1302,7 +1752,8 @@
               "string"
             ]
           }
-        }
+        },
+        "description": "The resolved local identity of the caller."
       },
       "MotionActivity": {
         "enum": [
@@ -1324,7 +1775,8 @@
               "string"
             ]
           }
-        }
+        },
+        "description": "Pause tracking for a device (optional human-readable reason)."
       },
       "PlaceLabelAtDto": {
         "required": [
@@ -1356,7 +1808,8 @@
           "source": {
             "type": "string"
           }
-        }
+        },
+        "description": "A coarse \"where was I at T\" answer — a place label + coarsened coordinate, never the raw fix. Synergy-safe."
       },
       "ProblemDetails": {
         "type": "object",
@@ -1391,8 +1844,15 @@
               "null",
               "string"
             ]
+          },
+          "traceId": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
-        }
+        },
+        "description": "RFC 9457 problem details."
       },
       "RegisterDeviceRequest": {
         "required": [
@@ -1413,7 +1873,8 @@
               "string"
             ]
           }
-        }
+        },
+        "description": "Register a device that will feed location telemetry."
       },
       "RegisterDeviceResponse": {
         "required": [
@@ -1433,7 +1894,8 @@
           "apiKey": {
             "type": "string"
           }
-        }
+        },
+        "description": "Result of registering a device. string RegisterDeviceResponse.ApiKey is the one-time plaintext ingest credential\n            (`{keyId:N}.{secret}`) — it is shown only here and never retrievable again; only its hash is stored."
       },
       "RenameDeviceRequest": {
         "required": [
@@ -1444,7 +1906,8 @@
           "label": {
             "type": "string"
           }
-        }
+        },
+        "description": "Rename a device."
       },
       "TrackingStateDto": {
         "required": [
@@ -1473,7 +1936,8 @@
               "string"
             ]
           }
-        }
+        },
+        "description": "Per-device tracking kill-switch state."
       },
       "TrackPointDto": {
         "required": [
@@ -1548,7 +2012,8 @@
               }
             ]
           }
-        }
+        },
+        "description": "A point on a (raw or thinned) track."
       },
       "TrackStatsDto": {
         "required": [
@@ -1579,7 +2044,8 @@
             "type": "integer",
             "format": "int64"
           }
-        }
+        },
+        "description": "Distance + speed stats over a time range."
       },
       "VisitedPlaceDto": {
         "required": [
@@ -1607,7 +2073,8 @@
             "type": "number",
             "format": "double"
           }
-        }
+        },
+        "description": "A place visited on a day, with dwell minutes."
       }
     },
     "securitySchemes": {

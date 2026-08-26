@@ -25,14 +25,19 @@ export type findOrphanPlacesResponse400 = {
 }
 
 export type findOrphanPlacesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type findOrphanPlacesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type findOrphanPlacesResponseSuccess = (findOrphanPlacesResponse200) & {
   headers: Headers;
 };
-export type findOrphanPlacesResponseError = (findOrphanPlacesResponse400 | findOrphanPlacesResponse401) & {
+export type findOrphanPlacesResponseError = (findOrphanPlacesResponse400 | findOrphanPlacesResponse401 | findOrphanPlacesResponse500) & {
   headers: Headers;
 };
 
@@ -72,14 +77,19 @@ export type prunePlacesResponse400 = {
 }
 
 export type prunePlacesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type prunePlacesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type prunePlacesResponseSuccess = (prunePlacesResponse200) & {
   headers: Headers;
 };
-export type prunePlacesResponseError = (prunePlacesResponse400 | prunePlacesResponse401) & {
+export type prunePlacesResponseError = (prunePlacesResponse400 | prunePlacesResponse401 | prunePlacesResponse500) & {
   headers: Headers;
 };
 

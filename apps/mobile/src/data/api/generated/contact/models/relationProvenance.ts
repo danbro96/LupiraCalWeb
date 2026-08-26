@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Whether a resolved relation was stored explicitly or derived from the kinship graph.
+ */
 export type RelationProvenance = typeof RelationProvenance[keyof typeof RelationProvenance];
 
 

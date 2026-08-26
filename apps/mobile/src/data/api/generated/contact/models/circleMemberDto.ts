@@ -8,6 +8,10 @@
 import type { ContactRelationKind } from './contactRelationKind';
 import type { RelationProvenance } from './relationProvenance';
 
+/**
+ * `Degree` is a pragmatic closeness bucket (1 = immediate, 2 = two-generation kin, 3 = cousin), not
+ *         consanguinity. `Kind` is null when the membership makes no kinship claim (household co-residency).
+ */
 export interface CircleMemberDto {
   contactId: string;
   displayName: string;

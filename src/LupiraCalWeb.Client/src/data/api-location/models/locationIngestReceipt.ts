@@ -7,6 +7,11 @@
  */
 import type { IngestReject } from './ingestReject';
 
+/**
+ * The outcome of a location ingest batch. Idempotent re-uploads show up as int LocationIngestReceipt.Duplicates; the
+ *             uploader advances past long? LocationIngestReceipt.HighWaterSeq. When tracking is paused the body is discarded and
+ *             bool LocationIngestReceipt.Paused is true.
+ */
 export interface LocationIngestReceipt {
   submitted: number;
   inserted: number;

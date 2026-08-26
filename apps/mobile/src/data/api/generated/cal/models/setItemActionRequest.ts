@@ -9,12 +9,18 @@ import type { ActionKind } from './actionKind';
 import type { PromptFire } from './promptFire';
 import type { Ref } from './ref';
 
+/**
+ * Set the deterministic payload on an item. Replaces any existing action; rejected (409) if the item carries a prompt.
+ */
 export interface SetItemActionRequest {
   kind: ActionKind;
   target?: null | Ref;
   paramsJson: string;
   fire: PromptFire;
   enabled?: boolean;
-  /** @nullable */
+  /**
+     * Client wall-clock of the edit (LWW for the payload section). Omitted ⇒ server receive time.
+     * @nullable
+     */
   occurredAt?: string | null;
 }

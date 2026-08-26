@@ -7,6 +7,11 @@
  */
 import type { ReachMedium } from './reachMedium';
 
+/**
+ * A way to reach a contact — an email address or phone number — with an open string? ContactReachChannel.Type token
+ *             (well-known: home/work/cell/fax/pager/other) and a per-medium bool ContactReachChannel.Preferred flag. A record so event
+ *             payloads stay immutable.
+ */
 export interface ContactReachChannel {
   medium: ReachMedium;
   value: string;

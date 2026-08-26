@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * The medium a reach channel uses. Social/IM handles are modeled separately as ContactSocialProfile.
+ */
 export type ReachMedium = typeof ReachMedium[keyof typeof ReachMedium];
 
 

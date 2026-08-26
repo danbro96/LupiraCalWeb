@@ -27,17 +27,16 @@ import type {
 import type {
   CurrentFixDto,
   DailyLocationSummaryDto,
-  DeleteLocationParams,
   DeviceDto,
+  GetBoundingBoxParams,
+  GetCurrentLocationParams,
+  GetDailySummaryParams,
   GetLocationAtParams,
-  GetLocationBboxParams,
-  GetLocationCurrentParams,
-  GetLocationStatsParams,
-  GetLocationSummaryParams,
-  GetLocationTrackParams,
-  GetLocationTrackThinnedParams,
-  GetLocationTripsParams,
-  GetLocationVisitsParams,
+  GetMovementStatsParams,
+  GetThinnedTrackParams,
+  GetTrackParams,
+  ListTripsParams,
+  ListVisitsParams,
   LocationCursor,
   LocationIngestReceipt,
   LocationTripDto,
@@ -46,6 +45,7 @@ import type {
   PauseTrackingRequest,
   PlaceLabelAtDto,
   ProblemDetails,
+  PurgeLocationHistoryParams,
   RegisterDeviceRequest,
   RegisterDeviceResponse,
   RenameDeviceRequest,
@@ -79,7 +79,7 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   return result;
 };
 
-export const getGetMeUrl = () => {
+export const getWhoAmIUrl = () => {
 
 
 
@@ -90,9 +90,9 @@ export const getGetMeUrl = () => {
 /**
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
-export const getMe = async ( options?: Parameters<typeof customFetchLocation>[1]): Promise<MeDto> => {
+export const whoAmI = async ( options?: Parameters<typeof customFetchLocation>[1]): Promise<MeDto> => {
 
-  return customFetchLocation<MeDto>(getGetMeUrl(),
+  return customFetchLocation<MeDto>(getWhoAmIUrl(),
   {
     ...options,
     method: 'GET'
@@ -105,69 +105,69 @@ export const getMe = async ( options?: Parameters<typeof customFetchLocation>[1]
 
 
 
-export const getGetMeQueryKey = () => {
+export const getWhoAmIQueryKey = () => {
     return [
     `/me`
     ] as const;
     }
 
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getWhoAmIQueryOptions = <TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetMeQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getWhoAmIQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMe>>> = ({ signal }) => getMe({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof whoAmI>>> = ({ signal }) => whoAmI({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
-export type GetMeQueryError = void
+export type WhoAmIQueryResult = NonNullable<Awaited<ReturnType<typeof whoAmI>>>
+export type WhoAmIQueryError = ProblemDetails
 
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
+export function useWhoAmI<TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMe>>,
+          Awaited<ReturnType<typeof whoAmI>>,
           TError,
-          Awaited<ReturnType<typeof getMe>>
+          Awaited<ReturnType<typeof whoAmI>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
+export function useWhoAmI<TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMe>>,
+          Awaited<ReturnType<typeof whoAmI>>,
           TError,
-          Awaited<ReturnType<typeof getMe>>
+          Awaited<ReturnType<typeof whoAmI>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useWhoAmI<TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useWhoAmI<TData = Awaited<ReturnType<typeof whoAmI>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof whoAmI>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetMeQueryOptions(options)
+  const queryOptions = getWhoAmIQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -180,7 +180,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
 
 
 
-export const getGetDevicesUrl = () => {
+export const getListDevicesUrl = () => {
 
 
 
@@ -191,9 +191,9 @@ export const getGetDevicesUrl = () => {
 /**
  * @summary List the caller's registered location-tracking devices.
  */
-export const getDevices = async ( options?: Parameters<typeof customFetchLocation>[1]): Promise<DeviceDto[]> => {
+export const listDevices = async ( options?: Parameters<typeof customFetchLocation>[1]): Promise<DeviceDto[]> => {
 
-  return customFetchLocation<DeviceDto[]>(getGetDevicesUrl(),
+  return customFetchLocation<DeviceDto[]>(getListDevicesUrl(),
   {
     ...options,
     method: 'GET'
@@ -206,69 +206,69 @@ export const getDevices = async ( options?: Parameters<typeof customFetchLocatio
 
 
 
-export const getGetDevicesQueryKey = () => {
+export const getListDevicesQueryKey = () => {
     return [
     `/devices`
     ] as const;
     }
 
 
-export const getGetDevicesQueryOptions = <TData = Awaited<ReturnType<typeof getDevices>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDevices>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getListDevicesQueryOptions = <TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetDevicesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getListDevicesQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDevices>>> = ({ signal }) => getDevices({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listDevices>>> = ({ signal }) => listDevices({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDevices>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetDevicesQueryResult = NonNullable<Awaited<ReturnType<typeof getDevices>>>
-export type GetDevicesQueryError = void
+export type ListDevicesQueryResult = NonNullable<Awaited<ReturnType<typeof listDevices>>>
+export type ListDevicesQueryError = ProblemDetails
 
 
-export function useGetDevices<TData = Awaited<ReturnType<typeof getDevices>>, TError = void>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDevices>>, TError, TData>> & Pick<
+export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getDevices>>,
+          Awaited<ReturnType<typeof listDevices>>,
           TError,
-          Awaited<ReturnType<typeof getDevices>>
+          Awaited<ReturnType<typeof listDevices>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetDevices<TData = Awaited<ReturnType<typeof getDevices>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDevices>>, TError, TData>> & Pick<
+export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getDevices>>,
+          Awaited<ReturnType<typeof listDevices>>,
           TError,
-          Awaited<ReturnType<typeof getDevices>>
+          Awaited<ReturnType<typeof listDevices>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetDevices<TData = Awaited<ReturnType<typeof getDevices>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDevices>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List the caller's registered location-tracking devices.
  */
 
-export function useGetDevices<TData = Awaited<ReturnType<typeof getDevices>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDevices>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetDevicesQueryOptions(options)
+  const queryOptions = getListDevicesQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -281,7 +281,7 @@ export function useGetDevices<TData = Awaited<ReturnType<typeof getDevices>>, TE
 
 
 
-export const getPostDevicesUrl = () => {
+export const getRegisterDeviceUrl = () => {
 
 
 
@@ -292,7 +292,7 @@ export const getPostDevicesUrl = () => {
 /**
  * @summary Register a device; returns the one-time ingest API key.
  */
-export const postDevices = async (registerDeviceRequest: RegisterDeviceRequest, options?: Parameters<typeof customFetchLocation>[1]): Promise<RegisterDeviceResponse> => {
+export const registerDevice = async (registerDeviceRequest: RegisterDeviceRequest, options?: Parameters<typeof customFetchLocation>[1]): Promise<RegisterDeviceResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -300,7 +300,7 @@ export const postDevices = async (registerDeviceRequest: RegisterDeviceRequest, 
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchLocation<RegisterDeviceResponse>(getPostDevicesUrl(),
+return customFetchLocation<RegisterDeviceResponse>(getRegisterDeviceUrl(),
   {
     ...options,
     method: 'POST',
@@ -313,11 +313,11 @@ return customFetchLocation<RegisterDeviceResponse>(getPostDevicesUrl(),
 
 
 
-export const getPostDevicesMutationOptions = <TError = ProblemDetails | void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postDevices>>, TError,{data: RegisterDeviceRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
-): UseMutationOptions<Awaited<ReturnType<typeof postDevices>>, TError,{data: RegisterDeviceRequest}, TContext> => {
+export const getRegisterDeviceMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof registerDevice>>, TError,{data: RegisterDeviceRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+): UseMutationOptions<Awaited<ReturnType<typeof registerDevice>>, TError,{data: RegisterDeviceRequest}, TContext> => {
 
-const mutationKey = ['postDevices'];
+const mutationKey = ['registerDevice'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -327,10 +327,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postDevices>>, {data: RegisterDeviceRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof registerDevice>>, {data: RegisterDeviceRequest}> = (props) => {
           const {data} = props ?? {};
 
-          return  postDevices(data,requestOptions)
+          return  registerDevice(data,requestOptions)
         }
 
 
@@ -340,25 +340,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostDevicesMutationResult = NonNullable<Awaited<ReturnType<typeof postDevices>>>
-    export type PostDevicesMutationBody = RegisterDeviceRequest
-    export type PostDevicesMutationError = ProblemDetails | void
+    export type RegisterDeviceMutationResult = NonNullable<Awaited<ReturnType<typeof registerDevice>>>
+    export type RegisterDeviceMutationBody = RegisterDeviceRequest
+    export type RegisterDeviceMutationError = ProblemDetails
 
     /**
  * @summary Register a device; returns the one-time ingest API key.
  */
-export const usePostDevices = <TError = ProblemDetails | void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postDevices>>, TError,{data: RegisterDeviceRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+export const useRegisterDevice = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof registerDevice>>, TError,{data: RegisterDeviceRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postDevices>>,
+        Awaited<ReturnType<typeof registerDevice>>,
         TError,
         {data: RegisterDeviceRequest},
         TContext
       > => {
-      return useMutation(getPostDevicesMutationOptions(options), queryClient);
+      return useMutation(getRegisterDeviceMutationOptions(options), queryClient);
     }
 
-export const getPutDevicesIdUrl = (id: string,) => {
+export const getRenameDeviceUrl = (id: string,) => {
 
 
 
@@ -369,7 +369,7 @@ export const getPutDevicesIdUrl = (id: string,) => {
 /**
  * @summary Rename a device.
  */
-export const putDevicesId = async (id: string,
+export const renameDevice = async (id: string,
     renameDeviceRequest: RenameDeviceRequest, options?: Parameters<typeof customFetchLocation>[1]): Promise<DeviceDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
@@ -378,7 +378,7 @@ export const putDevicesId = async (id: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchLocation<DeviceDto>(getPutDevicesIdUrl(id),
+return customFetchLocation<DeviceDto>(getRenameDeviceUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -391,11 +391,11 @@ return customFetchLocation<DeviceDto>(getPutDevicesIdUrl(id),
 
 
 
-export const getPutDevicesIdMutationOptions = <TError = ProblemDetails | void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putDevicesId>>, TError,{id: string;data: RenameDeviceRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
-): UseMutationOptions<Awaited<ReturnType<typeof putDevicesId>>, TError,{id: string;data: RenameDeviceRequest}, TContext> => {
+export const getRenameDeviceMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof renameDevice>>, TError,{id: string;data: RenameDeviceRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+): UseMutationOptions<Awaited<ReturnType<typeof renameDevice>>, TError,{id: string;data: RenameDeviceRequest}, TContext> => {
 
-const mutationKey = ['putDevicesId'];
+const mutationKey = ['renameDevice'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -405,10 +405,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putDevicesId>>, {id: string;data: RenameDeviceRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof renameDevice>>, {id: string;data: RenameDeviceRequest}> = (props) => {
           const {id,data} = props ?? {};
 
-          return  putDevicesId(id,data,requestOptions)
+          return  renameDevice(id,data,requestOptions)
         }
 
 
@@ -418,25 +418,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PutDevicesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putDevicesId>>>
-    export type PutDevicesIdMutationBody = RenameDeviceRequest
-    export type PutDevicesIdMutationError = ProblemDetails | void
+    export type RenameDeviceMutationResult = NonNullable<Awaited<ReturnType<typeof renameDevice>>>
+    export type RenameDeviceMutationBody = RenameDeviceRequest
+    export type RenameDeviceMutationError = ProblemDetails
 
     /**
  * @summary Rename a device.
  */
-export const usePutDevicesId = <TError = ProblemDetails | void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putDevicesId>>, TError,{id: string;data: RenameDeviceRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+export const useRenameDevice = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof renameDevice>>, TError,{id: string;data: RenameDeviceRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putDevicesId>>,
+        Awaited<ReturnType<typeof renameDevice>>,
         TError,
         {id: string;data: RenameDeviceRequest},
         TContext
       > => {
-      return useMutation(getPutDevicesIdMutationOptions(options), queryClient);
+      return useMutation(getRenameDeviceMutationOptions(options), queryClient);
     }
 
-export const getDeleteDevicesIdUrl = (id: string,) => {
+export const getRetireDeviceUrl = (id: string,) => {
 
 
 
@@ -447,9 +447,9 @@ export const getDeleteDevicesIdUrl = (id: string,) => {
 /**
  * @summary Retire a device (revokes its ingest keys).
  */
-export const deleteDevicesId = async (id: string, options?: Parameters<typeof customFetchLocation>[1]): Promise<void> => {
+export const retireDevice = async (id: string, options?: Parameters<typeof customFetchLocation>[1]): Promise<void> => {
 
-  return customFetchLocation<void>(getDeleteDevicesIdUrl(id),
+  return customFetchLocation<void>(getRetireDeviceUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -462,11 +462,11 @@ export const deleteDevicesId = async (id: string, options?: Parameters<typeof cu
 
 
 
-export const getDeleteDevicesIdMutationOptions = <TError = ProblemDetails | void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDevicesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteDevicesId>>, TError,{id: string}, TContext> => {
+export const getRetireDeviceMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retireDevice>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+): UseMutationOptions<Awaited<ReturnType<typeof retireDevice>>, TError,{id: string}, TContext> => {
 
-const mutationKey = ['deleteDevicesId'];
+const mutationKey = ['retireDevice'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -476,10 +476,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteDevicesId>>, {id: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof retireDevice>>, {id: string}> = (props) => {
           const {id} = props ?? {};
 
-          return  deleteDevicesId(id,requestOptions)
+          return  retireDevice(id,requestOptions)
         }
 
 
@@ -489,25 +489,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeleteDevicesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteDevicesId>>>
+    export type RetireDeviceMutationResult = NonNullable<Awaited<ReturnType<typeof retireDevice>>>
 
-    export type DeleteDevicesIdMutationError = ProblemDetails | void
+    export type RetireDeviceMutationError = ProblemDetails
 
     /**
  * @summary Retire a device (revokes its ingest keys).
  */
-export const useDeleteDevicesId = <TError = ProblemDetails | void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDevicesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+export const useRetireDevice = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retireDevice>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteDevicesId>>,
+        Awaited<ReturnType<typeof retireDevice>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getDeleteDevicesIdMutationOptions(options), queryClient);
+      return useMutation(getRetireDeviceMutationOptions(options), queryClient);
     }
 
-export const getPostIngestLocationUrl = () => {
+export const getIngestLocationUrl = () => {
 
 
 
@@ -518,7 +518,7 @@ export const getPostIngestLocationUrl = () => {
 /**
  * @summary Ingest a batch of GPS fixes (NDJSON, one fix per line).
  */
-export const postIngestLocation = async (postIngestLocationBody: string, options?: Parameters<typeof customFetchLocation>[1]): Promise<LocationIngestReceipt> => {
+export const ingestLocation = async (ingestLocationBody: string, options?: Parameters<typeof customFetchLocation>[1]): Promise<LocationIngestReceipt> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -526,12 +526,12 @@ export const postIngestLocation = async (postIngestLocationBody: string, options
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchLocation<LocationIngestReceipt>(getPostIngestLocationUrl(),
+return customFetchLocation<LocationIngestReceipt>(getIngestLocationUrl(),
   {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/x-ndjson', ...getHeaders(options?.headers) },
-    body: JSON.stringify(postIngestLocationBody)
+    body: JSON.stringify(ingestLocationBody)
   }
 );}
 
@@ -539,11 +539,11 @@ return customFetchLocation<LocationIngestReceipt>(getPostIngestLocationUrl(),
 
 
 
-export const getPostIngestLocationMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postIngestLocation>>, TError,{data: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
-): UseMutationOptions<Awaited<ReturnType<typeof postIngestLocation>>, TError,{data: string}, TContext> => {
+export const getIngestLocationMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof ingestLocation>>, TError,{data: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+): UseMutationOptions<Awaited<ReturnType<typeof ingestLocation>>, TError,{data: string}, TContext> => {
 
-const mutationKey = ['postIngestLocation'];
+const mutationKey = ['ingestLocation'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -553,10 +553,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postIngestLocation>>, {data: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof ingestLocation>>, {data: string}> = (props) => {
           const {data} = props ?? {};
 
-          return  postIngestLocation(data,requestOptions)
+          return  ingestLocation(data,requestOptions)
         }
 
 
@@ -566,25 +566,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostIngestLocationMutationResult = NonNullable<Awaited<ReturnType<typeof postIngestLocation>>>
-    export type PostIngestLocationMutationBody = string
-    export type PostIngestLocationMutationError = unknown
+    export type IngestLocationMutationResult = NonNullable<Awaited<ReturnType<typeof ingestLocation>>>
+    export type IngestLocationMutationBody = string
+    export type IngestLocationMutationError = ProblemDetails
 
     /**
  * @summary Ingest a batch of GPS fixes (NDJSON, one fix per line).
  */
-export const usePostIngestLocation = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postIngestLocation>>, TError,{data: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+export const useIngestLocation = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof ingestLocation>>, TError,{data: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postIngestLocation>>,
+        Awaited<ReturnType<typeof ingestLocation>>,
         TError,
         {data: string},
         TContext
       > => {
-      return useMutation(getPostIngestLocationMutationOptions(options), queryClient);
+      return useMutation(getIngestLocationMutationOptions(options), queryClient);
     }
 
-export const getGetIngestLocationCursorUrl = () => {
+export const getGetIngestCursorUrl = () => {
 
 
 
@@ -595,9 +595,9 @@ export const getGetIngestLocationCursorUrl = () => {
 /**
  * @summary The device's resume cursor (last accepted seq + ts).
  */
-export const getIngestLocationCursor = async ( options?: Parameters<typeof customFetchLocation>[1]): Promise<LocationCursor> => {
+export const getIngestCursor = async ( options?: Parameters<typeof customFetchLocation>[1]): Promise<LocationCursor> => {
 
-  return customFetchLocation<LocationCursor>(getGetIngestLocationCursorUrl(),
+  return customFetchLocation<LocationCursor>(getGetIngestCursorUrl(),
   {
     ...options,
     method: 'GET'
@@ -610,69 +610,69 @@ export const getIngestLocationCursor = async ( options?: Parameters<typeof custo
 
 
 
-export const getGetIngestLocationCursorQueryKey = () => {
+export const getGetIngestCursorQueryKey = () => {
     return [
     `/ingest/location/cursor`
     ] as const;
     }
 
 
-export const getGetIngestLocationCursorQueryOptions = <TData = Awaited<ReturnType<typeof getIngestLocationCursor>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationCursor>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetIngestCursorQueryOptions = <TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetIngestLocationCursorQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetIngestCursorQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getIngestLocationCursor>>> = ({ signal }) => getIngestLocationCursor({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getIngestCursor>>> = ({ signal }) => getIngestCursor({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationCursor>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetIngestLocationCursorQueryResult = NonNullable<Awaited<ReturnType<typeof getIngestLocationCursor>>>
-export type GetIngestLocationCursorQueryError = unknown
+export type GetIngestCursorQueryResult = NonNullable<Awaited<ReturnType<typeof getIngestCursor>>>
+export type GetIngestCursorQueryError = ProblemDetails
 
 
-export function useGetIngestLocationCursor<TData = Awaited<ReturnType<typeof getIngestLocationCursor>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationCursor>>, TError, TData>> & Pick<
+export function useGetIngestCursor<TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getIngestLocationCursor>>,
+          Awaited<ReturnType<typeof getIngestCursor>>,
           TError,
-          Awaited<ReturnType<typeof getIngestLocationCursor>>
+          Awaited<ReturnType<typeof getIngestCursor>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetIngestLocationCursor<TData = Awaited<ReturnType<typeof getIngestLocationCursor>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationCursor>>, TError, TData>> & Pick<
+export function useGetIngestCursor<TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getIngestLocationCursor>>,
+          Awaited<ReturnType<typeof getIngestCursor>>,
           TError,
-          Awaited<ReturnType<typeof getIngestLocationCursor>>
+          Awaited<ReturnType<typeof getIngestCursor>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetIngestLocationCursor<TData = Awaited<ReturnType<typeof getIngestLocationCursor>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationCursor>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetIngestCursor<TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary The device's resume cursor (last accepted seq + ts).
  */
 
-export function useGetIngestLocationCursor<TData = Awaited<ReturnType<typeof getIngestLocationCursor>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationCursor>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetIngestCursor<TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetIngestLocationCursorQueryOptions(options)
+  const queryOptions = getGetIngestCursorQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -685,7 +685,7 @@ export function useGetIngestLocationCursor<TData = Awaited<ReturnType<typeof get
 
 
 
-export const getGetIngestLocationStateUrl = () => {
+export const getGetIngestStateUrl = () => {
 
 
 
@@ -696,9 +696,9 @@ export const getGetIngestLocationStateUrl = () => {
 /**
  * @summary Whether tracking is paused for this device (the uploader should stop collecting if so).
  */
-export const getIngestLocationState = async ( options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackingStateDto> => {
+export const getIngestState = async ( options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackingStateDto> => {
 
-  return customFetchLocation<TrackingStateDto>(getGetIngestLocationStateUrl(),
+  return customFetchLocation<TrackingStateDto>(getGetIngestStateUrl(),
   {
     ...options,
     method: 'GET'
@@ -711,69 +711,69 @@ export const getIngestLocationState = async ( options?: Parameters<typeof custom
 
 
 
-export const getGetIngestLocationStateQueryKey = () => {
+export const getGetIngestStateQueryKey = () => {
     return [
     `/ingest/location/state`
     ] as const;
     }
 
 
-export const getGetIngestLocationStateQueryOptions = <TData = Awaited<ReturnType<typeof getIngestLocationState>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetIngestStateQueryOptions = <TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetIngestLocationStateQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetIngestStateQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getIngestLocationState>>> = ({ signal }) => getIngestLocationState({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getIngestState>>> = ({ signal }) => getIngestState({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationState>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetIngestLocationStateQueryResult = NonNullable<Awaited<ReturnType<typeof getIngestLocationState>>>
-export type GetIngestLocationStateQueryError = unknown
+export type GetIngestStateQueryResult = NonNullable<Awaited<ReturnType<typeof getIngestState>>>
+export type GetIngestStateQueryError = ProblemDetails
 
 
-export function useGetIngestLocationState<TData = Awaited<ReturnType<typeof getIngestLocationState>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationState>>, TError, TData>> & Pick<
+export function useGetIngestState<TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getIngestLocationState>>,
+          Awaited<ReturnType<typeof getIngestState>>,
           TError,
-          Awaited<ReturnType<typeof getIngestLocationState>>
+          Awaited<ReturnType<typeof getIngestState>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetIngestLocationState<TData = Awaited<ReturnType<typeof getIngestLocationState>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationState>>, TError, TData>> & Pick<
+export function useGetIngestState<TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getIngestLocationState>>,
+          Awaited<ReturnType<typeof getIngestState>>,
           TError,
-          Awaited<ReturnType<typeof getIngestLocationState>>
+          Awaited<ReturnType<typeof getIngestState>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetIngestLocationState<TData = Awaited<ReturnType<typeof getIngestLocationState>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetIngestState<TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Whether tracking is paused for this device (the uploader should stop collecting if so).
  */
 
-export function useGetIngestLocationState<TData = Awaited<ReturnType<typeof getIngestLocationState>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestLocationState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetIngestState<TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetIngestLocationStateQueryOptions(options)
+  const queryOptions = getGetIngestStateQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -786,7 +786,7 @@ export function useGetIngestLocationState<TData = Awaited<ReturnType<typeof getI
 
 
 
-export const getGetLocationCurrentUrl = (params?: GetLocationCurrentParams,) => {
+export const getGetCurrentLocationUrl = (params?: GetCurrentLocationParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -804,9 +804,9 @@ export const getGetLocationCurrentUrl = (params?: GetLocationCurrentParams,) => 
 /**
  * @summary Latest known location per device.
  */
-export const getLocationCurrent = async (params?: GetLocationCurrentParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<CurrentFixDto[]> => {
+export const getCurrentLocation = async (params?: GetCurrentLocationParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<CurrentFixDto[]> => {
 
-  return customFetchLocation<CurrentFixDto[]>(getGetLocationCurrentUrl(params),
+  return customFetchLocation<CurrentFixDto[]>(getGetCurrentLocationUrl(params),
   {
     ...options,
     method: 'GET'
@@ -819,69 +819,69 @@ export const getLocationCurrent = async (params?: GetLocationCurrentParams, opti
 
 
 
-export const getGetLocationCurrentQueryKey = (params?: GetLocationCurrentParams,) => {
+export const getGetCurrentLocationQueryKey = (params?: GetCurrentLocationParams,) => {
     return [
     `/location/current`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLocationCurrentQueryOptions = <TData = Awaited<ReturnType<typeof getLocationCurrent>>, TError = unknown>(params?: GetLocationCurrentParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationCurrent>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetCurrentLocationQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(params?: GetCurrentLocationParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationCurrentQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetCurrentLocationQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationCurrent>>> = ({ signal }) => getLocationCurrent(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCurrentLocation>>> = ({ signal }) => getCurrentLocation(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationCurrent>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationCurrentQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationCurrent>>>
-export type GetLocationCurrentQueryError = unknown
+export type GetCurrentLocationQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentLocation>>>
+export type GetCurrentLocationQueryError = ProblemDetails
 
 
-export function useGetLocationCurrent<TData = Awaited<ReturnType<typeof getLocationCurrent>>, TError = unknown>(
- params: undefined |  GetLocationCurrentParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationCurrent>>, TError, TData>> & Pick<
+export function useGetCurrentLocation<TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(
+ params: undefined |  GetCurrentLocationParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationCurrent>>,
+          Awaited<ReturnType<typeof getCurrentLocation>>,
           TError,
-          Awaited<ReturnType<typeof getLocationCurrent>>
+          Awaited<ReturnType<typeof getCurrentLocation>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationCurrent<TData = Awaited<ReturnType<typeof getLocationCurrent>>, TError = unknown>(
- params?: GetLocationCurrentParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationCurrent>>, TError, TData>> & Pick<
+export function useGetCurrentLocation<TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(
+ params?: GetCurrentLocationParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationCurrent>>,
+          Awaited<ReturnType<typeof getCurrentLocation>>,
           TError,
-          Awaited<ReturnType<typeof getLocationCurrent>>
+          Awaited<ReturnType<typeof getCurrentLocation>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationCurrent<TData = Awaited<ReturnType<typeof getLocationCurrent>>, TError = unknown>(
- params?: GetLocationCurrentParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationCurrent>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetCurrentLocation<TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(
+ params?: GetCurrentLocationParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Latest known location per device.
  */
 
-export function useGetLocationCurrent<TData = Awaited<ReturnType<typeof getLocationCurrent>>, TError = unknown>(
- params?: GetLocationCurrentParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationCurrent>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetCurrentLocation<TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(
+ params?: GetCurrentLocationParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationCurrentQueryOptions(params,options)
+  const queryOptions = getGetCurrentLocationQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -894,7 +894,7 @@ export function useGetLocationCurrent<TData = Awaited<ReturnType<typeof getLocat
 
 
 
-export const getGetLocationTrackUrl = (params?: GetLocationTrackParams,) => {
+export const getGetTrackUrl = (params?: GetTrackParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -912,9 +912,9 @@ export const getGetLocationTrackUrl = (params?: GetLocationTrackParams,) => {
 /**
  * @summary Raw track over a time range (capped).
  */
-export const getLocationTrack = async (params?: GetLocationTrackParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackPointDto[]> => {
+export const getTrack = async (params?: GetTrackParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackPointDto[]> => {
 
-  return customFetchLocation<TrackPointDto[]>(getGetLocationTrackUrl(params),
+  return customFetchLocation<TrackPointDto[]>(getGetTrackUrl(params),
   {
     ...options,
     method: 'GET'
@@ -927,69 +927,69 @@ export const getLocationTrack = async (params?: GetLocationTrackParams, options?
 
 
 
-export const getGetLocationTrackQueryKey = (params?: GetLocationTrackParams,) => {
+export const getGetTrackQueryKey = (params?: GetTrackParams,) => {
     return [
     `/location/track`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLocationTrackQueryOptions = <TData = Awaited<ReturnType<typeof getLocationTrack>>, TError = unknown>(params?: GetLocationTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetTrackQueryOptions = <TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(params?: GetTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationTrackQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetTrackQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationTrack>>> = ({ signal }) => getLocationTrack(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTrack>>> = ({ signal }) => getTrack(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationTrack>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationTrackQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationTrack>>>
-export type GetLocationTrackQueryError = unknown
+export type GetTrackQueryResult = NonNullable<Awaited<ReturnType<typeof getTrack>>>
+export type GetTrackQueryError = ProblemDetails
 
 
-export function useGetLocationTrack<TData = Awaited<ReturnType<typeof getLocationTrack>>, TError = unknown>(
- params: undefined |  GetLocationTrackParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrack>>, TError, TData>> & Pick<
+export function useGetTrack<TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(
+ params: undefined |  GetTrackParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationTrack>>,
+          Awaited<ReturnType<typeof getTrack>>,
           TError,
-          Awaited<ReturnType<typeof getLocationTrack>>
+          Awaited<ReturnType<typeof getTrack>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationTrack<TData = Awaited<ReturnType<typeof getLocationTrack>>, TError = unknown>(
- params?: GetLocationTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrack>>, TError, TData>> & Pick<
+export function useGetTrack<TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(
+ params?: GetTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationTrack>>,
+          Awaited<ReturnType<typeof getTrack>>,
           TError,
-          Awaited<ReturnType<typeof getLocationTrack>>
+          Awaited<ReturnType<typeof getTrack>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationTrack<TData = Awaited<ReturnType<typeof getLocationTrack>>, TError = unknown>(
- params?: GetLocationTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetTrack<TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(
+ params?: GetTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Raw track over a time range (capped).
  */
 
-export function useGetLocationTrack<TData = Awaited<ReturnType<typeof getLocationTrack>>, TError = unknown>(
- params?: GetLocationTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetTrack<TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(
+ params?: GetTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationTrackQueryOptions(params,options)
+  const queryOptions = getGetTrackQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1002,7 +1002,7 @@ export function useGetLocationTrack<TData = Awaited<ReturnType<typeof getLocatio
 
 
 
-export const getGetLocationTrackThinnedUrl = (params?: GetLocationTrackThinnedParams,) => {
+export const getGetThinnedTrackUrl = (params?: GetThinnedTrackParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -1020,9 +1020,9 @@ export const getGetLocationTrackThinnedUrl = (params?: GetLocationTrackThinnedPa
 /**
  * @summary Server-downsampled track (one best-accuracy fix per time bucket).
  */
-export const getLocationTrackThinned = async (params?: GetLocationTrackThinnedParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackPointDto[]> => {
+export const getThinnedTrack = async (params?: GetThinnedTrackParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackPointDto[]> => {
 
-  return customFetchLocation<TrackPointDto[]>(getGetLocationTrackThinnedUrl(params),
+  return customFetchLocation<TrackPointDto[]>(getGetThinnedTrackUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1035,69 +1035,69 @@ export const getLocationTrackThinned = async (params?: GetLocationTrackThinnedPa
 
 
 
-export const getGetLocationTrackThinnedQueryKey = (params?: GetLocationTrackThinnedParams,) => {
+export const getGetThinnedTrackQueryKey = (params?: GetThinnedTrackParams,) => {
     return [
     `/location/track/thinned`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLocationTrackThinnedQueryOptions = <TData = Awaited<ReturnType<typeof getLocationTrackThinned>>, TError = unknown>(params?: GetLocationTrackThinnedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackThinned>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetThinnedTrackQueryOptions = <TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(params?: GetThinnedTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationTrackThinnedQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetThinnedTrackQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationTrackThinned>>> = ({ signal }) => getLocationTrackThinned(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getThinnedTrack>>> = ({ signal }) => getThinnedTrack(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackThinned>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationTrackThinnedQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationTrackThinned>>>
-export type GetLocationTrackThinnedQueryError = unknown
+export type GetThinnedTrackQueryResult = NonNullable<Awaited<ReturnType<typeof getThinnedTrack>>>
+export type GetThinnedTrackQueryError = ProblemDetails
 
 
-export function useGetLocationTrackThinned<TData = Awaited<ReturnType<typeof getLocationTrackThinned>>, TError = unknown>(
- params: undefined |  GetLocationTrackThinnedParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackThinned>>, TError, TData>> & Pick<
+export function useGetThinnedTrack<TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(
+ params: undefined |  GetThinnedTrackParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationTrackThinned>>,
+          Awaited<ReturnType<typeof getThinnedTrack>>,
           TError,
-          Awaited<ReturnType<typeof getLocationTrackThinned>>
+          Awaited<ReturnType<typeof getThinnedTrack>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationTrackThinned<TData = Awaited<ReturnType<typeof getLocationTrackThinned>>, TError = unknown>(
- params?: GetLocationTrackThinnedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackThinned>>, TError, TData>> & Pick<
+export function useGetThinnedTrack<TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(
+ params?: GetThinnedTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationTrackThinned>>,
+          Awaited<ReturnType<typeof getThinnedTrack>>,
           TError,
-          Awaited<ReturnType<typeof getLocationTrackThinned>>
+          Awaited<ReturnType<typeof getThinnedTrack>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationTrackThinned<TData = Awaited<ReturnType<typeof getLocationTrackThinned>>, TError = unknown>(
- params?: GetLocationTrackThinnedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackThinned>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetThinnedTrack<TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(
+ params?: GetThinnedTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Server-downsampled track (one best-accuracy fix per time bucket).
  */
 
-export function useGetLocationTrackThinned<TData = Awaited<ReturnType<typeof getLocationTrackThinned>>, TError = unknown>(
- params?: GetLocationTrackThinnedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackThinned>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetThinnedTrack<TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(
+ params?: GetThinnedTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationTrackThinnedQueryOptions(params,options)
+  const queryOptions = getGetThinnedTrackQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1110,7 +1110,7 @@ export function useGetLocationTrackThinned<TData = Awaited<ReturnType<typeof get
 
 
 
-export const getGetLocationStatsUrl = (params?: GetLocationStatsParams,) => {
+export const getGetMovementStatsUrl = (params?: GetMovementStatsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -1128,9 +1128,9 @@ export const getGetLocationStatsUrl = (params?: GetLocationStatsParams,) => {
 /**
  * @summary Distance + speed stats over a time range.
  */
-export const getLocationStats = async (params?: GetLocationStatsParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackStatsDto> => {
+export const getMovementStats = async (params?: GetMovementStatsParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackStatsDto> => {
 
-  return customFetchLocation<TrackStatsDto>(getGetLocationStatsUrl(params),
+  return customFetchLocation<TrackStatsDto>(getGetMovementStatsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1143,69 +1143,69 @@ export const getLocationStats = async (params?: GetLocationStatsParams, options?
 
 
 
-export const getGetLocationStatsQueryKey = (params?: GetLocationStatsParams,) => {
+export const getGetMovementStatsQueryKey = (params?: GetMovementStatsParams,) => {
     return [
     `/location/stats`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLocationStatsQueryOptions = <TData = Awaited<ReturnType<typeof getLocationStats>>, TError = unknown>(params?: GetLocationStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetMovementStatsQueryOptions = <TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(params?: GetMovementStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationStatsQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetMovementStatsQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationStats>>> = ({ signal }) => getLocationStats(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMovementStats>>> = ({ signal }) => getMovementStats(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationStats>>>
-export type GetLocationStatsQueryError = unknown
+export type GetMovementStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getMovementStats>>>
+export type GetMovementStatsQueryError = ProblemDetails
 
 
-export function useGetLocationStats<TData = Awaited<ReturnType<typeof getLocationStats>>, TError = unknown>(
- params: undefined |  GetLocationStatsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationStats>>, TError, TData>> & Pick<
+export function useGetMovementStats<TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(
+ params: undefined |  GetMovementStatsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationStats>>,
+          Awaited<ReturnType<typeof getMovementStats>>,
           TError,
-          Awaited<ReturnType<typeof getLocationStats>>
+          Awaited<ReturnType<typeof getMovementStats>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationStats<TData = Awaited<ReturnType<typeof getLocationStats>>, TError = unknown>(
- params?: GetLocationStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationStats>>, TError, TData>> & Pick<
+export function useGetMovementStats<TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(
+ params?: GetMovementStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationStats>>,
+          Awaited<ReturnType<typeof getMovementStats>>,
           TError,
-          Awaited<ReturnType<typeof getLocationStats>>
+          Awaited<ReturnType<typeof getMovementStats>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationStats<TData = Awaited<ReturnType<typeof getLocationStats>>, TError = unknown>(
- params?: GetLocationStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetMovementStats<TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(
+ params?: GetMovementStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Distance + speed stats over a time range.
  */
 
-export function useGetLocationStats<TData = Awaited<ReturnType<typeof getLocationStats>>, TError = unknown>(
- params?: GetLocationStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetMovementStats<TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(
+ params?: GetMovementStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationStatsQueryOptions(params,options)
+  const queryOptions = getGetMovementStatsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1218,7 +1218,7 @@ export function useGetLocationStats<TData = Awaited<ReturnType<typeof getLocatio
 
 
 
-export const getGetLocationBboxUrl = (params: GetLocationBboxParams,) => {
+export const getGetBoundingBoxUrl = (params: GetBoundingBoxParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -1236,9 +1236,9 @@ export const getGetLocationBboxUrl = (params: GetLocationBboxParams,) => {
 /**
  * @summary Fixes within a lat/lon rectangle over a time range.
  */
-export const getLocationBbox = async (params: GetLocationBboxParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackPointDto[]> => {
+export const getBoundingBox = async (params: GetBoundingBoxParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackPointDto[]> => {
 
-  return customFetchLocation<TrackPointDto[]>(getGetLocationBboxUrl(params),
+  return customFetchLocation<TrackPointDto[]>(getGetBoundingBoxUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1251,69 +1251,69 @@ export const getLocationBbox = async (params: GetLocationBboxParams, options?: P
 
 
 
-export const getGetLocationBboxQueryKey = (params?: GetLocationBboxParams,) => {
+export const getGetBoundingBoxQueryKey = (params?: GetBoundingBoxParams,) => {
     return [
     `/location/bbox`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLocationBboxQueryOptions = <TData = Awaited<ReturnType<typeof getLocationBbox>>, TError = unknown>(params: GetLocationBboxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationBbox>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetBoundingBoxQueryOptions = <TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(params: GetBoundingBoxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationBboxQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetBoundingBoxQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationBbox>>> = ({ signal }) => getLocationBbox(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBoundingBox>>> = ({ signal }) => getBoundingBox(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationBbox>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationBboxQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationBbox>>>
-export type GetLocationBboxQueryError = unknown
+export type GetBoundingBoxQueryResult = NonNullable<Awaited<ReturnType<typeof getBoundingBox>>>
+export type GetBoundingBoxQueryError = ProblemDetails
 
 
-export function useGetLocationBbox<TData = Awaited<ReturnType<typeof getLocationBbox>>, TError = unknown>(
- params: GetLocationBboxParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationBbox>>, TError, TData>> & Pick<
+export function useGetBoundingBox<TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(
+ params: GetBoundingBoxParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationBbox>>,
+          Awaited<ReturnType<typeof getBoundingBox>>,
           TError,
-          Awaited<ReturnType<typeof getLocationBbox>>
+          Awaited<ReturnType<typeof getBoundingBox>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationBbox<TData = Awaited<ReturnType<typeof getLocationBbox>>, TError = unknown>(
- params: GetLocationBboxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationBbox>>, TError, TData>> & Pick<
+export function useGetBoundingBox<TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(
+ params: GetBoundingBoxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationBbox>>,
+          Awaited<ReturnType<typeof getBoundingBox>>,
           TError,
-          Awaited<ReturnType<typeof getLocationBbox>>
+          Awaited<ReturnType<typeof getBoundingBox>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationBbox<TData = Awaited<ReturnType<typeof getLocationBbox>>, TError = unknown>(
- params: GetLocationBboxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationBbox>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetBoundingBox<TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(
+ params: GetBoundingBoxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Fixes within a lat/lon rectangle over a time range.
  */
 
-export function useGetLocationBbox<TData = Awaited<ReturnType<typeof getLocationBbox>>, TError = unknown>(
- params: GetLocationBboxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationBbox>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetBoundingBox<TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(
+ params: GetBoundingBoxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationBboxQueryOptions(params,options)
+  const queryOptions = getGetBoundingBoxQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1366,7 +1366,7 @@ export const getGetLocationAtQueryKey = (params?: GetLocationAtParams,) => {
     }
 
 
-export const getGetLocationAtQueryOptions = <TData = Awaited<ReturnType<typeof getLocationAt>>, TError = unknown>(params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetLocationAtQueryOptions = <TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1385,10 +1385,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetLocationAtQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationAt>>>
-export type GetLocationAtQueryError = unknown
+export type GetLocationAtQueryError = ProblemDetails
 
 
-export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = unknown>(
+export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(
  params: GetLocationAtParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getLocationAt>>,
@@ -1398,7 +1398,7 @@ export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = unknown>(
+export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(
  params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getLocationAt>>,
@@ -1408,7 +1408,7 @@ export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = unknown>(
+export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(
  params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1416,7 +1416,7 @@ export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt
  * @summary Coarse place label at a time (synergy-safe — never the raw fix).
  */
 
-export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = unknown>(
+export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(
  params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1434,7 +1434,7 @@ export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt
 
 
 
-export const getGetLocationVisitsUrl = (params?: GetLocationVisitsParams,) => {
+export const getListVisitsUrl = (params?: ListVisitsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -1452,9 +1452,9 @@ export const getGetLocationVisitsUrl = (params?: GetLocationVisitsParams,) => {
 /**
  * @summary Materialized stay-points over a time range.
  */
-export const getLocationVisits = async (params?: GetLocationVisitsParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<LocationVisitDto[]> => {
+export const listVisits = async (params?: ListVisitsParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<LocationVisitDto[]> => {
 
-  return customFetchLocation<LocationVisitDto[]>(getGetLocationVisitsUrl(params),
+  return customFetchLocation<LocationVisitDto[]>(getListVisitsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1467,69 +1467,69 @@ export const getLocationVisits = async (params?: GetLocationVisitsParams, option
 
 
 
-export const getGetLocationVisitsQueryKey = (params?: GetLocationVisitsParams,) => {
+export const getListVisitsQueryKey = (params?: ListVisitsParams,) => {
     return [
     `/location/visits`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLocationVisitsQueryOptions = <TData = Awaited<ReturnType<typeof getLocationVisits>>, TError = unknown>(params?: GetLocationVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationVisits>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getListVisitsQueryOptions = <TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(params?: ListVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationVisitsQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getListVisitsQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationVisits>>> = ({ signal }) => getLocationVisits(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listVisits>>> = ({ signal }) => listVisits(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationVisits>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationVisitsQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationVisits>>>
-export type GetLocationVisitsQueryError = unknown
+export type ListVisitsQueryResult = NonNullable<Awaited<ReturnType<typeof listVisits>>>
+export type ListVisitsQueryError = ProblemDetails
 
 
-export function useGetLocationVisits<TData = Awaited<ReturnType<typeof getLocationVisits>>, TError = unknown>(
- params: undefined |  GetLocationVisitsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationVisits>>, TError, TData>> & Pick<
+export function useListVisits<TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(
+ params: undefined |  ListVisitsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationVisits>>,
+          Awaited<ReturnType<typeof listVisits>>,
           TError,
-          Awaited<ReturnType<typeof getLocationVisits>>
+          Awaited<ReturnType<typeof listVisits>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationVisits<TData = Awaited<ReturnType<typeof getLocationVisits>>, TError = unknown>(
- params?: GetLocationVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationVisits>>, TError, TData>> & Pick<
+export function useListVisits<TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(
+ params?: ListVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationVisits>>,
+          Awaited<ReturnType<typeof listVisits>>,
           TError,
-          Awaited<ReturnType<typeof getLocationVisits>>
+          Awaited<ReturnType<typeof listVisits>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationVisits<TData = Awaited<ReturnType<typeof getLocationVisits>>, TError = unknown>(
- params?: GetLocationVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationVisits>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useListVisits<TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(
+ params?: ListVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Materialized stay-points over a time range.
  */
 
-export function useGetLocationVisits<TData = Awaited<ReturnType<typeof getLocationVisits>>, TError = unknown>(
- params?: GetLocationVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationVisits>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useListVisits<TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(
+ params?: ListVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationVisitsQueryOptions(params,options)
+  const queryOptions = getListVisitsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1542,7 +1542,7 @@ export function useGetLocationVisits<TData = Awaited<ReturnType<typeof getLocati
 
 
 
-export const getGetLocationTripsUrl = (params?: GetLocationTripsParams,) => {
+export const getListTripsUrl = (params?: ListTripsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -1560,9 +1560,9 @@ export const getGetLocationTripsUrl = (params?: GetLocationTripsParams,) => {
 /**
  * @summary Materialized trips over a time range.
  */
-export const getLocationTrips = async (params?: GetLocationTripsParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<LocationTripDto[]> => {
+export const listTrips = async (params?: ListTripsParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<LocationTripDto[]> => {
 
-  return customFetchLocation<LocationTripDto[]>(getGetLocationTripsUrl(params),
+  return customFetchLocation<LocationTripDto[]>(getListTripsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1575,69 +1575,69 @@ export const getLocationTrips = async (params?: GetLocationTripsParams, options?
 
 
 
-export const getGetLocationTripsQueryKey = (params?: GetLocationTripsParams,) => {
+export const getListTripsQueryKey = (params?: ListTripsParams,) => {
     return [
     `/location/trips`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLocationTripsQueryOptions = <TData = Awaited<ReturnType<typeof getLocationTrips>>, TError = unknown>(params?: GetLocationTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrips>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getListTripsQueryOptions = <TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(params?: ListTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationTripsQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getListTripsQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationTrips>>> = ({ signal }) => getLocationTrips(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listTrips>>> = ({ signal }) => listTrips(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationTrips>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationTripsQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationTrips>>>
-export type GetLocationTripsQueryError = unknown
+export type ListTripsQueryResult = NonNullable<Awaited<ReturnType<typeof listTrips>>>
+export type ListTripsQueryError = ProblemDetails
 
 
-export function useGetLocationTrips<TData = Awaited<ReturnType<typeof getLocationTrips>>, TError = unknown>(
- params: undefined |  GetLocationTripsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrips>>, TError, TData>> & Pick<
+export function useListTrips<TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(
+ params: undefined |  ListTripsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationTrips>>,
+          Awaited<ReturnType<typeof listTrips>>,
           TError,
-          Awaited<ReturnType<typeof getLocationTrips>>
+          Awaited<ReturnType<typeof listTrips>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationTrips<TData = Awaited<ReturnType<typeof getLocationTrips>>, TError = unknown>(
- params?: GetLocationTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrips>>, TError, TData>> & Pick<
+export function useListTrips<TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(
+ params?: ListTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationTrips>>,
+          Awaited<ReturnType<typeof listTrips>>,
           TError,
-          Awaited<ReturnType<typeof getLocationTrips>>
+          Awaited<ReturnType<typeof listTrips>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationTrips<TData = Awaited<ReturnType<typeof getLocationTrips>>, TError = unknown>(
- params?: GetLocationTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrips>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useListTrips<TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(
+ params?: ListTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Materialized trips over a time range.
  */
 
-export function useGetLocationTrips<TData = Awaited<ReturnType<typeof getLocationTrips>>, TError = unknown>(
- params?: GetLocationTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrips>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useListTrips<TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(
+ params?: ListTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationTripsQueryOptions(params,options)
+  const queryOptions = getListTripsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1650,7 +1650,7 @@ export function useGetLocationTrips<TData = Awaited<ReturnType<typeof getLocatio
 
 
 
-export const getGetLocationSummaryUrl = (params: GetLocationSummaryParams,) => {
+export const getGetDailySummaryUrl = (params: GetDailySummaryParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -1668,9 +1668,9 @@ export const getGetLocationSummaryUrl = (params: GetLocationSummaryParams,) => {
 /**
  * @summary Per-day location rollup.
  */
-export const getLocationSummary = async (params: GetLocationSummaryParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<DailyLocationSummaryDto> => {
+export const getDailySummary = async (params: GetDailySummaryParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<DailyLocationSummaryDto> => {
 
-  return customFetchLocation<DailyLocationSummaryDto>(getGetLocationSummaryUrl(params),
+  return customFetchLocation<DailyLocationSummaryDto>(getGetDailySummaryUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1683,69 +1683,69 @@ export const getLocationSummary = async (params: GetLocationSummaryParams, optio
 
 
 
-export const getGetLocationSummaryQueryKey = (params?: GetLocationSummaryParams,) => {
+export const getGetDailySummaryQueryKey = (params?: GetDailySummaryParams,) => {
     return [
     `/location/summary`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLocationSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getLocationSummary>>, TError = unknown>(params: GetLocationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetDailySummaryQueryOptions = <TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(params: GetDailySummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationSummaryQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetDailySummaryQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationSummary>>> = ({ signal }) => getLocationSummary(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDailySummary>>> = ({ signal }) => getDailySummary(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationSummary>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationSummary>>>
-export type GetLocationSummaryQueryError = unknown
+export type GetDailySummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getDailySummary>>>
+export type GetDailySummaryQueryError = ProblemDetails
 
 
-export function useGetLocationSummary<TData = Awaited<ReturnType<typeof getLocationSummary>>, TError = unknown>(
- params: GetLocationSummaryParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationSummary>>, TError, TData>> & Pick<
+export function useGetDailySummary<TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(
+ params: GetDailySummaryParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationSummary>>,
+          Awaited<ReturnType<typeof getDailySummary>>,
           TError,
-          Awaited<ReturnType<typeof getLocationSummary>>
+          Awaited<ReturnType<typeof getDailySummary>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationSummary<TData = Awaited<ReturnType<typeof getLocationSummary>>, TError = unknown>(
- params: GetLocationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationSummary>>, TError, TData>> & Pick<
+export function useGetDailySummary<TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(
+ params: GetDailySummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationSummary>>,
+          Awaited<ReturnType<typeof getDailySummary>>,
           TError,
-          Awaited<ReturnType<typeof getLocationSummary>>
+          Awaited<ReturnType<typeof getDailySummary>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationSummary<TData = Awaited<ReturnType<typeof getLocationSummary>>, TError = unknown>(
- params: GetLocationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetDailySummary<TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(
+ params: GetDailySummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Per-day location rollup.
  */
 
-export function useGetLocationSummary<TData = Awaited<ReturnType<typeof getLocationSummary>>, TError = unknown>(
- params: GetLocationSummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationSummary>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetDailySummary<TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(
+ params: GetDailySummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationSummaryQueryOptions(params,options)
+  const queryOptions = getGetDailySummaryQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1758,7 +1758,7 @@ export function useGetLocationSummary<TData = Awaited<ReturnType<typeof getLocat
 
 
 
-export const getDeleteLocationUrl = (params?: DeleteLocationParams,) => {
+export const getPurgeLocationHistoryUrl = (params?: PurgeLocationHistoryParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -1776,9 +1776,9 @@ export const getDeleteLocationUrl = (params?: DeleteLocationParams,) => {
 /**
  * @summary Purge raw fixes + derived docs in a time range (owner erase).
  */
-export const deleteLocation = async (params?: DeleteLocationParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<void> => {
+export const purgeLocationHistory = async (params?: PurgeLocationHistoryParams, options?: Parameters<typeof customFetchLocation>[1]): Promise<void> => {
 
-  return customFetchLocation<void>(getDeleteLocationUrl(params),
+  return customFetchLocation<void>(getPurgeLocationHistoryUrl(params),
   {
     ...options,
     method: 'DELETE'
@@ -1791,11 +1791,11 @@ export const deleteLocation = async (params?: DeleteLocationParams, options?: Pa
 
 
 
-export const getDeleteLocationMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteLocation>>, TError,{params?: DeleteLocationParams}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteLocation>>, TError,{params?: DeleteLocationParams}, TContext> => {
+export const getPurgeLocationHistoryMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof purgeLocationHistory>>, TError,{params?: PurgeLocationHistoryParams}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+): UseMutationOptions<Awaited<ReturnType<typeof purgeLocationHistory>>, TError,{params?: PurgeLocationHistoryParams}, TContext> => {
 
-const mutationKey = ['deleteLocation'];
+const mutationKey = ['purgeLocationHistory'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1805,10 +1805,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteLocation>>, {params?: DeleteLocationParams}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof purgeLocationHistory>>, {params?: PurgeLocationHistoryParams}> = (props) => {
           const {params} = props ?? {};
 
-          return  deleteLocation(params,requestOptions)
+          return  purgeLocationHistory(params,requestOptions)
         }
 
 
@@ -1818,25 +1818,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeleteLocationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteLocation>>>
+    export type PurgeLocationHistoryMutationResult = NonNullable<Awaited<ReturnType<typeof purgeLocationHistory>>>
 
-    export type DeleteLocationMutationError = unknown
+    export type PurgeLocationHistoryMutationError = ProblemDetails
 
     /**
  * @summary Purge raw fixes + derived docs in a time range (owner erase).
  */
-export const useDeleteLocation = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteLocation>>, TError,{params?: DeleteLocationParams}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+export const usePurgeLocationHistory = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof purgeLocationHistory>>, TError,{params?: PurgeLocationHistoryParams}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteLocation>>,
+        Awaited<ReturnType<typeof purgeLocationHistory>>,
         TError,
-        {params?: DeleteLocationParams},
+        {params?: PurgeLocationHistoryParams},
         TContext
       > => {
-      return useMutation(getDeleteLocationMutationOptions(options), queryClient);
+      return useMutation(getPurgeLocationHistoryMutationOptions(options), queryClient);
     }
 
-export const getPostLocationTrackingDeviceIdPauseUrl = (deviceId: string,) => {
+export const getPauseTrackingUrl = (deviceId: string,) => {
 
 
 
@@ -1847,7 +1847,7 @@ export const getPostLocationTrackingDeviceIdPauseUrl = (deviceId: string,) => {
 /**
  * @summary Pause tracking for a device (ingest is discarded while paused).
  */
-export const postLocationTrackingDeviceIdPause = async (deviceId: string,
+export const pauseTracking = async (deviceId: string,
     nullPauseTrackingRequest?: null | PauseTrackingRequest, options?: Parameters<typeof customFetchLocation>[1]): Promise<void> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
@@ -1856,7 +1856,7 @@ export const postLocationTrackingDeviceIdPause = async (deviceId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchLocation<void>(getPostLocationTrackingDeviceIdPauseUrl(deviceId),
+return customFetchLocation<void>(getPauseTrackingUrl(deviceId),
   {
     ...options,
     method: 'POST',
@@ -1869,11 +1869,11 @@ return customFetchLocation<void>(getPostLocationTrackingDeviceIdPauseUrl(deviceI
 
 
 
-export const getPostLocationTrackingDeviceIdPauseMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLocationTrackingDeviceIdPause>>, TError,{deviceId: string;data?: null | PauseTrackingRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
-): UseMutationOptions<Awaited<ReturnType<typeof postLocationTrackingDeviceIdPause>>, TError,{deviceId: string;data?: null | PauseTrackingRequest}, TContext> => {
+export const getPauseTrackingMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pauseTracking>>, TError,{deviceId: string;data?: null | PauseTrackingRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+): UseMutationOptions<Awaited<ReturnType<typeof pauseTracking>>, TError,{deviceId: string;data?: null | PauseTrackingRequest}, TContext> => {
 
-const mutationKey = ['postLocationTrackingDeviceIdPause'];
+const mutationKey = ['pauseTracking'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1883,10 +1883,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLocationTrackingDeviceIdPause>>, {deviceId: string;data?: null | PauseTrackingRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof pauseTracking>>, {deviceId: string;data?: null | PauseTrackingRequest}> = (props) => {
           const {deviceId,data} = props ?? {};
 
-          return  postLocationTrackingDeviceIdPause(deviceId,data,requestOptions)
+          return  pauseTracking(deviceId,data,requestOptions)
         }
 
 
@@ -1896,25 +1896,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostLocationTrackingDeviceIdPauseMutationResult = NonNullable<Awaited<ReturnType<typeof postLocationTrackingDeviceIdPause>>>
-    export type PostLocationTrackingDeviceIdPauseMutationBody = null | PauseTrackingRequest | undefined
-    export type PostLocationTrackingDeviceIdPauseMutationError = unknown
+    export type PauseTrackingMutationResult = NonNullable<Awaited<ReturnType<typeof pauseTracking>>>
+    export type PauseTrackingMutationBody = null | PauseTrackingRequest | undefined
+    export type PauseTrackingMutationError = ProblemDetails
 
     /**
  * @summary Pause tracking for a device (ingest is discarded while paused).
  */
-export const usePostLocationTrackingDeviceIdPause = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLocationTrackingDeviceIdPause>>, TError,{deviceId: string;data?: null | PauseTrackingRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+export const usePauseTracking = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pauseTracking>>, TError,{deviceId: string;data?: null | PauseTrackingRequest}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postLocationTrackingDeviceIdPause>>,
+        Awaited<ReturnType<typeof pauseTracking>>,
         TError,
         {deviceId: string;data?: null | PauseTrackingRequest},
         TContext
       > => {
-      return useMutation(getPostLocationTrackingDeviceIdPauseMutationOptions(options), queryClient);
+      return useMutation(getPauseTrackingMutationOptions(options), queryClient);
     }
 
-export const getPostLocationTrackingDeviceIdResumeUrl = (deviceId: string,) => {
+export const getResumeTrackingUrl = (deviceId: string,) => {
 
 
 
@@ -1925,9 +1925,9 @@ export const getPostLocationTrackingDeviceIdResumeUrl = (deviceId: string,) => {
 /**
  * @summary Resume tracking for a device.
  */
-export const postLocationTrackingDeviceIdResume = async (deviceId: string, options?: Parameters<typeof customFetchLocation>[1]): Promise<void> => {
+export const resumeTracking = async (deviceId: string, options?: Parameters<typeof customFetchLocation>[1]): Promise<void> => {
 
-  return customFetchLocation<void>(getPostLocationTrackingDeviceIdResumeUrl(deviceId),
+  return customFetchLocation<void>(getResumeTrackingUrl(deviceId),
   {
     ...options,
     method: 'POST'
@@ -1940,11 +1940,11 @@ export const postLocationTrackingDeviceIdResume = async (deviceId: string, optio
 
 
 
-export const getPostLocationTrackingDeviceIdResumeMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLocationTrackingDeviceIdResume>>, TError,{deviceId: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
-): UseMutationOptions<Awaited<ReturnType<typeof postLocationTrackingDeviceIdResume>>, TError,{deviceId: string}, TContext> => {
+export const getResumeTrackingMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeTracking>>, TError,{deviceId: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+): UseMutationOptions<Awaited<ReturnType<typeof resumeTracking>>, TError,{deviceId: string}, TContext> => {
 
-const mutationKey = ['postLocationTrackingDeviceIdResume'];
+const mutationKey = ['resumeTracking'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1954,10 +1954,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLocationTrackingDeviceIdResume>>, {deviceId: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resumeTracking>>, {deviceId: string}> = (props) => {
           const {deviceId} = props ?? {};
 
-          return  postLocationTrackingDeviceIdResume(deviceId,requestOptions)
+          return  resumeTracking(deviceId,requestOptions)
         }
 
 
@@ -1967,25 +1967,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostLocationTrackingDeviceIdResumeMutationResult = NonNullable<Awaited<ReturnType<typeof postLocationTrackingDeviceIdResume>>>
+    export type ResumeTrackingMutationResult = NonNullable<Awaited<ReturnType<typeof resumeTracking>>>
 
-    export type PostLocationTrackingDeviceIdResumeMutationError = unknown
+    export type ResumeTrackingMutationError = ProblemDetails
 
     /**
  * @summary Resume tracking for a device.
  */
-export const usePostLocationTrackingDeviceIdResume = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLocationTrackingDeviceIdResume>>, TError,{deviceId: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
+export const useResumeTracking = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeTracking>>, TError,{deviceId: string}, TContext>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postLocationTrackingDeviceIdResume>>,
+        Awaited<ReturnType<typeof resumeTracking>>,
         TError,
         {deviceId: string},
         TContext
       > => {
-      return useMutation(getPostLocationTrackingDeviceIdResumeMutationOptions(options), queryClient);
+      return useMutation(getResumeTrackingMutationOptions(options), queryClient);
     }
 
-export const getGetLocationTrackingDeviceIdStateUrl = (deviceId: string,) => {
+export const getGetTrackingStateUrl = (deviceId: string,) => {
 
 
 
@@ -1996,9 +1996,9 @@ export const getGetLocationTrackingDeviceIdStateUrl = (deviceId: string,) => {
 /**
  * @summary Tracking state for a device.
  */
-export const getLocationTrackingDeviceIdState = async (deviceId: string, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackingStateDto> => {
+export const getTrackingState = async (deviceId: string, options?: Parameters<typeof customFetchLocation>[1]): Promise<TrackingStateDto> => {
 
-  return customFetchLocation<TrackingStateDto>(getGetLocationTrackingDeviceIdStateUrl(deviceId),
+  return customFetchLocation<TrackingStateDto>(getGetTrackingStateUrl(deviceId),
   {
     ...options,
     method: 'GET'
@@ -2011,69 +2011,69 @@ export const getLocationTrackingDeviceIdState = async (deviceId: string, options
 
 
 
-export const getGetLocationTrackingDeviceIdStateQueryKey = (deviceId: string,) => {
+export const getGetTrackingStateQueryKey = (deviceId: string,) => {
     return [
     `/location/tracking/${deviceId}/state`
     ] as const;
     }
 
 
-export const getGetLocationTrackingDeviceIdStateQueryOptions = <TData = Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError = unknown>(deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export const getGetTrackingStateQueryOptions = <TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetLocationTrackingDeviceIdStateQueryKey(deviceId);
+  const queryKey =  queryOptions?.queryKey ?? getGetTrackingStateQueryKey(deviceId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>> = ({ signal }) => getLocationTrackingDeviceIdState(deviceId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTrackingState>>> = ({ signal }) => getTrackingState(deviceId, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, enabled: deviceId !== null && deviceId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: deviceId !== null && deviceId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetLocationTrackingDeviceIdStateQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>>
-export type GetLocationTrackingDeviceIdStateQueryError = unknown
+export type GetTrackingStateQueryResult = NonNullable<Awaited<ReturnType<typeof getTrackingState>>>
+export type GetTrackingStateQueryError = ProblemDetails
 
 
-export function useGetLocationTrackingDeviceIdState<TData = Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError = unknown>(
- deviceId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError, TData>> & Pick<
+export function useGetTrackingState<TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(
+ deviceId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>,
+          Awaited<ReturnType<typeof getTrackingState>>,
           TError,
-          Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>
+          Awaited<ReturnType<typeof getTrackingState>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationTrackingDeviceIdState<TData = Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError = unknown>(
- deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError, TData>> & Pick<
+export function useGetTrackingState<TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(
+ deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>,
+          Awaited<ReturnType<typeof getTrackingState>>,
           TError,
-          Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>
+          Awaited<ReturnType<typeof getTrackingState>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetLocationTrackingDeviceIdState<TData = Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError = unknown>(
- deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetTrackingState<TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(
+ deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Tracking state for a device.
  */
 
-export function useGetLocationTrackingDeviceIdState<TData = Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError = unknown>(
- deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationTrackingDeviceIdState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
+export function useGetTrackingState<TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(
+ deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>>, request?: SecondParameter<typeof customFetchLocation>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLocationTrackingDeviceIdStateQueryOptions(deviceId,options)
+  const queryOptions = getGetTrackingStateQueryOptions(deviceId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

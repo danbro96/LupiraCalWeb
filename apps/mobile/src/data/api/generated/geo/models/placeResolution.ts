@@ -6,6 +6,11 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * How Place resolution landed: an existing entry matched, a fresh geocode created one, a
+ *             coordinate-less provisional stub was created (address not found), or the geocoder was unreachable so nothing was
+ *             created — the last is retryable and must NOT be mistaken for "not found".
+ */
 export type PlaceResolution = typeof PlaceResolution[keyof typeof PlaceResolution];
 
 

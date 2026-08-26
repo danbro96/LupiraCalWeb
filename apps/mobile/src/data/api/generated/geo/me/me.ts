@@ -6,31 +6,37 @@
  * OpenAPI spec version: v1
  */
 import type {
-  MeDto
+  MeDto,
+  ProblemDetails
 } from '../models';
 
 import { apiFetch } from '../../../mutator';
 
-export type getMeResponse200 = {
+export type whoAmIResponse200 = {
   data: MeDto
   status: 200
 }
 
-export type getMeResponse401 = {
-  data: void
+export type whoAmIResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type getMeResponseSuccess = (getMeResponse200) & {
+export type whoAmIResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type whoAmIResponseSuccess = (whoAmIResponse200) & {
   headers: Headers;
 };
-export type getMeResponseError = (getMeResponse401) & {
+export type whoAmIResponseError = (whoAmIResponse401 | whoAmIResponse500) & {
   headers: Headers;
 };
 
-export type getMeResponse = (getMeResponseSuccess | getMeResponseError)
+export type whoAmIResponse = (whoAmIResponseSuccess | whoAmIResponseError)
 
-export const getGetMeUrl = () => {
+export const getWhoAmIUrl = () => {
 
 
 
@@ -41,9 +47,9 @@ export const getGetMeUrl = () => {
 /**
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
-export const getMe = async ( options?: Parameters<typeof apiFetch>[1]): Promise<getMeResponse> => {
+export const whoAmI = async ( options?: Parameters<typeof apiFetch>[1]): Promise<whoAmIResponse> => {
 
-  return apiFetch<getMeResponse>(getGetMeUrl(),
+  return apiFetch<whoAmIResponse>(getWhoAmIUrl(),
   {
     ...options,
     method: 'GET'

@@ -12,6 +12,9 @@ import type { PromptFire } from './promptFire';
 import type { PromptIntent } from './promptIntent';
 import type { Ref } from './ref';
 
+/**
+ * An LLM-interpreted, contracted payload → an agent run. Declared at authoring time; enforced by assistant-api at fire time.
+ */
 export interface ItemPrompt {
   intent: PromptIntent;
   target: null | Ref;

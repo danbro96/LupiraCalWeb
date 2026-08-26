@@ -10,6 +10,11 @@ import type { ContactReachChannel } from './contactReachChannel';
 import type { DisplayNameFormat } from './displayNameFormat';
 import type { PartialDate } from './partialDate';
 
+/**
+ * Update an existing contact by <b>merge</b>: a provided scalar overwrites, provided reach channels/tags
+ *             are unioned onto the existing values (deduped), and any field left null keeps its current value. Enrichment never
+ *             wipes what it didn't mention. Use `PUT /contacts/{id}/channels` to remove channels. The address book isn't changeable here.
+ */
 export interface ReviseContactRequest {
   kind?: null | ContactKind;
   /** @nullable */
@@ -30,6 +35,10 @@ export interface ReviseContactRequest {
   notes?: string | null;
   /** @nullable */
   pronouns?: string | null;
-  /** @nullable */
+  /**
+     * Client wall-clock of the edit, for last-writer-wins conflict resolution of the core fields.
+     *             Omitted ⇒ server receive time.
+     * @nullable
+     */
   occurredAt?: string | null;
 }

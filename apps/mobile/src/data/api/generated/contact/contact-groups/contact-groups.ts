@@ -20,15 +20,25 @@ export type listContactGroupsResponse200 = {
   status: 200
 }
 
+export type listContactGroupsResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type listContactGroupsResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
+export type listContactGroupsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type listContactGroupsResponseSuccess = (listContactGroupsResponse200) & {
   headers: Headers;
 };
-export type listContactGroupsResponseError = (listContactGroupsResponse403) & {
+export type listContactGroupsResponseError = (listContactGroupsResponse401 | listContactGroupsResponse403 | listContactGroupsResponse500) & {
   headers: Headers;
 };
 
@@ -62,15 +72,25 @@ export type createContactGroupResponse200 = {
   status: 200
 }
 
+export type createContactGroupResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type createContactGroupResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
+export type createContactGroupResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type createContactGroupResponseSuccess = (createContactGroupResponse200) & {
   headers: Headers;
 };
-export type createContactGroupResponseError = (createContactGroupResponse403) & {
+export type createContactGroupResponseError = (createContactGroupResponse401 | createContactGroupResponse403 | createContactGroupResponse500) & {
   headers: Headers;
 };
 
@@ -113,15 +133,25 @@ export type renameContactGroupResponse200 = {
   status: 200
 }
 
+export type renameContactGroupResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type renameContactGroupResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type renameContactGroupResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type renameContactGroupResponseSuccess = (renameContactGroupResponse200) & {
   headers: Headers;
 };
-export type renameContactGroupResponseError = (renameContactGroupResponse404) & {
+export type renameContactGroupResponseError = (renameContactGroupResponse401 | renameContactGroupResponse404 | renameContactGroupResponse500) & {
   headers: Headers;
 };
 
@@ -164,15 +194,25 @@ export type deleteContactGroupResponse204 = {
   status: 204
 }
 
+export type deleteContactGroupResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type deleteContactGroupResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type deleteContactGroupResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type deleteContactGroupResponseSuccess = (deleteContactGroupResponse204) & {
   headers: Headers;
 };
-export type deleteContactGroupResponseError = (deleteContactGroupResponse404) & {
+export type deleteContactGroupResponseError = (deleteContactGroupResponse401 | deleteContactGroupResponse404 | deleteContactGroupResponse500) & {
   headers: Headers;
 };
 
@@ -206,15 +246,25 @@ export type addContactGroupMemberResponse200 = {
   status: 200
 }
 
+export type addContactGroupMemberResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type addContactGroupMemberResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type addContactGroupMemberResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type addContactGroupMemberResponseSuccess = (addContactGroupMemberResponse200) & {
   headers: Headers;
 };
-export type addContactGroupMemberResponseError = (addContactGroupMemberResponse404) & {
+export type addContactGroupMemberResponseError = (addContactGroupMemberResponse401 | addContactGroupMemberResponse404 | addContactGroupMemberResponse500) & {
   headers: Headers;
 };
 
@@ -257,15 +307,25 @@ export type removeContactGroupMemberResponse200 = {
   status: 200
 }
 
+export type removeContactGroupMemberResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type removeContactGroupMemberResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type removeContactGroupMemberResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type removeContactGroupMemberResponseSuccess = (removeContactGroupMemberResponse200) & {
   headers: Headers;
 };
-export type removeContactGroupMemberResponseError = (removeContactGroupMemberResponse404) & {
+export type removeContactGroupMemberResponseError = (removeContactGroupMemberResponse401 | removeContactGroupMemberResponse404 | removeContactGroupMemberResponse500) & {
   headers: Headers;
 };
 

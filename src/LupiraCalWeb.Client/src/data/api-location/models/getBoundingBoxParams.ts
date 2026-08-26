@@ -6,7 +6,11 @@
  * OpenAPI spec version: v1
  */
 
-export type DeleteLocationParams = {
+export type GetBoundingBoxParams = {
+minLat: number;
+maxLat: number;
+minLon: number;
+maxLon: number;
 from?: string;
 to?: string;
 deviceId?: string;

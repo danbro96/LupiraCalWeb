@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A field is fully present, weak/partial (0.5), or absent.
+ */
 export type GapSeverity = typeof GapSeverity[keyof typeof GapSeverity];
 
 

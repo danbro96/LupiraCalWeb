@@ -7,7 +7,7 @@
  */
 import type { ItemStatus } from './itemStatus';
 
-export type GetListsListIdItemsParams = {
+export type ListListItemsParams = {
 completed?: boolean;
 tagId?: string;
 parentItemId?: string;

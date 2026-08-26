@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A materialized stay-point.
+ */
 export interface LocationVisitDto {
   id: string;
   arriveTs: string;

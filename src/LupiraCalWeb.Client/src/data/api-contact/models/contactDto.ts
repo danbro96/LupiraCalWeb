@@ -41,11 +41,16 @@ export interface ContactDto {
   notes?: string | null;
   /** @nullable */
   pronouns?: string | null;
-  /** @nullable */
+  /**
+     * Pointer to an avatar image (URL/media id), never bytes.
+     * @nullable
+     */
   avatarRef?: string | null;
   addresses: ContactPostalAddress[];
   profiles: ContactSocialProfileDto[];
+  /** Ordered designation (first = highest priority) — who to call about this person, not a kinship. */
   emergencyContactIds: string[];
+  /** Raw outgoing edges (unfiltered; targets may be deleted or unreadable). The `/relations` sub-resource is the resolved two-way view. */
   relations: ContactRelationDto[];
   metadata?: null | JsonNode;
   completeness?: null | CompletenessScore;
@@ -55,6 +60,7 @@ export interface ContactDto {
   updatedAt?: string;
   /** @nullable */
   updatedBy?: string | null;
+  /** Stream version — the offline clients' optimistic-versioning surface (`Etag` stays content-derived). */
   version: number;
   etag: string;
 }

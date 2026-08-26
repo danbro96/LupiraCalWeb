@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A coarse "where was I at T" answer — a place label + coarsened coordinate, never the raw fix. Synergy-safe.
+ */
 export interface PlaceLabelAtDto {
   ts: string;
   /** @nullable */

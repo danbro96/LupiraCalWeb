@@ -8,6 +8,9 @@
 import type { PlaceCategory } from './placeCategory';
 import type { PlaceKind } from './placeKind';
 
+/**
+ * Create a user place directly (name + optional coordinates/category).
+ */
 export interface CreatePlaceRequest {
   name: string;
   kind?: PlaceKind;

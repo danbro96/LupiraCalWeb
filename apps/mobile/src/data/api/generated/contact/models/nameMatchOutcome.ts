@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Per-name match outcome. `Matched` = exactly one contact whose normalized display name equals the
+ *             query (or the lone substring hit); `Ambiguous` = several candidates; `NotFound` = no substring hit.
+ */
 export type NameMatchOutcome = typeof NameMatchOutcome[keyof typeof NameMatchOutcome];
 
 

@@ -7,6 +7,10 @@
  */
 import type { PromptFireKind } from './promptFireKind';
 
+/**
+ * Fire timing (flattened union): OnStart/OnEnd carry nothing; Offset uses `OffsetMinutes` (negative = lead time);
+ *             AllDayAt uses `AllDayAt` (local wall-clock time on the occurrence date).
+ */
 export interface PromptFire {
   kind: PromptFireKind;
   /** @nullable */

@@ -8,6 +8,11 @@
 import type { ContactAddressType } from './contactAddressType';
 import type { FuzzyDate } from './fuzzyDate';
 
+/**
+ * A contact's postal address: a LupiraGeoApi place id (the sole source of truth — no free-text) with a home/work
+ *             type. FuzzyDate boundaries are as precise as actually known, null = unknown; currency is
+ *             bool ContactPostalAddress.IsActiveOn(DateOnly today), never "MovedOut set".
+ */
 export interface ContactPostalAddress {
   placeId: string;
   type?: ContactAddressType;

@@ -20,15 +20,25 @@ export type listProposedItemsResponse200 = {
   status: 200
 }
 
+export type listProposedItemsResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type listProposedItemsResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
+export type listProposedItemsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type listProposedItemsResponseSuccess = (listProposedItemsResponse200) & {
   headers: Headers;
 };
-export type listProposedItemsResponseError = (listProposedItemsResponse403) & {
+export type listProposedItemsResponseError = (listProposedItemsResponse401 | listProposedItemsResponse403 | listProposedItemsResponse500) & {
   headers: Headers;
 };
 
@@ -62,15 +72,25 @@ export type acceptItemIntoCalendarResponse200 = {
   status: 200
 }
 
+export type acceptItemIntoCalendarResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type acceptItemIntoCalendarResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type acceptItemIntoCalendarResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type acceptItemIntoCalendarResponseSuccess = (acceptItemIntoCalendarResponse200) & {
   headers: Headers;
 };
-export type acceptItemIntoCalendarResponseError = (acceptItemIntoCalendarResponse404) & {
+export type acceptItemIntoCalendarResponseError = (acceptItemIntoCalendarResponse401 | acceptItemIntoCalendarResponse404 | acceptItemIntoCalendarResponse500) & {
   headers: Headers;
 };
 
@@ -115,15 +135,25 @@ export type fileItemToCalendarResponse200 = {
   status: 200
 }
 
+export type fileItemToCalendarResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type fileItemToCalendarResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type fileItemToCalendarResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type fileItemToCalendarResponseSuccess = (fileItemToCalendarResponse200) & {
   headers: Headers;
 };
-export type fileItemToCalendarResponseError = (fileItemToCalendarResponse404) & {
+export type fileItemToCalendarResponseError = (fileItemToCalendarResponse401 | fileItemToCalendarResponse404 | fileItemToCalendarResponse500) & {
   headers: Headers;
 };
 
@@ -168,15 +198,25 @@ export type removeItemFromCalendarResponse200 = {
   status: 200
 }
 
+export type removeItemFromCalendarResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type removeItemFromCalendarResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type removeItemFromCalendarResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type removeItemFromCalendarResponseSuccess = (removeItemFromCalendarResponse200) & {
   headers: Headers;
 };
-export type removeItemFromCalendarResponseError = (removeItemFromCalendarResponse404) & {
+export type removeItemFromCalendarResponseError = (removeItemFromCalendarResponse401 | removeItemFromCalendarResponse404 | removeItemFromCalendarResponse500) & {
   headers: Headers;
 };
 

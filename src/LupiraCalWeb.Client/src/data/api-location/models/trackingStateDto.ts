@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Per-device tracking kill-switch state.
+ */
 export interface TrackingStateDto {
   deviceId: string;
   paused: boolean;

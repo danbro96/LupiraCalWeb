@@ -9,6 +9,10 @@ import type { PlaceCategory } from './placeCategory';
 import type { PlaceKind } from './placeKind';
 import type { PlaceSource } from './placeSource';
 
+/**
+ * A live place nothing references: zero contact addresses, zero live calendar items, zero saved places.
+ *             bool OrphanCandidateDto.Prunable is false when soft-deleted calendar items still reference it — an undelete would dangle.
+ */
 export interface OrphanCandidateDto {
   placeId: string;
   name: string;

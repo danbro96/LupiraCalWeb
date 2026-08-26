@@ -7,6 +7,9 @@
  */
 import type { DeviceKind } from './deviceKind';
 
+/**
+ * A registered device.
+ */
 export interface DeviceDto {
   id: string;
   kind: DeviceKind;

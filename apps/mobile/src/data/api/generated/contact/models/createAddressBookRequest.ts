@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Create an address book; the caller becomes its owner.
+ */
 export interface CreateAddressBookRequest {
   slug: string;
   /** @nullable */

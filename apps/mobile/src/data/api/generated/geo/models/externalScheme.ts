@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * External identity system a PlaceExternalId reconciles against.
+ */
 export type ExternalScheme = typeof ExternalScheme[keyof typeof ExternalScheme];
 
 

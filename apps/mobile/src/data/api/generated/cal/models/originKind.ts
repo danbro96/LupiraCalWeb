@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * What a read-time-projected occurrence was synthesized from.
+ */
 export type OriginKind = typeof OriginKind[keyof typeof OriginKind];
 
 

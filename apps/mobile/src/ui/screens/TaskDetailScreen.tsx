@@ -4,7 +4,7 @@ import type { RouteProp } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Chip, Text, useTheme } from 'react-native-paper';
-import { getListsListIdItemsItemId } from '../../data/api/generated/tasks/items/items';
+import { getItem } from '../../data/api/generated/tasks/items/items';
 import { taskDeepLink } from '../../domain/taskRows';
 import { Centered } from '../components/Centered';
 import { Button } from '../components/form';
@@ -21,7 +21,7 @@ export function TaskDetailScreen() {
     queryKey: ['tasks', 'detail', listId, itemId],
     staleTime: 60_000,
     retry: 1,
-    queryFn: () => getListsListIdItemsItemId(listId, itemId),
+    queryFn: () => getItem(listId, itemId),
   });
 
   if (isLoading) return <Centered text="Loading…" />;

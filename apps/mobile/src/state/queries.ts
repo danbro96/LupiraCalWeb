@@ -3,7 +3,7 @@ import { getDb } from '../data/db/expoDb';
 import { usePrefs } from './prefs-store';
 import type { ContactListRow, GridRow, OutboxRow } from '../data/mirror';
 import { gridRowsBetween, listContacts, listContainerDocs, listParked, listPendingOps, loadContact, loadItem } from '../data/mirror';
-import { getItems } from '../data/api/generated/tasks/items/items';
+import { listItems } from '../data/api/generated/tasks/items/items';
 import { monthUtcRange, taskDeadlineRows, type TaskDeadlineRow } from '../domain/taskRows';
 import { useSyncStatus } from '../sync/syncStatus';
 
@@ -57,7 +57,7 @@ export function useTaskDeadlines(dayKeys: string[]): TaskDeadlineRow[] {
       staleTime: 60_000,
       retry: 1,
       queryFn: async () => {
-        const r = await getItems({ ...monthUtcRange(monthKey), completed: false });
+        const r = await listItems({ ...monthUtcRange(monthKey), completed: false });
         if (r.status !== 200) throw new Error(`tasks fetch ${r.status}`);
         return taskDeadlineRows(r.data.items, new Date());
       },

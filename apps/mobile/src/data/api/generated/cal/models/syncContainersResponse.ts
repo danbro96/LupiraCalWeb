@@ -7,6 +7,10 @@
  */
 import type { ContainerDto } from './containerDto';
 
+/**
+ * Snapshot of the caller's containers. Containers are plain documents with no event history, so they
+ *             have no cursor — fetch once per sync cycle and diff against the mirror.
+ */
 export interface SyncContainersResponse {
   calendars: ContainerDto[];
 }

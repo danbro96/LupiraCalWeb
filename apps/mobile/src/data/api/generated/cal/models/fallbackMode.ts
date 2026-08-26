@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * On a missed contract: retry once then ask (Retry), ask immediately (Ask), or drop (Drop).
+ */
 export type FallbackMode = typeof FallbackMode[keyof typeof FallbackMode];
 
 

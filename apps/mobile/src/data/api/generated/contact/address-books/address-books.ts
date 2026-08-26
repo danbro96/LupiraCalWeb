@@ -23,14 +23,19 @@ export type listAddressBooksResponse200 = {
 }
 
 export type listAddressBooksResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type listAddressBooksResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type listAddressBooksResponseSuccess = (listAddressBooksResponse200) & {
   headers: Headers;
 };
-export type listAddressBooksResponseError = (listAddressBooksResponse401) & {
+export type listAddressBooksResponseError = (listAddressBooksResponse401 | listAddressBooksResponse500) & {
   headers: Headers;
 };
 
@@ -65,14 +70,19 @@ export type createAddressBookResponse200 = {
 }
 
 export type createAddressBookResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type createAddressBookResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type createAddressBookResponseSuccess = (createAddressBookResponse200) & {
   headers: Headers;
 };
-export type createAddressBookResponseError = (createAddressBookResponse401) & {
+export type createAddressBookResponseError = (createAddressBookResponse401 | createAddressBookResponse500) & {
   headers: Headers;
 };
 
@@ -117,20 +127,30 @@ export type updateAddressBookResponse400 = {
   status: 400
 }
 
+export type updateAddressBookResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type updateAddressBookResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
 export type updateAddressBookResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type updateAddressBookResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type updateAddressBookResponseSuccess = (updateAddressBookResponse200) & {
   headers: Headers;
 };
-export type updateAddressBookResponseError = (updateAddressBookResponse400 | updateAddressBookResponse403 | updateAddressBookResponse404) & {
+export type updateAddressBookResponseError = (updateAddressBookResponse400 | updateAddressBookResponse401 | updateAddressBookResponse403 | updateAddressBookResponse404 | updateAddressBookResponse500) & {
   headers: Headers;
 };
 
@@ -171,13 +191,18 @@ export type deleteAddressBookResponse204 = {
   status: 204
 }
 
+export type deleteAddressBookResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type deleteAddressBookResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
 export type deleteAddressBookResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -186,10 +211,15 @@ export type deleteAddressBookResponse409 = {
   status: 409
 }
 
+export type deleteAddressBookResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type deleteAddressBookResponseSuccess = (deleteAddressBookResponse204) & {
   headers: Headers;
 };
-export type deleteAddressBookResponseError = (deleteAddressBookResponse403 | deleteAddressBookResponse404 | deleteAddressBookResponse409) & {
+export type deleteAddressBookResponseError = (deleteAddressBookResponse401 | deleteAddressBookResponse403 | deleteAddressBookResponse404 | deleteAddressBookResponse409 | deleteAddressBookResponse500) & {
   headers: Headers;
 };
 
@@ -223,20 +253,30 @@ export type listAddressBookOwnersResponse200 = {
   status: 200
 }
 
+export type listAddressBookOwnersResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type listAddressBookOwnersResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
 export type listAddressBookOwnersResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type listAddressBookOwnersResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type listAddressBookOwnersResponseSuccess = (listAddressBookOwnersResponse200) & {
   headers: Headers;
 };
-export type listAddressBookOwnersResponseError = (listAddressBookOwnersResponse403 | listAddressBookOwnersResponse404) & {
+export type listAddressBookOwnersResponseError = (listAddressBookOwnersResponse401 | listAddressBookOwnersResponse403 | listAddressBookOwnersResponse404 | listAddressBookOwnersResponse500) & {
   headers: Headers;
 };
 
@@ -270,13 +310,18 @@ export type grantAddressBookOwnerResponse200 = {
   status: 200
 }
 
+export type grantAddressBookOwnerResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type grantAddressBookOwnerResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
 export type grantAddressBookOwnerResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -285,10 +330,15 @@ export type grantAddressBookOwnerResponse409 = {
   status: 409
 }
 
+export type grantAddressBookOwnerResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type grantAddressBookOwnerResponseSuccess = (grantAddressBookOwnerResponse200) & {
   headers: Headers;
 };
-export type grantAddressBookOwnerResponseError = (grantAddressBookOwnerResponse403 | grantAddressBookOwnerResponse404 | grantAddressBookOwnerResponse409) & {
+export type grantAddressBookOwnerResponseError = (grantAddressBookOwnerResponse401 | grantAddressBookOwnerResponse403 | grantAddressBookOwnerResponse404 | grantAddressBookOwnerResponse409 | grantAddressBookOwnerResponse500) & {
   headers: Headers;
 };
 
@@ -329,13 +379,18 @@ export type revokeAddressBookOwnerResponse204 = {
   status: 204
 }
 
+export type revokeAddressBookOwnerResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type revokeAddressBookOwnerResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
 export type revokeAddressBookOwnerResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -344,10 +399,15 @@ export type revokeAddressBookOwnerResponse409 = {
   status: 409
 }
 
+export type revokeAddressBookOwnerResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type revokeAddressBookOwnerResponseSuccess = (revokeAddressBookOwnerResponse204) & {
   headers: Headers;
 };
-export type revokeAddressBookOwnerResponseError = (revokeAddressBookOwnerResponse403 | revokeAddressBookOwnerResponse404 | revokeAddressBookOwnerResponse409) & {
+export type revokeAddressBookOwnerResponseError = (revokeAddressBookOwnerResponse401 | revokeAddressBookOwnerResponse403 | revokeAddressBookOwnerResponse404 | revokeAddressBookOwnerResponse409 | revokeAddressBookOwnerResponse500) & {
   headers: Headers;
 };
 

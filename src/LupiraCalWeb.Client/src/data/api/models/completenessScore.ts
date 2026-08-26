@@ -7,6 +7,11 @@
  */
 import type { CompletenessGap } from './completenessGap';
 
+/**
+ * How well-documented a record is: `Score` 0..1 (Σ weight·presence / Σ weight), the unmet
+ *             fields ranked by missing mass (weight·absence, largest first), and the rubric version that produced it.
+ *             `null` (not this type) means "not applicable".
+ */
 export interface CompletenessScore {
   score: number;
   rubricVersion: number;

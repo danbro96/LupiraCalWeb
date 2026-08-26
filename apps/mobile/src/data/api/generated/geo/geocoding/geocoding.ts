@@ -8,6 +8,7 @@
 import type {
   ForwardGeocodeParams,
   GeocodeResultDto,
+  ProblemDetails,
   ReverseGeocodeParams
 } from '../models';
 
@@ -19,19 +20,24 @@ export type reverseGeocodeResponse200 = {
 }
 
 export type reverseGeocodeResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type reverseGeocodeResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type reverseGeocodeResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type reverseGeocodeResponseSuccess = (reverseGeocodeResponse200) & {
   headers: Headers;
 };
-export type reverseGeocodeResponseError = (reverseGeocodeResponse401 | reverseGeocodeResponse404) & {
+export type reverseGeocodeResponseError = (reverseGeocodeResponse401 | reverseGeocodeResponse404 | reverseGeocodeResponse500) & {
   headers: Headers;
 };
 
@@ -73,14 +79,19 @@ export type forwardGeocodeResponse200 = {
 }
 
 export type forwardGeocodeResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type forwardGeocodeResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type forwardGeocodeResponseSuccess = (forwardGeocodeResponse200) & {
   headers: Headers;
 };
-export type forwardGeocodeResponseError = (forwardGeocodeResponse401) & {
+export type forwardGeocodeResponseError = (forwardGeocodeResponse401 | forwardGeocodeResponse500) & {
   headers: Headers;
 };
 

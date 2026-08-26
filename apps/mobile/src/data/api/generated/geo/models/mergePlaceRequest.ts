@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Merge the addressed place into Guid MergePlaceRequest.IntoPlaceId (the survivor). The addressed id becomes a
+ *             tombstone redirect, so ids held by other services keep resolving.
+ */
 export interface MergePlaceRequest {
   intoPlaceId: string;
 }

@@ -6,6 +6,12 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Update a saved place. Omitted members are left unchanged. Re-point the target by passing EITHER
+ *             `PlaceId` (link a gazetteer place; clears any raw coordinate) OR `Latitude`+`Longitude` together
+ *             (set a raw coordinate; clears any link) — not both. There is no "clear to nothing": drop a link by re-pointing
+ *             to a raw coordinate.
+ */
 export interface UpdateSavedPlaceRequest {
   /** @nullable */
   label?: string | null;

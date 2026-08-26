@@ -7,6 +7,10 @@
  */
 import type { ContactRelationKind } from './contactRelationKind';
 
+/**
+ * One outgoing relation edge as published: "the `ToContactId` contact is my `Kind`".
+ *             `Ended`/`Until` mark a relationship that ran its course, distinct from removal.
+ */
 export interface ContactRelationDto {
   toContactId: string;
   kind: ContactRelationKind;

@@ -7,6 +7,9 @@
  */
 import type { MotionActivity } from './motionActivity';
 
+/**
+ * A materialized trip between stays.
+ */
 export interface LocationTripDto {
   id: string;
   startTs: string;
@@ -16,7 +19,12 @@ export interface LocationTripDto {
   dominantActivity?: null | MotionActivity;
   avgSpeedMps: number;
   maxSpeedMps: number;
-  /** @nullable */
+  /**
+     * Endpoint visits (when the trip started/ended at a detected stay-point) — lets a client join trips to
+     *             visit markers without time-window heuristics. The trip carries no geometry; fetch the polyline via
+     *             GET /location/track/thinned for [StartTs, EndTs].
+     * @nullable
+     */
   fromVisitId?: string | null;
   /** @nullable */
   toVisitId?: string | null;

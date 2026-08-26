@@ -7,7 +7,8 @@
  */
 import type {
   AdminAreaDto,
-  ListAdminAreasParams
+  ListAdminAreasParams,
+  ProblemDetails
 } from '../models';
 
 import { apiFetch } from '../../../mutator';
@@ -18,14 +19,19 @@ export type listAdminAreasResponse200 = {
 }
 
 export type listAdminAreasResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type listAdminAreasResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type listAdminAreasResponseSuccess = (listAdminAreasResponse200) & {
   headers: Headers;
 };
-export type listAdminAreasResponseError = (listAdminAreasResponse401) & {
+export type listAdminAreasResponseError = (listAdminAreasResponse401 | listAdminAreasResponse500) & {
   headers: Headers;
 };
 
@@ -67,19 +73,24 @@ export type getAdminAreaResponse200 = {
 }
 
 export type getAdminAreaResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type getAdminAreaResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type getAdminAreaResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getAdminAreaResponseSuccess = (getAdminAreaResponse200) & {
   headers: Headers;
 };
-export type getAdminAreaResponseError = (getAdminAreaResponse401 | getAdminAreaResponse404) & {
+export type getAdminAreaResponseError = (getAdminAreaResponse401 | getAdminAreaResponse404 | getAdminAreaResponse500) & {
   headers: Headers;
 };
 

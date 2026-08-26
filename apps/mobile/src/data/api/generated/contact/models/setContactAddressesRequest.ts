@@ -7,8 +7,14 @@
  */
 import type { ContactPostalAddress } from './contactPostalAddress';
 
+/**
+ * Wholesale replacement of a contact's postal addresses; each entry needs a geo place id.
+ */
 export interface SetContactAddressesRequest {
   addresses: ContactPostalAddress[];
-  /** @nullable */
+  /**
+     * Client wall-clock of the edit, for last-writer-wins conflict resolution. Omitted ⇒ server receive time.
+     * @nullable
+     */
   occurredAt?: string | null;
 }

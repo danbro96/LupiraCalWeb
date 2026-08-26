@@ -9,7 +9,11 @@ import type { PlaceResolution } from './placeResolution';
 
 export interface ResolvePlaceResponse {
   resolution: PlaceResolution;
-  /** @nullable */
+  /**
+     * Null only when PlaceResolution ResolvePlaceResponse.Resolution is PlaceResolution.GeocodeUnavailable — the
+     *             geocoder was unreachable and nothing was created; the item is retryable.
+     * @nullable
+     */
   placeId?: string | null;
   name: string;
   /** @nullable */

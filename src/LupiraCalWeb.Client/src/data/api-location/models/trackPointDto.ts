@@ -8,6 +8,9 @@
 import type { LocationProvider } from './locationProvider';
 import type { MotionActivity } from './motionActivity';
 
+/**
+ * A point on a (raw or thinned) track.
+ */
 export interface TrackPointDto {
   deviceId: string;
   ts: string;

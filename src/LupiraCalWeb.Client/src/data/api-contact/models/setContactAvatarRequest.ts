@@ -6,9 +6,15 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Sets (or clears, when null/empty) a contact's avatar — a URL/media id, never image bytes.
+ */
 export interface SetContactAvatarRequest {
   /** @nullable */
   avatarRef?: string | null;
-  /** @nullable */
+  /**
+     * Client wall-clock of the edit, for last-writer-wins conflict resolution. Omitted ⇒ server receive time.
+     * @nullable
+     */
   occurredAt?: string | null;
 }

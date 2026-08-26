@@ -7,6 +7,11 @@
  */
 import type { PlaceCategory } from './placeCategory';
 
+/**
+ * Curate a place: rename, recategorize, verify, or correct its location. Omitted members are left unchanged.
+ *             `Latitude`+`Longitude` (both required together) move the point — for fixing a wrong geocode by hand;
+ *             `WithinAreaId` re-anchors containment to match.
+ */
 export interface UpdatePlaceRequest {
   /** @nullable */
   name?: string | null;

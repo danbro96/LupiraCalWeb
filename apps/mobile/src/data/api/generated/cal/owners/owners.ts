@@ -19,13 +19,18 @@ export type grantCalendarOwnerResponse200 = {
   status: 200
 }
 
+export type grantCalendarOwnerResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type grantCalendarOwnerResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
 export type grantCalendarOwnerResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -34,10 +39,15 @@ export type grantCalendarOwnerResponse409 = {
   status: 409
 }
 
+export type grantCalendarOwnerResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type grantCalendarOwnerResponseSuccess = (grantCalendarOwnerResponse200) & {
   headers: Headers;
 };
-export type grantCalendarOwnerResponseError = (grantCalendarOwnerResponse403 | grantCalendarOwnerResponse404 | grantCalendarOwnerResponse409) & {
+export type grantCalendarOwnerResponseError = (grantCalendarOwnerResponse401 | grantCalendarOwnerResponse403 | grantCalendarOwnerResponse404 | grantCalendarOwnerResponse409 | grantCalendarOwnerResponse500) & {
   headers: Headers;
 };
 
@@ -78,13 +88,18 @@ export type revokeCalendarOwnerResponse204 = {
   status: 204
 }
 
+export type revokeCalendarOwnerResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
 export type revokeCalendarOwnerResponse403 = {
   data: ProblemDetails
   status: 403
 }
 
 export type revokeCalendarOwnerResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -93,10 +108,15 @@ export type revokeCalendarOwnerResponse409 = {
   status: 409
 }
 
+export type revokeCalendarOwnerResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type revokeCalendarOwnerResponseSuccess = (revokeCalendarOwnerResponse204) & {
   headers: Headers;
 };
-export type revokeCalendarOwnerResponseError = (revokeCalendarOwnerResponse403 | revokeCalendarOwnerResponse404 | revokeCalendarOwnerResponse409) & {
+export type revokeCalendarOwnerResponseError = (revokeCalendarOwnerResponse401 | revokeCalendarOwnerResponse403 | revokeCalendarOwnerResponse404 | revokeCalendarOwnerResponse409 | revokeCalendarOwnerResponse500) & {
   headers: Headers;
 };
 

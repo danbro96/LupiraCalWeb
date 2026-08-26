@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Bulk ResolvePlaceRequest — for imports. Responses align index-for-index with the input.
+ */
 export interface ResolvePlacesBatchRequest {
   texts: string[];
 }

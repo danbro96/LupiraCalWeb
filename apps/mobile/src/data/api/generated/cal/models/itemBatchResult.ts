@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Per-item outcome of a batch create, aligned index-for-index with the request. `Status` is
+ *             `created` | `existed` (idempotent hit on SourceKey) | `invalid` (see `Error`).
+ */
 export interface ItemBatchResult {
   /** @nullable */
   sourceKey: string | null;

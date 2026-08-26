@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Curation state of a CalendarItem within a calendar. `Removed` is retained as a sync tombstone.
+ */
 export type CalendarEntryStatus = typeof CalendarEntryStatus[keyof typeof CalendarEntryStatus];
 
 

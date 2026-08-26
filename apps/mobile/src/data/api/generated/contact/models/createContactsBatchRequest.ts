@@ -7,6 +7,10 @@
  */
 import type { CreateContactRequest } from './createContactRequest';
 
+/**
+ * Create many contacts in one transaction (each carries its own `AddressBookId`). Returned contacts
+ *             align index-for-index with `Contacts`. For bulk imports instead of many single `create_contact` calls.
+ */
 export interface CreateContactsBatchRequest {
   contacts: CreateContactRequest[];
 }

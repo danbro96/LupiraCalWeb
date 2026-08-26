@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * What a Place is: a point-of-interest (a named venue/entity) or a plain street address.
+ */
 export type PlaceKind = typeof PlaceKind[keyof typeof PlaceKind];
 
 

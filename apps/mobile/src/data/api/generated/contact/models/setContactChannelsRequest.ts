@@ -7,8 +7,16 @@
  */
 import type { ContactReachChannel } from './contactReachChannel';
 
+/**
+ * Wholesale replacement of a contact's reach channels — emails and phones (empty clears). Unlike
+ *             `ReviseContact`, which only unions, this can remove a channel. Values are trimmed, type tokens lowercased,
+ *             duplicates (by medium + value) dropped; at most one preferred channel per medium.
+ */
 export interface SetContactChannelsRequest {
   channels: ContactReachChannel[];
-  /** @nullable */
+  /**
+     * Client wall-clock of the edit, for last-writer-wins conflict resolution. Omitted ⇒ server receive time.
+     * @nullable
+     */
   occurredAt?: string | null;
 }

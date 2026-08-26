@@ -7,6 +7,10 @@
  */
 import type { CreateCalendarItemRequest } from './createCalendarItemRequest';
 
+/**
+ * Create many items in one call. Items may reference their parent by `ParentSourceKey` (the parent's
+ *             `SourceKey`) in any order — the server orders parents before children. Idempotent per item on `SourceKey`.
+ */
 export interface CreateCalendarItemsBatchRequest {
   items: CreateCalendarItemRequest[];
 }

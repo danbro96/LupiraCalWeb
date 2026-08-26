@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * What an LLM-interpreted run should accomplish.
+ */
 export type PromptIntent = typeof PromptIntent[keyof typeof PromptIntent];
 
 

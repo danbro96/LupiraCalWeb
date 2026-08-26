@@ -20,14 +20,19 @@ export type listSavedPlacesResponse200 = {
 }
 
 export type listSavedPlacesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type listSavedPlacesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type listSavedPlacesResponseSuccess = (listSavedPlacesResponse200) & {
   headers: Headers;
 };
-export type listSavedPlacesResponseError = (listSavedPlacesResponse401) & {
+export type listSavedPlacesResponseError = (listSavedPlacesResponse401 | listSavedPlacesResponse500) & {
   headers: Headers;
 };
 
@@ -67,14 +72,19 @@ export type createSavedPlaceResponse400 = {
 }
 
 export type createSavedPlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type createSavedPlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type createSavedPlaceResponseSuccess = (createSavedPlaceResponse200) & {
   headers: Headers;
 };
-export type createSavedPlaceResponseError = (createSavedPlaceResponse400 | createSavedPlaceResponse401) & {
+export type createSavedPlaceResponseError = (createSavedPlaceResponse400 | createSavedPlaceResponse401 | createSavedPlaceResponse500) & {
   headers: Headers;
 };
 
@@ -120,19 +130,24 @@ export type updateSavedPlaceResponse400 = {
 }
 
 export type updateSavedPlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type updateSavedPlaceResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type updateSavedPlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type updateSavedPlaceResponseSuccess = (updateSavedPlaceResponse200) & {
   headers: Headers;
 };
-export type updateSavedPlaceResponseError = (updateSavedPlaceResponse400 | updateSavedPlaceResponse401 | updateSavedPlaceResponse404) & {
+export type updateSavedPlaceResponseError = (updateSavedPlaceResponse400 | updateSavedPlaceResponse401 | updateSavedPlaceResponse404 | updateSavedPlaceResponse500) & {
   headers: Headers;
 };
 
@@ -174,19 +189,24 @@ export type deleteSavedPlaceResponse204 = {
 }
 
 export type deleteSavedPlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type deleteSavedPlaceResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type deleteSavedPlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type deleteSavedPlaceResponseSuccess = (deleteSavedPlaceResponse204) & {
   headers: Headers;
 };
-export type deleteSavedPlaceResponseError = (deleteSavedPlaceResponse401 | deleteSavedPlaceResponse404) & {
+export type deleteSavedPlaceResponseError = (deleteSavedPlaceResponse401 | deleteSavedPlaceResponse404 | deleteSavedPlaceResponse500) & {
   headers: Headers;
 };
 

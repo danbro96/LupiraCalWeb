@@ -8,6 +8,10 @@
 import type { ContactRef } from './contactRef';
 import type { NameMatchOutcome } from './nameMatchOutcome';
 
+/**
+ * Resolution of one input name. On `Matched`, `ContactId` is set; `Candidates` always lists
+ *             the considered contacts (capped) so the caller can disambiguate.
+ */
 export interface ContactNameMatch {
   name: string;
   /** @nullable */

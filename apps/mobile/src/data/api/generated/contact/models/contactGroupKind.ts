@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A personal grouping (Friends/Family/Colleagues) vs a company/institution. An employer is membership in an `Organization`-kind group.
+ */
 export type ContactGroupKind = typeof ContactGroupKind[keyof typeof ContactGroupKind];
 
 

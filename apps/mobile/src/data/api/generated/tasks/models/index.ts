@@ -7,14 +7,14 @@
  */
 
 export * from './createItemRequest';
-export * from './deleteListsListIdItemsItemIdParams';
-export * from './getItemsParams';
-export * from './getListsListIdItemsParams';
+export * from './deleteListItemParams';
 export * from './itemCollectionResponse';
 export * from './itemResponse';
 export * from './itemStatus';
 export * from './itemTimestampRequest';
 export * from './jsonNode';
+export * from './listItemsParams';
+export * from './listListItemsParams';
 export * from './moveItemRequest';
 export * from './personRef';
 export * from './problemDetails';

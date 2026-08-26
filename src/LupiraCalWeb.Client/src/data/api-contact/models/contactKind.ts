@@ -6,6 +6,11 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * What the contact card represents — vCard `KIND`. A business/venue (a provider referenced from
+ *             bookings, say) is an `Organization`: no birthday, employer, or kinship applies. `Individual` is ordinal 0
+ *             so pre-existing events replay as persons.
+ */
 export type ContactKind = typeof ContactKind[keyof typeof ContactKind];
 
 

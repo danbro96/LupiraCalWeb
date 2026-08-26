@@ -7,6 +7,9 @@
  */
 import type { MotionActivity } from './motionActivity';
 
+/**
+ * Latest-known location for a device.
+ */
 export interface CurrentFixDto {
   deviceId: string;
   ts: string;

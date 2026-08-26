@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A contact's membership in a group. `Role` is the title held in an organization (null for personal
+ *             groupings); `Since`/`Until` bound the tenure when known.
+ */
 export interface GroupMemberDto {
   contactId: string;
   /** @nullable */

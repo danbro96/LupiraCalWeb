@@ -6,8 +6,7 @@
  * OpenAPI spec version: v1
  */
 
-export type GetLocationStatsParams = {
+export type ListTripsParams = {
 from?: string;
 to?: string;
-deviceId?: string;
 };

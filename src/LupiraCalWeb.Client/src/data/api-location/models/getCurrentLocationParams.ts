@@ -6,8 +6,6 @@
  * OpenAPI spec version: v1
  */
 
-export type GetLocationTrackParams = {
-from?: string;
-to?: string;
+export type GetCurrentLocationParams = {
 deviceId?: string;
 };

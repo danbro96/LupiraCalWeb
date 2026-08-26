@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Type of a contact's postal address.
+ */
 export type ContactAddressType = typeof ContactAddressType[keyof typeof ContactAddressType];
 
 

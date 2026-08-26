@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A social/IM handle as submitted. `Url` is derived from the handle for well-known services when
+ *             omitted; `Preferred` defaults to false.
+ */
 export interface ContactSocialProfileInput {
   service: string;
   handle: string;

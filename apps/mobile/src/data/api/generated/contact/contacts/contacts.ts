@@ -42,7 +42,7 @@ export type searchContactsResponse200 = {
 }
 
 export type searchContactsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -51,10 +51,15 @@ export type searchContactsResponse403 = {
   status: 403
 }
 
+export type searchContactsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type searchContactsResponseSuccess = (searchContactsResponse200) & {
   headers: Headers;
 };
-export type searchContactsResponseError = (searchContactsResponse401 | searchContactsResponse403) & {
+export type searchContactsResponseError = (searchContactsResponse401 | searchContactsResponse403 | searchContactsResponse500) & {
   headers: Headers;
 };
 
@@ -96,7 +101,7 @@ export type createContactResponse200 = {
 }
 
 export type createContactResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -105,10 +110,15 @@ export type createContactResponse403 = {
   status: 403
 }
 
+export type createContactResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type createContactResponseSuccess = (createContactResponse200) & {
   headers: Headers;
 };
-export type createContactResponseError = (createContactResponse401 | createContactResponse403) & {
+export type createContactResponseError = (createContactResponse401 | createContactResponse403 | createContactResponse500) & {
   headers: Headers;
 };
 
@@ -154,7 +164,7 @@ export type getThinContactsResponse400 = {
 }
 
 export type getThinContactsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -163,10 +173,15 @@ export type getThinContactsResponse403 = {
   status: 403
 }
 
+export type getThinContactsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type getThinContactsResponseSuccess = (getThinContactsResponse200) & {
   headers: Headers;
 };
-export type getThinContactsResponseError = (getThinContactsResponse400 | getThinContactsResponse401 | getThinContactsResponse403) & {
+export type getThinContactsResponseError = (getThinContactsResponse400 | getThinContactsResponse401 | getThinContactsResponse403 | getThinContactsResponse500) & {
   headers: Headers;
 };
 
@@ -213,7 +228,7 @@ export type createContactsBatchResponse400 = {
 }
 
 export type createContactsBatchResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -222,10 +237,15 @@ export type createContactsBatchResponse403 = {
   status: 403
 }
 
+export type createContactsBatchResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type createContactsBatchResponseSuccess = (createContactsBatchResponse200) & {
   headers: Headers;
 };
-export type createContactsBatchResponseError = (createContactsBatchResponse400 | createContactsBatchResponse401 | createContactsBatchResponse403) & {
+export type createContactsBatchResponseError = (createContactsBatchResponse400 | createContactsBatchResponse401 | createContactsBatchResponse403 | createContactsBatchResponse500) & {
   headers: Headers;
 };
 
@@ -271,7 +291,7 @@ export type resolveContactsByNameResponse400 = {
 }
 
 export type resolveContactsByNameResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -280,10 +300,15 @@ export type resolveContactsByNameResponse403 = {
   status: 403
 }
 
+export type resolveContactsByNameResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type resolveContactsByNameResponseSuccess = (resolveContactsByNameResponse200) & {
   headers: Headers;
 };
-export type resolveContactsByNameResponseError = (resolveContactsByNameResponse400 | resolveContactsByNameResponse401 | resolveContactsByNameResponse403) & {
+export type resolveContactsByNameResponseError = (resolveContactsByNameResponse400 | resolveContactsByNameResponse401 | resolveContactsByNameResponse403 | resolveContactsByNameResponse500) & {
   headers: Headers;
 };
 
@@ -324,19 +349,24 @@ export type getContactResponse200 = {
 }
 
 export type getContactResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type getContactResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type getContactResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getContactResponseSuccess = (getContactResponse200) & {
   headers: Headers;
 };
-export type getContactResponseError = (getContactResponse401 | getContactResponse404) & {
+export type getContactResponseError = (getContactResponse401 | getContactResponse404 | getContactResponse500) & {
   headers: Headers;
 };
 
@@ -371,7 +401,7 @@ export type reviseContactResponse200 = {
 }
 
 export type reviseContactResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -381,14 +411,19 @@ export type reviseContactResponse403 = {
 }
 
 export type reviseContactResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type reviseContactResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type reviseContactResponseSuccess = (reviseContactResponse200) & {
   headers: Headers;
 };
-export type reviseContactResponseError = (reviseContactResponse401 | reviseContactResponse403 | reviseContactResponse404) & {
+export type reviseContactResponseError = (reviseContactResponse401 | reviseContactResponse403 | reviseContactResponse404 | reviseContactResponse500) & {
   headers: Headers;
 };
 
@@ -430,19 +465,24 @@ export type deleteContactResponse204 = {
 }
 
 export type deleteContactResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type deleteContactResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type deleteContactResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type deleteContactResponseSuccess = (deleteContactResponse204) & {
   headers: Headers;
 };
-export type deleteContactResponseError = (deleteContactResponse401 | deleteContactResponse404) & {
+export type deleteContactResponseError = (deleteContactResponse401 | deleteContactResponse404 | deleteContactResponse500) & {
   headers: Headers;
 };
 
@@ -477,19 +517,24 @@ export type mergeContactMetadataResponse200 = {
 }
 
 export type mergeContactMetadataResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type mergeContactMetadataResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type mergeContactMetadataResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type mergeContactMetadataResponseSuccess = (mergeContactMetadataResponse200) & {
   headers: Headers;
 };
-export type mergeContactMetadataResponseError = (mergeContactMetadataResponse401 | mergeContactMetadataResponse404) & {
+export type mergeContactMetadataResponseError = (mergeContactMetadataResponse401 | mergeContactMetadataResponse404 | mergeContactMetadataResponse500) & {
   headers: Headers;
 };
 
@@ -545,7 +590,7 @@ export type getContactCirclesResponse400 = {
 }
 
 export type getContactCirclesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -555,14 +600,19 @@ export type getContactCirclesResponse403 = {
 }
 
 export type getContactCirclesResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type getContactCirclesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getContactCirclesResponseSuccess = (getContactCirclesResponse200) & {
   headers: Headers;
 };
-export type getContactCirclesResponseError = (getContactCirclesResponse400 | getContactCirclesResponse401 | getContactCirclesResponse403 | getContactCirclesResponse404) & {
+export type getContactCirclesResponseError = (getContactCirclesResponse400 | getContactCirclesResponse401 | getContactCirclesResponse403 | getContactCirclesResponse404 | getContactCirclesResponse500) & {
   headers: Headers;
 };
 
@@ -604,7 +654,7 @@ export type markContactDeceasedResponse200 = {
 }
 
 export type markContactDeceasedResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -614,14 +664,19 @@ export type markContactDeceasedResponse403 = {
 }
 
 export type markContactDeceasedResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type markContactDeceasedResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type markContactDeceasedResponseSuccess = (markContactDeceasedResponse200) & {
   headers: Headers;
 };
-export type markContactDeceasedResponseError = (markContactDeceasedResponse401 | markContactDeceasedResponse403 | markContactDeceasedResponse404) & {
+export type markContactDeceasedResponseError = (markContactDeceasedResponse401 | markContactDeceasedResponse403 | markContactDeceasedResponse404 | markContactDeceasedResponse500) & {
   headers: Headers;
 };
 
@@ -663,7 +718,7 @@ export type clearContactDeceasedResponse200 = {
 }
 
 export type clearContactDeceasedResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -673,14 +728,19 @@ export type clearContactDeceasedResponse403 = {
 }
 
 export type clearContactDeceasedResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type clearContactDeceasedResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type clearContactDeceasedResponseSuccess = (clearContactDeceasedResponse200) & {
   headers: Headers;
 };
-export type clearContactDeceasedResponseError = (clearContactDeceasedResponse401 | clearContactDeceasedResponse403 | clearContactDeceasedResponse404) & {
+export type clearContactDeceasedResponseError = (clearContactDeceasedResponse401 | clearContactDeceasedResponse403 | clearContactDeceasedResponse404 | clearContactDeceasedResponse500) & {
   headers: Headers;
 };
 
@@ -729,7 +789,7 @@ export type setContactProfilesResponse400 = {
 }
 
 export type setContactProfilesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -739,14 +799,19 @@ export type setContactProfilesResponse403 = {
 }
 
 export type setContactProfilesResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type setContactProfilesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type setContactProfilesResponseSuccess = (setContactProfilesResponse200) & {
   headers: Headers;
 };
-export type setContactProfilesResponseError = (setContactProfilesResponse400 | setContactProfilesResponse401 | setContactProfilesResponse403 | setContactProfilesResponse404) & {
+export type setContactProfilesResponseError = (setContactProfilesResponse400 | setContactProfilesResponse401 | setContactProfilesResponse403 | setContactProfilesResponse404 | setContactProfilesResponse500) & {
   headers: Headers;
 };
 
@@ -788,7 +853,7 @@ export type setContactAvatarResponse200 = {
 }
 
 export type setContactAvatarResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -798,14 +863,19 @@ export type setContactAvatarResponse403 = {
 }
 
 export type setContactAvatarResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type setContactAvatarResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type setContactAvatarResponseSuccess = (setContactAvatarResponse200) & {
   headers: Headers;
 };
-export type setContactAvatarResponseError = (setContactAvatarResponse401 | setContactAvatarResponse403 | setContactAvatarResponse404) & {
+export type setContactAvatarResponseError = (setContactAvatarResponse401 | setContactAvatarResponse403 | setContactAvatarResponse404 | setContactAvatarResponse500) & {
   headers: Headers;
 };
 
@@ -852,7 +922,7 @@ export type setContactAddressesResponse400 = {
 }
 
 export type setContactAddressesResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -862,14 +932,19 @@ export type setContactAddressesResponse403 = {
 }
 
 export type setContactAddressesResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type setContactAddressesResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type setContactAddressesResponseSuccess = (setContactAddressesResponse200) & {
   headers: Headers;
 };
-export type setContactAddressesResponseError = (setContactAddressesResponse400 | setContactAddressesResponse401 | setContactAddressesResponse403 | setContactAddressesResponse404) & {
+export type setContactAddressesResponseError = (setContactAddressesResponse400 | setContactAddressesResponse401 | setContactAddressesResponse403 | setContactAddressesResponse404 | setContactAddressesResponse500) & {
   headers: Headers;
 };
 
@@ -916,7 +991,7 @@ export type setEmergencyContactsResponse400 = {
 }
 
 export type setEmergencyContactsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -926,14 +1001,19 @@ export type setEmergencyContactsResponse403 = {
 }
 
 export type setEmergencyContactsResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type setEmergencyContactsResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type setEmergencyContactsResponseSuccess = (setEmergencyContactsResponse200) & {
   headers: Headers;
 };
-export type setEmergencyContactsResponseError = (setEmergencyContactsResponse400 | setEmergencyContactsResponse401 | setEmergencyContactsResponse403 | setEmergencyContactsResponse404) & {
+export type setEmergencyContactsResponseError = (setEmergencyContactsResponse400 | setEmergencyContactsResponse401 | setEmergencyContactsResponse403 | setEmergencyContactsResponse404 | setEmergencyContactsResponse500) & {
   headers: Headers;
 };
 
@@ -980,7 +1060,7 @@ export type setContactChannelsResponse400 = {
 }
 
 export type setContactChannelsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -990,14 +1070,19 @@ export type setContactChannelsResponse403 = {
 }
 
 export type setContactChannelsResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type setContactChannelsResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type setContactChannelsResponseSuccess = (setContactChannelsResponse200) & {
   headers: Headers;
 };
-export type setContactChannelsResponseError = (setContactChannelsResponse400 | setContactChannelsResponse401 | setContactChannelsResponse403 | setContactChannelsResponse404) & {
+export type setContactChannelsResponseError = (setContactChannelsResponse400 | setContactChannelsResponse401 | setContactChannelsResponse403 | setContactChannelsResponse404 | setContactChannelsResponse500) & {
   headers: Headers;
 };
 
@@ -1039,7 +1124,7 @@ export type setContactTagsResponse200 = {
 }
 
 export type setContactTagsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -1049,14 +1134,19 @@ export type setContactTagsResponse403 = {
 }
 
 export type setContactTagsResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type setContactTagsResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type setContactTagsResponseSuccess = (setContactTagsResponse200) & {
   headers: Headers;
 };
-export type setContactTagsResponseError = (setContactTagsResponse401 | setContactTagsResponse403 | setContactTagsResponse404) & {
+export type setContactTagsResponseError = (setContactTagsResponse401 | setContactTagsResponse403 | setContactTagsResponse404 | setContactTagsResponse500) & {
   headers: Headers;
 };
 
@@ -1098,7 +1188,7 @@ export type listContactRelationsResponse200 = {
 }
 
 export type listContactRelationsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -1108,14 +1198,19 @@ export type listContactRelationsResponse403 = {
 }
 
 export type listContactRelationsResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type listContactRelationsResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type listContactRelationsResponseSuccess = (listContactRelationsResponse200) & {
   headers: Headers;
 };
-export type listContactRelationsResponseError = (listContactRelationsResponse401 | listContactRelationsResponse403 | listContactRelationsResponse404) & {
+export type listContactRelationsResponseError = (listContactRelationsResponse401 | listContactRelationsResponse403 | listContactRelationsResponse404 | listContactRelationsResponse500) & {
   headers: Headers;
 };
 
@@ -1164,7 +1259,7 @@ export type addContactRelationResponse400 = {
 }
 
 export type addContactRelationResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -1174,14 +1269,19 @@ export type addContactRelationResponse403 = {
 }
 
 export type addContactRelationResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type addContactRelationResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type addContactRelationResponseSuccess = (addContactRelationResponse200) & {
   headers: Headers;
 };
-export type addContactRelationResponseError = (addContactRelationResponse400 | addContactRelationResponse401 | addContactRelationResponse403 | addContactRelationResponse404) & {
+export type addContactRelationResponseError = (addContactRelationResponse400 | addContactRelationResponse401 | addContactRelationResponse403 | addContactRelationResponse404 | addContactRelationResponse500) & {
   headers: Headers;
 };
 
@@ -1223,7 +1323,7 @@ export type removeContactRelationResponse200 = {
 }
 
 export type removeContactRelationResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -1233,14 +1333,19 @@ export type removeContactRelationResponse403 = {
 }
 
 export type removeContactRelationResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type removeContactRelationResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type removeContactRelationResponseSuccess = (removeContactRelationResponse200) & {
   headers: Headers;
 };
-export type removeContactRelationResponseError = (removeContactRelationResponse401 | removeContactRelationResponse403 | removeContactRelationResponse404) & {
+export type removeContactRelationResponseError = (removeContactRelationResponse401 | removeContactRelationResponse403 | removeContactRelationResponse404 | removeContactRelationResponse500) & {
   headers: Headers;
 };
 
@@ -1286,7 +1391,7 @@ export type endContactRelationResponse200 = {
 }
 
 export type endContactRelationResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -1296,14 +1401,19 @@ export type endContactRelationResponse403 = {
 }
 
 export type endContactRelationResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type endContactRelationResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type endContactRelationResponseSuccess = (endContactRelationResponse200) & {
   headers: Headers;
 };
-export type endContactRelationResponseError = (endContactRelationResponse401 | endContactRelationResponse403 | endContactRelationResponse404) & {
+export type endContactRelationResponseError = (endContactRelationResponse401 | endContactRelationResponse403 | endContactRelationResponse404 | endContactRelationResponse500) & {
   headers: Headers;
 };
 

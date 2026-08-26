@@ -9,6 +9,13 @@ import type { BookingDetail } from './bookingDetail';
 import type { PresenceDetail } from './presenceDetail';
 import type { TravelLeg } from './travelLeg';
 
+/**
+ * Composable, category-independent detail for a CalendarItem: any of a reservation (BookingDetail? ItemDetails.Booking),
+ * a movement leg (TravelLeg? ItemDetails.Travel, a `Trip` only), or an availability segment (PresenceDetail? ItemDetails.Presence). Each is
+ * an optional value object rather than a per-kind member, so one event can carry several at once (a booked flight sets both
+ * BookingDetail? ItemDetails.Booking and TravelLeg? ItemDetails.Travel). Location (venue, hotel, clinic) uses the item's `PlaceId`
+ * (a LupiraGeoApi place id) + `LocationLabel`; provider/driver references reuse a `Contact` id.
+ */
 export interface ItemDetails {
   booking?: null | BookingDetail;
   travel?: null | TravelLeg;

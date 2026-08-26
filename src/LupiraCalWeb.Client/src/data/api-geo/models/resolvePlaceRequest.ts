@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Resolve free-text to a place id — match an existing entry, geocode, or provisionally create. This is what
+ *             LupiraCalApi calls when an item/travel-leg/contact address carries a location string.
+ */
 export interface ResolvePlaceRequest {
   text: string;
 }

@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * The resolved local identity of the caller.
+ */
 export interface MeDto {
   id: string;
   email: string;

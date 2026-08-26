@@ -9,6 +9,10 @@ import type { Access } from './access';
 import type { CalendarClass } from './calendarClass';
 import type { CalendarKind } from './calendarKind';
 
+/**
+ * A calendar the caller can access; `access` is the caller's own grant level.
+ *             `Class`/`Kind` classify the calendar. (Address books live in LupiraContactApi.)
+ */
 export interface ContainerDto {
   id: string;
   type: string;

@@ -6,8 +6,15 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Wholesale replacement of a contact's tags (empty clears). Unlike `ReviseContact`,
+ *             which only unions, this can remove a tag. Entries are trimmed and de-duplicated case-insensitively.
+ */
 export interface SetContactTagsRequest {
   tags: string[];
-  /** @nullable */
+  /**
+     * Client wall-clock of the edit, for last-writer-wins conflict resolution. Omitted ⇒ server receive time.
+     * @nullable
+     */
   occurredAt?: string | null;
 }

@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Links the caller's identity to its own contact ("this card is me") — the default circles focus.
+ */
 export interface SetMyContactRequest {
   contactId: string;
 }

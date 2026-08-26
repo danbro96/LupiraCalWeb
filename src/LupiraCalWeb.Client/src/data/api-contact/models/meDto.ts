@@ -6,11 +6,19 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * The resolved local identity of the caller: the stable Guid MeDto.PrincipalId plus current
+ *             email/display name — the same identity shape (`principalId`/`email`/`displayName`) the
+ *             platform uses everywhere it returns a person.
+ */
 export interface MeDto {
   principalId: string;
   email: string;
   /** @nullable */
   displayName?: string | null;
-  /** @nullable */
+  /**
+     * The caller's own contact ("this card is me"), when linked — the default circles focus.
+     * @nullable
+     */
   contactId?: string | null;
 }

@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Distance + speed stats over a time range.
+ */
 export interface TrackStatsDto {
   distanceM: number;
   /** @nullable */

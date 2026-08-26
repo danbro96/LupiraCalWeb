@@ -6,6 +6,11 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A reservation/confirmation attached to any category (a booked meal, a ticketed outing, a hotel, a flight).
+ *             `ProviderContactId` reuses a `Contact` (airline, hotel, restaurant, venue); `PartySize` covers a
+ *             table/seat reservation; `Amount`/`Currency` the paid cost.
+ */
 export interface BookingDetail {
   /** @nullable */
   providerContactId: string | null;

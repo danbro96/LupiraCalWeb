@@ -10,22 +10,48 @@ import type { DatePrecision } from './datePrecision';
 import type { ItemDetailsRequest } from './itemDetailsRequest';
 import type { JsonObject } from './jsonObject';
 
+/**
+ * Create an item via REST/MCP. `CalendarId` optional — when set, the item is accepted into that calendar;
+ *             when null, the item is created unfiled (e.g. an automated source) for later curation. `Location` is free text
+ *             resolved to a <see cref="!:LupiraCalApi.Core.Domain.Place" />. `Category`/`Status` are the enum names.
+ */
 export interface CreateCalendarItemRequest {
   /** @nullable */
   calendarId?: string | null;
-  /** @nullable */
+  /**
+     * Client-supplied provenance/idempotency key (e.g. an import `sourceKey`). When set, the item's stream id
+     *             is derived from it (DeterministicGuid), so re-creating with the same key is a no-op
+     *             that returns the existing item — safe batch/import replay. Also becomes the item's external UID. Omit for a random uid.
+     * @nullable
+     */
   sourceKey?: string | null;
-  /** @nullable */
+  /**
+     * Nest this item under a parent (e.g. a trip's leg/sub-event). The parent must exist and be accessible to the caller.
+     * @nullable
+     */
   parentItemId?: string | null;
-  /** @nullable */
+  /**
+     * Alternative to Guid? CreateCalendarItemRequest.ParentItemId for batch imports: reference the parent by its string? CreateCalendarItemRequest.SourceKey;
+     *             the server resolves it to the parent's deterministic id. Used when parent + children are created in one batch. Ignored if Guid? CreateCalendarItemRequest.ParentItemId is set.
+     * @nullable
+     */
   parentSourceKey?: string | null;
   /** @nullable */
   title?: string | null;
   /** @nullable */
   description?: string | null;
-  /** @nullable */
+  /**
+     * Free-text location resolved server-side to a LupiraGeoApi place (fail-closed if geo is up but can't resolve).
+     *             Prefer Guid? CreateCalendarItemRequest.PlaceId when you have already resolved/vetted the place (places-first imports) — then string? CreateCalendarItemRequest.Location
+     *             is used only as the display label.
+     * @nullable
+     */
   location?: string | null;
-  /** @nullable */
+  /**
+     * A pre-resolved LupiraGeoApi place id. When set, it is attached directly (no geocoding, no fail-closed risk) and
+     *             string? CreateCalendarItemRequest.Location, if any, is kept as the label. Trust the caller resolved it via geo first.
+     * @nullable
+     */
   placeId?: string | null;
   /** @nullable */
   status?: string | null;

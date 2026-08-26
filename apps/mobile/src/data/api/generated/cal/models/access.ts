@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A principal's permission on a collection. `Owner` adds member-management + delete rights over `ReadWrite`.
+ */
 export type Access = typeof Access[keyof typeof Access];
 
 

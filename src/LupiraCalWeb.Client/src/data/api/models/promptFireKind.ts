@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * When a payload fires relative to its item's occurrence.
+ */
 export type PromptFireKind = typeof PromptFireKind[keyof typeof PromptFireKind];
 
 

@@ -7,12 +7,12 @@
  */
 import type {
   CreateItemRequest,
-  DeleteListsListIdItemsItemIdParams,
-  GetItemsParams,
-  GetListsListIdItemsParams,
+  DeleteListItemParams,
   ItemCollectionResponse,
   ItemResponse,
   ItemTimestampRequest,
+  ListItemsParams,
+  ListListItemsParams,
   MoveItemRequest,
   ProblemDetails,
   SetMetadataRequest,
@@ -22,26 +22,31 @@ import type {
 
 import { apiFetch } from '../../../mutator';
 
-export type getItemsResponse200 = {
+export type listItemsResponse200 = {
   data: ItemCollectionResponse
   status: 200
 }
 
-export type getItemsResponse401 = {
-  data: void
+export type listItemsResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type getItemsResponseSuccess = (getItemsResponse200) & {
+export type listItemsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type listItemsResponseSuccess = (listItemsResponse200) & {
   headers: Headers;
 };
-export type getItemsResponseError = (getItemsResponse401) & {
+export type listItemsResponseError = (listItemsResponse401 | listItemsResponse500) & {
   headers: Headers;
 };
 
-export type getItemsResponse = (getItemsResponseSuccess | getItemsResponseError)
+export type listItemsResponse = (listItemsResponseSuccess | listItemsResponseError)
 
-export const getGetItemsUrl = (params?: GetItemsParams,) => {
+export const getListItemsUrl = (params?: ListItemsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -60,9 +65,9 @@ export const getGetItemsUrl = (params?: GetItemsParams,) => {
  * Case-insensitive `query` title substring, optional `completed`/`status`. `dueFrom`/`dueTo` bound `dueAt` half-open `[from, to)`; either bound implies `dueAt` is set. Spans every list the caller is a member of (archived included).
  * @summary Search items across the caller's lists (Viewer+).
  */
-export const getItems = async (params?: GetItemsParams, options?: Parameters<typeof apiFetch>[1]): Promise<getItemsResponse> => {
+export const listItems = async (params?: ListItemsParams, options?: Parameters<typeof apiFetch>[1]): Promise<listItemsResponse> => {
 
-  return apiFetch<getItemsResponse>(getGetItemsUrl(params),
+  return apiFetch<listItemsResponse>(getListItemsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -72,36 +77,41 @@ export const getItems = async (params?: GetItemsParams, options?: Parameters<typ
 );}
 
 
-export type patchItemsItemIdResponse200 = {
+export type updateItemResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type patchItemsItemIdResponse400 = {
+export type updateItemResponse400 = {
   data: ProblemDetails
   status: 400
 }
 
-export type patchItemsItemIdResponse401 = {
-  data: void
+export type updateItemResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type patchItemsItemIdResponse404 = {
-  data: void
+export type updateItemResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type patchItemsItemIdResponseSuccess = (patchItemsItemIdResponse200) & {
+export type updateItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type updateItemResponseSuccess = (updateItemResponse200) & {
   headers: Headers;
 };
-export type patchItemsItemIdResponseError = (patchItemsItemIdResponse400 | patchItemsItemIdResponse401 | patchItemsItemIdResponse404) & {
+export type updateItemResponseError = (updateItemResponse400 | updateItemResponse401 | updateItemResponse404 | updateItemResponse500) & {
   headers: Headers;
 };
 
-export type patchItemsItemIdResponse = (patchItemsItemIdResponseSuccess | patchItemsItemIdResponseError)
+export type updateItemResponse = (updateItemResponseSuccess | updateItemResponseError)
 
-export const getPatchItemsItemIdUrl = (itemId: string,) => {
+export const getUpdateItemUrl = (itemId: string,) => {
 
 
 
@@ -113,8 +123,8 @@ export const getPatchItemsItemIdUrl = (itemId: string,) => {
  * Same body as the list-scoped PATCH (`*Provided` flags). 404 if no such item or the caller can't edit its list.
  * @summary Edit item fields addressed by id (Editor+); the list is resolved server-side.
  */
-export const patchItemsItemId = async (itemId: string,
-    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof apiFetch>[1]): Promise<patchItemsItemIdResponse> => {
+export const updateItem = async (itemId: string,
+    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof apiFetch>[1]): Promise<updateItemResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -122,7 +132,7 @@ export const patchItemsItemId = async (itemId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<patchItemsItemIdResponse>(getPatchItemsItemIdUrl(itemId),
+return apiFetch<updateItemResponse>(getUpdateItemUrl(itemId),
   {
     ...options,
     method: 'PATCH',
@@ -132,36 +142,41 @@ return apiFetch<patchItemsItemIdResponse>(getPatchItemsItemIdUrl(itemId),
 );}
 
 
-export type postItemsItemIdMetadataResponse200 = {
+export type setItemMetadataResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type postItemsItemIdMetadataResponse400 = {
+export type setItemMetadataResponse400 = {
   data: ProblemDetails
   status: 400
 }
 
-export type postItemsItemIdMetadataResponse401 = {
-  data: void
+export type setItemMetadataResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type postItemsItemIdMetadataResponse404 = {
-  data: void
+export type setItemMetadataResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postItemsItemIdMetadataResponseSuccess = (postItemsItemIdMetadataResponse200) & {
+export type setItemMetadataResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type setItemMetadataResponseSuccess = (setItemMetadataResponse200) & {
   headers: Headers;
 };
-export type postItemsItemIdMetadataResponseError = (postItemsItemIdMetadataResponse400 | postItemsItemIdMetadataResponse401 | postItemsItemIdMetadataResponse404) & {
+export type setItemMetadataResponseError = (setItemMetadataResponse400 | setItemMetadataResponse401 | setItemMetadataResponse404 | setItemMetadataResponse500) & {
   headers: Headers;
 };
 
-export type postItemsItemIdMetadataResponse = (postItemsItemIdMetadataResponseSuccess | postItemsItemIdMetadataResponseError)
+export type setItemMetadataResponse = (setItemMetadataResponseSuccess | setItemMetadataResponseError)
 
-export const getPostItemsItemIdMetadataUrl = (itemId: string,) => {
+export const getSetItemMetadataUrl = (itemId: string,) => {
 
 
 
@@ -173,8 +188,8 @@ export const getPostItemsItemIdMetadataUrl = (itemId: string,) => {
  * Body `{ metadata (JSON object or null), occurredAt? }`. Whole-field LWW. 404 if no such item or the caller can't edit its list.
  * @summary Set an item's metadata addressed by id (Editor+); the list is resolved server-side.
  */
-export const postItemsItemIdMetadata = async (itemId: string,
-    setMetadataRequest: SetMetadataRequest, options?: Parameters<typeof apiFetch>[1]): Promise<postItemsItemIdMetadataResponse> => {
+export const setItemMetadata = async (itemId: string,
+    setMetadataRequest: SetMetadataRequest, options?: Parameters<typeof apiFetch>[1]): Promise<setItemMetadataResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -182,7 +197,7 @@ export const postItemsItemIdMetadata = async (itemId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<postItemsItemIdMetadataResponse>(getPostItemsItemIdMetadataUrl(itemId),
+return apiFetch<setItemMetadataResponse>(getSetItemMetadataUrl(itemId),
   {
     ...options,
     method: 'POST',
@@ -192,32 +207,37 @@ return apiFetch<postItemsItemIdMetadataResponse>(getPostItemsItemIdMetadataUrl(i
 );}
 
 
-export type getListsListIdItemsResponse200 = {
+export type listListItemsResponse200 = {
   data: ItemCollectionResponse
   status: 200
 }
 
-export type getListsListIdItemsResponse401 = {
-  data: void
+export type listListItemsResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type getListsListIdItemsResponse404 = {
-  data: void
+export type listListItemsResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type getListsListIdItemsResponseSuccess = (getListsListIdItemsResponse200) & {
+export type listListItemsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type listListItemsResponseSuccess = (listListItemsResponse200) & {
   headers: Headers;
 };
-export type getListsListIdItemsResponseError = (getListsListIdItemsResponse401 | getListsListIdItemsResponse404) & {
+export type listListItemsResponseError = (listListItemsResponse401 | listListItemsResponse404 | listListItemsResponse500) & {
   headers: Headers;
 };
 
-export type getListsListIdItemsResponse = (getListsListIdItemsResponseSuccess | getListsListIdItemsResponseError)
+export type listListItemsResponse = (listListItemsResponseSuccess | listListItemsResponseError)
 
-export const getGetListsListIdItemsUrl = (listId: string,
-    params?: GetListsListIdItemsParams,) => {
+export const getListListItemsUrl = (listId: string,
+    params?: ListListItemsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -236,10 +256,10 @@ export const getGetListsListIdItemsUrl = (listId: string,
  * Excludes deleted items; ordered by `sortOrder`. Filters: `completed`, `tagId`, `parentItemId`, `assignedTo`, `status`.
  * @summary List a list's items (Viewer+).
  */
-export const getListsListIdItems = async (listId: string,
-    params?: GetListsListIdItemsParams, options?: Parameters<typeof apiFetch>[1]): Promise<getListsListIdItemsResponse> => {
+export const listListItems = async (listId: string,
+    params?: ListListItemsParams, options?: Parameters<typeof apiFetch>[1]): Promise<listListItemsResponse> => {
 
-  return apiFetch<getListsListIdItemsResponse>(getGetListsListIdItemsUrl(listId,params),
+  return apiFetch<listListItemsResponse>(getListListItemsUrl(listId,params),
   {
     ...options,
     method: 'GET'
@@ -249,36 +269,41 @@ export const getListsListIdItems = async (listId: string,
 );}
 
 
-export type postListsListIdItemsResponse200 = {
+export type createListItemResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type postListsListIdItemsResponse400 = {
+export type createListItemResponse400 = {
   data: ProblemDetails
   status: 400
 }
 
-export type postListsListIdItemsResponse401 = {
-  data: void
+export type createListItemResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type postListsListIdItemsResponse404 = {
-  data: void
+export type createListItemResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postListsListIdItemsResponseSuccess = (postListsListIdItemsResponse200) & {
+export type createListItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type createListItemResponseSuccess = (createListItemResponse200) & {
   headers: Headers;
 };
-export type postListsListIdItemsResponseError = (postListsListIdItemsResponse400 | postListsListIdItemsResponse401 | postListsListIdItemsResponse404) & {
+export type createListItemResponseError = (createListItemResponse400 | createListItemResponse401 | createListItemResponse404 | createListItemResponse500) & {
   headers: Headers;
 };
 
-export type postListsListIdItemsResponse = (postListsListIdItemsResponseSuccess | postListsListIdItemsResponseError)
+export type createListItemResponse = (createListItemResponseSuccess | createListItemResponseError)
 
-export const getPostListsListIdItemsUrl = (listId: string,) => {
+export const getCreateListItemUrl = (listId: string,) => {
 
 
 
@@ -290,8 +315,8 @@ export const getPostListsListIdItemsUrl = (listId: string,) => {
  * Body `{ id (GUIDv7), title, parentItemId?, dueAt?, assigneeEmail?, quantity?, unit?, priority? (0..9), tagIds?, sortOrder, occurredAt? }`. Re-sending an existing id is idempotent.
  * @summary Add an item (Editor+).
  */
-export const postListsListIdItems = async (listId: string,
-    createItemRequest: CreateItemRequest, options?: Parameters<typeof apiFetch>[1]): Promise<postListsListIdItemsResponse> => {
+export const createListItem = async (listId: string,
+    createItemRequest: CreateItemRequest, options?: Parameters<typeof apiFetch>[1]): Promise<createListItemResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -299,7 +324,7 @@ export const postListsListIdItems = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<postListsListIdItemsResponse>(getPostListsListIdItemsUrl(listId),
+return apiFetch<createListItemResponse>(getCreateListItemUrl(listId),
   {
     ...options,
     method: 'POST',
@@ -309,31 +334,36 @@ return apiFetch<postListsListIdItemsResponse>(getPostListsListIdItemsUrl(listId)
 );}
 
 
-export type getListsListIdItemsItemIdResponse200 = {
+export type getItemResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type getListsListIdItemsItemIdResponse401 = {
-  data: void
+export type getItemResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type getListsListIdItemsItemIdResponse404 = {
-  data: void
+export type getItemResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type getListsListIdItemsItemIdResponseSuccess = (getListsListIdItemsItemIdResponse200) & {
+export type getItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type getItemResponseSuccess = (getItemResponse200) & {
   headers: Headers;
 };
-export type getListsListIdItemsItemIdResponseError = (getListsListIdItemsItemIdResponse401 | getListsListIdItemsItemIdResponse404) & {
+export type getItemResponseError = (getItemResponse401 | getItemResponse404 | getItemResponse500) & {
   headers: Headers;
 };
 
-export type getListsListIdItemsItemIdResponse = (getListsListIdItemsItemIdResponseSuccess | getListsListIdItemsItemIdResponseError)
+export type getItemResponse = (getItemResponseSuccess | getItemResponseError)
 
-export const getGetListsListIdItemsItemIdUrl = (listId: string,
+export const getGetItemUrl = (listId: string,
     itemId: string,) => {
 
 
@@ -345,10 +375,10 @@ export const getGetListsListIdItemsItemIdUrl = (listId: string,
 /**
  * @summary Get a single item (Viewer+).
  */
-export const getListsListIdItemsItemId = async (listId: string,
-    itemId: string, options?: Parameters<typeof apiFetch>[1]): Promise<getListsListIdItemsItemIdResponse> => {
+export const getItem = async (listId: string,
+    itemId: string, options?: Parameters<typeof apiFetch>[1]): Promise<getItemResponse> => {
 
-  return apiFetch<getListsListIdItemsItemIdResponse>(getGetListsListIdItemsItemIdUrl(listId,itemId),
+  return apiFetch<getItemResponse>(getGetItemUrl(listId,itemId),
   {
     ...options,
     method: 'GET'
@@ -358,36 +388,41 @@ export const getListsListIdItemsItemId = async (listId: string,
 );}
 
 
-export type patchListsListIdItemsItemIdResponse200 = {
+export type updateListItemResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type patchListsListIdItemsItemIdResponse400 = {
+export type updateListItemResponse400 = {
   data: ProblemDetails
   status: 400
 }
 
-export type patchListsListIdItemsItemIdResponse401 = {
-  data: void
+export type updateListItemResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type patchListsListIdItemsItemIdResponse404 = {
-  data: void
+export type updateListItemResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type patchListsListIdItemsItemIdResponseSuccess = (patchListsListIdItemsItemIdResponse200) & {
+export type updateListItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type updateListItemResponseSuccess = (updateListItemResponse200) & {
   headers: Headers;
 };
-export type patchListsListIdItemsItemIdResponseError = (patchListsListIdItemsItemIdResponse400 | patchListsListIdItemsItemIdResponse401 | patchListsListIdItemsItemIdResponse404) & {
+export type updateListItemResponseError = (updateListItemResponse400 | updateListItemResponse401 | updateListItemResponse404 | updateListItemResponse500) & {
   headers: Headers;
 };
 
-export type patchListsListIdItemsItemIdResponse = (patchListsListIdItemsItemIdResponseSuccess | patchListsListIdItemsItemIdResponseError)
+export type updateListItemResponse = (updateListItemResponseSuccess | updateListItemResponseError)
 
-export const getPatchListsListIdItemsItemIdUrl = (listId: string,
+export const getUpdateListItemUrl = (listId: string,
     itemId: string,) => {
 
 
@@ -400,9 +435,9 @@ export const getPatchListsListIdItemsItemIdUrl = (listId: string,
  * One event per changed field. Use the `*Provided` flags so a null can mean 'clear' rather than 'unchanged' (e.g. `priority` 0..9 with `priorityProvided`). Tags via `addTagIds`/`removeTagIds`.
  * @summary Edit item fields (Editor+).
  */
-export const patchListsListIdItemsItemId = async (listId: string,
+export const updateListItem = async (listId: string,
     itemId: string,
-    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof apiFetch>[1]): Promise<patchListsListIdItemsItemIdResponse> => {
+    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof apiFetch>[1]): Promise<updateListItemResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -410,7 +445,7 @@ export const patchListsListIdItemsItemId = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<patchListsListIdItemsItemIdResponse>(getPatchListsListIdItemsItemIdUrl(listId,itemId),
+return apiFetch<updateListItemResponse>(getUpdateListItemUrl(listId,itemId),
   {
     ...options,
     method: 'PATCH',
@@ -420,33 +455,38 @@ return apiFetch<patchListsListIdItemsItemIdResponse>(getPatchListsListIdItemsIte
 );}
 
 
-export type deleteListsListIdItemsItemIdResponse204 = {
+export type deleteListItemResponse204 = {
   data: void
   status: 204
 }
 
-export type deleteListsListIdItemsItemIdResponse401 = {
-  data: void
+export type deleteListItemResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type deleteListsListIdItemsItemIdResponse404 = {
-  data: void
+export type deleteListItemResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type deleteListsListIdItemsItemIdResponseSuccess = (deleteListsListIdItemsItemIdResponse204) & {
+export type deleteListItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type deleteListItemResponseSuccess = (deleteListItemResponse204) & {
   headers: Headers;
 };
-export type deleteListsListIdItemsItemIdResponseError = (deleteListsListIdItemsItemIdResponse401 | deleteListsListIdItemsItemIdResponse404) & {
+export type deleteListItemResponseError = (deleteListItemResponse401 | deleteListItemResponse404 | deleteListItemResponse500) & {
   headers: Headers;
 };
 
-export type deleteListsListIdItemsItemIdResponse = (deleteListsListIdItemsItemIdResponseSuccess | deleteListsListIdItemsItemIdResponseError)
+export type deleteListItemResponse = (deleteListItemResponseSuccess | deleteListItemResponseError)
 
-export const getDeleteListsListIdItemsItemIdUrl = (listId: string,
+export const getDeleteListItemUrl = (listId: string,
     itemId: string,
-    params?: DeleteListsListIdItemsItemIdParams,) => {
+    params?: DeleteListItemParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -465,11 +505,11 @@ export const getDeleteListsListIdItemsItemIdUrl = (listId: string,
  * Optional `?occurredAt=` (ISO-8601) carries the client timestamp for LWW.
  * @summary Delete an item (Editor+). Tombstone.
  */
-export const deleteListsListIdItemsItemId = async (listId: string,
+export const deleteListItem = async (listId: string,
     itemId: string,
-    params?: DeleteListsListIdItemsItemIdParams, options?: Parameters<typeof apiFetch>[1]): Promise<deleteListsListIdItemsItemIdResponse> => {
+    params?: DeleteListItemParams, options?: Parameters<typeof apiFetch>[1]): Promise<deleteListItemResponse> => {
 
-  return apiFetch<deleteListsListIdItemsItemIdResponse>(getDeleteListsListIdItemsItemIdUrl(listId,itemId,params),
+  return apiFetch<deleteListItemResponse>(getDeleteListItemUrl(listId,itemId,params),
   {
     ...options,
     method: 'DELETE'
@@ -479,31 +519,36 @@ export const deleteListsListIdItemsItemId = async (listId: string,
 );}
 
 
-export type postListsListIdItemsItemIdCompleteResponse200 = {
+export type completeItemResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type postListsListIdItemsItemIdCompleteResponse401 = {
-  data: void
+export type completeItemResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type postListsListIdItemsItemIdCompleteResponse404 = {
-  data: void
+export type completeItemResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postListsListIdItemsItemIdCompleteResponseSuccess = (postListsListIdItemsItemIdCompleteResponse200) & {
+export type completeItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type completeItemResponseSuccess = (completeItemResponse200) & {
   headers: Headers;
 };
-export type postListsListIdItemsItemIdCompleteResponseError = (postListsListIdItemsItemIdCompleteResponse401 | postListsListIdItemsItemIdCompleteResponse404) & {
+export type completeItemResponseError = (completeItemResponse401 | completeItemResponse404 | completeItemResponse500) & {
   headers: Headers;
 };
 
-export type postListsListIdItemsItemIdCompleteResponse = (postListsListIdItemsItemIdCompleteResponseSuccess | postListsListIdItemsItemIdCompleteResponseError)
+export type completeItemResponse = (completeItemResponseSuccess | completeItemResponseError)
 
-export const getPostListsListIdItemsItemIdCompleteUrl = (listId: string,
+export const getCompleteItemUrl = (listId: string,
     itemId: string,) => {
 
 
@@ -515,9 +560,9 @@ export const getPostListsListIdItemsItemIdCompleteUrl = (listId: string,
 /**
  * @summary Mark an item complete (Editor+).
  */
-export const postListsListIdItemsItemIdComplete = async (listId: string,
+export const completeItem = async (listId: string,
     itemId: string,
-    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof apiFetch>[1]): Promise<postListsListIdItemsItemIdCompleteResponse> => {
+    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof apiFetch>[1]): Promise<completeItemResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -525,7 +570,7 @@ export const postListsListIdItemsItemIdComplete = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<postListsListIdItemsItemIdCompleteResponse>(getPostListsListIdItemsItemIdCompleteUrl(listId,itemId),
+return apiFetch<completeItemResponse>(getCompleteItemUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -535,31 +580,36 @@ return apiFetch<postListsListIdItemsItemIdCompleteResponse>(getPostListsListIdIt
 );}
 
 
-export type postListsListIdItemsItemIdReopenResponse200 = {
+export type reopenItemResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type postListsListIdItemsItemIdReopenResponse401 = {
-  data: void
+export type reopenItemResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type postListsListIdItemsItemIdReopenResponse404 = {
-  data: void
+export type reopenItemResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postListsListIdItemsItemIdReopenResponseSuccess = (postListsListIdItemsItemIdReopenResponse200) & {
+export type reopenItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type reopenItemResponseSuccess = (reopenItemResponse200) & {
   headers: Headers;
 };
-export type postListsListIdItemsItemIdReopenResponseError = (postListsListIdItemsItemIdReopenResponse401 | postListsListIdItemsItemIdReopenResponse404) & {
+export type reopenItemResponseError = (reopenItemResponse401 | reopenItemResponse404 | reopenItemResponse500) & {
   headers: Headers;
 };
 
-export type postListsListIdItemsItemIdReopenResponse = (postListsListIdItemsItemIdReopenResponseSuccess | postListsListIdItemsItemIdReopenResponseError)
+export type reopenItemResponse = (reopenItemResponseSuccess | reopenItemResponseError)
 
-export const getPostListsListIdItemsItemIdReopenUrl = (listId: string,
+export const getReopenItemUrl = (listId: string,
     itemId: string,) => {
 
 
@@ -571,9 +621,9 @@ export const getPostListsListIdItemsItemIdReopenUrl = (listId: string,
 /**
  * @summary Reopen a completed item (Editor+).
  */
-export const postListsListIdItemsItemIdReopen = async (listId: string,
+export const reopenItem = async (listId: string,
     itemId: string,
-    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof apiFetch>[1]): Promise<postListsListIdItemsItemIdReopenResponse> => {
+    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof apiFetch>[1]): Promise<reopenItemResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -581,7 +631,7 @@ export const postListsListIdItemsItemIdReopen = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<postListsListIdItemsItemIdReopenResponse>(getPostListsListIdItemsItemIdReopenUrl(listId,itemId),
+return apiFetch<reopenItemResponse>(getReopenItemUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -591,36 +641,41 @@ return apiFetch<postListsListIdItemsItemIdReopenResponse>(getPostListsListIdItem
 );}
 
 
-export type postListsListIdItemsItemIdStatusResponse200 = {
+export type setItemStatusResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type postListsListIdItemsItemIdStatusResponse400 = {
+export type setItemStatusResponse400 = {
   data: ProblemDetails
   status: 400
 }
 
-export type postListsListIdItemsItemIdStatusResponse401 = {
-  data: void
+export type setItemStatusResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type postListsListIdItemsItemIdStatusResponse404 = {
-  data: void
+export type setItemStatusResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postListsListIdItemsItemIdStatusResponseSuccess = (postListsListIdItemsItemIdStatusResponse200) & {
+export type setItemStatusResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type setItemStatusResponseSuccess = (setItemStatusResponse200) & {
   headers: Headers;
 };
-export type postListsListIdItemsItemIdStatusResponseError = (postListsListIdItemsItemIdStatusResponse400 | postListsListIdItemsItemIdStatusResponse401 | postListsListIdItemsItemIdStatusResponse404) & {
+export type setItemStatusResponseError = (setItemStatusResponse400 | setItemStatusResponse401 | setItemStatusResponse404 | setItemStatusResponse500) & {
   headers: Headers;
 };
 
-export type postListsListIdItemsItemIdStatusResponse = (postListsListIdItemsItemIdStatusResponseSuccess | postListsListIdItemsItemIdStatusResponseError)
+export type setItemStatusResponse = (setItemStatusResponseSuccess | setItemStatusResponseError)
 
-export const getPostListsListIdItemsItemIdStatusUrl = (listId: string,
+export const getSetItemStatusUrl = (listId: string,
     itemId: string,) => {
 
 
@@ -633,9 +688,9 @@ export const getPostListsListIdItemsItemIdStatusUrl = (listId: string,
  * Body `{ status (Open|InProgress|Blocked|Waiting|Done|Cancelled), reason?, occurredAt? }`. `Done` is equivalent to completing the item; `completed` is the derived `status == Done`.
  * @summary Set an item's lifecycle status (Editor+).
  */
-export const postListsListIdItemsItemIdStatus = async (listId: string,
+export const setItemStatus = async (listId: string,
     itemId: string,
-    setStatusRequest: SetStatusRequest, options?: Parameters<typeof apiFetch>[1]): Promise<postListsListIdItemsItemIdStatusResponse> => {
+    setStatusRequest: SetStatusRequest, options?: Parameters<typeof apiFetch>[1]): Promise<setItemStatusResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -643,7 +698,7 @@ export const postListsListIdItemsItemIdStatus = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<postListsListIdItemsItemIdStatusResponse>(getPostListsListIdItemsItemIdStatusUrl(listId,itemId),
+return apiFetch<setItemStatusResponse>(getSetItemStatusUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -653,36 +708,41 @@ return apiFetch<postListsListIdItemsItemIdStatusResponse>(getPostListsListIdItem
 );}
 
 
-export type postListsListIdItemsItemIdMetadataResponse200 = {
+export type setListItemMetadataResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type postListsListIdItemsItemIdMetadataResponse400 = {
+export type setListItemMetadataResponse400 = {
   data: ProblemDetails
   status: 400
 }
 
-export type postListsListIdItemsItemIdMetadataResponse401 = {
-  data: void
+export type setListItemMetadataResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type postListsListIdItemsItemIdMetadataResponse404 = {
-  data: void
+export type setListItemMetadataResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postListsListIdItemsItemIdMetadataResponseSuccess = (postListsListIdItemsItemIdMetadataResponse200) & {
+export type setListItemMetadataResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type setListItemMetadataResponseSuccess = (setListItemMetadataResponse200) & {
   headers: Headers;
 };
-export type postListsListIdItemsItemIdMetadataResponseError = (postListsListIdItemsItemIdMetadataResponse400 | postListsListIdItemsItemIdMetadataResponse401 | postListsListIdItemsItemIdMetadataResponse404) & {
+export type setListItemMetadataResponseError = (setListItemMetadataResponse400 | setListItemMetadataResponse401 | setListItemMetadataResponse404 | setListItemMetadataResponse500) & {
   headers: Headers;
 };
 
-export type postListsListIdItemsItemIdMetadataResponse = (postListsListIdItemsItemIdMetadataResponseSuccess | postListsListIdItemsItemIdMetadataResponseError)
+export type setListItemMetadataResponse = (setListItemMetadataResponseSuccess | setListItemMetadataResponseError)
 
-export const getPostListsListIdItemsItemIdMetadataUrl = (listId: string,
+export const getSetListItemMetadataUrl = (listId: string,
     itemId: string,) => {
 
 
@@ -695,9 +755,9 @@ export const getPostListsListIdItemsItemIdMetadataUrl = (listId: string,
  * Body `{ metadata (JSON object or null), occurredAt? }`. Server-side bookkeeping; never in VTODO or share links. Whole-field LWW.
  * @summary Set an item's free-form JSON metadata (Editor+).
  */
-export const postListsListIdItemsItemIdMetadata = async (listId: string,
+export const setListItemMetadata = async (listId: string,
     itemId: string,
-    setMetadataRequest: SetMetadataRequest, options?: Parameters<typeof apiFetch>[1]): Promise<postListsListIdItemsItemIdMetadataResponse> => {
+    setMetadataRequest: SetMetadataRequest, options?: Parameters<typeof apiFetch>[1]): Promise<setListItemMetadataResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -705,7 +765,7 @@ export const postListsListIdItemsItemIdMetadata = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<postListsListIdItemsItemIdMetadataResponse>(getPostListsListIdItemsItemIdMetadataUrl(listId,itemId),
+return apiFetch<setListItemMetadataResponse>(getSetListItemMetadataUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -715,36 +775,41 @@ return apiFetch<postListsListIdItemsItemIdMetadataResponse>(getPostListsListIdIt
 );}
 
 
-export type postListsListIdItemsItemIdMoveResponse200 = {
+export type moveItemResponse200 = {
   data: ItemResponse
   status: 200
 }
 
-export type postListsListIdItemsItemIdMoveResponse400 = {
+export type moveItemResponse400 = {
   data: ProblemDetails
   status: 400
 }
 
-export type postListsListIdItemsItemIdMoveResponse401 = {
-  data: void
+export type moveItemResponse401 = {
+  data: ProblemDetails
   status: 401
 }
 
-export type postListsListIdItemsItemIdMoveResponse404 = {
-  data: void
+export type moveItemResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postListsListIdItemsItemIdMoveResponseSuccess = (postListsListIdItemsItemIdMoveResponse200) & {
+export type moveItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type moveItemResponseSuccess = (moveItemResponse200) & {
   headers: Headers;
 };
-export type postListsListIdItemsItemIdMoveResponseError = (postListsListIdItemsItemIdMoveResponse400 | postListsListIdItemsItemIdMoveResponse401 | postListsListIdItemsItemIdMoveResponse404) & {
+export type moveItemResponseError = (moveItemResponse400 | moveItemResponse401 | moveItemResponse404 | moveItemResponse500) & {
   headers: Headers;
 };
 
-export type postListsListIdItemsItemIdMoveResponse = (postListsListIdItemsItemIdMoveResponseSuccess | postListsListIdItemsItemIdMoveResponseError)
+export type moveItemResponse = (moveItemResponseSuccess | moveItemResponseError)
 
-export const getPostListsListIdItemsItemIdMoveUrl = (listId: string,
+export const getMoveItemUrl = (listId: string,
     itemId: string,) => {
 
 
@@ -757,9 +822,9 @@ export const getPostListsListIdItemsItemIdMoveUrl = (listId: string,
  * Carries the fractional-index `sortOrder` string and optional `parentItemId`.
  * @summary Reparent / reorder an item (Editor+).
  */
-export const postListsListIdItemsItemIdMove = async (listId: string,
+export const moveItem = async (listId: string,
     itemId: string,
-    moveItemRequest: MoveItemRequest, options?: Parameters<typeof apiFetch>[1]): Promise<postListsListIdItemsItemIdMoveResponse> => {
+    moveItemRequest: MoveItemRequest, options?: Parameters<typeof apiFetch>[1]): Promise<moveItemResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -767,7 +832,7 @@ export const postListsListIdItemsItemIdMove = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<postListsListIdItemsItemIdMoveResponse>(getPostListsListIdItemsItemIdMoveUrl(listId,itemId),
+return apiFetch<moveItemResponse>(getMoveItemUrl(listId,itemId),
   {
     ...options,
     method: 'POST',

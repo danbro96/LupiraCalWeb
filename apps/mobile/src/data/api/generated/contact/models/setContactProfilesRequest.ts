@@ -7,8 +7,15 @@
  */
 import type { ContactSocialProfileInput } from './contactSocialProfileInput';
 
+/**
+ * Wholesale replacement of a contact's social/IM handles. For well-known services (telegram, messenger,
+ *             whatsapp…) the profile URL is derived from the handle when omitted.
+ */
 export interface SetContactProfilesRequest {
   profiles: ContactSocialProfileInput[];
-  /** @nullable */
+  /**
+     * Client wall-clock of the edit, for last-writer-wins conflict resolution. Omitted ⇒ server receive time.
+     * @nullable
+     */
   occurredAt?: string | null;
 }

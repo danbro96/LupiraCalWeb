@@ -36,7 +36,7 @@ export type searchItemsResponse400 = {
 }
 
 export type searchItemsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -45,10 +45,15 @@ export type searchItemsResponse403 = {
   status: 403
 }
 
+export type searchItemsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type searchItemsResponseSuccess = (searchItemsResponse200) & {
   headers: Headers;
 };
-export type searchItemsResponseError = (searchItemsResponse400 | searchItemsResponse401 | searchItemsResponse403) & {
+export type searchItemsResponseError = (searchItemsResponse400 | searchItemsResponse401 | searchItemsResponse403 | searchItemsResponse500) & {
   headers: Headers;
 };
 
@@ -90,7 +95,7 @@ export type createItemResponse200 = {
 }
 
 export type createItemResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -99,10 +104,15 @@ export type createItemResponse403 = {
   status: 403
 }
 
+export type createItemResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type createItemResponseSuccess = (createItemResponse200) & {
   headers: Headers;
 };
-export type createItemResponseError = (createItemResponse401 | createItemResponse403) & {
+export type createItemResponseError = (createItemResponse401 | createItemResponse403 | createItemResponse500) & {
   headers: Headers;
 };
 
@@ -148,7 +158,7 @@ export type createItemsBatchResponse400 = {
 }
 
 export type createItemsBatchResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -157,10 +167,15 @@ export type createItemsBatchResponse403 = {
   status: 403
 }
 
+export type createItemsBatchResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type createItemsBatchResponseSuccess = (createItemsBatchResponse200) & {
   headers: Headers;
 };
-export type createItemsBatchResponseError = (createItemsBatchResponse400 | createItemsBatchResponse401 | createItemsBatchResponse403) & {
+export type createItemsBatchResponseError = (createItemsBatchResponse400 | createItemsBatchResponse401 | createItemsBatchResponse403 | createItemsBatchResponse500) & {
   headers: Headers;
 };
 
@@ -201,19 +216,24 @@ export type getItemResponse200 = {
 }
 
 export type getItemResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type getItemResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type getItemResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getItemResponseSuccess = (getItemResponse200) & {
   headers: Headers;
 };
-export type getItemResponseError = (getItemResponse401 | getItemResponse404) & {
+export type getItemResponseError = (getItemResponse401 | getItemResponse404 | getItemResponse500) & {
   headers: Headers;
 };
 
@@ -248,19 +268,24 @@ export type updateItemResponse200 = {
 }
 
 export type updateItemResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type updateItemResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type updateItemResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type updateItemResponseSuccess = (updateItemResponse200) & {
   headers: Headers;
 };
-export type updateItemResponseError = (updateItemResponse401 | updateItemResponse404) & {
+export type updateItemResponseError = (updateItemResponse401 | updateItemResponse404 | updateItemResponse500) & {
   headers: Headers;
 };
 
@@ -302,19 +327,24 @@ export type deleteItemResponse204 = {
 }
 
 export type deleteItemResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type deleteItemResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type deleteItemResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type deleteItemResponseSuccess = (deleteItemResponse204) & {
   headers: Headers;
 };
-export type deleteItemResponseError = (deleteItemResponse401 | deleteItemResponse404) & {
+export type deleteItemResponseError = (deleteItemResponse401 | deleteItemResponse404 | deleteItemResponse500) & {
   headers: Headers;
 };
 
@@ -354,7 +384,7 @@ export type getThinItemsResponse400 = {
 }
 
 export type getThinItemsResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
@@ -363,10 +393,15 @@ export type getThinItemsResponse403 = {
   status: 403
 }
 
+export type getThinItemsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type getThinItemsResponseSuccess = (getThinItemsResponse200) & {
   headers: Headers;
 };
-export type getThinItemsResponseError = (getThinItemsResponse400 | getThinItemsResponse401 | getThinItemsResponse403) & {
+export type getThinItemsResponseError = (getThinItemsResponse400 | getThinItemsResponse401 | getThinItemsResponse403 | getThinItemsResponse500) & {
   headers: Headers;
 };
 
@@ -408,14 +443,19 @@ export type getItemsByPlaceResponse200 = {
 }
 
 export type getItemsByPlaceResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
+}
+
+export type getItemsByPlaceResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type getItemsByPlaceResponseSuccess = (getItemsByPlaceResponse200) & {
   headers: Headers;
 };
-export type getItemsByPlaceResponseError = (getItemsByPlaceResponse401) & {
+export type getItemsByPlaceResponseError = (getItemsByPlaceResponse401 | getItemsByPlaceResponse500) & {
   headers: Headers;
 };
 
@@ -450,19 +490,24 @@ export type mergeItemMetadataResponse200 = {
 }
 
 export type mergeItemMetadataResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type mergeItemMetadataResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type mergeItemMetadataResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type mergeItemMetadataResponseSuccess = (mergeItemMetadataResponse200) & {
   headers: Headers;
 };
-export type mergeItemMetadataResponseError = (mergeItemMetadataResponse401 | mergeItemMetadataResponse404) & {
+export type mergeItemMetadataResponseError = (mergeItemMetadataResponse401 | mergeItemMetadataResponse404 | mergeItemMetadataResponse500) & {
   headers: Headers;
 };
 
@@ -513,12 +558,12 @@ export type setItemPromptResponse200 = {
 }
 
 export type setItemPromptResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type setItemPromptResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -527,10 +572,15 @@ export type setItemPromptResponse409 = {
   status: 409
 }
 
+export type setItemPromptResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type setItemPromptResponseSuccess = (setItemPromptResponse200) & {
   headers: Headers;
 };
-export type setItemPromptResponseError = (setItemPromptResponse401 | setItemPromptResponse404 | setItemPromptResponse409) & {
+export type setItemPromptResponseError = (setItemPromptResponse401 | setItemPromptResponse404 | setItemPromptResponse409 | setItemPromptResponse500) & {
   headers: Headers;
 };
 
@@ -572,19 +622,24 @@ export type clearItemPromptResponse204 = {
 }
 
 export type clearItemPromptResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type clearItemPromptResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type clearItemPromptResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type clearItemPromptResponseSuccess = (clearItemPromptResponse204) & {
   headers: Headers;
 };
-export type clearItemPromptResponseError = (clearItemPromptResponse401 | clearItemPromptResponse404) & {
+export type clearItemPromptResponseError = (clearItemPromptResponse401 | clearItemPromptResponse404 | clearItemPromptResponse500) & {
   headers: Headers;
 };
 
@@ -628,12 +683,12 @@ export type setItemActionResponse200 = {
 }
 
 export type setItemActionResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type setItemActionResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
 }
 
@@ -642,10 +697,15 @@ export type setItemActionResponse409 = {
   status: 409
 }
 
+export type setItemActionResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
 export type setItemActionResponseSuccess = (setItemActionResponse200) & {
   headers: Headers;
 };
-export type setItemActionResponseError = (setItemActionResponse401 | setItemActionResponse404 | setItemActionResponse409) & {
+export type setItemActionResponseError = (setItemActionResponse401 | setItemActionResponse404 | setItemActionResponse409 | setItemActionResponse500) & {
   headers: Headers;
 };
 
@@ -687,19 +747,24 @@ export type clearItemActionResponse204 = {
 }
 
 export type clearItemActionResponse401 = {
-  data: void
+  data: ProblemDetails
   status: 401
 }
 
 export type clearItemActionResponse404 = {
-  data: void
+  data: ProblemDetails
   status: 404
+}
+
+export type clearItemActionResponse500 = {
+  data: ProblemDetails
+  status: 500
 }
 
 export type clearItemActionResponseSuccess = (clearItemActionResponse204) & {
   headers: Headers;
 };
-export type clearItemActionResponseError = (clearItemActionResponse401 | clearItemActionResponse404) & {
+export type clearItemActionResponseError = (clearItemActionResponse401 | clearItemActionResponse404 | clearItemActionResponse500) & {
   headers: Headers;
 };
 

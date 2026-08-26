@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Grant a member access to a container, identified by their login `Email` (provisioned if they have
+ *             not logged in yet). `Access` is `owner` (default), `read-write`, or `read` — case-insensitive.
+ */
 export interface GrantOwnerRequest {
   email: string;
   /** @nullable */

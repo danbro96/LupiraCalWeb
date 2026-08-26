@@ -8,6 +8,12 @@
 import type { BookingDetail } from './bookingDetail';
 import type { TravelLegRequest } from './travelLegRequest';
 
+/**
+ * Composable detail input for create/update. BookingDetail? ItemDetailsRequest.Booking (reservation/confirmation) attaches to any category;
+ * TravelLegRequest? ItemDetailsRequest.Travel applies to a `Trip` (its `ToPlace`/`FromPlace` are free-text labels resolved to a
+ * a LupiraGeoApi place, like `Location`). A presence/availability segment is authored via the request's top-level
+ * `Availability` field, not here. On update, a supplied member replaces that member wholesale; omitted members are kept.
+ */
 export interface ItemDetailsRequest {
   booking?: null | BookingDetail;
   travel?: null | TravelLegRequest;

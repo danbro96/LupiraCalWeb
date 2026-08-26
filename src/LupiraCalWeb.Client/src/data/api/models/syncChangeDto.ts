@@ -8,6 +8,9 @@
 import type { CalendarItemDto } from './calendarItemDto';
 import type { SectionGuardsDto } from './sectionGuardsDto';
 
+/**
+ * A changed item: the full DTO plus its section guards.
+ */
 export interface SyncChangeDto {
   item: CalendarItemDto;
   guards: SectionGuardsDto;

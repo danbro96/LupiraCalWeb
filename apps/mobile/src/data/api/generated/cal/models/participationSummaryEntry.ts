@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * One contact's participation across the caller's readable calendars: how many items they attend(ed)
+ *             and the most recent occurrence start (past or planned). A ranking signal for pickers/resolvers, not an ACL surface.
+ */
 export interface ParticipationSummaryEntry {
   contactId: string;
   count: number;

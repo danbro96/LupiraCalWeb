@@ -7,6 +7,9 @@
  */
 import type { AdminLevel } from './adminLevel';
 
+/**
+ * A node in the administrative containment tree (Country/Region/Locality).
+ */
 export interface AdminAreaDto {
   id: string;
   level: AdminLevel;

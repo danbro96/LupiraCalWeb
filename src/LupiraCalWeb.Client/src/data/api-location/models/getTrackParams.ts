@@ -6,11 +6,7 @@
  * OpenAPI spec version: v1
  */
 
-export type GetLocationBboxParams = {
-minLat: number;
-maxLat: number;
-minLon: number;
-maxLon: number;
+export type GetTrackParams = {
 from?: string;
 to?: string;
 deviceId?: string;

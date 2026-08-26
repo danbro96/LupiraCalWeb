@@ -8,6 +8,11 @@
 import type { AddressBookDto } from './addressBookDto';
 import type { ContactGroupDto } from './contactGroupDto';
 
+/**
+ * Snapshot of the caller's containers. Address books are plain documents (no cursor); groups are
+ *             event-sourced but small and fully replaced each cycle — both are fetched once per sync cycle and diffed
+ *             against the mirror.
+ */
 export interface SyncContainersResponse {
   addressBooks: AddressBookDto[];
   groups: ContactGroupDto[];

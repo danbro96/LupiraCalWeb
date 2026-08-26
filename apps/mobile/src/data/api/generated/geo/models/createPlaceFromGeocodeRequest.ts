@@ -6,10 +6,18 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Create/dedupe a place from one specific forward-geocode hit the user picked, identified by OSM identity.
+ *             The hit must be among the (cached) geocode results for string CreatePlaceFromGeocodeRequest.Query — the preview call froze them, so this
+ *             costs no extra geocoder round trip.
+ */
 export interface CreatePlaceFromGeocodeRequest {
   query: string;
   osmType: string;
   osmId: number;
-  /** @nullable */
+  /**
+     * Canonical name override; defaults to the normalized query text.
+     * @nullable
+     */
   name?: string | null;
 }

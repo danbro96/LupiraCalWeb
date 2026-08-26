@@ -8,6 +8,11 @@
 import type { PlaceCategory } from './placeCategory';
 import type { SuggestionType } from './suggestionType';
 
+/**
+ * A typeahead suggestion: a gazetteer place (name/alias trigram match) or an AdminArea locality — cities come
+ *             from the GeoNames seed, so they suggest without anyone having geocoded a POI there. `Context` disambiguates
+ *             (formatted address for places, parent area for localities).
+ */
 export interface PlaceSuggestionDto {
   id: string;
   type: SuggestionType;

@@ -7,6 +7,9 @@
  */
 import type { Access } from './access';
 
+/**
+ * An address book the caller can access, with their access level.
+ */
 export interface AddressBookDto {
   id: string;
   slug: string;

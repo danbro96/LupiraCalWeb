@@ -6,6 +6,9 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * A newly added attendee: the contact and its assigned participation id.
+ */
 export interface ParticipationRef {
   contactId: string;
   participationId: string;
