@@ -50,7 +50,7 @@ const EDGE_BASE =
 
 type RelationNodeData = {
   label: string;
-  category: string;
+  category: RelationCategory | 'self';
   isCenter: boolean;
   expanded: boolean;
   selected: boolean;
@@ -63,7 +63,7 @@ type RelationFlowNode = Node<RelationNodeData, 'relation'>;
 
 /** Chip node with centered (hidden) handles so straight edges read as radial spokes. */
 function RelationNode({ id, data }: NodeProps<RelationFlowNode>) {
-  const accent = CAT_ACCENT[data.category as RelationCategory] ?? CAT_ACCENT.Other;
+  const accent = data.category === 'self' ? CAT_ACCENT.Other : CAT_ACCENT[data.category];
   return (
     <Box
       title={data.label}
@@ -205,7 +205,7 @@ export function ContactRelationGraph({
     target: e.target,
     label: e.label ?? e.kind,
     type: 'straight',
-    className: `${EDGE_BASE} ${EDGE_STROKE[e.category] ?? EDGE_STROKE.Other}${
+    className: `${EDGE_BASE} ${EDGE_STROKE[e.category]}${
       e.inferred ? ' opacity-75 [stroke-dasharray:5_4]' : ''
     }`,
     markerEnd: e.directed ? { type: MarkerType.ArrowClosed } : undefined,

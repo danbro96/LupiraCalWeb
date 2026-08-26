@@ -34,10 +34,6 @@ function palette(c: ColorScheme) {
   };
 }
 
-// Custom props must carry units — Emotion serializes them verbatim.
-const px = (o: Record<string, number>, prefix: string) =>
-  Object.fromEntries(Object.entries(o).map(([k, v]) => [`--${prefix}-${k}`, `${v}px`]));
-
 // Domain palette with no MUI slot; @theme re-exports these as Tailwind cat-* utilities.
 const catVars = (o: Record<ContactCategoryName, string>) =>
   Object.fromEntries(Object.entries(o).map(([k, v]) => [`--cat-${k.toLowerCase()}`, v]));
@@ -46,7 +42,7 @@ export const theme = createTheme({
   // 'media' = system-driven scheme; MUI emits the dark var overrides in a prefers-color-scheme block.
   cssVariables: { colorSchemeSelector: 'media' },
   // Emotion injects unlayered, which outranks every layer — utilities would silently lose.
-  // 'bespoke' before 'mui' keeps MUI winning that tie; 19 elements still carry both.
+  // 'bespoke' before 'mui' keeps MUI winning that tie for the few structural hooks left.
   modularCssLayers: '@layer theme, base, bespoke, mui, utilities;',
   colorSchemes: {
     light: { palette: palette(LIGHT) },
@@ -57,16 +53,14 @@ export const theme = createTheme({
   shape: { borderRadius: RADII.md },
   spacing: SPACING.sm,
   breakpoints: {
-    // 'md' doubles as the phone breakpoint (down('md') === max-width PHONE_BREAKPOINT.95px),
-    // matching the raw 820px media queries in index.css.
+    // 'md' doubles as the phone breakpoint (down('md') === max-width PHONE_BREAKPOINT.95px);
+    // responsive sx values key off it, and useIsPhone wraps the same query.
     values: { xs: 0, sm: 600, md: PHONE_BREAKPOINT + 1, lg: 1200, xl: 1536 },
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         ':root': {
-          ...px(SPACING, 'sp'),
-          ...px(RADII, 'r'),
           ...catVars(CATEGORY_COLORS_LIGHT),
           '@media (prefers-color-scheme: dark)': catVars(CATEGORY_COLORS_DARK),
         },
