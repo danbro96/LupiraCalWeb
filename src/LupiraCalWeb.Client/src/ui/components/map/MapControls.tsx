@@ -93,7 +93,7 @@ export function LayerToggles({ active, onToggle, theme, unmappableCount, showHis
         >
           {t.label}
           {t.key === 'events' && unmappableCount > 0 && (
-            <Typography variant="caption" color="text.secondary" title={`${unmappableCount} occurrences have a free-text location only (no place)`}>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }} title={`${unmappableCount} occurrences have a free-text location only (no place)`}>
               {' '}·{unmappableCount}
             </Typography>
           )}

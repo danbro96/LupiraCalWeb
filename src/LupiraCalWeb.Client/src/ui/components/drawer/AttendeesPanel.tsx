@@ -25,6 +25,7 @@ import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { FormRow } from '../FormRow';
+import { DrawerSection } from '../DrawerSection';
 
 const ROLE_OPTIONS = [
   { value: 'req-participant', label: 'Required' },
@@ -73,9 +74,8 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
   );
 
   return (
-    <section className="drawer-section">
-      <h3>Attendees</h3>
-      {item.attendees.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No attendees yet.</Typography>}
+    <DrawerSection title="Attendees">
+      {item.attendees.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No attendees yet.</Typography>}
       {item.attendees.map((a) => {
         const pid = a.participationId ?? '';
         const status = a.status ?? 'NeedsAction';
@@ -86,7 +86,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
             </Avatar>
             <div className="attendee-info">
               <span>{contactName(a.contactId)}</span>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 {ROLE_LABELS[a.role ?? ''] ?? a.role} · <b className={`rsvp-${status.toLowerCase()}`}>{STATUS_LABELS[status] ?? status}</b>
                 {a.attendedAt ? ' · attended' : ''}
                 {a.leftAt ? ' · left' : ''}
@@ -152,7 +152,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
           Invite
         </Button>
       </FormRow>
-    </section>
+    </DrawerSection>
   );
 }
 

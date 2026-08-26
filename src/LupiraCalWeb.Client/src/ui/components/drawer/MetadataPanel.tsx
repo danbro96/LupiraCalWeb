@@ -5,6 +5,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useMergeItemMetadata } from '../../../data/api/lupiraCalApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
+import { DrawerSection } from '../DrawerSection';
 
 /** The item's free-form JSON metadata, with a merge editor (POST /items/{id}/metadata merges keys). */
 export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: unknown }) {
@@ -24,8 +25,8 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
   const isEmpty = !metadata || (typeof metadata === 'object' && Object.keys(metadata as object).length === 0);
 
   return (
-    <section className="drawer-section">
-      <h3>
+    <DrawerSection
+      title={
         <Button
           variant="text"
           endIcon={open ? <ExpandMoreIcon /> : <ChevronRightIcon />}
@@ -33,7 +34,8 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
         >
           Metadata
         </Button>
-      </h3>
+      }
+    >
       {open && (
         <>
           <pre className="json-view">{isEmpty ? '{}' : JSON.stringify(metadata, null, 2)}</pre>
@@ -63,6 +65,6 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
           </Button>
         </>
       )}
-    </section>
+    </DrawerSection>
   );
 }

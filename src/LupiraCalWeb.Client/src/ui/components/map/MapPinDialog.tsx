@@ -31,7 +31,7 @@ export default function MapPinDialog({ title, center, zoom, onConfirm, onCancel 
             <PinMarker pin={pin} onMove={setPin} />
           </MapCanvas>
         </div>
-        <Typography variant="caption" color="text.secondary" component="p">
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
           {pin ? `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}` : 'Click the map to place the pin, then drag to fine-tune.'}
         </Typography>
       </DialogContent>

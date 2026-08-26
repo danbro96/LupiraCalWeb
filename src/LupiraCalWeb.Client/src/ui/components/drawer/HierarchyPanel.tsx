@@ -5,6 +5,7 @@ import { useGetItem, useSearchItems } from '../../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { fmtWhen } from '@lupira/cal-domain/time';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
+import { DrawerSection } from '../DrawerSection';
 
 /** Parent link + direct children (ParentItemId nesting — distinct from cross-API Relations). */
 export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
@@ -23,11 +24,10 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
   };
 
   return (
-    <section className="drawer-section">
-      <h3>Hierarchy</h3>
+    <DrawerSection title="Hierarchy">
       {parent && (
         <Link to={itemHref(parent.id)} className="location-row">
-          <Typography variant="caption" color="text.secondary">↳ part of</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>↳ part of</Typography>
           <span className="location-name">{parent.title || '(untitled)'}</span>
         </Link>
       )}
@@ -35,7 +35,7 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
         <Link key={c.id} to={itemHref(c.id)} className="location-row">
           <span className="kind-icon">{(c.category && ITEM_CATEGORY_ICONS[c.category]) || '📅'}</span>
           <span className="location-name">{c.title || '(untitled)'}</span>
-          <Typography variant="caption" color="text.secondary">{fmtWhen(c.start, c.isAllDay)}</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>{fmtWhen(c.start, c.isAllDay)}</Typography>
         </Link>
       ))}
       {children.length > 0 && (
@@ -43,6 +43,6 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
           open in list
         </Button>
       )}
-    </section>
+    </DrawerSection>
   );
 }

@@ -25,7 +25,7 @@ export function CompletenessBadge({ score }: { score?: CompletenessScore | null 
           {score.gaps.map((g) => (
             <li key={g.field}>
               <Chip variant="outlined" label={g.severity} /> {g.field}
-              <Typography variant="caption" color="text.secondary"> ·  weight {g.weight}</Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}> ·  weight {g.weight}</Typography>
             </li>
           ))}
         </ul>

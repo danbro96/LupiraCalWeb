@@ -19,6 +19,7 @@ import {
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useGroup } from './useGroup';
 import { FormRow } from '../FormRow';
+import { DrawerSection } from '../DrawerSection';
 
 /** Right pane for a group/org: members with add/remove, inline rename, delete. */
 export function GroupDetailPane() {
@@ -64,11 +65,10 @@ export function GroupDetailPane() {
             }}
           />
         </h2>
-        <Typography variant="caption" color="text.secondary">{group.members.length} members</Typography>
+        <Typography variant="caption" sx={{ color: 'text.secondary' }}>{group.members.length} members</Typography>
       </div>
 
-      <section className="drawer-section">
-        <h3>Members</h3>
+      <DrawerSection title="Members">
         {members.map((c) => (
           <div key={c.id} className="membership-row">
             <Avatar sx={{ width: 30, height: 30, fontSize: 12, fontWeight: 700, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
@@ -86,7 +86,7 @@ export function GroupDetailPane() {
             </Tooltip>
           </div>
         ))}
-        {members.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No members yet.</Typography>}
+        {members.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No members yet.</Typography>}
         <FormRow>
           <TextField select value={addId} onChange={(e) => setAddId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
             <MenuItem value="">Add member…</MenuItem>
@@ -107,7 +107,7 @@ export function GroupDetailPane() {
             Add
           </Button>
         </FormRow>
-      </section>
+      </DrawerSection>
 
       <div className="drawer-footer">
         <Button variant="outlined" color="error" onClick={() => del.mutate({ groupId: group.id })} disabled={del.isPending}>

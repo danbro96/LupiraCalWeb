@@ -218,7 +218,7 @@ export default function MapScreen() {
         <button className={`chip${showIndex ? ' active' : ''}`} onClick={() => setParam('index', showIndex ? undefined : '1')}>
           <ViewListIcon sx={{ fontSize: 16, verticalAlign: 'text-bottom', mr: 0.5 }} /> List
         </button>
-        {anyLoading && <Typography variant="caption" color="text.secondary">Loading…</Typography>}
+        {anyLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }}>Loading…</Typography>}
       </div>
 
       {showIndex && <MapIndexPanel groups={indexGroups} onClose={() => setParam('index', undefined)} />}
@@ -242,7 +242,7 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
         {names.map((name, i) => (
           <Link key={ids[i] ?? name} to={`/contacts/${ids[i]}`} className="location-row">
             <span className="location-name">{name}</span>
-            {kind === 'contact-former' && periods[i] && <Typography variant="caption" color="text.secondary">{periods[i]}</Typography>}
+            {kind === 'contact-former' && periods[i] && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{periods[i]}</Typography>}
           </Link>
         ))}
       </>
@@ -254,7 +254,7 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
     return (
       <>
         <h4>{String(props.placeLabel ?? 'Stay')}</h4>
-        <Typography variant="caption" color="text.secondary" component="p">{arrive}–{depart} · {String(props.durationMin)} min</Typography>
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">{arrive}–{depart} · {String(props.durationMin)} min</Typography>
       </>
     );
   }
@@ -262,7 +262,7 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
     return (
       <>
         <h4>Current position</h4>
-        <Typography variant="caption" color="text.secondary" component="p">
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
           {props.ts ? fmtTime(new Date(String(props.ts))) : ''}
           {props.batteryPct != null ? ` · 🔋${String(props.batteryPct)}%` : ''}
         </Typography>
@@ -276,7 +276,7 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
           <img src={String(props.thumbUrl)} alt="" className="map-photo-thumb" loading="lazy" />
         )}
         <h4>{String(props.placeLabel ?? 'Unknown place')}</h4>
-        <Typography variant="caption" color="text.secondary" component="p">
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
           {props.takenAt ? new Date(String(props.takenAt)).toLocaleString() : ''}
           {props.kind === 'Video' ? ' · video' : ''}
         </Typography>

@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button';
 import type { ItemDetails } from '../../../data/api/models';
 import { fmtDateTime } from '@lupira/cal-domain/time';
+import { DrawerSection } from '../DrawerSection';
 
 /** Read-only card for the composable item detail: a booking, a travel leg, and/or a presence segment.
  *  Details are authored elsewhere (agent/DAV); REST only writes the presence status. */
@@ -33,8 +34,7 @@ export function KindDetailsCard({ details }: { details?: ItemDetails | null }) {
   if (visible.length === 0 && !details.booking?.url) return null;
 
   return (
-    <section className="drawer-section">
-      <h3>Details</h3>
+    <DrawerSection title="Details">
       <dl className="detail-grid">
         {visible.map(([label, value]) => (
           <div key={label}>
@@ -48,6 +48,6 @@ export function KindDetailsCard({ details }: { details?: ItemDetails | null }) {
           Booking ↗
         </Button>
       )}
-    </section>
+    </DrawerSection>
   );
 }

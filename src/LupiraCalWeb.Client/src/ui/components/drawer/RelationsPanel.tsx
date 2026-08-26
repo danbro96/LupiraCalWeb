@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { useCreateItemRelation, useListItemRelations } from '../../../data/api/lupiraCalApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { FormRow } from '../FormRow';
+import { DrawerSection } from '../DrawerSection';
 
 /** Opaque cross-API edges (e.g. → a LupiraTasks item). Kind/ref/type are free-form by design. */
 export function RelationsPanel({ itemId }: { itemId: string }) {
@@ -15,12 +16,11 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
   const [form, setForm] = useState({ toKind: '', toRef: '', relationType: '' });
 
   return (
-    <section className="drawer-section">
-      <h3>Relations</h3>
+    <DrawerSection title="Relations">
       {(relations ?? []).map((r) => (
         <div key={r.id} className="relation-row">
           <Chip variant="outlined" label={r.relationType} />
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             {r.toKind}: <code>{r.toRef}</code>
           </Typography>
         </div>
@@ -40,6 +40,6 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
           Link
         </Button>
       </FormRow>
-    </section>
+    </DrawerSection>
   );
 }

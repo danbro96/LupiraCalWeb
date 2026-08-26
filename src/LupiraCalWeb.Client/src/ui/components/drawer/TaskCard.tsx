@@ -4,6 +4,7 @@ import { useGetListsListIdItemsItemId } from '../../../data/api-tasks/lupiraTask
 import type { ItemResponse } from '../../../data/api-tasks/models';
 import { fmtDate, fmtTime } from '@lupira/cal-domain/time';
 import { DetailDrawer } from './DetailDrawer';
+import { DrawerSection } from '../DrawerSection';
 
 /** Read-only view for a task deadline (lives in LupiraTasks, not cal): status, due, notes, and the
  *  deep link into the tasks app. The web fallback lands on the list — tasks-web has no per-task route. */
@@ -32,40 +33,37 @@ function TaskBody({ task }: { task: ItemResponse }) {
         <h2 className="field-value">{task.title}</h2>
       </div>
 
-      <section className="drawer-section">
-        <h3>Due</h3>
+      <DrawerSection title="Due">
         {due ? (
           <p className="field-value" style={overdue ? { color: 'var(--mui-palette-error-main)' } : undefined}>
             {fmtDate(due)} {fmtTime(due)}
             {overdue ? ' — overdue' : ''}
           </p>
         ) : (
-          <Typography variant="caption" color="text.secondary" component="p">No deadline.</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No deadline.</Typography>
         )}
-      </section>
+      </DrawerSection>
 
-      <section className="drawer-section">
-        <h3>Status</h3>
+      <DrawerSection title="Status">
         <p className="field-value">
           {task.status}
           {task.statusReason ? ` — ${task.statusReason}` : ''}
         </p>
-        {task.priority > 0 && <Typography variant="caption" color="text.secondary" component="p">Priority {task.priority}</Typography>}
-        {task.assignee && <Typography variant="caption" color="text.secondary" component="p">Assigned to {task.assignee.displayName || task.assignee.email}</Typography>}
-      </section>
+        {task.priority > 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Priority {task.priority}</Typography>}
+        {task.assignee && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Assigned to {task.assignee.displayName || task.assignee.email}</Typography>}
+      </DrawerSection>
 
       {task.notes && (
-        <section className="drawer-section">
-          <h3>Notes</h3>
+        <DrawerSection title="Notes">
           <p className="field-value">{task.notes}</p>
-        </section>
+        </DrawerSection>
       )}
 
-      <section className="drawer-section">
+      <DrawerSection>
         <Button variant="contained" href={`lupiratasks://task/${task.listId}/${task.id}`}>
           Open in Lupira Tasks
         </Button>
-      </section>
+      </DrawerSection>
       <Button variant="text" href={`https://tasks.lupira.com/lists/${task.listId}`} target="_blank" rel="noreferrer">
         Open list on the web →
       </Button>

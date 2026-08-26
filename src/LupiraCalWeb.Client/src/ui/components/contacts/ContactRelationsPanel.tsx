@@ -25,6 +25,7 @@ import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { ContactRelationGraph } from './ContactRelationGraph';
 import { FormRow } from '../FormRow';
+import { DrawerSection } from '../DrawerSection';
 
 /** Sections with more rows than this start collapsed. */
 const OPEN_THRESHOLD = 8;
@@ -82,13 +83,14 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
     `relation-row${extra}${r.contactId === selectedId ? ' selected' : ''}`;
 
   return (
-    <section className="drawer-section">
-      <div className="page-head">
-        <h3>Relations</h3>
+    <DrawerSection
+      title="Relations"
+      action={
         <Button variant="text" onClick={() => setShowExtended((v) => !v)}>
           {showExtended ? 'Hide extended family' : 'Show extended family'}
         </Button>
-      </div>
+      }
+    >
 
       <div className="relation-toolbar">
         <TextField
@@ -147,8 +149,8 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
-                  {r.label && <Typography variant="caption" color="text.secondary">“{r.label}”</Typography>}
-                  {r.ended && <Typography variant="caption" color="text.secondary">· ended{r.until ? ` ${r.until}` : ''}</Typography>}
+                  {r.label && <Typography variant="caption" sx={{ color: 'text.secondary' }}>“{r.label}”</Typography>}
+                  {r.ended && <Typography variant="caption" sx={{ color: 'text.secondary' }}>· ended{r.until ? ` ${r.until}` : ''}</Typography>}
                   {r.ended ? (
                     <Tooltip title="Revive relationship">
                       <IconButton
@@ -184,7 +186,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
-                  <Typography variant="caption" color="text.secondary">· managed on their card</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>· managed on their card</Typography>
                 </div>
               ))}
               {open && inferred.map((r) => (
@@ -193,7 +195,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
-                  <Typography variant="caption" color="text.secondary">· derived</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>· derived</Typography>
                 </div>
               ))}
             </div>
@@ -234,6 +236,6 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
           Add
         </Button>
       </FormRow>
-    </section>
+    </DrawerSection>
   );
 }

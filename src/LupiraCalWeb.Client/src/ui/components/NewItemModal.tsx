@@ -170,7 +170,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               control={control}
               render={({ field }) => <TextField type="date" {...field} required />}
             />
-            <Typography variant="caption" color="text.secondary">→</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>→</Typography>
             <Controller name="endDate" control={control} render={({ field }) => <TextField type="date" {...field} />} />
           </FormRow>
         ) : (
@@ -180,7 +180,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               control={control}
               render={({ field }) => <TextField type="datetime-local" {...field} required />}
             />
-            <Typography variant="caption" color="text.secondary">→</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>→</Typography>
             <Controller name="end" control={control} render={({ field }) => <TextField type="datetime-local" {...field} />} />
           </FormRow>
         )}

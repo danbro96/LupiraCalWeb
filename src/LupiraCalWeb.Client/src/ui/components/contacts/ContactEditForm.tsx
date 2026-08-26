@@ -68,7 +68,7 @@ function AddressStatusHint({ movedInText, movedOutText }: { movedInText: string;
     movedInText.trim() ? parseFuzzyInput(movedInText) : null,
     movedOutText.trim() ? parseFuzzyInput(movedOutText) : null,
   );
-  return status === 'active' ? null : <Typography variant="caption" color="text.secondary">{status === 'former' ? 'former' : 'upcoming'}</Typography>;
+  return status === 'active' ? null : <Typography variant="caption" sx={{ color: 'text.secondary' }}>{status === 'former' ? 'former' : 'upcoming'}</Typography>;
 }
 
 const norm = (s?: string | null) => (s ?? '').trim();
@@ -276,7 +276,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
           name="birthdayYearKnown"
           control={control}
           render={({ field }) => (
-            <Typography variant="caption" color="text.secondary" component="label">
+            <Typography variant="caption" sx={{ color: 'text.secondary' }} component="label">
               <input
                 type="checkbox"
                 checked={field.value}
@@ -355,7 +355,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               name={`channels.${i}.preferred`}
               control={control}
               render={({ field }) => (
-                <Typography variant="caption" color="text.secondary" component="label">
+                <Typography variant="caption" sx={{ color: 'text.secondary' }} component="label">
                   <input
                     type="checkbox"
                     checked={field.value}
@@ -475,7 +475,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               name={`profiles.${i}.preferred`}
               control={control}
               render={({ field }) => (
-                <Typography variant="caption" color="text.secondary" component="label">
+                <Typography variant="caption" sx={{ color: 'text.secondary' }} component="label">
                   <input type="checkbox" checked={!!field.value} onChange={(e) => field.onChange(e.target.checked)} /> preferred
                 </Typography>
               )}
@@ -494,7 +494,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
 
       <div className="edit-field">
         <label>Emergency contacts</label>
-        <Typography variant="caption" color="text.secondary" component="p">In priority order — who to call about this person.</Typography>
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">In priority order — who to call about this person.</Typography>
         <Controller
           name="emergency"
           control={control}
@@ -541,7 +541,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
           name="deceased"
           control={control}
           render={({ field }) => (
-            <Typography variant="caption" color="text.secondary" component="label">
+            <Typography variant="caption" sx={{ color: 'text.secondary' }} component="label">
               <input type="checkbox" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} /> Deceased
             </Typography>
           )}

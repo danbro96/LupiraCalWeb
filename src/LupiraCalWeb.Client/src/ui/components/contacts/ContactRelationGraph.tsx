@@ -167,7 +167,7 @@ export function ContactRelationGraph({
     markerEnd: e.directed ? { type: MarkerType.ArrowClosed } : undefined,
   }));
 
-  if (results[0]?.isLoading) return <Typography variant="caption" color="text.secondary" component="p">Loading relations…</Typography>;
+  if (results[0]?.isLoading) return <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading relations…</Typography>;
   if (graph.edges.length === 0)
     return <p className="empty">{categories.size > 0 ? 'No relations in the selected categories.' : 'No relations yet.'}</p>;
 

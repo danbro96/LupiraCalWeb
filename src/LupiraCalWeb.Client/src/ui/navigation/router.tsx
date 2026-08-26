@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
               {
                 path: 'locations',
                 element: (
-                  <Suspense fallback={<div className="page"><Typography variant="caption" color="text.secondary" component="p">Loading map…</Typography></div>}>
+                  <Suspense fallback={<div className="page"><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading map…</Typography></div>}>
                     <MapScreen />
                   </Suspense>
                 ),
@@ -53,7 +53,7 @@ export const router = createBrowserRouter([
               {
                 path: 'places',
                 element: (
-                  <Suspense fallback={<div className="page"><Typography variant="caption" color="text.secondary" component="p">Loading…</Typography></div>}>
+                  <Suspense fallback={<div className="page"><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></div>}>
                     <PlacesScreen />
                   </Suspense>
                 ),

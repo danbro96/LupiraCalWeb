@@ -128,7 +128,7 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
           <li key={key} {...props}>
             {o.name}
             {o.type === SuggestionType.Locality && <Chip label="Area" sx={{ ml: 1 }} />}
-            {o.context && <Typography variant="caption" color="text.secondary"> {o.context}</Typography>}
+            {o.context && <Typography variant="caption" sx={{ color: 'text.secondary' }}> {o.context}</Typography>}
           </li>
         )}
         renderInput={(params) => (

@@ -170,7 +170,7 @@ export function ItemsScreen() {
     <div className="page items-page">
       <div className="page-head">
         <h2>Items</h2>
-        {isFetching && !isFetchingNextPage && <Typography variant="caption" color="text.secondary">loading…</Typography>}
+        {isFetching && !isFetchingNextPage && <Typography variant="caption" sx={{ color: 'text.secondary' }}>loading…</Typography>}
       </div>
       <div className="cal-filters items-filters">
         <form

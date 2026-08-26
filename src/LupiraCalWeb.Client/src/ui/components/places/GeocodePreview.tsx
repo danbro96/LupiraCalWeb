@@ -25,7 +25,7 @@ export function GeocodePreview({ query, hits, busy, error, onPick, onPin, onCanc
     <Dialog open onClose={busy ? undefined : onCancel} maxWidth="sm" fullWidth>
       <DialogTitle>{hits.length > 0 ? 'Did you mean…?' : 'No matches'}</DialogTitle>
       <DialogContent>
-        {hits.length === 0 && <Typography variant="caption" color="text.secondary" component="p">Nothing found for “{query}”.</Typography>}
+        {hits.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Nothing found for “{query}”.</Typography>}
         {hits.length > 0 && (
           <List dense disablePadding>
             {hits.map((hit, i) => (

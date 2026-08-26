@@ -16,7 +16,7 @@ const CIRCLE_LABEL: Record<CircleKind, string> = {
 export function ContactCircles({ focusId }: { focusId: string }) {
   const location = useLocation();
   const { data, isLoading } = useGetContactCircles({ focusId });
-  if (isLoading) return <Typography variant="caption" color="text.secondary" component="p">Loading circles…</Typography>;
+  if (isLoading) return <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading circles…</Typography>;
 
   const circles = (data?.circles ?? []).filter((c) => c.members.length > 0);
   if (circles.length === 0) return <p className="empty">No circles yet — add relations to build them.</p>;

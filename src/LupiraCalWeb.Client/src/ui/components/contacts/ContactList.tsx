@@ -131,7 +131,7 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
       </Avatar>
       <span className="contact-name">
         {c.displayName}
-        {c.nickname && c.nickname !== c.displayName ? <Typography variant="caption" color="text.secondary"> “{c.nickname}”</Typography> : null}
+        {c.nickname && c.nickname !== c.displayName ? <Typography variant="caption" sx={{ color: 'text.secondary' }}> “{c.nickname}”</Typography> : null}
       </span>
       {c.birthday && <Chip variant="outlined" label={`🎂 ${partialDateBadge(c.birthday)}`} />}
       {c.completeness && (
@@ -201,7 +201,7 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
       </FormRow>
       <FormRow>
         <TextField placeholder="Nickname" value={form.nickname} onChange={(e) => setForm({ ...form, nickname: e.target.value })} />
-        <Typography variant="caption" color="text.secondary" component="label">
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} component="label">
           <input
             type="checkbox"
             checked={form.birthdayYearKnown}

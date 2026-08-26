@@ -47,7 +47,7 @@ export function ContactsTree() {
         me &&
         (allContacts?.length ?? 0) > 0 && (
           <div className="tree-add">
-            <Typography variant="caption" color="text.secondary">Open your card → “This is me” to pin it here.</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>Open your card → “This is me” to pin it here.</Typography>
           </div>
         )
       )}

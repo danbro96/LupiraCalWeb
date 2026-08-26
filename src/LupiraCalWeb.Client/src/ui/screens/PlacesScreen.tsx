@@ -31,6 +31,7 @@ import {
 import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
 import { FormRow } from '../components/FormRow';
+import { DrawerSection } from '../components/DrawerSection';
 
 const MapPinDialog = lazy(() => import('../components/map/MapPinDialog'));
 
@@ -72,8 +73,7 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
   });
 
   return (
-    <section className="drawer-section">
-      <h3>Unlocated</h3>
+    <DrawerSection title="Unlocated">
       <FormRow>
         <TextField
           select
@@ -101,9 +101,9 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
           <MenuItem value="false">Unverified</MenuItem>
         </TextField>
       </FormRow>
-      {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
+      {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
       {error != null && <Alert severity="error">{errText(error) ?? 'Failed to load places.'}</Alert>}
-      {places && places.length === 0 && <Typography variant="caption" color="text.secondary" component="p">Every place has coordinates.</Typography>}
+      {places && places.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Every place has coordinates.</Typography>}
       {places && places.length > 0 && (
         <Table size="small">
           <TableHead>
@@ -155,7 +155,7 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
           onCancel={() => setCoordsFor(null)}
         />
       )}
-    </section>
+    </DrawerSection>
   );
 }
 
@@ -180,7 +180,7 @@ function UnlocatedRow({ place, onFixOnMap, onManualCoords, onVerify, onHistory }
       <TableCell sx={{ color: 'text.secondary' }}>{place.kind}</TableCell>
       <TableCell sx={{ color: 'text.secondary' }}>{place.category}</TableCell>
       <TableCell sx={{ color: 'text.secondary' }}>{place.source}</TableCell>
-      <TableCell>{place.verified ? <Chip label="Verified" /> : <Typography variant="caption" color="text.secondary">—</Typography>}</TableCell>
+      <TableCell>{place.verified ? <Chip label="Verified" /> : <Typography variant="caption" sx={{ color: 'text.secondary' }}>—</Typography>}</TableCell>
       <TableCell>
         <Button disabled={regeocode.isPending || !!regeocode.data} onClick={() => regeocode.mutate({ id: place.id })}>
           {regeocode.isPending ? 'Regeocoding…' : 'Regeocode'}
@@ -277,16 +277,15 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
   };
 
   return (
-    <section className="drawer-section">
-      <h3>Orphans</h3>
-      {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
+    <DrawerSection title="Orphans">
+      {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
       {error != null &&
         (isLanOnly404(error) ? (
           <Alert severity="info">{LAN_ONLY_MSG}</Alert>
         ) : (
           <Alert severity="error">{errText(error) ?? 'Failed to load orphans.'}</Alert>
         ))}
-      {orphans && orphans.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No orphaned places.</Typography>}
+      {orphans && orphans.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No orphaned places.</Typography>}
       {orphans && orphans.length > 0 && (
         <>
           <Table size="small">
@@ -331,7 +330,7 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
       <Dialog open={confirming} onClose={() => setConfirming(false)}>
         <DialogTitle>Soft delete {selected.size} place{selected.size === 1 ? '' : 's'}?</DialogTitle>
         <DialogContent>
-          <Typography variant="caption" color="text.secondary" component="p">References are re-checked at prune time; anything referenced since is left alone.</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">References are re-checked at prune time; anything referenced since is left alone.</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirming(false)}>
@@ -342,7 +341,7 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
           </Button>
         </DialogActions>
       </Dialog>
-    </section>
+    </DrawerSection>
   );
 }
 
@@ -389,24 +388,24 @@ function HistoryDrawer({ placeId, name, onClose }: { placeId: string; name: stri
     <Drawer anchor="right" open onClose={onClose}>
       <div className="drawer-pad" style={{ width: 360, maxWidth: '90vw' }}>
         <h3>History — {name}</h3>
-        {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
+        {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
         {error != null &&
           (isLanOnly404(error) ? (
             <Alert severity="info">{LAN_ONLY_MSG}</Alert>
           ) : (
             <Alert severity="error">{errText(error) ?? 'Failed to load history.'}</Alert>
           ))}
-        {events && events.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No curation events.</Typography>}
+        {events && events.length === 0 && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No curation events.</Typography>}
         {events?.map((e) => (
-          <div key={e.seq} className="drawer-section">
+          <DrawerSection key={e.seq}>
             <p className="field-value">
               #{e.seq} {e.action}
-              <Typography variant="caption" color="text.secondary"> · {new Date(e.at).toLocaleString()}</Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}> · {new Date(e.at).toLocaleString()}</Typography>
             </p>
-            {e.detail && <Typography variant="caption" color="text.secondary" component="p">{e.detail}</Typography>}
-            {e.relatedPlaceId && <Typography variant="caption" color="text.secondary" component="p">related: {e.relatedPlaceId}</Typography>}
-            {e.actorPrincipalId && <Typography variant="caption" color="text.secondary" component="p">by {e.actorPrincipalId}</Typography>}
-          </div>
+            {e.detail && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">{e.detail}</Typography>}
+            {e.relatedPlaceId && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">related: {e.relatedPlaceId}</Typography>}
+            {e.actorPrincipalId && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">by {e.actorPrincipalId}</Typography>}
+          </DrawerSection>
         ))}
       </div>
     </Drawer>

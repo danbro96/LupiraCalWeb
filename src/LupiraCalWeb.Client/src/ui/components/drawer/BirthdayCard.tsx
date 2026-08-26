@@ -7,6 +7,7 @@ import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
 import { fmtDate } from '@lupira/cal-domain/time';
 import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
 import { DetailDrawer } from './DetailDrawer';
+import { DrawerSection } from '../DrawerSection';
 
 /** Read-only view for a birthday occurrence (a contact projection, not a stored item): the birthday date,
  *  the age the contact is turning when known, and a link to the contact. `year` is the clicked occurrence's year. */
@@ -45,15 +46,14 @@ function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | n
         <h2 className="field-value">{contact.displayName}</h2>
       </div>
 
-      <section className="drawer-section">
-        <h3>Birthday</h3>
-        {b ? <p className="field-value">{fmtPartialDate(b)}</p> : <Typography variant="caption" color="text.secondary" component="p">Unknown.</Typography>}
+      <DrawerSection title="Birthday">
+        {b ? <p className="field-value">{fmtPartialDate(b)}</p> : <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Unknown.</Typography>}
         {age != null && onDate && (
           <p className="field-value">
             {verb} {age} on {fmtDate(onDate)}
           </p>
         )}
-      </section>
+      </DrawerSection>
 
       <Button variant="text" component={Link} to={`/contacts/${contact.id}`}>
         View contact →

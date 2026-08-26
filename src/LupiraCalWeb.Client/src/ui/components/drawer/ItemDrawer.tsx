@@ -29,6 +29,7 @@ import { RelationsPanel } from './RelationsPanel';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { FormRow } from '../FormRow';
+import { DrawerSection } from '../DrawerSection';
 
 /** The item detail drawer (?item=<id>): every field the REST read model exposes, editable where the API allows. */
 export function ItemDrawer({ itemId, onClose }: { itemId: string; onClose: () => void }) {
@@ -118,8 +119,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         )}
       </FormRow>
 
-      <section className="drawer-section">
-        <h3>When</h3>
+      <DrawerSection title="When">
         {item.isAllDay ? (
           <p className="field-value">
             All day · {item.startDate ? fmtDate(parseYmd(item.startDate)) : '?'}
@@ -135,7 +135,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
                 if (iso && iso !== item.startsAt) patch({ startsAt: iso });
               }}
             />
-            <Typography variant="caption" color="text.secondary">→</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>→</Typography>
             <TextField
               type="datetime-local"
               defaultValue={isoToLocalInput(item.endsAt)}
@@ -175,11 +175,10 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             onBlur={() => rrule && rrule !== (item.recurrenceRule ?? '') && patch({ recurrenceRule: rrule })}
           />
         </FormRow>
-        {item.recurrenceRule && <Typography variant="caption" color="text.secondary" component="p">{describeRrule(item.recurrenceRule)}</Typography>}
-      </section>
+        {item.recurrenceRule && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">{describeRrule(item.recurrenceRule)}</Typography>}
+      </DrawerSection>
 
-      <section className="drawer-section">
-        <h3>Where</h3>
+      <DrawerSection title="Where">
         <PlacePicker
           placeId={item.placeId ?? null}
           initialText={!item.placeId ? (item.locationLabel ?? '') : ''}
@@ -187,12 +186,11 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
           onChange={(placeId) => (placeId ? patch({ placeId, placeIdProvided: true }) : patch({ placeId: null, placeIdProvided: true }))}
         />
         {!item.placeId && item.locationLabel && (
-          <Typography variant="caption" color="text.secondary" component="p">“{item.locationLabel}” from calendar text</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">“{item.locationLabel}” from calendar text</Typography>
         )}
-      </section>
+      </DrawerSection>
 
-      <section className="drawer-section">
-        <h3>Description</h3>
+      <DrawerSection title="Description">
         <TextField
           multiline
           minRows={3}
@@ -201,10 +199,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
           onChange={(e) => setDescription(e.target.value)}
           onBlur={() => description !== (item.description ?? '') && patch({ description })}
         />
-      </section>
+      </DrawerSection>
 
-      <section className="drawer-section">
-        <h3>Tags</h3>
+      <DrawerSection title="Tags">
         <div className="chip-row">
           {(item.tags ?? []).map((t) => (
             <Chip key={t} label={t} onDelete={() => patch({ tags: (item.tags ?? []).filter((x) => x !== t) })} />
@@ -221,7 +218,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             }}
           />
         </div>
-      </section>
+      </DrawerSection>
 
       <KindDetailsCard details={item.details} />
       <PayloadPanel item={item} />
@@ -232,7 +229,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <MetadataPanel itemId={item.id} metadata={item.metadata} />
 
       <div className="drawer-footer">
-        <Typography variant="caption" color="text.secondary" title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
           {item.category ?? 'General'} item
         </Typography>
         <Button variant="outlined" color="error" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>

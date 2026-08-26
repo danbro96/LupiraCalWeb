@@ -38,6 +38,7 @@ import { ContactEventsPanel } from './ContactEventsPanel';
 import { ContactRelationsPanel } from './ContactRelationsPanel';
 import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
 import { FormRow } from '../FormRow';
+import { DrawerSection } from '../DrawerSection';
 
 const linkSx: SxProps<Theme> = { fontSize: 13, fontWeight: 600, p: '2px', whiteSpace: 'nowrap', '@media (pointer: coarse)': { p: '6px 2px' } };
 
@@ -60,7 +61,7 @@ export function ContactDetailPane() {
   const [editing, setEditing] = useState(false);
   const [showCircles, setShowCircles] = useState(false);
 
-  if (isLoading) return <div className="contacts-detail-pane"><Typography variant="caption" color="text.secondary" component="p">Loading…</Typography></div>;
+  if (isLoading) return <div className="contacts-detail-pane"><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></div>;
   if (!contact) return <div className="contacts-detail-pane"><p className="empty">Contact not found.</p></div>;
 
   const memberOf = (groups ?? []).filter((g) => g.members.some((m) => m.contactId === contact.id));
@@ -74,7 +75,7 @@ export function ContactDetailPane() {
       <div className="page-head">
         <h2>
           {contact.displayName}
-          {contact.nickname && contact.nickname !== contact.displayName && <Typography variant="caption" color="text.secondary"> “{contact.nickname}”</Typography>}
+          {contact.nickname && contact.nickname !== contact.displayName && <Typography variant="caption" sx={{ color: 'text.secondary' }}> “{contact.nickname}”</Typography>}
           {contact.deceased && (
             <Tooltip title={contact.deathDate ? `died ${contact.deathDate}` : 'deceased'}>
               <Chip variant="outlined" label="†" />
@@ -121,7 +122,7 @@ export function ContactDetailPane() {
                 <dd>
                   📍 <PlaceLabel placeId={a.placeId} link />
                   {(a.movedIn || a.movedOut) && (
-                    <Typography variant="caption" color="text.secondary"> · {fmtResidencyPeriod(a.movedIn, a.movedOut)}{residencySuffix(a.movedIn, a.movedOut)}</Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}> · {fmtResidencyPeriod(a.movedIn, a.movedOut)}{residencySuffix(a.movedIn, a.movedOut)}</Typography>
                   )}
                 </dd>
               </div>
@@ -154,8 +155,7 @@ export function ContactDetailPane() {
           )}
 
           {contact.emergencyContactIds.length > 0 && (
-            <section className="drawer-section">
-              <h3>Emergency contacts</h3>
+            <DrawerSection title="Emergency contacts">
               {contact.emergencyContactIds.map((cid, i) => (
                 <div key={cid} className="membership-row">
                   <Chip variant="outlined" label={i + 1} />
@@ -164,13 +164,12 @@ export function ContactDetailPane() {
                   </Link>
                 </div>
               ))}
-            </section>
+            </DrawerSection>
           )}
         </>
       )}
 
-      <section className="drawer-section">
-        <h3>Groups</h3>
+      <DrawerSection title="Groups">
         {memberOf.map((g) => (
           <div key={g.id} className="membership-row">
             <Chip variant="outlined" label={g.kind === 'Organization' ? '🏢' : '👥'} />
@@ -206,24 +205,25 @@ export function ContactDetailPane() {
             Add
           </Button>
         </FormRow>
-      </section>
+      </DrawerSection>
 
       <ContactEventsPanel contactId={contact.id} />
 
       <ContactRelationsPanel contact={contact} />
 
-      <section className="drawer-section">
-        <div className="page-head">
-          <h3>Social circles</h3>
+      <DrawerSection
+        title="Social circles"
+        action={
           <Button variant="text" onClick={() => setShowCircles((v) => !v)}>
             {showCircles ? 'Hide' : 'Show'}
           </Button>
-        </div>
+        }
+      >
         {showCircles && <ContactCircles focusId={contact.id} />}
-      </section>
+      </DrawerSection>
 
       {contact.updatedAt && (
-        <Typography variant="caption" color="text.secondary" component="p">
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
           Updated {fmtDate(new Date(contact.updatedAt))}
           {contact.createdAt && ` · added ${fmtDate(new Date(contact.createdAt))}`}
         </Typography>

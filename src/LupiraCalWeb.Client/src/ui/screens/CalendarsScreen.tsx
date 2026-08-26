@@ -200,7 +200,7 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
       >
         Revoke
       </Button>
-      {(grant.isPending || revoke.isPending) && <Typography variant="caption" color="text.secondary">…</Typography>}
+      {(grant.isPending || revoke.isPending) && <Typography variant="caption" sx={{ color: 'text.secondary' }}>…</Typography>}
     </div>
   );
 }

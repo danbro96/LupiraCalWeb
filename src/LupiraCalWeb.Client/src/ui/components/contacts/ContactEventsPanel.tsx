@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useSearchItems } from '../../../data/api/lupiraCalApi';
 import { fmtWhen } from '@lupira/cal-domain/time';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
+import { DrawerSection } from '../DrawerSection';
 
 const FETCH_SIZE = 50;
 const SHOWN = 10;
@@ -25,13 +26,12 @@ export function ContactEventsPanel({ contactId }: { contactId: string }) {
   };
 
   return (
-    <section className="drawer-section">
-      <h3>Events</h3>
+    <DrawerSection title="Events">
       {events.map((e) => (
         <Link key={e.id} to={itemHref(e.id)} className="location-row">
           <span className="kind-icon">{(e.category && ITEM_CATEGORY_ICONS[e.category]) || '📅'}</span>
           <span className="location-name">{e.title || '(untitled)'}</span>
-          <Typography variant="caption" color="text.secondary">{fmtWhen(e.start, e.isAllDay)}</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>{fmtWhen(e.start, e.isAllDay)}</Typography>
         </Link>
       ))}
       <MuiLink
@@ -42,6 +42,6 @@ export function ContactEventsPanel({ contactId }: { contactId: string }) {
       >
         open in list
       </MuiLink>
-    </section>
+    </DrawerSection>
   );
 }

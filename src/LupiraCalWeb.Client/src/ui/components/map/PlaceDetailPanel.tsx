@@ -8,6 +8,7 @@ import { formatCoords, osmUrl } from '@lupira/cal-domain/places';
 import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
 import { useGeoPlace, usePlaceItems } from '../../../state/usePlaces';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
+import { DrawerSection } from '../DrawerSection';
 
 /** The ?place= detail pane (extracted from the former LocationsScreen): containment, items, contacts. */
 export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClose: () => void }) {
@@ -16,7 +17,7 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
   return (
     <aside className="map-detail">
       <button className="map-popover-close" onClick={onClose} aria-label="Close">×</button>
-      {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
+      {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
       {!isLoading && !place && <p className="empty">Place not found.</p>}
       {place && (
         <>
@@ -74,9 +75,8 @@ function ItemsPanel({ placeId }: { placeId: string }) {
   };
 
   return (
-    <section className="drawer-section">
-      <h3>Items here</h3>
-      {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
+    <DrawerSection title="Items here">
+      {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
       {!isLoading && (items ?? []).length === 0 && <p className="empty">No items reference this place.</p>}
       {(items ?? []).map((item) => (
         <Link key={item.id} to={itemHref(item.id)} className="location-row">
@@ -84,11 +84,11 @@ function ItemsPanel({ placeId }: { placeId: string }) {
             <span className="kind-icon">{ITEM_CATEGORY_ICONS[item.category]}</span>
           )}
           <span className="location-name">{item.title || '(untitled)'}</span>
-          <Typography variant="caption" color="text.secondary">{whenOf(item)}</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>{whenOf(item)}</Typography>
           {roleOf(item, placeId) && <span className="loc-role">{roleOf(item, placeId)}</span>}
         </Link>
       ))}
-    </section>
+    </DrawerSection>
   );
 }
 
@@ -97,14 +97,13 @@ function ContactsPanel({ placeId }: { placeId: string }) {
   const here = (contacts ?? []).filter((c) => (c.addresses ?? []).some((a) => a.placeId === placeId));
   if (here.length === 0) return null;
   return (
-    <section className="drawer-section">
-      <h3>Contacts here</h3>
+    <DrawerSection title="Contacts here">
       {here.map((c) => (
         <Link key={c.id} to={`/contacts/${c.id}`} className="location-row">
           <span className="location-name">{c.displayName}</span>
         </Link>
       ))}
-    </section>
+    </DrawerSection>
   );
 }
 

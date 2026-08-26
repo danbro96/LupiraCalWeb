@@ -31,6 +31,7 @@ import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { FormRow } from '../FormRow';
+import { DrawerSection } from '../DrawerSection';
 
 /**
  * The event-bound payload (⚡): at most one of prompt/action per item (server-enforced XOR — a 409
@@ -45,8 +46,7 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
   const clearAction = useClearItemAction({ mutation: { onSuccess: invalidate, onError } });
 
   return (
-    <section className="drawer-section">
-      <h3>⚡ Payload</h3>
+    <DrawerSection title="⚡ Payload">
       {item.prompt && editing !== 'prompt' && (
         <div className="payload-card">
           <div className="payload-head">
@@ -56,7 +56,7 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             {!item.prompt.enabled && <Chip variant="outlined" label="disabled" />}
           </div>
           <p className="payload-instruction">{item.prompt.instruction}</p>
-          <Typography variant="caption" color="text.secondary" component="p">
+          <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
             Fires {describeFire(item.prompt.fire.kind, item.prompt.fire.offsetMinutes, item.prompt.fire.allDayAt)}
             {item.prompt.tier ? ` · ${item.prompt.tier} model` : ''} · on miss: {item.prompt.onMiss}
             {item.prompt.tools?.length ? ` · tools: ${item.prompt.tools.join(', ')}` : ''}
@@ -75,7 +75,7 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             {!item.action.enabled && <Chip variant="outlined" label="disabled" />}
           </div>
           <pre className="json-view">{prettyJson(item.action.paramsJson)}</pre>
-          <Typography variant="caption" color="text.secondary" component="p">
+          <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
             Fires {describeFire(item.action.fire.kind, item.action.fire.offsetMinutes, item.action.fire.allDayAt)}
           </Typography>
           <div className="chip-row">
@@ -92,7 +92,7 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
       )}
       {editing === 'prompt' && <PromptForm item={item} onDone={() => setEditing(null)} />}
       {editing === 'action' && <ActionForm item={item} onDone={() => setEditing(null)} />}
-    </section>
+    </DrawerSection>
   );
 }
 

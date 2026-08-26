@@ -597,19 +597,6 @@ code {
 .kind-icon {
   font-size: 22px;
 }
-.drawer-section {
-  margin-top: var(--sp-lg);
-  padding-top: var(--sp-md);
-  border-top: 1px solid var(--mui-palette-divider);
-}
-.drawer-section h3 {
-  margin: 0 0 var(--sp-sm);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  color: var(--mui-palette-text-subtle);
-  text-transform: uppercase;
-}
 .drawer-footer {
   margin-top: var(--sp-xl);
   display: flex;

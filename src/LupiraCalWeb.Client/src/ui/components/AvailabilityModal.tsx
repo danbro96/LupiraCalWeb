@@ -72,7 +72,7 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
       </DialogTitle>
       <form onSubmit={submit}>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pt: 0 }}>
-          {!availabilityCalendar && <Typography variant="caption" color="text.secondary" component="p">No availability calendar — bootstrap the standard set first.</Typography>}
+          {!availabilityCalendar && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">No availability calendar — bootstrap the standard set first.</Typography>}
         <FormRow>
           <Controller
             name="status"

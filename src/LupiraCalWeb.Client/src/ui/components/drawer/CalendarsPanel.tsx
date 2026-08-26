@@ -16,6 +16,7 @@ import { calendarLabel, useContainers } from '../../../state/useContainers';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { calendarColor } from '../../theme/kinds';
 import { FormRow } from '../FormRow';
+import { DrawerSection } from '../DrawerSection';
 
 /** The item's calendar memberships (Proposed/Accepted) + curation actions and file-to-calendar. */
 export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
@@ -31,8 +32,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
   const fileable = calendars.filter((c) => !memberIds.has(c.id));
 
   return (
-    <section className="drawer-section">
-      <h3>Calendars</h3>
+    <DrawerSection title="Calendars">
       {memberships.map((m) => {
         const cal = calendars.find((c) => c.id === m.calendarId);
         return (
@@ -75,6 +75,6 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
           File
         </Button>
       </FormRow>
-    </section>
+    </DrawerSection>
   );
 }

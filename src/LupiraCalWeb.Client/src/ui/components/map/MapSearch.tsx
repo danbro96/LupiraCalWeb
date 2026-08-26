@@ -84,7 +84,7 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
             ) : (
               <>
                 <span className="location-name">{o.name}</span>
-                {o.context && <Typography variant="caption" color="text.secondary"> {o.context}</Typography>}
+                {o.context && <Typography variant="caption" sx={{ color: 'text.secondary' }}> {o.context}</Typography>}
                 <Chip variant="outlined" label={o.type === SuggestionType.Place ? o.category ?? 'Place' : 'Area'} />
               </>
             )}
