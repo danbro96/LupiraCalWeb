@@ -60,7 +60,6 @@ import type {
   SetParticipantsRequest,
   SetParticipantsResult,
   SyncChangesResponse,
-  SyncContainersResponse,
   UpdateCalendarItemRequest
 } from './models';
 
@@ -3142,9 +3141,9 @@ export const getGetSyncContainersUrl = () => {
 /**
  * @summary Snapshot of the caller's calendars for mirror reconciliation. Containers are plain documents with no event history (no cursor) — fetch once per sync cycle and diff locally.
  */
-export const getSyncContainers = async ( options?: Parameters<typeof customFetch>[1]): Promise<SyncContainersResponse> => {
+export const getSyncContainers = async ( options?: Parameters<typeof customFetch>[1]): Promise<ContainerDto[]> => {
 
-  return customFetch<SyncContainersResponse>(getGetSyncContainersUrl(),
+  return customFetch<ContainerDto[]>(getGetSyncContainersUrl(),
   {
     ...options,
     method: 'GET'

@@ -79,7 +79,6 @@ export * from './setParticipantsRequest';
 export * from './setParticipantsResult';
 export * from './syncChangeDto';
 export * from './syncChangesResponse';
-export * from './syncContainersResponse';
 export * from './transportMode';
 export * from './travelLeg';
 export * from './travelLegRequest';

@@ -7,9 +7,9 @@
  */
 
 /**
- * A tag definition on a list.
+ * A tag definition as shown on a shared list (no sensitive data).
  */
-export interface TagResponse {
+export interface SharedTagDto {
   id: string;
   label: string;
   color: string;

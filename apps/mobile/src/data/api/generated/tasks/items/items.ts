@@ -9,7 +9,7 @@ import type {
   CreateItemRequest,
   DeleteListItemParams,
   ItemCollectionResponse,
-  ItemResponse,
+  ItemDto,
   ItemTimestampRequest,
   ListItemsParams,
   ListListItemsParams,
@@ -78,7 +78,7 @@ export const listItems = async (params?: ListItemsParams, options?: Parameters<t
 
 
 export type updateItemResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -143,7 +143,7 @@ return apiFetch<updateItemResponse>(getUpdateItemUrl(itemId),
 
 
 export type setItemMetadataResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -270,7 +270,7 @@ export const listListItems = async (listId: string,
 
 
 export type createListItemResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -335,7 +335,7 @@ return apiFetch<createListItemResponse>(getCreateListItemUrl(listId),
 
 
 export type getItemResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -389,7 +389,7 @@ export const getItem = async (listId: string,
 
 
 export type updateListItemResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -520,7 +520,7 @@ export const deleteListItem = async (listId: string,
 
 
 export type completeItemResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -581,7 +581,7 @@ return apiFetch<completeItemResponse>(getCompleteItemUrl(listId,itemId),
 
 
 export type reopenItemResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -642,7 +642,7 @@ return apiFetch<reopenItemResponse>(getReopenItemUrl(listId,itemId),
 
 
 export type setItemStatusResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -709,7 +709,7 @@ return apiFetch<setItemStatusResponse>(getSetItemStatusUrl(listId,itemId),
 
 
 export type setListItemMetadataResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 
@@ -776,7 +776,7 @@ return apiFetch<setListItemMetadataResponse>(getSetListItemMetadataUrl(listId,it
 
 
 export type moveItemResponse200 = {
-  data: ItemResponse
+  data: ItemDto
   status: 200
 }
 

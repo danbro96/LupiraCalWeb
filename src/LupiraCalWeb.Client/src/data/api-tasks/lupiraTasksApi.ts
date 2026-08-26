@@ -36,13 +36,13 @@ import type {
   DirectoryResponse,
   GetUserDirectoryParams,
   ItemCollectionResponse,
-  ItemResponse,
+  ItemDto,
   ItemTimestampRequest,
   ListCollectionResponse,
+  ListDto,
   ListItemsParams,
   ListListItemsParams,
   ListListsParams,
-  ListResponse,
   MeResponse,
   MoveItemRequest,
   PingDto,
@@ -54,8 +54,8 @@ import type {
   SetMetadataRequest,
   SetStatusRequest,
   ShareCollectionResponse,
-  ShareResponse,
-  SharedItemResponse,
+  ShareDto,
+  SharedItemDto,
   SharedListResponse,
   SyncListParams,
   SyncResponse,
@@ -722,7 +722,7 @@ export const getCreateListUrl = () => {
  * Body `{ id (GUIDv7), name, kind, color? }`. `kind` is `Todo`, `Shopping`, or `Agent` (agent/system-owned lists). Re-sending an existing id is an idempotent success.
  * @summary Create a list; the caller becomes Owner.
  */
-export const createList = async (createListRequest: CreateListRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListResponse> => {
+export const createList = async (createListRequest: CreateListRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -730,7 +730,7 @@ export const createList = async (createListRequest: CreateListRequest, options?:
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ListResponse>(getCreateListUrl(),
+return customFetchTasks<ListDto>(getCreateListUrl(),
   {
     ...options,
     method: 'POST',
@@ -799,9 +799,9 @@ export const getGetListUrl = (listId: string,) => {
 /**
  * @summary Get a list with its members and tags (Viewer+).
  */
-export const getList = async (listId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListResponse> => {
+export const getList = async (listId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto> => {
 
-  return customFetchTasks<ListResponse>(getGetListUrl(listId),
+  return customFetchTasks<ListDto>(getGetListUrl(listId),
   {
     ...options,
     method: 'GET'
@@ -902,7 +902,7 @@ export const getUpdateListUrl = (listId: string,) => {
  * @summary Rename / recolor a list, or set its priority mode (Editor+).
  */
 export const updateList = async (listId: string,
-    updateListRequest: UpdateListRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListResponse> => {
+    updateListRequest: UpdateListRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -910,7 +910,7 @@ export const updateList = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ListResponse>(getUpdateListUrl(listId),
+return customFetchTasks<ListDto>(getUpdateListUrl(listId),
   {
     ...options,
     method: 'PATCH',
@@ -1050,9 +1050,9 @@ export const getArchiveListUrl = (listId: string,) => {
 /**
  * @summary Archive a list (Owner). Soft — items retained.
  */
-export const archiveList = async (listId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListResponse> => {
+export const archiveList = async (listId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto> => {
 
-  return customFetchTasks<ListResponse>(getArchiveListUrl(listId),
+  return customFetchTasks<ListDto>(getArchiveListUrl(listId),
   {
     ...options,
     method: 'POST'
@@ -1121,9 +1121,9 @@ export const getRestoreListUrl = (listId: string,) => {
 /**
  * @summary Restore an archived list (Owner).
  */
-export const restoreList = async (listId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListResponse> => {
+export const restoreList = async (listId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto> => {
 
-  return customFetchTasks<ListResponse>(getRestoreListUrl(listId),
+  return customFetchTasks<ListDto>(getRestoreListUrl(listId),
   {
     ...options,
     method: 'POST'
@@ -1190,11 +1190,11 @@ export const getReorderListItemsUrl = (listId: string,) => {
 }
 
 /**
- * Body `{ sortOrder }` — a fractional-index key generated between the neighbours the list was dropped between. Per-user: other members' ordering is untouched, and this does not count as a change to the list. Returned as `sortOrder` on the caller's `ListResponse`; lists the caller has never ordered come back null and sort by name after the ordered ones.
+ * Body `{ sortOrder }` — a fractional-index key generated between the neighbours the list was dropped between. Per-user: other members' ordering is untouched, and this does not count as a change to the list. Returned as `sortOrder` on the caller's `ListDto`; lists the caller has never ordered come back null and sort by name after the ordered ones.
  * @summary Set the caller's own position for this list (Viewer+).
  */
 export const reorderListItems = async (listId: string,
-    setListOrderRequest: SetListOrderRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListResponse> => {
+    setListOrderRequest: SetListOrderRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -1202,7 +1202,7 @@ export const reorderListItems = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ListResponse>(getReorderListItemsUrl(listId),
+return customFetchTasks<ListDto>(getReorderListItemsUrl(listId),
   {
     ...options,
     method: 'POST',
@@ -1273,7 +1273,7 @@ export const getAddListMemberUrl = (listId: string,) => {
  * @summary Add a member by email (any member; defaults to Editor).
  */
 export const addListMember = async (listId: string,
-    addMemberRequest: AddMemberRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListResponse> => {
+    addMemberRequest: AddMemberRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -1281,7 +1281,7 @@ export const addListMember = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ListResponse>(getAddListMemberUrl(listId),
+return customFetchTasks<ListDto>(getAddListMemberUrl(listId),
   {
     ...options,
     method: 'POST',
@@ -1353,7 +1353,7 @@ export const getUpdateListMemberUrl = (listId: string,
  */
 export const updateListMember = async (listId: string,
     principalId: string,
-    updateMemberRoleRequest: UpdateMemberRoleRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListResponse> => {
+    updateMemberRoleRequest: UpdateMemberRoleRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -1361,7 +1361,7 @@ export const updateListMember = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ListResponse>(getUpdateListMemberUrl(listId,principalId),
+return customFetchTasks<ListDto>(getUpdateListMemberUrl(listId,principalId),
   {
     ...options,
     method: 'PATCH',
@@ -1614,7 +1614,7 @@ export const getUpdateItemUrl = (itemId: string,) => {
  * @summary Edit item fields addressed by id (Editor+); the list is resolved server-side.
  */
 export const updateItem = async (itemId: string,
-    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -1622,7 +1622,7 @@ export const updateItem = async (itemId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getUpdateItemUrl(itemId),
+return customFetchTasks<ItemDto>(getUpdateItemUrl(itemId),
   {
     ...options,
     method: 'PATCH',
@@ -1693,7 +1693,7 @@ export const getSetItemMetadataUrl = (itemId: string,) => {
  * @summary Set an item's metadata addressed by id (Editor+); the list is resolved server-side.
  */
 export const setItemMetadata = async (itemId: string,
-    setMetadataRequest: SetMetadataRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    setMetadataRequest: SetMetadataRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -1701,7 +1701,7 @@ export const setItemMetadata = async (itemId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getSetItemMetadataUrl(itemId),
+return customFetchTasks<ItemDto>(getSetItemMetadataUrl(itemId),
   {
     ...options,
     method: 'POST',
@@ -1889,7 +1889,7 @@ export const getCreateListItemUrl = (listId: string,) => {
  * @summary Add an item (Editor+).
  */
 export const createListItem = async (listId: string,
-    createItemRequest: CreateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    createItemRequest: CreateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -1897,7 +1897,7 @@ export const createListItem = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getCreateListItemUrl(listId),
+return customFetchTasks<ItemDto>(getCreateListItemUrl(listId),
   {
     ...options,
     method: 'POST',
@@ -1968,9 +1968,9 @@ export const getGetItemUrl = (listId: string,
  * @summary Get a single item (Viewer+).
  */
 export const getItem = async (listId: string,
-    itemId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    itemId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
-  return customFetchTasks<ItemResponse>(getGetItemUrl(listId,itemId),
+  return customFetchTasks<ItemDto>(getGetItemUrl(listId,itemId),
   {
     ...options,
     method: 'GET'
@@ -2079,7 +2079,7 @@ export const getUpdateListItemUrl = (listId: string,
  */
 export const updateListItem = async (listId: string,
     itemId: string,
-    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -2087,7 +2087,7 @@ export const updateListItem = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getUpdateListItemUrl(listId,itemId),
+return customFetchTasks<ItemDto>(getUpdateListItemUrl(listId,itemId),
   {
     ...options,
     method: 'PATCH',
@@ -2242,7 +2242,7 @@ export const getCompleteItemUrl = (listId: string,
  */
 export const completeItem = async (listId: string,
     itemId: string,
-    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -2250,7 +2250,7 @@ export const completeItem = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getCompleteItemUrl(listId,itemId),
+return customFetchTasks<ItemDto>(getCompleteItemUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -2322,7 +2322,7 @@ export const getReopenItemUrl = (listId: string,
  */
 export const reopenItem = async (listId: string,
     itemId: string,
-    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -2330,7 +2330,7 @@ export const reopenItem = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getReopenItemUrl(listId,itemId),
+return customFetchTasks<ItemDto>(getReopenItemUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -2403,7 +2403,7 @@ export const getSetItemStatusUrl = (listId: string,
  */
 export const setItemStatus = async (listId: string,
     itemId: string,
-    setStatusRequest: SetStatusRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    setStatusRequest: SetStatusRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -2411,7 +2411,7 @@ export const setItemStatus = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getSetItemStatusUrl(listId,itemId),
+return customFetchTasks<ItemDto>(getSetItemStatusUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -2484,7 +2484,7 @@ export const getSetListItemMetadataUrl = (listId: string,
  */
 export const setListItemMetadata = async (listId: string,
     itemId: string,
-    setMetadataRequest: SetMetadataRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    setMetadataRequest: SetMetadataRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -2492,7 +2492,7 @@ export const setListItemMetadata = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getSetListItemMetadataUrl(listId,itemId),
+return customFetchTasks<ItemDto>(getSetListItemMetadataUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -2565,7 +2565,7 @@ export const getMoveItemUrl = (listId: string,
  */
 export const moveItem = async (listId: string,
     itemId: string,
-    moveItemRequest: MoveItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemResponse> => {
+    moveItemRequest: MoveItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -2573,7 +2573,7 @@ export const moveItem = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ItemResponse>(getMoveItemUrl(listId,itemId),
+return customFetchTasks<ItemDto>(getMoveItemUrl(listId,itemId),
   {
     ...options,
     method: 'POST',
@@ -2917,7 +2917,7 @@ export const getCreateShareUrl = (listId: string,) => {
  * @summary Mint a public share link for a list (Owner).
  */
 export const createShare = async (listId: string,
-    createShareRequest: CreateShareRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ShareResponse> => {
+    createShareRequest: CreateShareRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<ShareDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -2925,7 +2925,7 @@ export const createShare = async (listId: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<ShareResponse>(getCreateShareUrl(listId),
+return customFetchTasks<ShareDto>(getCreateShareUrl(listId),
   {
     ...options,
     method: 'POST',
@@ -3271,7 +3271,7 @@ export const getCreateSharedItemUrl = (token: string,) => {
  * @summary Add an item via a read/write share link.
  */
 export const createSharedItem = async (token: string,
-    createItemRequest: CreateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemResponse> => {
+    createItemRequest: CreateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -3279,7 +3279,7 @@ export const createSharedItem = async (token: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<SharedItemResponse>(getCreateSharedItemUrl(token),
+return customFetchTasks<SharedItemDto>(getCreateSharedItemUrl(token),
   {
     ...options,
     method: 'POST',
@@ -3351,7 +3351,7 @@ export const getUpdateSharedItemUrl = (token: string,
  */
 export const updateSharedItem = async (token: string,
     itemId: string,
-    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemResponse> => {
+    updateItemRequest: UpdateItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -3359,7 +3359,7 @@ export const updateSharedItem = async (token: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<SharedItemResponse>(getUpdateSharedItemUrl(token,itemId),
+return customFetchTasks<SharedItemDto>(getUpdateSharedItemUrl(token,itemId),
   {
     ...options,
     method: 'PATCH',
@@ -3513,7 +3513,7 @@ export const getCompleteSharedItemUrl = (token: string,
  */
 export const completeSharedItem = async (token: string,
     itemId: string,
-    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemResponse> => {
+    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -3521,7 +3521,7 @@ export const completeSharedItem = async (token: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<SharedItemResponse>(getCompleteSharedItemUrl(token,itemId),
+return customFetchTasks<SharedItemDto>(getCompleteSharedItemUrl(token,itemId),
   {
     ...options,
     method: 'POST',
@@ -3593,7 +3593,7 @@ export const getReopenSharedItemUrl = (token: string,
  */
 export const reopenSharedItem = async (token: string,
     itemId: string,
-    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemResponse> => {
+    nullItemTimestampRequest?: null | ItemTimestampRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -3601,7 +3601,7 @@ export const reopenSharedItem = async (token: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<SharedItemResponse>(getReopenSharedItemUrl(token,itemId),
+return customFetchTasks<SharedItemDto>(getReopenSharedItemUrl(token,itemId),
   {
     ...options,
     method: 'POST',
@@ -3673,7 +3673,7 @@ export const getMoveSharedItemUrl = (token: string,
  */
 export const moveSharedItem = async (token: string,
     itemId: string,
-    moveItemRequest: MoveItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemResponse> => {
+    moveItemRequest: MoveItemRequest, options?: Parameters<typeof customFetchTasks>[1]): Promise<SharedItemDto> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -3681,7 +3681,7 @@ export const moveSharedItem = async (token: string,
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchTasks<SharedItemResponse>(getMoveSharedItemUrl(token,itemId),
+return customFetchTasks<SharedItemDto>(getMoveSharedItemUrl(token,itemId),
   {
     ...options,
     method: 'POST',

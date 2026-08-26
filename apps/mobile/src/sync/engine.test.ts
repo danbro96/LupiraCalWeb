@@ -73,7 +73,7 @@ function pagesDeps(calPages: ChangesPage<ItemChange>[], contactPages: ChangesPag
     contactChanges: async () =>
       contactPages[Math.min(contactIdx++, Math.max(contactPages.length - 1, 0))]
       ?? { cursor: '0', hasMore: false, changed: [], deleted: [] },
-    calContainers: async () => ({ calendars: [{ id: 'cal-1' }] }),
+    calContainers: async () => [{ id: 'cal-1' }],
     contactContainers: async () => ({ addressBooks: [{ id: 'book-1' }], groups: [] }),
     now: () => new Date('2026-07-01T13:00:00Z'),
   };

@@ -6,10 +6,10 @@
  * OpenAPI spec version: v1
  */
 import type {
+  ContainerDto,
   GetChangesParams,
   ProblemDetails,
-  SyncChangesResponse,
-  SyncContainersResponse
+  SyncChangesResponse
 } from '../models';
 
 import { apiFetch } from '../../../mutator';
@@ -74,7 +74,7 @@ export const getChanges = async (params?: GetChangesParams, options?: Parameters
 
 
 export type getSyncContainersResponse200 = {
-  data: SyncContainersResponse
+  data: ContainerDto[]
   status: 200
 }
 

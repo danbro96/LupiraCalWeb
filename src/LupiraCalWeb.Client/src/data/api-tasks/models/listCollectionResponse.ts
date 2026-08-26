@@ -5,11 +5,11 @@
  * Task and command processing backend for Lupira. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
-import type { ListResponse } from './listResponse';
+import type { ListDto } from './listDto';
 
 /**
  * Envelope for the caller's lists.
  */
 export interface ListCollectionResponse {
-  lists: ListResponse[];
+  lists: ListDto[];
 }

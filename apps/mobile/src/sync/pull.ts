@@ -24,7 +24,7 @@ export type ChangesPage<TChange> = { cursor: string; hasMore: boolean; changed: 
 export type PullDeps = {
   calChanges(since: string | null): Promise<ChangesPage<ItemChange>>;
   contactChanges(since: string | null): Promise<ChangesPage<ContactChange>>;
-  calContainers(): Promise<{ calendars: { id: string }[] }>;
+  calContainers(): Promise<{ id: string }[]>;
   contactContainers(): Promise<{ addressBooks: { id: string }[]; groups: { id: string }[] }>;
   now(): Date;
 };
@@ -56,7 +56,7 @@ export const realPullDeps: PullDeps = {
 export async function pullContainers(db: Db, deps: PullDeps): Promise<void> {
   const [cal, contact] = [await deps.calContainers(), await deps.contactContainers()];
   await db.exclusive(async (tx) => {
-    await mirror.replaceContainers(tx, 'calendars', cal.calendars);
+    await mirror.replaceContainers(tx, 'calendars', cal);
     await mirror.replaceContainers(tx, 'address_books', contact.addressBooks);
     await mirror.replaceContainers(tx, 'contact_groups', contact.groups);
   });
