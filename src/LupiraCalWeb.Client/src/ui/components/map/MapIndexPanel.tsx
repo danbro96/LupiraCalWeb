@@ -1,4 +1,7 @@
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import CloseIcon from '@mui/icons-material/Close';
 export interface IndexRow {
   key: string;
   primary: string;
@@ -15,12 +18,37 @@ export interface IndexGroup {
 export function MapIndexPanel({ groups, onClose }: { groups: IndexGroup[]; onClose: () => void }) {
   const nonEmpty = groups.filter((g) => g.rows.length > 0);
   return (
-    <aside className="map-index">
-      <button className="map-popover-close" onClick={onClose} aria-label="Close">×</button>
+    <Paper
+      component="aside"
+      elevation={4}
+      sx={{
+        position: 'absolute',
+        zIndex: 6,
+        top: 96,
+        left: 1.5,
+        bottom: 1.5,
+        width: 'min(280px, calc(100vw - 24px))',
+        overflowY: 'auto',
+        borderRadius: '12px',
+        p: '8px 12px 12px',
+        // Rows are still bespoke; the index wants them full-width with the caption on its own line.
+        '& .location-row': { width: '100%', flexWrap: 'wrap' },
+        '& .location-row .MuiTypography-caption': { flexBasis: '100%', textAlign: 'left' },
+      }}
+    >
+      <IconButton onClick={onClose} aria-label="Close" sx={{ position: 'absolute', top: 4, right: 4 }}>
+        <CloseIcon fontSize="small" />
+      </IconButton>
       {nonEmpty.length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Nothing on the map yet.</Typography>}
       {nonEmpty.map((group) => (
         <section key={group.title}>
-          <h4>{group.title}</h4>
+          <Typography
+            variant="overline"
+            component="h4"
+            sx={{ display: 'block', mt: 1.5, mb: 0.5, color: 'text.secondary' }}
+          >
+            {group.title}
+          </Typography>
           {group.rows.map((row) => (
             <button key={row.key} className="location-row" onClick={row.onClick}>
               <span className="location-name">{row.primary}</span>
@@ -29,6 +57,6 @@ export function MapIndexPanel({ groups, onClose }: { groups: IndexGroup[]; onClo
           ))}
         </section>
       ))}
-    </aside>
+    </Paper>
   );
 }

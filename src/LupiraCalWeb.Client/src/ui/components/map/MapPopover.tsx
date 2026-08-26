@@ -1,4 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import CloseIcon from '@mui/icons-material/Close';
 import { useMap } from './MapCanvas';
 
 export interface PopoverAnchor {
@@ -22,9 +25,23 @@ export function MapPopover({ anchor, onClose, children }: {
   }, [map, anchor]);
 
   return (
-    <div className="map-popover" style={{ left: point.x, top: point.y }}>
-      <button className="map-popover-close" onClick={onClose} aria-label="Close">×</button>
+    <Paper
+      elevation={4}
+      sx={{
+        position: 'absolute',
+        zIndex: 7,
+        transform: 'translate(-50%, calc(-100% - 12px))',
+        borderRadius: '10px',
+        p: '8px 12px',
+        minWidth: 180,
+        maxWidth: 280,
+      }}
+      style={{ left: point.x, top: point.y }}
+    >
+      <IconButton onClick={onClose} aria-label="Close" sx={{ position: 'absolute', top: 0, right: 0 }}>
+        <CloseIcon fontSize="small" />
+      </IconButton>
       {children}
-    </div>
+    </Paper>
   );
 }

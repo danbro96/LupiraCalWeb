@@ -3,6 +3,7 @@ import { Protocol } from 'pmtiles';
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { fallbackStyle, loadMapStyle } from './mapStyle';
 import type { MapTheme } from './mapTokens';
+import Paper from '@mui/material/Paper';
 
 // MapLibre's default worker URL (a sibling of the entry module) 404s under bundlers, and bundling the
 // worker ourselves gets tree-shaken to an empty file (maplibre's sideEffects allowlist). The worker +
@@ -104,7 +105,22 @@ export function MapCanvas({ children, center, zoom }: { children?: ReactNode; ce
       ref={containerRef}
     >
       {basemapMissing && (
-        <div className="map-error">Basemap unavailable — pins and tracks still render.</div>
+        <Paper
+          elevation={2}
+          sx={{
+            position: 'absolute',
+            bottom: 36,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 5,
+            borderRadius: '8px',
+            color: 'text.secondary',
+            fontSize: 13,
+            p: '4px 12px',
+          }}
+        >
+          Basemap unavailable — pins and tracks still render.
+        </Paper>
       )}
       {map && <MapContext.Provider value={map}>{children}</MapContext.Provider>}
     </div>

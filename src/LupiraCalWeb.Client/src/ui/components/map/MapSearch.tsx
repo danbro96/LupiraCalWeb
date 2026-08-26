@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useForwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
+import Box from '@mui/material/Box';
 
 export interface SearchTarget {
   lat: number;
@@ -56,7 +57,7 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
         : [];
 
   return (
-    <div className="map-search">
+    <Box sx={{ position: 'relative', minWidth: 220 }}>
       <Autocomplete<SearchOption, false, false, true>
         freeSolo
         options={options}
@@ -102,6 +103,6 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
           />
         )}
       />
-    </div>
+    </Box>
   );
 }

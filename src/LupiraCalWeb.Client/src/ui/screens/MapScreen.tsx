@@ -26,6 +26,8 @@ import { PlaceDetailPanel } from '../components/map/PlaceDetailPanel';
 import { ContactsLayer, EventsLayer, FormerContactsLayer, MovementLayer, PhotosLayer, SavedPlacesLayer, type PinSelection } from '../components/map/layers';
 import { FitToData, FlyToPlace, ViewportReporter } from '../components/map/mapEffects';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 
 /** The map over everything located: events, GPS movement, contacts, saved places. Route stays
  * /locations so ?place=/?q= deep links keep working; state rides the URL (?from ?to ?layers). */
@@ -173,7 +175,7 @@ export default function MapScreen() {
   }, [contacts.features, contacts.former, showHistory, saved.features, events.features, setParam]);
 
   return (
-    <div className="map-page">
+    <Box sx={{ flex: 1, minHeight: 0, position: 'relative', display: 'flex' }}>
       <MapCanvas>
         {activeLayers.includes('movement') && (
           <MovementLayer theme={theme} visits={movement.visits} track={movement.track} current={movement.current} onSelect={onSelect} />
@@ -204,7 +206,21 @@ export default function MapScreen() {
         )}
       </MapCanvas>
 
-      <div className="map-overlay map-topbar">
+      <Box
+        sx={{
+          position: 'absolute',
+          zIndex: 6,
+          top: 1.5,
+          left: 1.5,
+          right: { xs: 1.5, sm: '56px' },
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1,
+          alignItems: 'flex-start',
+          pointerEvents: 'none',
+          '& > *': { pointerEvents: 'auto' },
+        }}
+      >
         <MapSearch onPick={onSearchPick} />
         <TimeRangeBar range={range} onChange={setRange} />
         <LayerToggles
@@ -215,18 +231,22 @@ export default function MapScreen() {
           showHistory={showHistory}
           onToggleHistory={() => setParam('history', showHistory ? undefined : '1')}
         />
-        <button className={`chip${showIndex ? ' active' : ''}`} onClick={() => setParam('index', showIndex ? undefined : '1')}>
-          <ViewListIcon sx={{ fontSize: 16, verticalAlign: 'text-bottom', mr: 0.5 }} /> List
-        </button>
+        <Chip
+          variant={showIndex ? 'filled' : 'outlined'}
+          color={showIndex ? 'primary' : 'default'}
+          onClick={() => setParam('index', showIndex ? undefined : '1')}
+          icon={<ViewListIcon />}
+          label="List"
+        />
         {anyLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }}>Loading…</Typography>}
-      </div>
+      </Box>
 
       {showIndex && <MapIndexPanel groups={indexGroups} onClose={() => setParam('index', undefined)} />}
 
       {selectedPlaceId && (
         <PlaceDetailPanel placeId={selectedPlaceId} onClose={() => setParam('place', undefined)} />
       )}
-    </div>
+    </Box>
   );
 }
 
@@ -273,7 +293,13 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
     return (
       <>
         {props.thumbUrl != null && (
-          <img src={String(props.thumbUrl)} alt="" className="map-photo-thumb" loading="lazy" />
+          <Box
+            component="img"
+            src={String(props.thumbUrl)}
+            alt=""
+            loading="lazy"
+            sx={{ display: 'block', width: '100%', maxHeight: 180, objectFit: 'cover', borderRadius: '6px', mb: 1 }}
+          />
         )}
         <h4>{String(props.placeLabel ?? 'Unknown place')}</h4>
         <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">

@@ -1,3 +1,7 @@
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { addDays, startOfDay, ymd } from '@lupira/cal-domain/time';
@@ -40,28 +44,35 @@ export function TimeRangeBar({ range, onChange }: { range: DateRange; onChange: 
   })?.key;
 
   return (
-    <div className="map-timebar">
+    <Paper elevation={2} sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 0.5,
+        alignItems: 'center',
+        borderRadius: '10px',
+        p: '4px 8px',
+      }}>
       {PRESETS.map((p) => (
-        <button
+        <Chip
           key={p.key}
-          className={`chip${p.key === activeKey ? ' active' : ''}`}
+          label={p.label}
+          variant={p.key === activeKey ? 'filled' : 'outlined'}
+          color={p.key === activeKey ? 'primary' : 'default'}
           onClick={() => onChange(presetRange(p.key)!)}
-        >
-          {p.label}
-        </button>
+        />
       ))}
       <TextField
         type="date" value={range.fromYmd} sx={{ width: '9.5em' }}
         slotProps={{ htmlInput: { max: range.toYmd, 'aria-label': 'From date' } }}
         onChange={(e) => e.target.value && onChange({ ...range, fromYmd: e.target.value })}
       />
-      <span className="sep">–</span>
+      <Box component="span">–</Box>
       <TextField
         type="date" value={range.toYmd} sx={{ width: '9.5em' }}
         slotProps={{ htmlInput: { min: range.fromYmd, 'aria-label': 'To date' } }}
         onChange={(e) => e.target.value && onChange({ ...range, toYmd: e.target.value })}
       />
-    </div>
+    </Paper>
   );
 }
 
@@ -84,40 +95,63 @@ export function LayerToggles({ active, onToggle, theme, unmappableCount, showHis
   const activities = ACTIVITY_COLORS[theme];
 
   return (
-    <div className="map-toggles">
+    <Paper elevation={2} sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 0.5,
+        alignItems: 'center',
+        borderRadius: '10px',
+        p: '4px 8px',
+      }}>
       {toggles.map((t) => (
-        <button
+        <Chip
           key={t.key}
-          className={`chip${active.includes(t.key) ? ' active' : ''}`}
+          variant={active.includes(t.key) ? 'filled' : 'outlined'}
+          color={active.includes(t.key) ? 'primary' : 'default'}
           onClick={() => onToggle(t.key)}
-        >
-          {t.label}
-          {t.key === 'events' && unmappableCount > 0 && (
-            <Typography variant="caption" sx={{ color: 'text.secondary' }} title={`${unmappableCount} occurrences have a free-text location only (no place)`}>
-              {' '}·{unmappableCount}
-            </Typography>
-          )}
-        </button>
+          label={
+            <>
+              {t.label}
+              {t.key === 'events' && unmappableCount > 0 && (
+                <Typography
+                  variant="caption"
+                  component="span"
+                  title={`${unmappableCount} occurrences have a free-text location only (no place)`}
+                >
+                  {' '}·{unmappableCount}
+                </Typography>
+              )}
+            </>
+          }
+        />
       ))}
       {active.includes('contacts') && (
-        <button
-          className={`chip${showHistory ? ' active' : ''}`}
+        <Chip
+          label="History"
+          variant={showHistory ? 'filled' : 'outlined'}
+          color={showHistory ? 'primary' : 'default'}
           title="Show former addresses (residency history)"
           onClick={onToggleHistory}
-        >
-          History
-        </button>
+        />
       )}
       {active.includes('movement') && (
-        <span className="map-legend">
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{ ml: 0.5, color: 'text.secondary', fontSize: 12, alignItems: 'center' }}
+        >
           {(['Walk', 'Run', 'Cycle', 'Vehicle'] as const).map((a) => (
-            <span key={a} className="map-legend-item">
-              <span className="map-legend-swatch" style={{ background: activities[a] }} />
+            <Stack key={a} direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+              <Box
+                component="span"
+                sx={{ width: 14, height: 3, borderRadius: '2px', display: 'inline-block' }}
+                style={{ background: activities[a] }}
+              />
               {a}
-            </span>
+            </Stack>
           ))}
-        </span>
+        </Stack>
       )}
-    </div>
+    </Paper>
   );
 }

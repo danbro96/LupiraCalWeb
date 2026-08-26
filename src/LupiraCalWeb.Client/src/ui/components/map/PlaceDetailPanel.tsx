@@ -10,14 +10,34 @@ import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
 import { useGeoPlace, usePlaceItems } from '../../../state/usePlaces';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 import { DrawerSection } from '../DrawerSection';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 /** The ?place= detail pane (extracted from the former LocationsScreen): containment, items, contacts. */
 export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClose: () => void }) {
   const { data: place, isLoading } = useGeoPlace(placeId);
 
   return (
-    <aside className="map-detail">
-      <button className="map-popover-close" onClick={onClose} aria-label="Close">×</button>
+    <Paper
+      component="aside"
+      elevation={4}
+      sx={{
+        position: 'absolute',
+        zIndex: 6,
+        top: { xs: 'auto', sm: 1.5 },
+        right: 1.5,
+        left: { xs: 1.5, sm: 'auto' },
+        bottom: { xs: 'calc(64px + 12px)', sm: 1.5 },
+        maxHeight: { xs: '45vh', sm: 'none' },
+        width: { xs: 'auto', sm: 'min(360px, calc(100vw - 24px))' },
+        overflowY: 'auto',
+        borderRadius: '12px',
+        p: 1.5,
+      }}
+    >
+      <IconButton onClick={onClose} aria-label="Close" sx={{ position: 'absolute', top: 4, right: 4 }}>
+        <CloseIcon fontSize="small" />
+      </IconButton>
       {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
       {!isLoading && !place && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Place not found.</Typography>}
       {place && (
@@ -61,7 +81,7 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
           <ContactsPanel placeId={placeId} />
         </>
       )}
-    </aside>
+    </Paper>
   );
 }
 
