@@ -42,6 +42,13 @@ const ROLE_LABELS: Record<string, string> = {
   NonParticipant: 'fyi',
 };
 
+/** RSVP colour comes from the palette slots added for it, not a per-status class. */
+const STATUS_COLOR: Record<string, string> = {
+  Accepted: 'success.main',
+  Declined: 'error.main',
+  Tentative: 'warning.main',
+};
+
 const STATUS_LABELS: Record<string, string> = {
   NeedsAction: 'invited',
   Accepted: 'accepted',
@@ -88,7 +95,9 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
               <span>{contactName(a.contactId)}</span>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                {ROLE_LABELS[a.role ?? ''] ?? a.role} · <b className={`rsvp-${status.toLowerCase()}`}>{STATUS_LABELS[status] ?? status}</b>
+                {ROLE_LABELS[a.role ?? ''] ?? a.role} · <Box component="b" sx={{ color: STATUS_COLOR[status] }}>
+                  {STATUS_LABELS[status] ?? status}
+                </Box>
                 {a.attendedAt ? ' · attended' : ''}
                 {a.leftAt ? ' · left' : ''}
               </Typography>
