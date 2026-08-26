@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { List, Text, useTheme } from 'react-native-paper';
+import { Card, List, Text, useTheme } from 'react-native-paper';
 import { getDb } from '../../data/db/expoDb';
 import type { OutboxRow } from '../../data/mirror';
 import { opOfRow } from '../../data/mirror';
@@ -83,8 +83,9 @@ function ParkedCard({ row }: { row: OutboxRow }) {
   };
 
   return (
-    <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.warning }]}>
-      <Pressable onPress={() => setExpanded(!expanded)}>
+    <Card mode="outlined" style={styles.card} theme={{ colors: { outline: theme.colors.warning } }}>
+      <Card.Content>
+        <Pressable onPress={() => setExpanded(!expanded)}>
         <Text style={styles.opLabel}>{labelOf(row)}</Text>
         <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>
           {new Date(row.occurred_at).toLocaleString()} · {row.attempts} attempt{row.attempts === 1 ? '' : 's'}
@@ -93,13 +94,14 @@ function ParkedCard({ row }: { row: OutboxRow }) {
           <Text style={[styles.error, { color: theme.colors.error }]} numberOfLines={expanded ? undefined : 2}>{row.last_error}</Text>
         )}
       </Pressable>
-      {expanded && <Text style={[styles.payload, { color: theme.colors.onSurface, backgroundColor: theme.colors.background }]}>{payloadOf(row)}</Text>}
-      <View style={styles.cardButtons}>
+        {expanded && <Text style={[styles.payload, { backgroundColor: theme.colors.background }]}>{payloadOf(row)}</Text>}
+      </Card.Content>
+      <Card.Actions>
         <Button title="Retry" onPress={() => void retry()} />
         <Button title="Discard" kind="danger" onPress={() => void discard()} />
         <Button title={expanded ? 'Less' : 'Details'} kind="plain" onPress={() => setExpanded(!expanded)} />
-      </View>
-    </View>
+      </Card.Actions>
+    </Card>
   );
 }
 
@@ -123,11 +125,10 @@ const styles = StyleSheet.create({
   progressBlock: { gap: 6, marginTop: 8 },
   progressText: { fontSize: 13, textAlign: 'center' },
   empty: { textAlign: 'center', marginTop: 32 },
-  card: { borderWidth: 1, borderRadius: 8, padding: 10, gap: 6 },
+  card: { marginBottom: 8 },
   opLabel: { fontSize: 15, fontWeight: '600' },
   muted: { fontSize: 12 },
   error: { fontSize: 12 },
   payload: { fontFamily: 'monospace', fontSize: 11, borderRadius: 6, padding: 8 },
-  cardButtons: { flexDirection: 'row', gap: 8 },
   pendingRow: { paddingVertical: 6, borderBottomWidth: 0.5 },
 });

@@ -3,8 +3,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { HelperText, List, Switch, Text, useTheme } from 'react-native-paper';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Button, HelperText, List, Switch, Text, useTheme } from 'react-native-paper';
 import type { ItemForm } from '../../domain/editors';
 import { categoryAllDayDefault, emptyItemForm, itemCoreFromForm, itemFormFromDoc } from '../../domain/editors';
 import { createItem, reviseItem } from '../../state/actions';
@@ -108,9 +108,9 @@ export function ItemEditScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable onPress={saveAndLeave} hitSlop={8}>
-          <Text style={[styles.headerSave, { color: theme.colors.primary }, !dirty && styles.headerSaveIdle]}>Save</Text>
-        </Pressable>
+        <Button mode="text" compact disabled={!dirty} onPress={saveAndLeave}>
+          Save
+        </Button>
       ),
     });
   });
@@ -213,6 +213,4 @@ const styles = StyleSheet.create({
   muted: { fontSize: 13 },
   pair: { flexDirection: 'row', gap: 8 },
   pairItem: { flex: 1 },
-  headerSave: { fontSize: 16, fontWeight: '600', paddingRight: 4 },
-  headerSaveIdle: { opacity: 0.45 },
 });

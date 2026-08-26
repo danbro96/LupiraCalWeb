@@ -3,7 +3,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { HelperText, IconButton, List, Switch, Text, useTheme } from 'react-native-paper';
+import { Button, HelperText, IconButton, List, Switch, Text, useTheme } from 'react-native-paper';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
@@ -132,9 +132,9 @@ export function ContactEditScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable onPress={saveAndLeave} hitSlop={8}>
-          <Text style={[styles.headerSave, { color: theme.colors.primary }, !dirty && styles.headerSaveIdle]}>Save</Text>
-        </Pressable>
+        <Button mode="text" compact disabled={!dirty} onPress={saveAndLeave}>
+          Save
+        </Button>
       ),
     });
   });
@@ -305,8 +305,6 @@ const styles = StyleSheet.create({
   addRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 },
   addChip: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 },
   addChipText: { fontSize: 13 },
-  headerSave: { fontSize: 16, fontWeight: '600', paddingRight: 4 },
-  headerSaveIdle: { opacity: 0.45 },
 });
 
 function snapshot(form: ContactForm, channels: ReachChannel[], profiles: SocialProfile[], tagsCsv: string): string {

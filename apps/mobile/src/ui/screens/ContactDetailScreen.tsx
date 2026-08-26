@@ -5,7 +5,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Avatar, Chip, List, Text, useTheme } from 'react-native-paper';
+import { Avatar, Button, Chip, List, Text, useTheme } from 'react-native-paper';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
@@ -41,11 +41,13 @@ export function ContactDetailScreen() {
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.headerActions}>
-          <Pressable onPress={() => navigation.navigate('ContactEdit', { contactId })} hitSlop={8}>
-            <Text style={[styles.headerAction, { color: theme.colors.primary }]}>Edit</Text>
-          </Pressable>
-          <Pressable
-            hitSlop={8}
+          <Button mode="text" compact onPress={() => navigation.navigate('ContactEdit', { contactId })}>
+            Edit
+          </Button>
+          <Button
+            mode="text"
+            compact
+            textColor={theme.colors.error}
             onPress={() =>
               void confirm({
                 title: 'Delete contact',
@@ -57,8 +59,8 @@ export function ContactDetailScreen() {
               })
             }
           >
-            <Text style={[styles.headerDanger, { color: theme.colors.error }]}>Delete</Text>
-          </Pressable>
+            Delete
+          </Button>
         </View>
       ),
     });
@@ -156,20 +158,20 @@ export function ContactDetailScreen() {
 
       {relations.filter((r) => !r.ended).length > 0 && (
         <>
-          <Pressable style={styles.sectionToggle} onPress={() => setRelationsOpen((o) => !o)}>
-            <List.Subheader>
-              Relations ({relations.filter((r) => !r.ended).length})
-            </List.Subheader>
-            <Text style={[styles.chevron, { color: theme.colors.onSurfaceVariant }]}>{relationsOpen ? '▾' : '▸'}</Text>
-          </Pressable>
-          {relationsOpen && relations.filter((r) => !r.ended).map((r, i) => (
-            <ResolvedName
-              key={`${r.toContactId}-${i}`}
-              contactId={r.toContactId ?? ''}
-              prefix={`${r.label ?? r.kind ?? 'Related'} — `}
-              navigation={navigation}
-            />
-          ))}
+          <List.Accordion
+            title={`Relations (${relations.filter((r) => !r.ended).length})`}
+            expanded={relationsOpen}
+            onPress={() => setRelationsOpen((o) => !o)}
+          >
+            {relations.filter((r) => !r.ended).map((r, i) => (
+              <ResolvedName
+                key={`${r.toContactId}-${i}`}
+                contactId={r.toContactId ?? ''}
+                prefix={`${r.label ?? r.kind ?? 'Related'} — `}
+                navigation={navigation}
+              />
+            ))}
+          </List.Accordion>
         </>
       )}
 
@@ -290,11 +292,7 @@ const styles = StyleSheet.create({
   notes: { fontSize: 14 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   footer: { fontSize: 11, marginTop: 12, marginBottom: 16 },
-  headerActions: { flexDirection: 'row', gap: 16, paddingRight: 4 },
-  headerAction: { fontSize: 15 },
-  headerDanger: { fontSize: 15 },
+  headerActions: { flexDirection: 'row', paddingRight: 4 },
   reachRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4 },
   reachText: { flex: 1, fontSize: 14 },
-  sectionToggle: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  chevron: { fontSize: 13 },
 });
