@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { List, useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { List, Text, useTheme } from 'react-native-paper';
 import { getDb } from '../../data/db/expoDb';
 import type { OutboxRow } from '../../data/mirror';
 import { opOfRow } from '../../data/mirror';
@@ -85,7 +85,7 @@ function ParkedCard({ row }: { row: OutboxRow }) {
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.warning }]}>
       <Pressable onPress={() => setExpanded(!expanded)}>
-        <Text style={[styles.opLabel, { color: theme.colors.onSurface }]}>{labelOf(row)}</Text>
+        <Text style={styles.opLabel}>{labelOf(row)}</Text>
         <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>
           {new Date(row.occurred_at).toLocaleString()} · {row.attempts} attempt{row.attempts === 1 ? '' : 's'}
         </Text>

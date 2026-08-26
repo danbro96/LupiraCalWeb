@@ -1,8 +1,8 @@
 import { clampToDay, layoutColumns } from '@lupira/cal-domain/occurrences';
 import { daysFrom, isToday, ymd } from '@lupira/cal-domain/time';
 import { memo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import type { GridRow } from '../../data/mirror';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';

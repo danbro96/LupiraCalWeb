@@ -2,8 +2,8 @@ import { addDays, addMonths, fmtMonthTitle, fmtTime, parseYmd, startOfWeek } fro
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
-import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button, FAB, IconButton, useTheme } from 'react-native-paper';
+import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
@@ -127,7 +127,7 @@ export function CalendarScreen() {
               <View style={styles.sheetHeader} {...pan.panHandlers}>
                 <View style={[styles.handle, { backgroundColor: theme.colors.outlineVariant }]} />
                 <View style={styles.sheetHeaderRow}>
-                  <Text style={[styles.sheetTitle, { color: theme.colors.onSurface }]}>
+                  <Text style={styles.sheetTitle}>
                     {parseYmd(selectedDay).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
                   </Text>
                   <View style={styles.sheetActions}>

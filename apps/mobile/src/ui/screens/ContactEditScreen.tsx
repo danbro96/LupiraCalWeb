@@ -2,8 +2,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { HelperText, IconButton, List, Switch, useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { HelperText, IconButton, List, Switch, Text, useTheme } from 'react-native-paper';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
@@ -269,7 +269,7 @@ export function ContactEditScreen() {
         {REACH_KINDS.map((k) => (
           <Pressable key={k.key} style={[styles.addChip, { borderColor: theme.colors.outline }]} onPress={() => addReach(k.key)}>
             <ReachIcon kind={k.key} size={13} />
-            <Text style={[styles.addChipText, { color: theme.colors.onSurface }]}>{k.key}</Text>
+            <Text style={styles.addChipText}>{k.key}</Text>
           </Pressable>
         ))}
       </View>

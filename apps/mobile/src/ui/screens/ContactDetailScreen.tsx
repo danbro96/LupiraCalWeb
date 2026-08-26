@@ -4,8 +4,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Avatar, Chip, List, useTheme } from 'react-native-paper';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Avatar, Chip, List, Text, useTheme } from 'react-native-paper';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
@@ -143,7 +143,7 @@ export function ContactDetailScreen() {
       {doc.notes ? (
         <>
           <List.Subheader>Notes</List.Subheader>
-          <Text style={[styles.notes, { color: theme.colors.onSurface }]}>{doc.notes}</Text>
+          <Text style={styles.notes}>{doc.notes}</Text>
         </>
       ) : null}
 

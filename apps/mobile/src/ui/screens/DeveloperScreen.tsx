@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button, List, RadioButton, useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, List, RadioButton, Text, useTheme } from 'react-native-paper';
 import { API_PRESETS, type AuthMode } from '../../config';
 import { presetFor, useAuth } from '../../state/auth-store';
 import { useSyncStatus } from '../../sync/syncStatus';

@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { List, Switch, useTheme } from 'react-native-paper';
+import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { List, Switch, Text, useTheme } from 'react-native-paper';
 import { APP_VERSION } from '../../config';
 import { useAuth } from '../../state/auth-store';
 import { useBridge } from '../../state/bridge-store';

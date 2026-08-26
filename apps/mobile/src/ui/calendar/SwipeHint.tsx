@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import type { SwipeHint as Hint } from './useHorizontalSwipe';
 
 /// Floating drag feedback: a pill on the edge you are dragging toward, naming the period you would

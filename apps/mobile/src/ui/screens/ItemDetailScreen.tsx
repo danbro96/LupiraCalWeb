@@ -4,8 +4,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Chip, List, useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Chip, List, Text, useTheme } from 'react-native-paper';
 import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { Centered } from '../components/Centered';
@@ -59,7 +59,7 @@ export function ItemDetailScreen() {
           <Chip key={t} compact>{`#${t}`}</Chip>
         ))}
       </View>
-      {doc.description ? <Text style={[styles.description, { color: theme.colors.onSurface }]}>{doc.description}</Text> : null}
+      {doc.description ? <Text style={styles.description}>{doc.description}</Text> : null}
       {attendees > 0 && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>{attendees} participant{attendees === 1 ? '' : 's'} (manage on web)</Text>}
       {doc.prompt != null && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>Has a prompt payload (view on web)</Text>}
       {doc.action != null && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>Has an action payload (view on web)</Text>}
@@ -129,7 +129,7 @@ function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<
       {entries.map(([k, v]) => (
         <Pressable key={k} style={styles.metaRow} onPress={() => { setKey(k); setValue(typeof v === 'string' ? v : JSON.stringify(v)); }}>
           <Text style={[styles.metaKey, { color: theme.colors.onSurfaceVariant }]}>{k}</Text>
-          <Text style={[styles.metaValue, { color: theme.colors.onSurface }]} numberOfLines={1}>{typeof v === 'string' ? v : JSON.stringify(v)}</Text>
+          <Text style={styles.metaValue} numberOfLines={1}>{typeof v === 'string' ? v : JSON.stringify(v)}</Text>
         </Pressable>
       ))}
       <View style={styles.metaEdit}>

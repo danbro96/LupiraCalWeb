@@ -2,8 +2,8 @@ import { fmtWhen } from '@lupira/cal-domain/time';
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
-import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Chip, useTheme } from 'react-native-paper';
+import { Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { Chip, Text, useTheme } from 'react-native-paper';
 import { getListsListIdItemsItemId } from '../../data/api/generated/tasks/items/items';
 import { taskDeepLink } from '../../domain/taskRows';
 import { Centered } from '../components/Centered';
@@ -57,7 +57,7 @@ export function TaskDetailScreen() {
       {task.assignee && (
         <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>Assigned to {task.assignee.displayName || task.assignee.email}</Text>
       )}
-      {task.notes ? <Text style={[styles.notes, { color: theme.colors.onSurface }]}>{task.notes}</Text> : null}
+      {task.notes ? <Text style={styles.notes}>{task.notes}</Text> : null}
       <View style={styles.actions}>
         <Button title="Open in Lupira Tasks ↗" onPress={openInTasks} />
       </View>

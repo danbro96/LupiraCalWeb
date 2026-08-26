@@ -1,7 +1,7 @@
 import { isToday, monthMatrix, ymd } from '@lupira/cal-domain/time';
 import { memo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';

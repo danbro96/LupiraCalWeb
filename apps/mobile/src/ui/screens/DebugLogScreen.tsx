@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { debugEntries, onDebugLog } from '../../debug/log';
 
 export function DebugLogScreen() {
