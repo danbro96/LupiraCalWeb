@@ -1,4 +1,5 @@
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { addDays, startOfDay, ymd } from '@lupira/cal-domain/time';
 import { ACTIVITY_COLORS, type MapTheme } from './mapTokens';
 
@@ -92,9 +93,9 @@ export function LayerToggles({ active, onToggle, theme, unmappableCount, showHis
         >
           {t.label}
           {t.key === 'events' && unmappableCount > 0 && (
-            <span className="meta" title={`${unmappableCount} occurrences have a free-text location only (no place)`}>
+            <Typography variant="caption" color="text.secondary" title={`${unmappableCount} occurrences have a free-text location only (no place)`}>
               {' '}·{unmappableCount}
-            </span>
+            </Typography>
           )}
         </button>
       ))}

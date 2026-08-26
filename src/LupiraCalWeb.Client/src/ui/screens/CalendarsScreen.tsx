@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { logout } from '../../data/session';
 import { useSession } from '../../state/useSession';
 import { useCreateCalendar, useGrantCalendarOwner, useRevokeCalendarOwner } from '../../data/api/lupiraCalApi';
@@ -198,7 +199,7 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
       >
         Revoke
       </Button>
-      {(grant.isPending || revoke.isPending) && <span className="meta">…</span>}
+      {(grant.isPending || revoke.isPending) && <Typography variant="caption" color="text.secondary">…</Typography>}
     </div>
   );
 }

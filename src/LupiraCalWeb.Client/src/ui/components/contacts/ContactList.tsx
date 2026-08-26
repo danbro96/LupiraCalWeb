@@ -5,6 +5,7 @@ import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-dom';
 import { useCreateContact, useSetContactTags } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto, ContactReachChannel } from '../../../data/api-contact/models';
@@ -129,7 +130,7 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
       </Avatar>
       <span className="contact-name">
         {c.displayName}
-        {c.nickname && c.nickname !== c.displayName ? <span className="meta"> “{c.nickname}”</span> : null}
+        {c.nickname && c.nickname !== c.displayName ? <Typography variant="caption" color="text.secondary"> “{c.nickname}”</Typography> : null}
       </span>
       {c.birthday && <Chip variant="outlined" label={`🎂 ${partialDateBadge(c.birthday)}`} />}
       {c.completeness && (
@@ -199,14 +200,14 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
       </div>
       <div className="form-row">
         <TextField placeholder="Nickname" value={form.nickname} onChange={(e) => setForm({ ...form, nickname: e.target.value })} />
-        <label className="meta">
+        <Typography variant="caption" color="text.secondary" component="label">
           <input
             type="checkbox"
             checked={form.birthdayYearKnown}
             onChange={(e) => setForm({ ...form, birthdayYearKnown: e.target.checked, birthday: '', birthdayMonth: '', birthdayDay: '' })}
           />{' '}
           Enter year
-        </label>
+        </Typography>
         {form.birthdayYearKnown ? (
           <Tooltip title="Birthday">
             <TextField type="date" value={form.birthday} onChange={(e) => setForm({ ...form, birthday: e.target.value })} />

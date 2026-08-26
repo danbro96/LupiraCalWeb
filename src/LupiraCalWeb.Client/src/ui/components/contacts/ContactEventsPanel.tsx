@@ -1,4 +1,5 @@
 import MuiLink from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useSearchItems } from '../../../data/api/lupiraCalApi';
 import { fmtWhen } from '@lupira/cal-domain/time';
@@ -30,7 +31,7 @@ export function ContactEventsPanel({ contactId }: { contactId: string }) {
         <Link key={e.id} to={itemHref(e.id)} className="location-row">
           <span className="kind-icon">{(e.category && ITEM_CATEGORY_ICONS[e.category]) || '📅'}</span>
           <span className="location-name">{e.title || '(untitled)'}</span>
-          <span className="meta">{fmtWhen(e.start, e.isAllDay)}</span>
+          <Typography variant="caption" color="text.secondary">{fmtWhen(e.start, e.isAllDay)}</Typography>
         </Link>
       ))}
       <MuiLink

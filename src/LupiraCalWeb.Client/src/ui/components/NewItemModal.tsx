@@ -10,6 +10,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import { useCreateItem } from '../../data/api/lupiraCalApi';
 import { AvailabilityStatus, type CreateCalendarItemRequest } from '../../data/api/models';
@@ -168,7 +169,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               control={control}
               render={({ field }) => <TextField type="date" {...field} required />}
             />
-            <span className="meta">→</span>
+            <Typography variant="caption" color="text.secondary">→</Typography>
             <Controller name="endDate" control={control} render={({ field }) => <TextField type="date" {...field} />} />
           </div>
         ) : (
@@ -178,7 +179,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               control={control}
               render={({ field }) => <TextField type="datetime-local" {...field} required />}
             />
-            <span className="meta">→</span>
+            <Typography variant="caption" color="text.secondary">→</Typography>
             <Controller name="end" control={control} render={({ field }) => <TextField type="datetime-local" {...field} />} />
           </div>
         )}

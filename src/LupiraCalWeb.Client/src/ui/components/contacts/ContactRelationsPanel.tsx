@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -145,8 +146,8 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
-                  {r.label && <span className="meta">“{r.label}”</span>}
-                  {r.ended && <span className="meta">· ended{r.until ? ` ${r.until}` : ''}</span>}
+                  {r.label && <Typography variant="caption" color="text.secondary">“{r.label}”</Typography>}
+                  {r.ended && <Typography variant="caption" color="text.secondary">· ended{r.until ? ` ${r.until}` : ''}</Typography>}
                   {r.ended ? (
                     <Tooltip title="Revive relationship">
                       <IconButton
@@ -182,7 +183,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
-                  <span className="meta">· managed on their card</span>
+                  <Typography variant="caption" color="text.secondary">· managed on their card</Typography>
                 </div>
               ))}
               {open && inferred.map((r) => (
@@ -191,7 +192,7 @@ export function ContactRelationsPanel({ contact }: { contact: ContactDto }) {
                   <Link className="membership-name" to={link(r.contactId)}>
                     {r.displayName}
                   </Link>
-                  <span className="meta">· derived</span>
+                  <Typography variant="caption" color="text.secondary">· derived</Typography>
                 </div>
               ))}
             </div>

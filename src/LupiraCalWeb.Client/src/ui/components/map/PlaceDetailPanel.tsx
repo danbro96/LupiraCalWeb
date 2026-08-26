@@ -1,6 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
 import { formatCoords, osmUrl } from '@lupira/cal-domain/places';
@@ -15,7 +16,7 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
   return (
     <aside className="map-detail">
       <button className="map-popover-close" onClick={onClose} aria-label="Close">×</button>
-      {isLoading && <p className="meta">Loading…</p>}
+      {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
       {!isLoading && !place && <p className="empty">Place not found.</p>}
       {place && (
         <>
@@ -75,7 +76,7 @@ function ItemsPanel({ placeId }: { placeId: string }) {
   return (
     <section className="drawer-section">
       <h3>Items here</h3>
-      {isLoading && <p className="meta">Loading…</p>}
+      {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
       {!isLoading && (items ?? []).length === 0 && <p className="empty">No items reference this place.</p>}
       {(items ?? []).map((item) => (
         <Link key={item.id} to={itemHref(item.id)} className="location-row">
@@ -83,7 +84,7 @@ function ItemsPanel({ placeId }: { placeId: string }) {
             <span className="kind-icon">{ITEM_CATEGORY_ICONS[item.category]}</span>
           )}
           <span className="location-name">{item.title || '(untitled)'}</span>
-          <span className="meta">{whenOf(item)}</span>
+          <Typography variant="caption" color="text.secondary">{whenOf(item)}</Typography>
           {roleOf(item, placeId) && <span className="loc-role">{roleOf(item, placeId)}</span>}
         </Link>
       ))}

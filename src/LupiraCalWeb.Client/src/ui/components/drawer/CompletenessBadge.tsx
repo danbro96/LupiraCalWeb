@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
 import type { CompletenessScore } from '../../../data/api/models';
 
 /** Score ring + expandable gap list (field, weight, severity). Exempt items pass null and render nothing. */
@@ -24,7 +25,7 @@ export function CompletenessBadge({ score }: { score?: CompletenessScore | null 
           {score.gaps.map((g) => (
             <li key={g.field}>
               <Chip variant="outlined" label={g.severity} /> {g.field}
-              <span className="meta"> ·  weight {g.weight}</span>
+              <Typography variant="caption" color="text.secondary"> ·  weight {g.weight}</Typography>
             </li>
           ))}
         </ul>

@@ -7,6 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import { useCreateItem } from '../../data/api/lupiraCalApi';
 import { AvailabilityStatus, type CreateCalendarItemRequest } from '../../data/api/models';
@@ -70,7 +71,7 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
       </DialogTitle>
       <form onSubmit={submit}>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pt: 0 }}>
-          {!availabilityCalendar && <p className="meta">No availability calendar — bootstrap the standard set first.</p>}
+          {!availabilityCalendar && <Typography variant="caption" color="text.secondary" component="p">No availability calendar — bootstrap the standard set first.</Typography>}
         <div className="form-row">
           <Controller
             name="status"

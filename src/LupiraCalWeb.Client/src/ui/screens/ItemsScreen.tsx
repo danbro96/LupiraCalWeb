@@ -7,6 +7,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useGetItem } from '../../data/api/lupiraCalApi';
 import { useGetContact } from '../../data/api-contact/lupiraContactApi';
@@ -169,7 +170,7 @@ export function ItemsScreen() {
     <div className="page items-page">
       <div className="page-head">
         <h2>Items</h2>
-        {isFetching && !isFetchingNextPage && <span className="meta">loading…</span>}
+        {isFetching && !isFetchingNextPage && <Typography variant="caption" color="text.secondary">loading…</Typography>}
       </div>
       <div className="cal-filters items-filters">
         <form

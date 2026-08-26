@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useDeleteItem, useGetItem, useUpdateItem } from '../../../data/api/lupiraCalApi';
 import {
   AvailabilityStatus,
@@ -133,7 +134,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
                 if (iso && iso !== item.startsAt) patch({ startsAt: iso });
               }}
             />
-            <span className="meta">→</span>
+            <Typography variant="caption" color="text.secondary">→</Typography>
             <TextField
               type="datetime-local"
               defaultValue={isoToLocalInput(item.endsAt)}
@@ -173,7 +174,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             onBlur={() => rrule && rrule !== (item.recurrenceRule ?? '') && patch({ recurrenceRule: rrule })}
           />
         </div>
-        {item.recurrenceRule && <p className="meta">{describeRrule(item.recurrenceRule)}</p>}
+        {item.recurrenceRule && <Typography variant="caption" color="text.secondary" component="p">{describeRrule(item.recurrenceRule)}</Typography>}
       </section>
 
       <section className="drawer-section">
@@ -185,7 +186,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
           onChange={(placeId) => (placeId ? patch({ placeId, placeIdProvided: true }) : patch({ placeId: null, placeIdProvided: true }))}
         />
         {!item.placeId && item.locationLabel && (
-          <p className="meta">“{item.locationLabel}” from calendar text</p>
+          <Typography variant="caption" color="text.secondary" component="p">“{item.locationLabel}” from calendar text</Typography>
         )}
       </section>
 
@@ -230,9 +231,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <MetadataPanel itemId={item.id} metadata={item.metadata} />
 
       <div className="drawer-footer">
-        <span className="meta" title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
+        <Typography variant="caption" color="text.secondary" title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
           {item.category ?? 'General'} item
-        </span>
+        </Typography>
         <Button variant="outlined" color="error" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>
           Delete item
         </Button>

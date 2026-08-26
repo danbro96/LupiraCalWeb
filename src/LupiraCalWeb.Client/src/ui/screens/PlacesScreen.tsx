@@ -15,6 +15,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { classifyOrphan, defaultPruneSelection, type OrphanClass } from '@lupira/cal-domain/placeCuration';
 import { useUpdatePlace } from '../../data/api-geo/lupiraGeoApi';
 import { PlaceSource, type OrphanCandidateDto, type PlaceDto } from '../../data/api-geo/models';
@@ -99,9 +100,9 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
           <MenuItem value="false">Unverified</MenuItem>
         </TextField>
       </div>
-      {isLoading && <p className="meta">Loading…</p>}
+      {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
       {error != null && <Alert severity="error">{errText(error) ?? 'Failed to load places.'}</Alert>}
-      {places && places.length === 0 && <p className="meta">Every place has coordinates.</p>}
+      {places && places.length === 0 && <Typography variant="caption" color="text.secondary" component="p">Every place has coordinates.</Typography>}
       {places && places.length > 0 && (
         <Table size="small">
           <TableHead>
@@ -175,10 +176,10 @@ function UnlocatedRow({ place, onFixOnMap, onManualCoords, onVerify, onHistory }
         )}
         {regeocode.error != null && <span className="error-text"> {errText(regeocode.error) ?? 'Regeocode failed.'}</span>}
       </TableCell>
-      <TableCell className="meta">{place.kind}</TableCell>
-      <TableCell className="meta">{place.category}</TableCell>
-      <TableCell className="meta">{place.source}</TableCell>
-      <TableCell>{place.verified ? <Chip label="Verified" /> : <span className="meta">—</span>}</TableCell>
+      <TableCell sx={{ color: 'text.secondary' }}>{place.kind}</TableCell>
+      <TableCell sx={{ color: 'text.secondary' }}>{place.category}</TableCell>
+      <TableCell sx={{ color: 'text.secondary' }}>{place.source}</TableCell>
+      <TableCell>{place.verified ? <Chip label="Verified" /> : <Typography variant="caption" color="text.secondary">—</Typography>}</TableCell>
       <TableCell>
         <Button disabled={regeocode.isPending || !!regeocode.data} onClick={() => regeocode.mutate({ id: place.id })}>
           {regeocode.isPending ? 'Regeocoding…' : 'Regeocode'}
@@ -277,14 +278,14 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
   return (
     <section className="drawer-section">
       <h3>Orphans</h3>
-      {isLoading && <p className="meta">Loading…</p>}
+      {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
       {error != null &&
         (isLanOnly404(error) ? (
           <Alert severity="info">{LAN_ONLY_MSG}</Alert>
         ) : (
           <Alert severity="error">{errText(error) ?? 'Failed to load orphans.'}</Alert>
         ))}
-      {orphans && orphans.length === 0 && <p className="meta">No orphaned places.</p>}
+      {orphans && orphans.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No orphaned places.</Typography>}
       {orphans && orphans.length > 0 && (
         <>
           <Table size="small">
@@ -329,7 +330,7 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
       <Dialog open={confirming} onClose={() => setConfirming(false)}>
         <DialogTitle>Soft delete {selected.size} place{selected.size === 1 ? '' : 's'}?</DialogTitle>
         <DialogContent>
-          <p className="meta">References are re-checked at prune time; anything referenced since is left alone.</p>
+          <Typography variant="caption" color="text.secondary" component="p">References are re-checked at prune time; anything referenced since is left alone.</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirming(false)}>
@@ -359,11 +360,11 @@ function OrphanRow({ orphan, checked, onToggle, onHistory }: {
         <Checkbox size="small" checked={checked} disabled={cls === 'referenced'} onChange={onToggle} />
       </TableCell>
       <TableCell>{orphan.name}</TableCell>
-      <TableCell className="meta">
+      <TableCell sx={{ color: 'text.secondary' }}>
         {orphan.kind}
         {orphan.category !== 'Unknown' ? ` · ${orphan.category}` : ''}
       </TableCell>
-      <TableCell className="meta">{orphan.source}</TableCell>
+      <TableCell sx={{ color: 'text.secondary' }}>{orphan.source}</TableCell>
       <TableCell align="right">{orphan.contactRefs}</TableCell>
       <TableCell align="right">{orphan.calendarLiveRefs}</TableCell>
       <TableCell align="right">{orphan.calendarDeletedRefs}</TableCell>
@@ -387,23 +388,23 @@ function HistoryDrawer({ placeId, name, onClose }: { placeId: string; name: stri
     <Drawer anchor="right" open onClose={onClose}>
       <div className="drawer-pad" style={{ width: 360, maxWidth: '90vw' }}>
         <h3>History — {name}</h3>
-        {isLoading && <p className="meta">Loading…</p>}
+        {isLoading && <Typography variant="caption" color="text.secondary" component="p">Loading…</Typography>}
         {error != null &&
           (isLanOnly404(error) ? (
             <Alert severity="info">{LAN_ONLY_MSG}</Alert>
           ) : (
             <Alert severity="error">{errText(error) ?? 'Failed to load history.'}</Alert>
           ))}
-        {events && events.length === 0 && <p className="meta">No curation events.</p>}
+        {events && events.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No curation events.</Typography>}
         {events?.map((e) => (
           <div key={e.seq} className="drawer-section">
             <p className="field-value">
               #{e.seq} {e.action}
-              <span className="meta"> · {new Date(e.at).toLocaleString()}</span>
+              <Typography variant="caption" color="text.secondary"> · {new Date(e.at).toLocaleString()}</Typography>
             </p>
-            {e.detail && <p className="meta">{e.detail}</p>}
-            {e.relatedPlaceId && <p className="meta">related: {e.relatedPlaceId}</p>}
-            {e.actorPrincipalId && <p className="meta">by {e.actorPrincipalId}</p>}
+            {e.detail && <Typography variant="caption" color="text.secondary" component="p">{e.detail}</Typography>}
+            {e.relatedPlaceId && <Typography variant="caption" color="text.secondary" component="p">related: {e.relatedPlaceId}</Typography>}
+            {e.actorPrincipalId && <Typography variant="caption" color="text.secondary" component="p">by {e.actorPrincipalId}</Typography>}
           </div>
         ))}
       </div>

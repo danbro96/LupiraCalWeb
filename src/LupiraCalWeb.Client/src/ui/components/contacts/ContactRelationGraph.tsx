@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -166,7 +167,7 @@ export function ContactRelationGraph({
     markerEnd: e.directed ? { type: MarkerType.ArrowClosed } : undefined,
   }));
 
-  if (results[0]?.isLoading) return <p className="meta">Loading relations…</p>;
+  if (results[0]?.isLoading) return <Typography variant="caption" color="text.secondary" component="p">Loading relations…</Typography>;
   if (graph.edges.length === 0)
     return <p className="empty">{categories.size > 0 ? 'No relations in the selected categories.' : 'No relations yet.'}</p>;
 

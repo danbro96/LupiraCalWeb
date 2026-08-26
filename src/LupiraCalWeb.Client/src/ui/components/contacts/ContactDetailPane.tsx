@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import type { SxProps, Theme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -58,7 +59,7 @@ export function ContactDetailPane() {
   const [editing, setEditing] = useState(false);
   const [showCircles, setShowCircles] = useState(false);
 
-  if (isLoading) return <div className="contacts-detail-pane"><p className="meta">Loading…</p></div>;
+  if (isLoading) return <div className="contacts-detail-pane"><Typography variant="caption" color="text.secondary" component="p">Loading…</Typography></div>;
   if (!contact) return <div className="contacts-detail-pane"><p className="empty">Contact not found.</p></div>;
 
   const memberOf = (groups ?? []).filter((g) => g.members.some((m) => m.contactId === contact.id));
@@ -72,7 +73,7 @@ export function ContactDetailPane() {
       <div className="page-head">
         <h2>
           {contact.displayName}
-          {contact.nickname && contact.nickname !== contact.displayName && <span className="meta"> “{contact.nickname}”</span>}
+          {contact.nickname && contact.nickname !== contact.displayName && <Typography variant="caption" color="text.secondary"> “{contact.nickname}”</Typography>}
           {contact.deceased && (
             <Tooltip title={contact.deathDate ? `died ${contact.deathDate}` : 'deceased'}>
               <Chip variant="outlined" label="†" />
@@ -119,7 +120,7 @@ export function ContactDetailPane() {
                 <dd>
                   📍 <PlaceLabel placeId={a.placeId} link />
                   {(a.movedIn || a.movedOut) && (
-                    <span className="meta"> · {fmtResidencyPeriod(a.movedIn, a.movedOut)}{residencySuffix(a.movedIn, a.movedOut)}</span>
+                    <Typography variant="caption" color="text.secondary"> · {fmtResidencyPeriod(a.movedIn, a.movedOut)}{residencySuffix(a.movedIn, a.movedOut)}</Typography>
                   )}
                 </dd>
               </div>
@@ -221,10 +222,10 @@ export function ContactDetailPane() {
       </section>
 
       {contact.updatedAt && (
-        <p className="meta">
+        <Typography variant="caption" color="text.secondary" component="p">
           Updated {fmtDate(new Date(contact.updatedAt))}
           {contact.createdAt && ` · added ${fmtDate(new Date(contact.createdAt))}`}
-        </p>
+        </Typography>
       )}
       <div className="detail-footer">
         <Button variant="text" disabled={setMe.isPending} onClick={() => setMe.mutate({ data: { contactId: contact.id } })}>

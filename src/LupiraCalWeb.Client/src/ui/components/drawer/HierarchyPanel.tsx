@@ -1,5 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { useGetItem, useSearchItems } from '../../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { fmtWhen } from '@lupira/cal-domain/time';
@@ -26,7 +27,7 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
       <h3>Hierarchy</h3>
       {parent && (
         <Link to={itemHref(parent.id)} className="location-row">
-          <span className="meta">↳ part of</span>
+          <Typography variant="caption" color="text.secondary">↳ part of</Typography>
           <span className="location-name">{parent.title || '(untitled)'}</span>
         </Link>
       )}
@@ -34,7 +35,7 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
         <Link key={c.id} to={itemHref(c.id)} className="location-row">
           <span className="kind-icon">{(c.category && ITEM_CATEGORY_ICONS[c.category]) || '📅'}</span>
           <span className="location-name">{c.title || '(untitled)'}</span>
-          <span className="meta">{fmtWhen(c.start, c.isAllDay)}</span>
+          <Typography variant="caption" color="text.secondary">{fmtWhen(c.start, c.isAllDay)}</Typography>
         </Link>
       ))}
       {children.length > 0 && (

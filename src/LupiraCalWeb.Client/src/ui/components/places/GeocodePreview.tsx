@@ -8,6 +8,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 import { hitContext, type PickerHit } from './placePickerMachine';
 
 /** "Did you mean…?" over forward-geocode hits. Cancel/close never creates anything. */
@@ -24,7 +25,7 @@ export function GeocodePreview({ query, hits, busy, error, onPick, onPin, onCanc
     <Dialog open onClose={busy ? undefined : onCancel} maxWidth="sm" fullWidth>
       <DialogTitle>{hits.length > 0 ? 'Did you mean…?' : 'No matches'}</DialogTitle>
       <DialogContent>
-        {hits.length === 0 && <p className="meta">Nothing found for “{query}”.</p>}
+        {hits.length === 0 && <Typography variant="caption" color="text.secondary" component="p">Nothing found for “{query}”.</Typography>}
         {hits.length > 0 && (
           <List dense disablePadding>
             {hits.map((hit, i) => (

@@ -1,4 +1,5 @@
 import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
 import { Link, useLocation } from 'react-router-dom';
 import { useGetContactCircles } from '../../../data/api-contact/lupiraContactApi';
 import type { CircleKind } from '../../../data/api-contact/models';
@@ -15,7 +16,7 @@ const CIRCLE_LABEL: Record<CircleKind, string> = {
 export function ContactCircles({ focusId }: { focusId: string }) {
   const location = useLocation();
   const { data, isLoading } = useGetContactCircles({ focusId });
-  if (isLoading) return <p className="meta">Loading circles…</p>;
+  if (isLoading) return <Typography variant="caption" color="text.secondary" component="p">Loading circles…</Typography>;
 
   const circles = (data?.circles ?? []).filter((c) => c.members.length > 0);
   if (circles.length === 0) return <p className="empty">No circles yet — add relations to build them.</p>;

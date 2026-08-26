@@ -1,4 +1,5 @@
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { useGetListsListIdItemsItemId } from '../../../data/api-tasks/lupiraTasksApi';
 import type { ItemResponse } from '../../../data/api-tasks/models';
 import { fmtDate, fmtTime } from '@lupira/cal-domain/time';
@@ -39,7 +40,7 @@ function TaskBody({ task }: { task: ItemResponse }) {
             {overdue ? ' — overdue' : ''}
           </p>
         ) : (
-          <p className="meta">No deadline.</p>
+          <Typography variant="caption" color="text.secondary" component="p">No deadline.</Typography>
         )}
       </section>
 
@@ -49,8 +50,8 @@ function TaskBody({ task }: { task: ItemResponse }) {
           {task.status}
           {task.statusReason ? ` — ${task.statusReason}` : ''}
         </p>
-        {task.priority > 0 && <p className="meta">Priority {task.priority}</p>}
-        {task.assignee && <p className="meta">Assigned to {task.assignee.displayName || task.assignee.email}</p>}
+        {task.priority > 0 && <Typography variant="caption" color="text.secondary" component="p">Priority {task.priority}</Typography>}
+        {task.assignee && <Typography variant="caption" color="text.secondary" component="p">Assigned to {task.assignee.displayName || task.assignee.email}</Typography>}
       </section>
 
       {task.notes && (

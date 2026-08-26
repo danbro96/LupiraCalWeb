@@ -1,3 +1,4 @@
+import Typography from '@mui/material/Typography';
 export interface IndexRow {
   key: string;
   primary: string;
@@ -23,7 +24,7 @@ export function MapIndexPanel({ groups, onClose }: { groups: IndexGroup[]; onClo
           {group.rows.map((row) => (
             <button key={row.key} className="location-row" onClick={row.onClick}>
               <span className="location-name">{row.primary}</span>
-              {row.secondary && <span className="meta">{row.secondary}</span>}
+              {row.secondary && <Typography variant="caption" color="text.secondary">{row.secondary}</Typography>}
             </button>
           ))}
         </section>

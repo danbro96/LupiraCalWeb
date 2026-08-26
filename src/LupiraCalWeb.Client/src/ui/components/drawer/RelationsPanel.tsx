@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useCreateItemRelation, useListItemRelations } from '../../../data/api/lupiraCalApi';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 
@@ -18,9 +19,9 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
       {(relations ?? []).map((r) => (
         <div key={r.id} className="relation-row">
           <Chip variant="outlined" label={r.relationType} />
-          <span className="meta">
+          <Typography variant="caption" color="text.secondary">
             {r.toKind}: <code>{r.toRef}</code>
-          </span>
+          </Typography>
         </div>
       ))}
       <form

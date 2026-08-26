@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useMatch, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useCreateAddressBook,
@@ -45,7 +46,7 @@ export function ContactsTree() {
         me &&
         (allContacts?.length ?? 0) > 0 && (
           <div className="tree-add">
-            <span className="meta">Open your card → “This is me” to pin it here.</span>
+            <Typography variant="caption" color="text.secondary">Open your card → “This is me” to pin it here.</Typography>
           </div>
         )
       )}

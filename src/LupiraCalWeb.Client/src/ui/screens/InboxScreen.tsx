@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { useAcceptItemIntoCalendar, useRemoveItemFromCalendar } from '../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../data/api/models';
 import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
@@ -33,7 +34,7 @@ export function InboxScreen() {
   return (
     <div className="page">
       <h2>Inbox</h2>
-      <p className="meta">Items proposed into your calendars, awaiting curation.</p>
+      <Typography variant="caption" color="text.secondary" component="p">Items proposed into your calendars, awaiting curation.</Typography>
       {groups.length === 0 && <p className="empty">Nothing to curate. 🎉</p>}
       {groups.map(({ calendar, items }) => (
         <section key={calendar.id} className="inbox-group">
@@ -44,7 +45,7 @@ export function InboxScreen() {
             <div key={item.id} className="inbox-row">
               <button className="inbox-body" onClick={() => open(item.id)}>
                 <span className="title">{item.title || '(untitled)'}</span>
-                <span className="meta">{itemWhen(item)}</span>
+                <Typography variant="caption" color="text.secondary">{itemWhen(item)}</Typography>
               </button>
               <Button variant="outlined" onClick={() => accept.mutate({ itemId: item.id, calendarId: calendar.id })}>
                 Accept

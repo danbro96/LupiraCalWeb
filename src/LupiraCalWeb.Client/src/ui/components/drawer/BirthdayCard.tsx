@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { useGetContact } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto } from '../../../data/api-contact/models';
 import { nextBirthday, turningAge } from '@lupira/cal-domain/birthday';
@@ -46,7 +47,7 @@ function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | n
 
       <section className="drawer-section">
         <h3>Birthday</h3>
-        {b ? <p className="field-value">{fmtPartialDate(b)}</p> : <p className="meta">Unknown.</p>}
+        {b ? <p className="field-value">{fmtPartialDate(b)}</p> : <Typography variant="caption" color="text.secondary" component="p">Unknown.</Typography>}
         {age != null && onDate && (
           <p className="field-value">
             {verb} {age} on {fmtDate(onDate)}

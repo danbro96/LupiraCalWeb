@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import CloseIcon from '@mui/icons-material/Close';
@@ -73,7 +74,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
   return (
     <section className="drawer-section">
       <h3>Attendees</h3>
-      {item.attendees.length === 0 && <p className="meta">No attendees yet.</p>}
+      {item.attendees.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No attendees yet.</Typography>}
       {item.attendees.map((a) => {
         const pid = a.participationId ?? '';
         const status = a.status ?? 'NeedsAction';
@@ -84,11 +85,11 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
             </Avatar>
             <div className="attendee-info">
               <span>{contactName(a.contactId)}</span>
-              <span className="meta">
+              <Typography variant="caption" color="text.secondary">
                 {ROLE_LABELS[a.role ?? ''] ?? a.role} · <b className={`rsvp-${status.toLowerCase()}`}>{STATUS_LABELS[status] ?? status}</b>
                 {a.attendedAt ? ' · attended' : ''}
                 {a.leftAt ? ' · left' : ''}
-              </span>
+              </Typography>
             </div>
             <div className="attendee-actions">
               {status === 'NeedsAction' && (

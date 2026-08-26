@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
@@ -62,7 +63,7 @@ export function GroupDetailPane() {
             }}
           />
         </h2>
-        <span className="meta">{group.members.length} members</span>
+        <Typography variant="caption" color="text.secondary">{group.members.length} members</Typography>
       </div>
 
       <section className="drawer-section">
@@ -84,7 +85,7 @@ export function GroupDetailPane() {
             </Tooltip>
           </div>
         ))}
-        {members.length === 0 && <p className="meta">No members yet.</p>}
+        {members.length === 0 && <Typography variant="caption" color="text.secondary" component="p">No members yet.</Typography>}
         <div className="form-row">
           <TextField select value={addId} onChange={(e) => setAddId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
             <MenuItem value="">Add member…</MenuItem>

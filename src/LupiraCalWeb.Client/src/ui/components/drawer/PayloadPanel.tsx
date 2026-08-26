@@ -7,6 +7,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import {
   useClearItemAction,
   useClearItemPrompt,
@@ -54,11 +55,11 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             {!item.prompt.enabled && <Chip variant="outlined" label="disabled" />}
           </div>
           <p className="payload-instruction">{item.prompt.instruction}</p>
-          <p className="meta">
+          <Typography variant="caption" color="text.secondary" component="p">
             Fires {describeFire(item.prompt.fire.kind, item.prompt.fire.offsetMinutes, item.prompt.fire.allDayAt)}
             {item.prompt.tier ? ` · ${item.prompt.tier} model` : ''} · on miss: {item.prompt.onMiss}
             {item.prompt.tools?.length ? ` · tools: ${item.prompt.tools.join(', ')}` : ''}
-          </p>
+          </Typography>
           <div className="chip-row">
             <Chip variant="outlined" label="Edit" onClick={() => setEditing('prompt')} />
             <Chip variant="outlined" color="error" label="Remove" onClick={() => clearPrompt.mutate({ id: item.id })} />
@@ -73,9 +74,9 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             {!item.action.enabled && <Chip variant="outlined" label="disabled" />}
           </div>
           <pre className="json-view">{prettyJson(item.action.paramsJson)}</pre>
-          <p className="meta">
+          <Typography variant="caption" color="text.secondary" component="p">
             Fires {describeFire(item.action.fire.kind, item.action.fire.offsetMinutes, item.action.fire.allDayAt)}
-          </p>
+          </Typography>
           <div className="chip-row">
             <Chip variant="outlined" label="Edit" onClick={() => setEditing('action')} />
             <Chip variant="outlined" color="error" label="Remove" onClick={() => clearAction.mutate({ id: item.id })} />

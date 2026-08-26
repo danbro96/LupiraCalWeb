@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   useClearContactDeceased,
@@ -66,7 +67,7 @@ function AddressStatusHint({ movedInText, movedOutText }: { movedInText: string;
     movedInText.trim() ? parseFuzzyInput(movedInText) : null,
     movedOutText.trim() ? parseFuzzyInput(movedOutText) : null,
   );
-  return status === 'active' ? null : <span className="meta">{status === 'former' ? 'former' : 'upcoming'}</span>;
+  return status === 'active' ? null : <Typography variant="caption" color="text.secondary">{status === 'former' ? 'former' : 'upcoming'}</Typography>;
 }
 
 const norm = (s?: string | null) => (s ?? '').trim();
@@ -274,7 +275,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
           name="birthdayYearKnown"
           control={control}
           render={({ field }) => (
-            <label className="meta">
+            <Typography variant="caption" color="text.secondary" component="label">
               <input
                 type="checkbox"
                 checked={field.value}
@@ -286,7 +287,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 }}
               />{' '}
               Enter year
-            </label>
+            </Typography>
           )}
         />
         {birthdayYearKnown ? (
@@ -353,7 +354,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               name={`channels.${i}.preferred`}
               control={control}
               render={({ field }) => (
-                <label className="meta">
+                <Typography variant="caption" color="text.secondary" component="label">
                   <input
                     type="checkbox"
                     checked={field.value}
@@ -368,7 +369,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                     }}
                   />{' '}
                   preferred
-                </label>
+                </Typography>
               )}
             />
             <Tooltip title="Remove channel">
@@ -473,9 +474,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               name={`profiles.${i}.preferred`}
               control={control}
               render={({ field }) => (
-                <label className="meta">
+                <Typography variant="caption" color="text.secondary" component="label">
                   <input type="checkbox" checked={!!field.value} onChange={(e) => field.onChange(e.target.checked)} /> preferred
-                </label>
+                </Typography>
               )}
             />
             <Tooltip title="Remove profile">
@@ -492,7 +493,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
 
       <div className="edit-field">
         <label>Emergency contacts</label>
-        <p className="meta">In priority order — who to call about this person.</p>
+        <Typography variant="caption" color="text.secondary" component="p">In priority order — who to call about this person.</Typography>
         <Controller
           name="emergency"
           control={control}
@@ -539,9 +540,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
           name="deceased"
           control={control}
           render={({ field }) => (
-            <label className="meta">
+            <Typography variant="caption" color="text.secondary" component="label">
               <input type="checkbox" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} /> Deceased
-            </label>
+            </Typography>
           )}
         />
         {deceased && (

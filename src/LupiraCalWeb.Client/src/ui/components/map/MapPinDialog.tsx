@@ -6,6 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
 import { MapCanvas, useMap } from './MapCanvas';
 
 type LatLon = { lat: number; lon: number };
@@ -30,9 +31,9 @@ export default function MapPinDialog({ title, center, zoom, onConfirm, onCancel 
             <PinMarker pin={pin} onMove={setPin} />
           </MapCanvas>
         </div>
-        <p className="meta">
+        <Typography variant="caption" color="text.secondary" component="p">
           {pin ? `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}` : 'Click the map to place the pin, then drag to fine-tune.'}
-        </p>
+        </Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel}>

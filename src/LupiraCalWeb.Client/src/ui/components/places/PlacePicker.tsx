@@ -4,6 +4,7 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import { forwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
@@ -127,7 +128,7 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
           <li key={key} {...props}>
             {o.name}
             {o.type === SuggestionType.Locality && <Chip label="Area" sx={{ ml: 1 }} />}
-            {o.context && <span className="meta"> {o.context}</span>}
+            {o.context && <Typography variant="caption" color="text.secondary"> {o.context}</Typography>}
           </li>
         )}
         renderInput={(params) => (
