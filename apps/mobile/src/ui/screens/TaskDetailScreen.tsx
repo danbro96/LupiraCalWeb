@@ -7,7 +7,7 @@ import { Chip, Text } from 'react-native-paper';
 import { getItem } from '../../data/api/generated/tasks/items/items';
 import { taskDeepLink } from '../../domain/taskRows';
 import { Centered } from '../components/Centered';
-import { Button } from '../components/form';
+import { Button } from '../components/Button';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
 

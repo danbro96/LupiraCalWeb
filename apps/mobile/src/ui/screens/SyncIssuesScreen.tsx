@@ -10,7 +10,7 @@ import { discardParkedAndRestore, runSync } from '../../sync/sync';
 import { PHASE_LABELS, useSyncStatus } from '../../sync/syncStatus';
 import { useOutboxRows } from '../../state/queries';
 import { useConfirm } from '../components/ConfirmDialog';
-import { Button } from '../components/form';
+import { Button } from '../components/Button';
 import { IndeterminateBar } from '../components/IndeterminateBar';
 import { useColors } from '../theme';
 
@@ -31,7 +31,7 @@ export function SyncIssuesScreen() {
           {syncing ? 'Syncing…' : serverReachable ? 'Server reachable' : 'Offline'}
           {lastSyncAt ? ` · last sync ${new Date(lastSyncAt).toLocaleTimeString()}` : ''}
         </Text>
-        <Button title="Sync now" kind="plain" onPress={() => void runSync()} disabled={syncing} />
+        <Button title="Sync now" variant="secondary" onPress={() => void runSync()} disabled={syncing} />
       </View>
       {lastError && <Text style={[styles.lastError, { color: c.warning }]}>{lastError}</Text>}
 
@@ -98,8 +98,8 @@ function ParkedCard({ row }: { row: OutboxRow }) {
       </Card.Content>
       <Card.Actions>
         <Button title="Retry" onPress={() => void retry()} />
-        <Button title="Discard" kind="danger" onPress={() => void discard()} />
-        <Button title={expanded ? 'Less' : 'Details'} kind="plain" onPress={() => setExpanded(!expanded)} />
+        <Button title="Discard" variant="destructive" onPress={() => void discard()} />
+        <Button title={expanded ? 'Less' : 'Details'} variant="secondary" onPress={() => setExpanded(!expanded)} />
       </Card.Actions>
     </Card>
   );

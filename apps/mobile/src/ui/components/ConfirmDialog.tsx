@@ -12,7 +12,7 @@ type ConfirmOptions = {
 
 const ConfirmContext = createContext<(opts: ConfirmOptions) => Promise<boolean>>(() => Promise.resolve(false));
 
-/** Promise-based confirm over a Paper Dialog; replaces Alert.alert confirm flows. */
+/** Promise-based confirm over a Paper Dialog; replaces two-button Alert.alert flows. */
 export function useConfirm() {
   return useContext(ConfirmContext);
 }
@@ -20,7 +20,7 @@ export function useConfirm() {
 export function ConfirmDialogHost({ children }: { children: ReactNode }) {
   const c = useColors();
   const [opts, setOpts] = useState<ConfirmOptions | null>(null);
-  const resolver = useRef<(v: boolean) => void>(null);
+  const resolver = useRef<((v: boolean) => void) | null>(null);
 
   const confirm = useCallback((o: ConfirmOptions) => {
     setOpts(o);

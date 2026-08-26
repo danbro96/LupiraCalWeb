@@ -12,7 +12,8 @@ import { retryParkedPhotos, runPhotoBackup } from '../../sync/photoUploader';
 import { runSync } from '../../sync/sync';
 import { useSyncStatus } from '../../sync/syncStatus';
 import { useConfirm } from '../components/ConfirmDialog';
-import { Button, DateField } from '../components/form';
+import { Button } from '../components/Button';
+import { DateField } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
 
@@ -169,7 +170,7 @@ export function SettingsScreen() {
       <View style={styles.row}>
         <Button title="Sync now" onPress={() => void runSync()} disabled={syncing} />
         <Button
-          kind="link"
+          variant="text"
           title={`Sync issues${pending + parked > 0 ? ` (${pending + parked})` : ''}`}
           onPress={() => navigation.navigate('SyncIssues')}
         />
@@ -179,7 +180,7 @@ export function SettingsScreen() {
       <Text style={[styles.detail, { color: c.textMuted }]}>Lupira Calendar {APP_VERSION}</Text>
 
       <List.Subheader>Developer</List.Subheader>
-      <Button kind="link" title="Developer options" onPress={() => navigation.navigate('Developer')} />
+      <Button variant="text" title="Developer options" onPress={() => navigation.navigate('Developer')} />
     </ScrollView>
   );
 }

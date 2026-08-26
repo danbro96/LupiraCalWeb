@@ -1,8 +1,9 @@
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import type { ComponentProps, ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button as PaperButton, Chip, IconButton, Text, TextInput, useTheme } from 'react-native-paper';
+import { Button as PaperButton, Chip, IconButton, Text, TextInput } from 'react-native-paper';
 import { localDay, localTime } from '../../domain/editors';
+import { useColors } from '../theme';
 
 export function Input({ style, ...props }: ComponentProps<typeof TextInput>) {
   return <TextInput mode="outlined" dense style={[styles.input, style]} {...props} />;
@@ -83,13 +84,13 @@ export function TimeField({ value, onChange, placeholder = 'Set time' }: {
 function PickerButton({ text, isSet, onPress, onClear }: {
   text: string; isSet: boolean; onPress: () => void; onClear: () => void;
 }) {
-  const theme = useTheme();
+  const c = useColors();
   return (
     <View style={styles.pickerRow}>
       <PaperButton
         mode="outlined"
         style={styles.picker}
-        textColor={isSet ? undefined : theme.colors.onSurfaceVariant}
+        textColor={isSet ? undefined : c.textMuted}
         onPress={onPress}
       >
         {text}
@@ -99,33 +100,10 @@ function PickerButton({ text, isSet, onPress, onClear }: {
   );
 }
 
-const BUTTON_MODE = { primary: 'contained', danger: 'contained', plain: 'outlined', link: 'text' } as const;
-
-export function Button({ title, onPress, kind = 'primary', disabled = false }: {
-  title: string; onPress: () => void; kind?: 'primary' | 'danger' | 'plain' | 'link'; disabled?: boolean;
-}) {
-  // useTheme, not useColors: a filled danger button needs MD3's onError, which the estate palette
-  // has no equivalent for.
-  const theme = useTheme();
-  return (
-    <PaperButton
-      mode={BUTTON_MODE[kind]}
-      buttonColor={kind === 'danger' ? theme.colors.error : undefined}
-      textColor={kind === 'danger' ? theme.colors.onError : undefined}
-      style={styles.button}
-      disabled={disabled}
-      onPress={onPress}
-    >
-      {title}
-    </PaperButton>
-  );
-}
-
 const styles = StyleSheet.create({
   input: { marginTop: 10 },
   field: { gap: 4, marginTop: 10 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   pickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   picker: { flexGrow: 1 },
-  button: { alignSelf: 'flex-start' },
 });

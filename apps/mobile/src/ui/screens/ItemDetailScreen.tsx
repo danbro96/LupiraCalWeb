@@ -10,7 +10,8 @@ import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';
-import { Button, Input } from '../components/form';
+import { Button } from '../components/Button';
+import { Input } from '../components/form';
 import { useCalendarColors } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
@@ -69,7 +70,7 @@ export function ItemDetailScreen() {
 
       <View style={styles.buttons}>
         <Button title="Edit" onPress={() => navigation.navigate('ItemEdit', { itemId })} />
-        <Button title="Delete" kind="danger" onPress={() => void confirmDelete()} />
+        <Button title="Delete" variant="destructive" onPress={() => void confirmDelete()} />
       </View>
     </ScrollView>
   );

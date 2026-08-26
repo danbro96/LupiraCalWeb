@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 import { useBridge } from '../../state/bridge-store';
-import { Button } from './form';
+import { Button } from './Button';
 
 /** One-time post-sign-in card: sets up the Android integration (permissions + account + first
  *  publish) or goes quiet forever. An inline card, not an Alert — it may wait across launches. */
@@ -20,7 +20,7 @@ export function BridgePrompt() {
       </Card.Content>
       <Card.Actions>
         <Button title="Enable" onPress={() => void useBridge.getState().enable()} />
-        <Button title="Not now" kind="plain" onPress={() => void useBridge.getState().markPrompted()} />
+        <Button title="Not now" variant="secondary" onPress={() => void useBridge.getState().markPrompted()} />
       </Card.Actions>
     </Card>
   );

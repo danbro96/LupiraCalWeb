@@ -6,7 +6,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { createItem } from '../../state/actions';
 import { useCalendars } from '../../state/queries';
-import { Button, ChoiceChips, DateField, Field } from '../components/form';
+import { Button } from '../components/Button';
+import { ChoiceChips, DateField, Field } from '../components/form';
 import { AVAILABILITY_COLORS } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
@@ -63,7 +64,7 @@ export function AvailabilityEditScreen() {
       {error && <Text style={[styles.error, { color: c.danger }]}>{error}</Text>}
       <View style={styles.buttons}>
         <Button title="Save" onPress={save} />
-        <Button title="Cancel" kind="plain" onPress={() => navigation.goBack()} />
+        <Button title="Cancel" variant="secondary" onPress={() => navigation.goBack()} />
       </View>
     </ScrollView>
   );
