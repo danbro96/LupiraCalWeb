@@ -3,7 +3,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Button, HelperText, IconButton, List, Switch, Text, useTheme } from 'react-native-paper';
+import { Button, Chip, HelperText, IconButton, List, Switch, Text, useTheme } from 'react-native-paper';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
@@ -224,7 +224,7 @@ export function ContactEditScreen() {
               : x)))}
             hitSlop={6}
           >
-            <Text style={[styles.typeChip, { color: theme.colors.primary, borderColor: theme.colors.primary + '66' }]}>{c.type ?? 'type'}</Text>
+            <Chip compact mode="outlined">{c.type ?? 'type'}</Chip>
           </Pressable>
           <IconButton
             icon={c.preferred ? 'star' : 'star-outline'}
@@ -299,7 +299,6 @@ const styles = StyleSheet.create({
   reachRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
   reachService: { flex: 2, fontSize: 13 },
   reachValue: { flex: 3 },
-  typeChip: { fontSize: 11, borderWidth: 1, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3 },
   star: { margin: 0 },
   remove: { margin: 0 },
   addRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 },

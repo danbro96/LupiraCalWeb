@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Button, FAB, IconButton, Text, useTheme } from 'react-native-paper';
+import { Button, Chip, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
@@ -167,9 +167,13 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
       {sorted.map((r) => (
         r.is_availability === 1 ? (
           <Pressable key={`${r.source}-${r.source_id}-${r.start_utc}`} style={styles.agendaRow} onPress={() => onPress(r)}>
-            <View style={[styles.availPill, { backgroundColor: availabilityColor(r.avail_status) }]}>
-              <Text style={styles.availPillText}>{r.avail_status ?? 'Availability'}</Text>
-            </View>
+            <Chip
+              compact
+              style={{ backgroundColor: availabilityColor(r.avail_status) }}
+              textStyle={styles.availPillText}
+            >
+              {r.avail_status ?? 'Availability'}
+            </Chip>
           </Pressable>
         ) : (
         <Pressable key={`${r.source}-${r.source_id}-${r.start_utc}`} style={styles.agendaRow} onPress={() => onPress(r)}>
@@ -209,7 +213,6 @@ const styles = StyleSheet.create({
   sheetTitle: { fontSize: 14, fontWeight: '700' },
   sheetActions: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   sheetLink: { fontSize: 13, fontWeight: '600' },
-  availPill: { borderRadius: 10, paddingHorizontal: 10, paddingVertical: 3 },
   availPillText: { color: '#fff', fontSize: 12, fontWeight: '600' },
   agenda: { paddingHorizontal: 14, paddingBottom: 24, gap: 2 },
   agendaEmpty: { fontSize: 13, paddingVertical: 8 },

@@ -102,26 +102,22 @@ export function ContactDetailScreen() {
         <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Nothing yet</Text>
       )}
       {(doc.channels ?? []).map((c, i) => (
-        <Pressable key={`ch-${i}`} onPress={() => openReach(c.medium, c.value)}>
-          <View style={styles.reachRow}>
-            <ReachIcon kind={c.medium} />
-            <Text style={styles.reachText}>
-              <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{c.medium}{c.type ? ` (${c.type})` : ''}  </Text>
-              {c.value}{c.preferred ? '  ★' : ''}
-            </Text>
-          </View>
-        </Pressable>
+        <List.Item
+          key={`ch-${i}`}
+          onPress={() => openReach(c.medium, c.value)}
+          title={`${c.value}${c.preferred ? '  ★' : ''}`}
+          description={`${c.medium}${c.type ? ` (${c.type})` : ''}`}
+          left={() => <ReachIcon kind={c.medium} />}
+        />
       ))}
       {(doc.profiles ?? []).map((p, i) => (
-        <Pressable key={`pr-${i}`} onPress={() => openReach(p.service, p.handle)}>
-          <View style={styles.reachRow}>
-            <ReachIcon kind={p.service} />
-            <Text style={styles.reachText}>
-              <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{p.service}  </Text>
-              {p.handle}{p.preferred ? '  ★' : ''}
-            </Text>
-          </View>
-        </Pressable>
+        <List.Item
+          key={`pr-${i}`}
+          onPress={() => openReach(p.service, p.handle)}
+          title={`${p.handle}${p.preferred ? '  ★' : ''}`}
+          description={p.service}
+          left={() => <ReachIcon kind={p.service} />}
+        />
       ))}
 
       {(doc.tags ?? []).length > 0 && (
@@ -293,6 +289,4 @@ const styles = StyleSheet.create({
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   footer: { fontSize: 11, marginTop: 12, marginBottom: 16 },
   headerActions: { flexDirection: 'row', paddingRight: 4 },
-  reachRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4 },
-  reachText: { flex: 1, fontSize: 14 },
 });

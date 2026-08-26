@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Chip, List, Text, useTheme } from 'react-native-paper';
 import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
@@ -92,16 +92,14 @@ function CalendarsPanel({ itemId, memberships }: {
         const status = statusOf(c.id);
         const member = status === 'Accepted' || status === 'Proposed';
         return (
-          <Pressable
+          <List.Item
             key={c.id}
-            style={styles.calRow}
             onPress={() => void (member ? unfileItem(itemId, c.id) : fileItem(itemId, c.id))}
-          >
-            <View style={[styles.calDot, { backgroundColor: colorOf(c.id) }]} />
-            <Text style={styles.calName}>{c.displayName ?? c.id}</Text>
-            {status === 'Proposed' && <Text style={[styles.proposed, { color: theme.colors.warning }]}>proposed</Text>}
-            <Text style={[styles.calCheck, { color: theme.colors.primary }]}>{member ? '✓' : ''}</Text>
-          </Pressable>
+            title={c.displayName ?? c.id}
+            description={status === 'Proposed' ? 'proposed' : undefined}
+            left={() => <View style={[styles.calDot, { backgroundColor: colorOf(c.id) }]} />}
+            right={() => (member ? <List.Icon icon="check" color={theme.colors.primary} /> : null)}
+          />
         );
       })}
     </View>
@@ -110,7 +108,6 @@ function CalendarsPanel({ itemId, memberships }: {
 
 /// Merge-patch editor: add or overwrite one key at a time (the REST surface has no key removal).
 function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<string, unknown> | null }) {
-  const theme = useTheme<AppTheme>();
   const [key, setKey] = useState('');
   const [value, setValue] = useState('');
   const entries = Object.entries(metadata ?? {});
@@ -127,10 +124,13 @@ function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<
     <View>
       <List.Subheader>Metadata</List.Subheader>
       {entries.map(([k, v]) => (
-        <Pressable key={k} style={styles.metaRow} onPress={() => { setKey(k); setValue(typeof v === 'string' ? v : JSON.stringify(v)); }}>
-          <Text style={[styles.metaKey, { color: theme.colors.onSurfaceVariant }]}>{k}</Text>
-          <Text style={styles.metaValue} numberOfLines={1}>{typeof v === 'string' ? v : JSON.stringify(v)}</Text>
-        </Pressable>
+        <List.Item
+          key={k}
+          onPress={() => { setKey(k); setValue(typeof v === 'string' ? v : JSON.stringify(v)); }}
+          title={typeof v === 'string' ? v : JSON.stringify(v)}
+          titleNumberOfLines={1}
+          description={k}
+        />
       ))}
       <View style={styles.metaEdit}>
         <Input label="key" style={styles.metaKeyInput} autoCapitalize="none" value={key} onChangeText={setKey} />
@@ -150,14 +150,7 @@ const styles = StyleSheet.create({
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
   description: { fontSize: 14, marginTop: 6 },
   note: { fontSize: 13, marginTop: 4 },
-  calRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8 },
   calDot: { width: 10, height: 10, borderRadius: 5 },
-  calName: { flex: 1, fontSize: 15 },
-  proposed: { fontSize: 11 },
-  calCheck: { width: 20, fontSize: 16, textAlign: 'center' },
-  metaRow: { flexDirection: 'row', gap: 8, paddingVertical: 4 },
-  metaKey: { fontWeight: '600', fontSize: 13 },
-  metaValue: { flex: 1, fontSize: 13 },
   metaEdit: { flexDirection: 'row', gap: 6, alignItems: 'center', marginTop: 6 },
   metaKeyInput: { flex: 2 },
   metaValueInput: { flex: 3 },
