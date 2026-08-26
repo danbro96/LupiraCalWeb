@@ -3,7 +3,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Chip, HelperText, IconButton, List, Switch, Text, useTheme } from 'react-native-paper';
+import { Button, Chip, HelperText, IconButton, List, Switch, Text } from 'react-native-paper';
 import type { ReachChannel, SocialProfile } from '../../domain/docTypes';
 import { REACH_KINDS } from '../../domain/reach';
 import type { ContactForm } from '../../domain/editors';
@@ -14,7 +14,7 @@ import { ChoiceChips, DateField, Field, Input } from '../components/form';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
-import type { AppTheme } from '../theme/paperTheme';
+import { useColors } from '../theme';
 
 const KIND_OPTIONS = [{ value: 'Individual', label: 'Person' }, { value: 'Organization', label: 'Organization' }];
 const NAME_FORMAT_OPTIONS = [
@@ -25,7 +25,7 @@ const NAME_FORMAT_OPTIONS = [
 const CHANNEL_TYPES = [null, 'Home', 'Work', 'Mobile'] as const;
 
 export function ContactEditScreen() {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const route = useRoute<RouteProp<RootStackParamList, 'ContactEdit'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const contactId = route.params?.contactId;
@@ -39,13 +39,13 @@ export function ContactEditScreen() {
   const [bookId, setBookId] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [seeded, setSeeded] = useState(!contactId);
-  /// Snapshot of the pristine form; anything different means unsaved work worth guarding.
+  /** Snapshot of the pristine form; anything different means unsaved work worth guarding. */
   const baseline = useRef(snapshot(emptyContactForm(), [], [], ''));
 
   useEffect(() => {
     if (!seeded && contactId && state) {
       const seededForm = contactFormFromDoc(state.doc);
-      const seededChannels = (state.doc.channels ?? []).map((c) => ({ ...c }));
+      const seededChannels = (state.doc.channels ?? []).map((ch) => ({ ...ch }));
       const seededProfiles = (state.doc.profiles ?? []).map((p) => ({ ...p }));
       const seededTags = (state.doc.tags ?? []).join(', ');
       setForm(seededForm);
@@ -64,7 +64,7 @@ export function ContactEditScreen() {
     () => snapshot(form, channels, profiles, tagsCsv) !== baseline.current,
     [form, channels, profiles, tagsCsv],
   );
-  /// Bridges the guard to the submit closure (assigned below) without re-subscribing every render.
+  /** Bridges the guard to the submit closure (assigned below) without re-subscribing every render. */
   const submitRef = useRef<() => Promise<boolean>>(() => Promise.resolve(false));
   const guard = useUnsavedGuard(dirty, {
     message: 'Save this contact edit before leaving?',
@@ -76,12 +76,12 @@ export function ContactEditScreen() {
   // The kind is chosen once, when the row is added — rows render it as a fixed icon+label afterwards.
   const addReach = (key: string) => {
     const kind = REACH_KINDS.find((k) => k.key === key);
-    if (kind?.channelMedium) setChannels((c) => [...c, { medium: kind.channelMedium!, value: '', preferred: false }]);
+    if (kind?.channelMedium) setChannels((prev) => [...prev, { medium: kind.channelMedium!, value: '', preferred: false }]);
     else setProfiles((p) => [...p, { service: key, handle: '', preferred: false }]);
   };
 
-  /// Persists without navigating — the caller (header button or the exit guard) decides what happens
-  /// next. Returns false when validation failed so the guard keeps the user on the form.
+  /** Persists without navigating — the caller (header button or the exit guard) decides what happens
+   *  next. Returns false when validation failed so the guard keeps the user on the form. */
   const submit = async (): Promise<boolean> => {
     const r = contactCoreFromForm(form);
     if (!r.ok) {
@@ -94,7 +94,7 @@ export function ContactEditScreen() {
     }
     setError(null);
 
-    const cleanChannels = channels.filter((c) => c.value.trim());
+    const cleanChannels = channels.filter((ch) => ch.value.trim());
     const cleanProfiles = profiles.filter((p) => p.service.trim() && p.handle.trim());
     const tags = parseCsv(tagsCsv);
 
@@ -142,7 +142,7 @@ export function ContactEditScreen() {
   if (contactId && !seeded) {
     return (
       <View style={styles.centered}>
-        <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Loading…</Text>
+        <Text style={[styles.muted, { color: c.textMuted }]}>Loading…</Text>
       </View>
     );
   }
@@ -203,19 +203,19 @@ export function ContactEditScreen() {
             />
           </View>
         )}
-        {contactId && <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Clearing a birthday isn't supported — leave empty to keep it.</Text>}
+        {contactId && <Text style={[styles.muted, { color: c.textMuted }]}>Clearing a birthday isn't supported — leave empty to keep it.</Text>}
       </Field>
 
       <List.Subheader>Reach</List.Subheader>
-      {channels.map((c, i) => (
+      {channels.map((ch, i) => (
         <View key={`ch-${i}`} style={styles.reachRow}>
-          <ReachIcon kind={c.medium} />
+          <ReachIcon kind={ch.medium} />
           <Input
-            label={c.medium === 'Phone' ? '+46…' : 'name@example.com'}
+            label={ch.medium === 'Phone' ? '+46…' : 'name@example.com'}
             style={styles.reachValue}
             autoCapitalize="none"
-            keyboardType={c.medium === 'Phone' ? 'phone-pad' : 'email-address'}
-            value={c.value}
+            keyboardType={ch.medium === 'Phone' ? 'phone-pad' : 'email-address'}
+            value={ch.value}
             onChangeText={(v) => setChannels((d) => d.map((x, j) => (j === i ? { ...x, value: v } : x)))}
           />
           <Pressable
@@ -224,12 +224,12 @@ export function ContactEditScreen() {
               : x)))}
             hitSlop={6}
           >
-            <Chip compact mode="outlined">{c.type ?? 'type'}</Chip>
+            <Chip compact mode="outlined">{ch.type ?? 'type'}</Chip>
           </Pressable>
           <IconButton
-            icon={c.preferred ? 'star' : 'star-outline'}
+            icon={ch.preferred ? 'star' : 'star-outline'}
             size={18}
-            iconColor={c.preferred ? theme.colors.warning : theme.colors.outline}
+            iconColor={ch.preferred ? c.warning : c.border}
             style={styles.star}
             onPress={() => setChannels((d) => d.map((x, j) => (j === i ? { ...x, preferred: !x.preferred } : x)))}
             hitSlop={6}
@@ -237,7 +237,7 @@ export function ContactEditScreen() {
           <IconButton
             icon="close"
             size={16}
-            iconColor={theme.colors.onSurfaceVariant}
+            iconColor={c.textMuted}
             style={styles.remove}
             onPress={() => setChannels((d) => d.filter((_, j) => j !== i))}
             hitSlop={6}
@@ -247,7 +247,7 @@ export function ContactEditScreen() {
       {profiles.map((p, i) => (
         <View key={`pr-${i}`} style={styles.reachRow}>
           <ReachIcon kind={p.service} />
-          <Text style={[styles.reachService, { color: theme.colors.onSurfaceVariant }]} numberOfLines={1}>{p.service}</Text>
+          <Text style={[styles.reachService, { color: c.textMuted }]} numberOfLines={1}>{p.service}</Text>
           <Input
             label="@handle or URL"
             style={styles.reachValue}
@@ -258,7 +258,7 @@ export function ContactEditScreen() {
           <IconButton
             icon="close"
             size={16}
-            iconColor={theme.colors.onSurfaceVariant}
+            iconColor={c.textMuted}
             style={styles.remove}
             onPress={() => setProfiles((d) => d.filter((_, j) => j !== i))}
             hitSlop={6}

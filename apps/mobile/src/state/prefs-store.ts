@@ -3,18 +3,18 @@ import { getDb } from '../data/db/expoDb';
 import { migrate } from '../data/db/schema';
 import { getMeta, setMeta } from '../data/mirror';
 
-/// Small user preferences, persisted in mirror_meta (same reasoning as bridge-store: shared ground the
-/// data layer can read, and no brittle SecureStore key destructuring).
+/** Small user preferences, persisted in mirror_meta (same reasoning as bridge-store: shared ground the
+ *  data layer can read, and no brittle SecureStore key destructuring). */
 
 const SHOW_SYSTEM_KEY = 'prefs.showSystemCalendars';
 const SHOW_TASKS_KEY = 'prefs.showTaskDeadlines';
 
 type Prefs = {
   loaded: boolean;
-  /// System-class calendars (Inbox, Availability, agent scaffolding …) are developer/agent surfaces —
-  /// hidden from lists, pickers, AND grids unless this is on. Birthdays is Agenda-class: unaffected.
+  /** System-class calendars (Inbox, Availability, agent scaffolding …) are developer/agent surfaces —
+   *  hidden from lists, pickers, AND grids unless this is on. Birthdays is Agenda-class: unaffected. */
   showSystemCalendars: boolean;
-  /// Task deadlines from LupiraTasks (online-only third grid source). Default ON — unset means shown.
+  /** Task deadlines from LupiraTasks (online-only third grid source). Default ON — unset means shown. */
   showTaskDeadlines: boolean;
 };
 

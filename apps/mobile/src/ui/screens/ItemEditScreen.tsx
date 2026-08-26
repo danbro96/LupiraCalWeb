@@ -4,7 +4,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Button, HelperText, List, Switch, Text, useTheme } from 'react-native-paper';
+import { Button, HelperText, List, Switch, Text } from 'react-native-paper';
 import type { ItemForm } from '../../domain/editors';
 import { categoryAllDayDefault, emptyItemForm, itemCoreFromForm, itemFormFromDoc } from '../../domain/editors';
 import { createItem, reviseItem } from '../../state/actions';
@@ -12,13 +12,14 @@ import { selectableCalendars, useCalendars, useItemState } from '../../state/que
 import { ChoiceChips, DateField, Field, Input, TimeField } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
+import { useColors } from '../theme';
 
 const STATUS_OPTIONS = ['Tentative', 'Confirmed', 'Cancelled'].map((s) => ({ value: s, label: s }));
 const CATEGORY_OPTIONS = ['General', 'Meeting', 'Appointment', 'Meal', 'Occasion', 'Outing', 'Trip', 'Stay', 'Activity', 'Focus', 'Chore']
   .map((c) => ({ value: c, label: c }));
 
 export function ItemEditScreen() {
-  const theme = useTheme();
+  const c = useColors();
   const route = useRoute<RouteProp<RootStackParamList, 'ItemEdit'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const itemId = route.params?.itemId;
@@ -31,7 +32,7 @@ export function ItemEditScreen() {
   const [error, setError] = useState<string | null>(null);
   const [seeded, setSeeded] = useState(!itemId);
 
-  /// Pristine snapshot; the exit guard and the header's Save state key off differences from it.
+  /** Pristine snapshot; the exit guard and the header's Save state key off differences from it. */
   const baseline = useRef(JSON.stringify(emptyItemForm(route.params?.day, route.params?.time)));
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export function ItemEditScreen() {
   }, [itemId, calendarId, calendars]);
 
   const dirty = useMemo(() => JSON.stringify(form) !== baseline.current, [form]);
-  /// Bridges the guard to the submit closure (assigned below) without re-subscribing every render.
+  /** Bridges the guard to the submit closure (assigned below) without re-subscribing every render. */
   const submitRef = useRef<() => Promise<boolean>>(() => Promise.resolve(false));
   const guard = useUnsavedGuard(dirty, {
     message: 'Save this event before leaving?',
@@ -68,7 +69,7 @@ export function ItemEditScreen() {
     if (allDay !== null) set('isAllDay', allDay);
   };
 
-  /// Persists without navigating; false = validation failed, so the guard keeps the user here.
+  /** Persists without navigating; false = validation failed, so the guard keeps the user here. */
   const submit = async (): Promise<boolean> => {
     const r = itemCoreFromForm(form, state?.doc);
     if (!r.ok) {
@@ -118,7 +119,7 @@ export function ItemEditScreen() {
   if (itemId && !seeded) {
     return (
       <View style={styles.centered}>
-        <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Loading…</Text>
+        <Text style={[styles.muted, { color: c.textMuted }]}>Loading…</Text>
       </View>
     );
   }
@@ -194,7 +195,7 @@ export function ItemEditScreen() {
           value={form.recurrenceRule}
           onChangeText={(v) => set('recurrenceRule', v)}
         />
-        {!!form.recurrenceRule && <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>{describeRrule(form.recurrenceRule)}</Text>}
+        {!!form.recurrenceRule && <Text style={[styles.muted, { color: c.textMuted }]}>{describeRrule(form.recurrenceRule)}</Text>}
       </Field>
 
       <Field label="Status">

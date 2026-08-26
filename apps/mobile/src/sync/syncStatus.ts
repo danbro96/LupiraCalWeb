@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
-/// Small shared status surface for banners/screens. Deliberately its own store so outbox and pull can both
-/// write it without import cycles. Mirror reactivity is NOT here — that's per-monthKey query invalidation
-/// (see reactivity.ts), not a global revision counter.
+/** Small shared status surface for banners/screens. Deliberately its own store so outbox and pull can both
+ *  write it without import cycles. Mirror reactivity is NOT here — that's per-monthKey query invalidation
+ *  (see reactivity.ts), not a global revision counter. */
 
 export type SyncPhase = 'containers' | 'items' | 'contacts' | 'push' | 'bridge';
 
@@ -13,7 +13,7 @@ type SyncStatus = {
   parked: number;
   lastError: string | null;
   lastSyncAt: string | null;
-  /// Live phase + processed count while a sync runs (cursor paging has no total — counts, not percent).
+  /** Live phase + processed count while a sync runs (cursor paging has no total — counts, not percent). */
   progress: { phase: SyncPhase; count: number } | null;
 };
 

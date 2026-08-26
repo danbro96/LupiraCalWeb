@@ -1,10 +1,10 @@
 import type { ContactDoc, ItemDoc, PartialDateDto, ReachChannel } from './docTypes';
 import type { ContactCore, ItemCore } from './ops';
 
-/// Pure half of the bridge write-back: a captured provider edit → the op the engine should enqueue.
-/// The impure half (id resolution, mirror lookup, enqueue, ack) lives in sync/bridge.ts. Warts are
-/// inherited from the REST contract: title/description cleared in the stock app stay unchanged
-/// server-side (null = keep), and EVENT_LOCATION is publish-only (ItemCore has no location field).
+/** Pure half of the bridge write-back: a captured provider edit → the op the engine should enqueue.
+ *  The impure half (id resolution, mirror lookup, enqueue, ack) lives in sync/bridge.ts. Warts are
+ *  inherited from the REST contract: title/description cleared in the stock app stay unchanged
+ *  server-side (null = keep), and EVENT_LOCATION is publish-only (ItemCore has no location field). */
 
 export type CalCapturePayload = {
   title: string | null;
@@ -69,7 +69,7 @@ export function translateCalRow(row: ParsedCalRow, existing: ItemDoc | null): Ca
   return { kind: 'revise', itemId: row.itemId, core, occurredAt: row.occurredAt };
 }
 
-/// RFC2445 duration subset the calendar provider emits (P1D, PT1800S, P1DT12H, P2W …).
+/** RFC2445 duration subset the calendar provider emits (P1D, PT1800S, P1DT12H, P2W …). */
 export function parseRfc2445Duration(value: string): number | null {
   const m = /^([+-])?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/.exec(value.trim());
   if (!m) return null;
@@ -80,8 +80,8 @@ export function parseRfc2445Duration(value: string): number | null {
   return sign === '-' ? -ms : ms;
 }
 
-/// What ContactsCapturer emits for a dirty raw contact. Channel `type` is the provider's raw int
-/// (Phone.TYPE_* / Email.TYPE_*); translation maps it back onto the app's loose type strings.
+/** What ContactsCapturer emits for a dirty raw contact. Channel `type` is the provider's raw int
+ *  (Phone.TYPE_* / Email.TYPE_*); translation maps it back onto the app's loose type strings. */
 export type ContactCapturePayload = {
   given?: string | null;
   middle?: string | null;
@@ -104,8 +104,8 @@ export type ContactTranslation =
   | { kind: 'revise'; contactId: string; core: ContactCore; channels: ReachChannel[]; occurredAt: string }
   | { kind: 'delete'; contactId: string; occurredAt: string };
 
-/// One dirty raw contact → a core revise (names/birthday/notes; null = keep for anything the stock app
-/// can't express) plus a wholesale channels replacement (revise UNION-merges, so channels never ride it).
+/** One dirty raw contact → a core revise (names/birthday/notes; null = keep for anything the stock app
+ *  can't express) plus a wholesale channels replacement (revise UNION-merges, so channels never ride it). */
 export function translateContactRow(row: ParsedContactRow): ContactTranslation {
   if (row.kind === 'deleted') return { kind: 'delete', contactId: row.contactId, occurredAt: row.occurredAt };
   const p = row.payload;
@@ -147,8 +147,8 @@ function emailTypeName(type: number | null): string | null {
   return type === 2 ? 'Work' : null;
 }
 
-/// Captured channels lose type fidelity (provider ints can't express the app's free-text types, e.g.
-/// 'Mobile' maps to null) — re-attach the mirror's type where medium+value still match.
+/** Captured channels lose type fidelity (provider ints can't express the app's free-text types, e.g.
+ *  'Mobile' maps to null) — re-attach the mirror's type where medium+value still match. */
 export function mergeChannelTypes(captured: ReachChannel[], docChannels: ReachChannel[]): ReachChannel[] {
   return captured.map((c) => {
     if (c.type != null) return c;
@@ -157,8 +157,8 @@ export function mergeChannelTypes(captured: ReachChannel[], docChannels: ReachCh
   });
 }
 
-/// Write-back echo guard: a dirty flag can fire without a change the app cares about (provider
-/// bookkeeping, cosmetic edits). Skip the ops when everything stock-expressible matches the mirror.
+/** Write-back echo guard: a dirty flag can fire without a change the app cares about (provider
+ *  bookkeeping, cosmetic edits). Skip the ops when everything stock-expressible matches the mirror. */
 export function contactReviseIsEcho(core: ContactCore, channels: ReachChannel[], doc: ContactDoc): boolean {
   const cur = contactCoreOfDoc(doc);
   const names = ['givenName', 'middleName', 'familyName', 'nickname', 'notes'] as const;
@@ -179,8 +179,8 @@ function canonChannels(channels: ReachChannel[]): string {
     .join(';');
 }
 
-/// Existing mirror doc → the same ContactCore, for deciding whether a captured revise actually changed
-/// anything the stock app can express (echo guard on the write-back side).
+/** Existing mirror doc → the same ContactCore, for deciding whether a captured revise actually changed
+ *  anything the stock app can express (echo guard on the write-back side). */
 export function contactCoreOfDoc(doc: ContactDoc): { core: ContactCore; channels: ReachChannel[] } {
   return {
     core: {
@@ -202,8 +202,8 @@ export function contactCoreOfDoc(doc: ContactDoc): { core: ContactCore; channels
 
 export const PENDING_PREFIX = 'pending:';
 
-/// The capturer's pending marker doubles as the deterministic sourceKey, so re-drains converge on the
-/// same aggregate: "pending:<uuid>" → sourceKey "bridge:<uuid>".
+/** The capturer's pending marker doubles as the deterministic sourceKey, so re-drains converge on the
+ *  same aggregate: "pending:<uuid>" → sourceKey "bridge:<uuid>". */
 export function sourceKeyOfPendingMarker(marker: string): string | null {
   if (!marker.startsWith(PENDING_PREFIX)) return null;
   const uuid = marker.slice(PENDING_PREFIX.length);

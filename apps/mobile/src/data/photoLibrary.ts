@@ -3,9 +3,9 @@ import { Asset, AssetField, MediaType, Query, requestPermissionsAsync } from 'ex
 import { contentTypeOf, isSupportedContentType } from '../domain/photoBackup';
 import { logDebug } from '../debug/log';
 
-/// MediaStore adapter for the backup queue. Scanning uses `exeForMetadata()` — it reads the cheap
-/// media-store columns without resolving file paths, so a full-library sweep stays fast; per-asset
-/// details (uri, size, EXIF location) are resolved only for assets we are actually going to enqueue.
+/** MediaStore adapter for the backup queue. Scanning uses `exeForMetadata()` — it reads the cheap
+ *  media-store columns without resolving file paths, so a full-library sweep stays fast; per-asset
+ *  details (uri, size, EXIF location) are resolved only for assets we are actually going to enqueue. */
 
 export type ScannedAsset = {
   mediaStoreId: string;
@@ -20,15 +20,15 @@ export type ScannedAsset = {
   localUri: string;
 };
 
-/// ACCESS_MEDIA_LOCATION is what makes `getLocation()` return un-redacted EXIF GPS; without it the
-/// coordinates are stripped and the server has to fall back to location history.
+/** ACCESS_MEDIA_LOCATION is what makes `getLocation()` return un-redacted EXIF GPS; without it the
+ *  coordinates are stripped and the server has to fall back to location history. */
 export async function ensurePhotoPermission(): Promise<boolean> {
   const response = await requestPermissionsAsync(false, ['photo', 'video']);
   return response.granted;
 }
 
-/// Metadata for assets created after `sinceMs`, oldest first (a backfill drains chronologically).
-/// `limit` bounds one scan pass; the caller re-scans until a pass returns nothing new.
+/** Metadata for assets created after `sinceMs`, oldest first (a backfill drains chronologically).
+ *  `limit` bounds one scan pass; the caller re-scans until a pass returns nothing new. */
 export async function scanAssets(sinceMs: number, limit: number, offset = 0): Promise<ScannedAsset[]> {
   const metadata = await new Query()
     .gt(AssetField.CREATION_TIME, sinceMs)
@@ -90,8 +90,8 @@ async function resolveAsset(id: string): Promise<{ uri: string; sizeBytes: numbe
   }
 }
 
-/// Streams one file to a presigned URL. Content-Type must match what was signed, and no bearer is
-/// sent — the signature IS the authorization, and an extra Authorization header breaks SigV4.
+/** Streams one file to a presigned URL. Content-Type must match what was signed, and no bearer is
+ *  sent — the signature IS the authorization, and an extra Authorization header breaks SigV4. */
 export async function uploadToPresignedUrl(
   localUri: string,
   url: string,

@@ -3,9 +3,9 @@ import { logDebug } from '../../debug/log';
 import { REQUEST_TIMEOUT_MS } from '../../domain/apiError';
 import { OIDC_CLIENT_ID, OIDC_ISSUER } from './oidcConfig';
 
-/// Token-endpoint failure classified for the refresh state machine. Definitive (400/401 from the endpoint —
-/// invalid_grant, revoked session) means the session is dead: clear it and demand a fresh sign-in. Everything
-/// else (discovery failure, transport, 5xx/429) is transient: keep the session and retry on a later trigger.
+/** Token-endpoint failure classified for the refresh state machine. Definitive (400/401 from the endpoint —
+ *  invalid_grant, revoked session) means the session is dead: clear it and demand a fresh sign-in. Everything
+ *  else (discovery failure, transport, 5xx/429) is transient: keep the session and retry on a later trigger. */
 export class RefreshError extends Error {
   readonly definitive: boolean;
 
@@ -33,8 +33,8 @@ export function getDiscovery(): Promise<AuthSession.DiscoveryDocument> {
   return discovery;
 }
 
-/// Hand-rolled code exchange (not AuthSession.exchangeCodeAsync): a broken token response then surfaces its
-/// raw status + body slice instead of an opaque "JSON Parse error".
+/** Hand-rolled code exchange (not AuthSession.exchangeCodeAsync): a broken token response then surfaces its
+ *  raw status + body slice instead of an opaque "JSON Parse error". */
 export async function exchangeAuthCode(code: string, redirectUri: string, codeVerifier: string): Promise<TokenResponse> {
   const d = await getDiscovery();
   return postForm(d.tokenEndpoint!, {
@@ -90,7 +90,7 @@ async function postForm(url: string, fields: Record<string, string>): Promise<To
   };
 }
 
-/// Payload-only JWT decode (no signature check — the server verifies; this is for display identity only).
+/** Payload-only JWT decode (no signature check — the server verifies; this is for display identity only). */
 export function decodeJwt(token: string): { email?: string; name?: string; sub?: string } {
   try {
     const payload = token.split('.')[1];

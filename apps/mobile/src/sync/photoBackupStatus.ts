@@ -3,14 +3,14 @@ import { getDb } from '../data/db/expoDb';
 import type { Db } from '../data/db/types';
 import { queueCounts } from '../data/photoQueue';
 
-/// Live backup counters + transfer progress. Lives in the sync layer for the same reason syncStatus
-/// does: the uploader must write it without importing state/ (upward), and the UI reads it from above.
+/** Live backup counters + transfer progress. Lives in the sync layer for the same reason syncStatus
+ *  does: the uploader must write it without importing state/ (upward), and the UI reads it from above. */
 
 type PhotoBackupStatus = {
   pending: number;
   parked: number;
   done: number;
-  /// Byte progress of the asset currently uploading — a queue count alone looks stuck on a long video.
+  /** Byte progress of the asset currently uploading — a queue count alone looks stuck on a long video. */
   progress: { mediaStoreId: string; fraction: number } | null;
 };
 

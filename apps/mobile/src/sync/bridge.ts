@@ -11,10 +11,10 @@ import type { ClientOp } from '../domain/ops';
 import { logDebug } from '../debug/log';
 import { enqueue } from './outbox';
 
-/// Impure half of the write-back: pull captured provider edits from the Kotlin inbox, resolve ids
-/// (pending markers → deterministic aggregate ids), translate, enqueue through the normal outbox/LWW
-/// path, re-point provider rows, ack. Idempotent across crashes: re-drained creates share the
-/// deterministic sourceKey and revises converge via LWW.
+/** Impure half of the write-back: pull captured provider edits from the Kotlin inbox, resolve ids
+ *  (pending markers → deterministic aggregate ids), translate, enqueue through the normal outbox/LWW
+ *  path, re-point provider rows, ack. Idempotent across crashes: re-drained creates share the
+ *  deterministic sourceKey and revises converge via LWW. */
 export async function drainBridgeInbox(db: Db): Promise<number> {
   if (!(await bridgeEnabled(db))) return 0;
   let rows: BridgeInboxRow[];
@@ -72,8 +72,8 @@ export async function drainBridgeInbox(db: Db): Promise<number> {
   return ops.length;
 }
 
-/// Mirror → provider refresh at the end of an engine sync (fresh pull state lands in the stock apps
-/// without waiting for the OS scheduler). No-op unless the user enabled the integration.
+/** Mirror → provider refresh at the end of an engine sync (fresh pull state lands in the stock apps
+ *  without waiting for the OS scheduler). No-op unless the user enabled the integration. */
 export async function bridgePublish(db: Db): Promise<void> {
   if (!(await bridgeEnabled(db))) return;
   try {
@@ -83,7 +83,7 @@ export async function bridgePublish(db: Db): Promise<void> {
   }
 }
 
-/// The user preference lives in mirror_meta so this layer can read it (boundaries: sync ↛ state).
+/** The user preference lives in mirror_meta so this layer can read it (boundaries: sync ↛ state). */
 async function bridgeEnabled(db: Db): Promise<boolean> {
   return (await mirror.getMeta(db, 'bridge.enabled')) === '1';
 }

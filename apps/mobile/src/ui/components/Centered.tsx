@@ -1,11 +1,12 @@
 import { StyleSheet, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
+import { useColors } from '../theme';
 
 export function Centered({ text }: { text: string }) {
-  const theme = useTheme();
+  const c = useColors();
   return (
     <View style={styles.centered}>
-      <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>{text}</Text>
+      <Text variant="bodyMedium" style={{ color: c.textMuted }}>{text}</Text>
     </View>
   );
 }

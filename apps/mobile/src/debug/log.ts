@@ -1,5 +1,5 @@
-/// On-device debug trail: a bounded ring buffer surfaced by the DebugLog screen, so auth/sync problems on a
-/// phone are diagnosable without a cable. Mirrored to the console for `expo start` sessions.
+/** On-device debug trail: a bounded ring buffer surfaced by the DebugLog screen, so auth/sync problems on a
+ *  phone are diagnosable without a cable. Mirrored to the console for `expo start` sessions. */
 
 export type DebugEntry = { at: string; tag: string; message: string };
 

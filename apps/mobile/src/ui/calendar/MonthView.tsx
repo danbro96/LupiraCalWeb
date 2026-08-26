@@ -1,19 +1,20 @@
 import { isToday, monthMatrix, ymd } from '@lupira/cal-domain/time';
 import { memo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
+import { useColors } from '../theme';
 
-/// Month grid straight off the mirror: monthMatrix (domain) for the day layout, one occurrence query per
-/// touched month bucket, up to three title bars per cell. Day selection drives the agenda in CalendarScreen.
+/** Month grid straight off the mirror: monthMatrix (domain) for the day layout, one occurrence query per
+ *  touched month bucket, up to three title bars per cell. Day selection drives the agenda in CalendarScreen. */
 export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelectDay }: {
   anchor: Date;
   selectedDay: string | null;
   onSelectDay: (day: string) => void;
 }) {
-  const theme = useTheme();
+  const c = useColors();
   const weeks = monthMatrix(anchor);
   const dayKeys = weeks.flat().map(ymd);
   const { rows } = useDaysOccurrences(dayKeys);
@@ -37,7 +38,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
     <View style={styles.grid}>
       <View style={styles.weekdayRow}>
         {weeks[0].map((d) => (
-          <Text key={ymd(d)} style={[styles.weekday, { color: theme.colors.onSurfaceVariant }]}>
+          <Text key={ymd(d)} style={[styles.weekday, { color: c.textMuted }]}>
             {d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)}
           </Text>
         ))}
@@ -52,7 +53,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
             return (
               <Pressable
                 key={key}
-                style={[styles.cell, { borderColor: theme.colors.outlineVariant }, selected && [styles.cellSelected, { borderColor: theme.colors.primary }]]}
+                style={[styles.cell, { borderColor: c.divider }, selected && [styles.cellSelected, { borderColor: c.primary }]]}
                 onPress={() => onSelectDay(key)}
               >
                 {availByDay.has(key) && (
@@ -61,7 +62,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
                 <Text
                   style={[
                     styles.dayNum,
-                    { color: isToday(d) ? theme.colors.primary : inMonth ? theme.colors.onSurface : theme.colors.onSurfaceVariant },
+                    { color: isToday(d) ? c.primary : inMonth ? c.text : c.textMuted },
                     isToday(d) && styles.dayNumToday,
                   ]}
                 >
@@ -73,12 +74,12 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
                       key={`${r.source}-${r.source_id}-${r.start_utc}`}
                       style={[
                         styles.taskBar,
-                        { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
-                        r.task.overdue && { borderColor: theme.colors.error, backgroundColor: theme.colors.error + '22' },
+                        { backgroundColor: c.surface, borderColor: c.border },
+                        r.task.overdue && { borderColor: c.danger, backgroundColor: c.danger + '22' },
                       ]}
                     >
                       <Text
-                        style={[styles.taskBarText, { color: r.task.overdue ? theme.colors.error : theme.colors.onSurfaceVariant }]}
+                        style={[styles.taskBarText, { color: r.task.overdue ? c.danger : c.textMuted }]}
                         numberOfLines={1}
                       >
                         ⏰ {r.title ?? '(untitled)'}
@@ -95,7 +96,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
                     </View>
                   ),
                 )}
-                {dayRows.length > 3 && <Text style={[styles.more, { color: theme.colors.onSurfaceVariant }]}>+{dayRows.length - 3}</Text>}
+                {dayRows.length > 3 && <Text style={[styles.more, { color: c.textMuted }]}>+{dayRows.length - 3}</Text>}
               </Pressable>
             );
           })}

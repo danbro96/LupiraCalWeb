@@ -12,10 +12,10 @@ import { ApiError } from '../domain/apiError';
 import { toContactChangesPage, toItemChangesPage } from './docAdapters';
 import { useSyncStatus } from './syncStatus';
 
-/// Pull side of the engine: a paged delta loop that actually READS the cursor (the tasks app wrote and
-/// ignored it), applies tombstones, and — the critical part — rebases every changed aggregate through the
-/// pending (and parked) local ops so a fresh server base never clobbers un-pushed intent. Server guards seed
-/// the local per-section guards, so the rebase decides each section exactly as the server eventually will.
+/** Pull side of the engine: a paged delta loop that actually READS the cursor (the tasks app wrote and
+ *  ignored it), applies tombstones, and — the critical part — rebases every changed aggregate through the
+ *  pending (and parked) local ops so a fresh server base never clobbers un-pushed intent. Server guards seed
+ *  the local per-section guards, so the rebase decides each section exactly as the server eventually will. */
 
 export type ItemChange = { item: ItemDoc; guards: ItemGuards };
 export type ContactChange = { contact: ContactDoc; guards: ContactGuards };
@@ -62,7 +62,7 @@ export async function pullContainers(db: Db, deps: PullDeps): Promise<void> {
   });
 }
 
-/// Returns the touched month keys for query invalidation.
+/** Returns the touched month keys for query invalidation. */
 export async function pullCal(db: Db, horizon: Horizon, deps: PullDeps): Promise<Set<string>> {
   const monthKeys = new Set<string>();
   let cursor = await mirror.getCursor(db, 'cal');
@@ -136,8 +136,8 @@ export async function pullContacts(db: Db, horizon: Horizon, deps: PullDeps): Pr
   return monthKeys;
 }
 
-/// Server truth + pending local ops replayed through the reducer twin = the state the server will converge
-/// on once the outbox lands. Parked ops stay in the fold — they remain the user's intent until discarded.
+/** Server truth + pending local ops replayed through the reducer twin = the state the server will converge
+ *  on once the outbox lands. Parked ops stay in the fold — they remain the user's intent until discarded. */
 async function rebaseItem(tx: Tx, change: ItemChange, horizon: Horizon, monthKeys: Set<string>): Promise<void> {
   await collectItemMonths(tx, change.item.id, horizon, monthKeys);
   let state: MirrorItem | null = { doc: change.item, guards: change.guards, deleted: false };
@@ -158,8 +158,8 @@ async function rebaseContact(tx: Tx, change: ContactChange, horizon: Horizon, mo
   await mirror.saveContact(tx, state!, rows);
 }
 
-/// Delete-wins: the row and its occurrences go. Pending ops for it are left to 404-park on replay — the
-/// Sync issues screen is where a user resurrects that intent deliberately.
+/** Delete-wins: the row and its occurrences go. Pending ops for it are left to 404-park on replay — the
+ *  Sync issues screen is where a user resurrects that intent deliberately. */
 async function tombstoneItem(tx: Tx, id: string, horizon: Horizon, monthKeys: Set<string>): Promise<void> {
   await collectItemMonths(tx, id, horizon, monthKeys);
   await mirror.removeItem(tx, id);

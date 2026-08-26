@@ -6,8 +6,8 @@ import type { ClientOp } from '../domain/ops';
 import { OP_ENVELOPE_VERSION, aggregateIdOf, domainOf } from '../domain/ops';
 import type { SqlValue, Tx } from './db/types';
 
-/// Row-level persistence for the mirror. Every function takes a Tx — writes only ever happen inside
-/// Db.exclusive, so a pull can never interleave with an enqueue (the tasks app's transaction defect).
+/** Row-level persistence for the mirror. Every function takes a Tx — writes only ever happen inside
+ *  Db.exclusive, so a pull can never interleave with an enqueue (the tasks app's transaction defect). */
 
 type ItemRow = { id: string; doc: string; guards: string; deleted: number };
 
@@ -79,8 +79,8 @@ export async function allContactIds(tx: Tx): Promise<string[]> {
   return (await tx.all<{ id: string }>('SELECT id FROM contacts')).map((r) => r.id);
 }
 
-/// Server composition mirrored (Contact.DisplayName): format-specific label, falling back to the full
-/// composition, then nickname — never empty for a named contact.
+/** Server composition mirrored (Contact.DisplayName): format-specific label, falling back to the full
+ *  composition, then nickname — never empty for a named contact. */
 export function composeDisplayName(d: ContactDoc): string {
   const parts = (xs: (string | null | undefined)[]) => xs.filter((s) => s && s.trim().length > 0).join(' ');
   const full = parts([d.givenName, d.middleName, d.familyName]) || (d.nickname ?? '') || d.id;
@@ -98,9 +98,9 @@ async function replaceOccurrences(tx: Tx, source: 'item' | 'birthday', sourceId:
     rows.map((r) => [r.source, r.sourceId, r.startUtc, r.endUtc, r.startDay, r.allDay ? 1 : 0]));
 }
 
-/// Multi-row VALUES batches: the first full sync writes tens of thousands of occurrence rows, and one
-/// awaited bridge round-trip per row is what made it take minutes. ~40 rows/statement keeps parameter
-/// counts well under SQLite's limit.
+/** Multi-row VALUES batches: the first full sync writes tens of thousands of occurrence rows, and one
+ *  awaited bridge round-trip per row is what made it take minutes. ~40 rows/statement keeps parameter
+ *  counts well under SQLite's limit. */
 const INSERT_CHUNK = 40;
 
 async function insertChunked(tx: Tx, insertPrefix: string, columns: number, rows: SqlValue[][]): Promise<void> {
@@ -126,16 +126,16 @@ export type GridRow = OccurrenceQueryRow & {
   title: string | null;
   status: string | null;
   calendar_id: string | null;
-  /// 1 when the item lives in the Availability-kind calendar — grids render these as the background
-  /// band (status in avail_status), never as chips.
+  /** 1 when the item lives in the Availability-kind calendar — grids render these as the background
+   *  band (status in avail_status), never as chips. */
   is_availability: number | null;
   avail_status: string | null;
 };
 
-/// The grids' one read: occurrences joined with just enough display data (title, status, a calendar for the
-/// color). Still a single indexed start_day range — no per-item fan-out, no render-time expansion.
-/// With includeSystem=false, items whose only Accepted homes are System-class calendars stay out of the
-/// grids (birthday rows always pass — locally synthesized, and the Birthdays calendar is Agenda-class).
+/** The grids' one read: occurrences joined with just enough display data (title, status, a calendar for the
+ *  color). Still a single indexed start_day range — no per-item fan-out, no render-time expansion.
+ *  With includeSystem=false, items whose only Accepted homes are System-class calendars stay out of the
+ *  grids (birthday rows always pass — locally synthesized, and the Birthdays calendar is Agenda-class). */
 export async function gridRowsBetween(tx: Tx, fromDay: string, toDay: string, includeSystem = true): Promise<GridRow[]> {
   const systemFilter = includeSystem ? '' : `
        AND (o.source != 'item' OR EXISTS (
@@ -168,8 +168,8 @@ export type MapEventRow = {
   calendar_id: string | null;
 };
 
-/// Map pins: one row per placed item with an occurrence in range. Recurring items repeat occurrence
-/// rows but share one place — GROUP BY collapses them to the earliest occurrence in the window.
+/** Map pins: one row per placed item with an occurrence in range. Recurring items repeat occurrence
+ *  rows but share one place — GROUP BY collapses them to the earliest occurrence in the window. */
 export async function mapEventRowsBetween(tx: Tx, fromDay: string, toDay: string): Promise<MapEventRow[]> {
   return tx.all<MapEventRow>(
     `SELECT o.source_id, MIN(o.start_utc) AS start_utc, i.title,
@@ -217,8 +217,8 @@ export async function insertOp(tx: Tx, op: ClientOp): Promise<void> {
   );
 }
 
-/// The next op the drain may replay: oldest pending row that is due AND has no earlier parked sibling on the
-/// same aggregate — a parked create must hold back the revisions behind it instead of guaranteeing their 404s.
+/** The next op the drain may replay: oldest pending row that is due AND has no earlier parked sibling on the
+ *  same aggregate — a parked create must hold back the revisions behind it instead of guaranteeing their 404s. */
 export async function nextEligibleOp(tx: Tx, nowIso: string): Promise<OutboxRow | null> {
   return tx.first<OutboxRow>(
     `SELECT * FROM outbox o

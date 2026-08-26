@@ -12,10 +12,10 @@ import type { PhotoBackupSettings, PhotoQueueRow } from '../domain/photoBackup';
 import { logDebug } from '../debug/log';
 import { usePhotoBackupStatus } from './photoBackupStatus';
 
-/// Camera-roll backup: scan MediaStore for assets inside the backup window, then drain the queue by
-/// declaring each asset, PUTting the bytes straight to the object store's presigned URL, and completing.
-/// Single-flight like the outbox, and deliberately separate from it: blobs need progress, a WiFi gate,
-/// and per-asset resumability that JSON ops don't.
+/** Camera-roll backup: scan MediaStore for assets inside the backup window, then drain the queue by
+ *  declaring each asset, PUTting the bytes straight to the object store's presigned URL, and completing.
+ *  Single-flight like the outbox, and deliberately separate from it: blobs need progress, a WiFi gate,
+ *  and per-asset resumability that JSON ops don't. */
 
 const SCAN_PAGE = 200;
 const DRAIN_BATCH = 8;
@@ -23,8 +23,8 @@ const DEVICE_ID_KEY = 'photo.deviceId';
 
 let draining: Promise<void> | null = null;
 
-/// Stable per-install device id — the server's idempotency triple is (principal, device, mediaStoreId),
-/// so this must survive app restarts but need not survive a reinstall (MediaStore ids don't either).
+/** Stable per-install device id — the server's idempotency triple is (principal, device, mediaStoreId),
+ *  so this must survive app restarts but need not survive a reinstall (MediaStore ids don't either). */
 export async function deviceId(db: Db): Promise<string> {
   const existing = await mirror.getMeta(db, DEVICE_ID_KEY);
   if (existing) return existing;
@@ -33,8 +33,8 @@ export async function deviceId(db: Db): Promise<string> {
   return minted;
 }
 
-/// Enqueues everything in the window that isn't already queued. Pages until a pass yields nothing,
-/// so the first run after a backfill date change picks up the whole history.
+/** Enqueues everything in the window that isn't already queued. Pages until a pass yields nothing,
+ *  so the first run after a backfill date change picks up the whole history. */
 export async function scanLibrary(db: Db, settings: PhotoBackupSettings): Promise<number> {
   const sinceMs = Date.parse(settings.backupFrom);
   let offset = 0;
@@ -65,8 +65,8 @@ export async function scanLibrary(db: Db, settings: PhotoBackupSettings): Promis
   return enqueued;
 }
 
-/// True when the connection satisfies the WiFi-only setting. Cellular uploads of video originals are
-/// the reason this defaults on.
+/** True when the connection satisfies the WiFi-only setting. Cellular uploads of video originals are
+ *  the reason this defaults on. */
 async function transportAllowed(wifiOnly: boolean): Promise<boolean> {
   const state = await NetInfo.fetch();
   if (!state.isConnected) return false;
@@ -155,7 +155,7 @@ async function uploadOne(db: Db, device: string, row: PhotoQueueRow): Promise<vo
   }
 }
 
-/// Un-parks everything and drains immediately (the Settings "retry" action).
+/** Un-parks everything and drains immediately (the Settings "retry" action). */
 export async function retryParkedPhotos(dbOverride?: Db): Promise<void> {
   const db = dbOverride ?? (await getDb());
   await db.exclusive((tx) => queue.retryParkedUploads(tx));

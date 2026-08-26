@@ -1,9 +1,9 @@
 import { ymd } from '@lupira/cal-domain/time';
 
-/// Task deadlines are the grids' third entry source (after items and birthdays), fetched online-only —
-/// they never touch the SQLite mirror. Rows are GridRow-shaped so the render sites take them unchanged;
-/// `dueAt` means "done by", so a deadline pins to its local due day as an all-day entry (the exact time
-/// shows on the TaskDetail screen).
+/** Task deadlines are the grids' third entry source (after items and birthdays), fetched online-only —
+ *  they never touch the SQLite mirror. Rows are GridRow-shaped so the render sites take them unchanged;
+ *  `dueAt` means "done by", so a deadline pins to its local due day as an all-day entry (the exact time
+ *  shows on the TaskDetail screen). */
 
 export type TaskLike = {
   id: string;
@@ -28,8 +28,8 @@ export type TaskDeadlineRow = {
   task: { listId: string; itemId: string; dueAt: string; overdue: boolean };
 };
 
-/// Drops undated tasks and Cancelled (closed but `completed: false` server-side, so the
-/// completed=false fetch still returns it).
+/** Drops undated tasks and Cancelled (closed but `completed: false` server-side, so the
+ *  completed=false fetch still returns it). */
 export function taskDeadlineRows(items: TaskLike[], now: Date): TaskDeadlineRow[] {
   return items.flatMap((t) => {
     if (!t.dueAt || t.status === 'Cancelled') return [];
@@ -55,7 +55,7 @@ export function isTaskRow(r: { source: string }): r is TaskDeadlineRow {
   return r.source === 'task';
 }
 
-/// Half-open [dueFrom, dueTo) covering the LOCAL month, in the ISO instants the API filters on.
+/** Half-open [dueFrom, dueTo) covering the LOCAL month, in the ISO instants the API filters on. */
 export function monthUtcRange(monthKey: string): { dueFrom: string; dueTo: string } {
   const [y, m] = monthKey.split('-').map(Number);
   return {

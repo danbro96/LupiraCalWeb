@@ -3,17 +3,18 @@ import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
-import { Chip, Text, useTheme } from 'react-native-paper';
+import { Chip, Text } from 'react-native-paper';
 import { getItem } from '../../data/api/generated/tasks/items/items';
 import { taskDeepLink } from '../../domain/taskRows';
 import { Centered } from '../components/Centered';
 import { Button } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
+import { useColors } from '../theme';
 
-/// Read-only view of a LupiraTasks deadline. Online-only by design (tasks never enter the mirror);
-/// editing lives in the Lupira Tasks app, reached via the deep link below.
+/** Read-only view of a LupiraTasks deadline. Online-only by design (tasks never enter the mirror);
+ *  editing lives in the Lupira Tasks app, reached via the deep link below. */
 export function TaskDetailScreen() {
-  const theme = useTheme();
+  const c = useColors();
   const route = useRoute<RouteProp<RootStackParamList, 'TaskDetail'>>();
   const { listId, itemId } = route.params;
 
@@ -40,12 +41,12 @@ export function TaskDetailScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.h1}>⏰ {task.title}</Text>
       {task.dueAt ? (
-        <Text style={[styles.when, { color: overdue ? theme.colors.error : theme.colors.onSurfaceVariant }]}>
+        <Text style={[styles.when, { color: overdue ? c.danger : c.textMuted }]}>
           Due {fmtWhen(task.dueAt, false)}
           {overdue ? ' — overdue' : ''}
         </Text>
       ) : (
-        <Text style={[styles.when, { color: theme.colors.onSurfaceVariant }]}>No deadline</Text>
+        <Text style={[styles.when, { color: c.textMuted }]}>No deadline</Text>
       )}
       <View style={styles.chipRow}>
         <Chip compact mode="outlined">{task.status}</Chip>
@@ -53,9 +54,9 @@ export function TaskDetailScreen() {
           <Chip compact mode="outlined">{`Priority ${task.priority}`}</Chip>
         )}
       </View>
-      {task.statusReason ? <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>{task.statusReason}</Text> : null}
+      {task.statusReason ? <Text style={[styles.note, { color: c.textMuted }]}>{task.statusReason}</Text> : null}
       {task.assignee && (
-        <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>Assigned to {task.assignee.displayName || task.assignee.email}</Text>
+        <Text style={[styles.note, { color: c.textMuted }]}>Assigned to {task.assignee.displayName || task.assignee.email}</Text>
       )}
       {task.notes ? <Text style={styles.notes}>{task.notes}</Text> : null}
       <View style={styles.actions}>

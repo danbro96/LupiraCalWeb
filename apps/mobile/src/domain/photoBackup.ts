@@ -1,11 +1,11 @@
-/// Camera-roll backup queue: pure types + selection rules. Blob-shaped work, so it lives in its own
-/// table rather than the outbox (JSON ops with a causal hold), but it reuses the outbox's discipline —
-/// exponential backoff via domain/backoff.ts and parking after enough consecutive failures.
+/** Camera-roll backup queue: pure types + selection rules. Blob-shaped work, so it lives in its own
+ *  table rather than the outbox (JSON ops with a causal hold), but it reuses the outbox's discipline —
+ *  exponential backoff via domain/backoff.ts and parking after enough consecutive failures. */
 
 export type QueueState = 'pending' | 'uploading' | 'done' | 'parked';
 
-/// One camera-roll asset awaiting (or having completed) backup. `media_store_id` is MediaStore's own id:
-/// stable per device, and half of the server's idempotency triple, so it is the natural primary key.
+/** One camera-roll asset awaiting (or having completed) backup. `media_store_id` is MediaStore's own id:
+ *  stable per device, and half of the server's idempotency triple, so it is the natural primary key. */
 export type PhotoQueueRow = {
   media_store_id: string;
   asset_id: string | null;
@@ -28,8 +28,8 @@ export type PhotoQueueRow = {
 export type PhotoBackupSettings = {
   enabled: boolean;
   wifiOnly: boolean;
-  /// Assets created before this instant are ignored. Defaults to the moment backup was enabled;
-  /// moving it earlier is how a backfill is requested.
+  /** Assets created before this instant are ignored. Defaults to the moment backup was enabled;
+   *  moving it earlier is how a backfill is requested. */
   backupFrom: string;
 };
 
@@ -38,8 +38,8 @@ export const DEFAULT_BACKUP_SETTINGS: Omit<PhotoBackupSettings, 'backupFrom'> = 
   wifiOnly: true,
 };
 
-/// MediaStore reports mime types the API may not accept; declaring one would just earn a 422 per asset.
-/// Mirrors LupiraPhotoApi's ObjectKeys whitelist — keep the two in step.
+/** MediaStore reports mime types the API may not accept; declaring one would just earn a 422 per asset.
+ *  Mirrors LupiraPhotoApi's ObjectKeys whitelist — keep the two in step. */
 const SUPPORTED_CONTENT_TYPES = new Set([
   'image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'image/gif', 'image/avif',
   'video/mp4', 'video/quicktime', 'video/webm', 'video/x-matroska', 'video/3gpp',
@@ -49,8 +49,8 @@ export function isSupportedContentType(contentType: string): boolean {
   return SUPPORTED_CONTENT_TYPES.has(contentType.toLowerCase());
 }
 
-/// MediaLibrary gives a filename + mediaType, not a mime type. Extension wins because it distinguishes
-/// heic from jpeg where mediaType only says "photo".
+/** MediaLibrary gives a filename + mediaType, not a mime type. Extension wins because it distinguishes
+ *  heic from jpeg where mediaType only says "photo". */
 export function contentTypeOf(filename: string, mediaType: 'image' | 'video' | string): string | null {
   const ext = filename.toLowerCase().split('.').pop() ?? '';
   const byExt: Record<string, string> = {

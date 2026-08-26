@@ -11,11 +11,11 @@ import { invalidateContacts, invalidateItems, invalidateMonthKeys, invalidateOut
 import { replayOp } from './replayOp';
 import { useSyncStatus } from './syncStatus';
 
-/// Push side of the engine. Enqueue = ONE exclusive transaction covering the optimistic mirror write, the
-/// occurrence re-materialization, and the outbox insert — all-or-nothing (the tasks app's non-exclusive
-/// enqueue is the defect this design exists to fix). Drain = serialized, single-flight, with queue-level
-/// backoff (next_attempt_at), park-after-N, and the causal hold (a parked op blocks later ops on the same
-/// aggregate so a dead create can't 404-cascade its children).
+/** Push side of the engine. Enqueue = ONE exclusive transaction covering the optimistic mirror write, the
+ *  occurrence re-materialization, and the outbox insert — all-or-nothing (the tasks app's non-exclusive
+ *  enqueue is the defect this design exists to fix). Drain = serialized, single-flight, with queue-level
+ *  backoff (next_attempt_at), park-after-N, and the causal hold (a parked op blocks later ops on the same
+ *  aggregate so a dead create can't 404-cascade its children). */
 
 export type OutboxDeps = {
   replay: (op: ClientOp) => Promise<void>;
@@ -124,8 +124,8 @@ export async function retryOne(db: Db, seq: number, deps: Partial<OutboxDeps> = 
   void drain(db, deps);
 }
 
-/// Discard = drop the op AND roll its optimistic effect back to server truth (the tasks app left the mirror
-/// lying until the next pull). The caller re-fetches the aggregate; here we just remove the row.
+/** Discard = drop the op AND roll its optimistic effect back to server truth (the tasks app left the mirror
+ *  lying until the next pull). The caller re-fetches the aggregate; here we just remove the row. */
 export async function discardParked(db: Db, seq: number): Promise<{ domain: 'cal' | 'contact'; aggregateId: string } | null> {
   const target = await db.exclusive(async (tx) => {
     const row = await tx.first<mirror.OutboxRow>('SELECT * FROM outbox WHERE seq = ?', [seq]);

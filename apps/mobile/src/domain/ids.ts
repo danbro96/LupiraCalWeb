@@ -1,8 +1,8 @@
-/// Client half of the servers' DeterministicGuid: id = MD5(sourceKey) laid out as a .NET Guid. The client
-/// mints a sourceKey (UUIDv7) for offline creates and derives the SAME id the server will assign, so the
-/// mirror row, its occurrences, and follow-up ops can reference the aggregate before the create is acked —
-/// no temp-id reconciliation. MD5 itself comes from the platform (expo-crypto / node:crypto); this is the
-/// pure byte-order half, pinned against real .NET output in tests.
+/** Client half of the servers' DeterministicGuid: id = MD5(sourceKey) laid out as a .NET Guid. The client
+ *  mints a sourceKey (UUIDv7) for offline creates and derives the SAME id the server will assign, so the
+ *  mirror row, its occurrences, and follow-up ops can reference the aggregate before the create is acked —
+ *  no temp-id reconciliation. MD5 itself comes from the platform (expo-crypto / node:crypto); this is the
+ *  pure byte-order half, pinned against real .NET output in tests. */
 export function guidFromMd5Hex(md5Hex: string): string {
   const h = md5Hex.toLowerCase();
   if (!/^[0-9a-f]{32}$/.test(h)) throw new Error('guidFromMd5Hex expects 32 hex digits');

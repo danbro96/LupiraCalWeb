@@ -1,6 +1,6 @@
-/// node:sqlite adapter — the vitest harness. NEVER imported from app code (Metro must not see node:*);
-/// only test files construct it. Exclusive transactions are emulated with BEGIN IMMEDIATE plus a promise
-/// mutex, matching expo-sqlite's serialization semantics closely enough for engine tests.
+/** node:sqlite adapter — the vitest harness. NEVER imported from app code (Metro must not see node:*);
+ *  only test files construct it. Exclusive transactions are emulated with BEGIN IMMEDIATE plus a promise
+ *  mutex, matching expo-sqlite's serialization semantics closely enough for engine tests. */
 import { DatabaseSync } from 'node:sqlite';
 import type { Db, SqlValue, Tx } from './types';
 

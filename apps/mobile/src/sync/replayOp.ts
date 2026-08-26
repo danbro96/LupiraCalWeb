@@ -5,8 +5,8 @@ import { createContact, deleteContact, reviseContact, setContactChannels, setCon
 import type { ContactReachChannel } from '../data/api/generated/contact/models';
 import type { ClientOp, ItemCore } from '../domain/ops';
 
-/// Op → REST. Every call carries `Idempotency-Key: commandId` (the server ledger makes redelivery a no-op —
-/// and it's what licenses the mutator to auto-retry writes) and the op's occurredAt (the server's LWW input).
+/** Op → REST. Every call carries `Idempotency-Key: commandId` (the server ledger makes redelivery a no-op —
+ *  and it's what licenses the mutator to auto-retry writes) and the op's occurredAt (the server's LWW input). */
 export async function replayOp(op: ClientOp): Promise<void> {
   const idem = { headers: { 'Idempotency-Key': op.commandId } };
   switch (op.kind) {
@@ -93,8 +93,8 @@ export async function replayOp(op: ClientOp): Promise<void> {
   }
 }
 
-/// The whole-core write: every sentinel set so the op's desired state lands verbatim (incl. clears of the
-/// sentinel-backed fields); non-sentinel fields keep server semantics (null = keep).
+/** The whole-core write: every sentinel set so the op's desired state lands verbatim (incl. clears of the
+ *  sentinel-backed fields); non-sentinel fields keep server semantics (null = keep). */
 function totalizedPut(core: ItemCore, occurredAt: string): UpdateCalendarItemRequest {
   return {
     title: core.title ?? undefined,

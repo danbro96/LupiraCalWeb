@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { debugEntries, onDebugLog } from '../../debug/log';
+import { useColors } from '../theme';
 
 export function DebugLogScreen() {
-  const theme = useTheme();
+  const c = useColors();
   const [, setRev] = useState(0);
   useEffect(() => onDebugLog(() => setRev((n) => n + 1)), []);
 
@@ -14,12 +15,12 @@ export function DebugLogScreen() {
       data={entries}
       keyExtractor={(e, i) => `${e.at}-${i}`}
       renderItem={({ item }) => (
-        <View style={[styles.row, { borderColor: theme.colors.outlineVariant }]}>
-          <Text style={[styles.meta, { color: theme.colors.onSurfaceVariant }]}>{item.at.slice(11, 19)} [{item.tag}]</Text>
+        <View style={[styles.row, { borderColor: c.divider }]}>
+          <Text style={[styles.meta, { color: c.textMuted }]}>{item.at.slice(11, 19)} [{item.tag}]</Text>
           <Text style={styles.msg}>{item.message}</Text>
         </View>
       )}
-      ListEmptyComponent={<Text style={[styles.empty, { color: theme.colors.onSurfaceVariant }]}>Nothing logged yet.</Text>}
+      ListEmptyComponent={<Text style={[styles.empty, { color: c.textMuted }]}>Nothing logged yet.</Text>}
     />
   );
 }

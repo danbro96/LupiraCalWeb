@@ -5,7 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Chip, List, Text, useTheme } from 'react-native-paper';
+import { Chip, List, Text } from 'react-native-paper';
 import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { Centered } from '../components/Centered';
@@ -13,10 +13,10 @@ import { useConfirm } from '../components/ConfirmDialog';
 import { Button, Input } from '../components/form';
 import { useCalendarColors } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
-import type { AppTheme } from '../theme/paperTheme';
+import { useColors } from '../theme';
 
 export function ItemDetailScreen() {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const route = useRoute<RouteProp<RootStackParamList, 'ItemDetail'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { itemId } = route.params;
@@ -43,15 +43,15 @@ export function ItemDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {state.deleted && <Text style={[styles.deleted, { color: theme.colors.error }]}>Deleted — pending sync</Text>}
+      {state.deleted && <Text style={[styles.deleted, { color: c.danger }]}>Deleted — pending sync</Text>}
       <Text style={styles.h1}>{doc.title ?? '(untitled)'}</Text>
       {start && (
-        <Text style={[styles.when, { color: theme.colors.onSurfaceVariant }]}>
+        <Text style={[styles.when, { color: c.textMuted }]}>
           {fmtWhen(start, doc.isAllDay)}
           {end ? ` → ${fmtWhen(end, doc.isAllDay)}` : ''}
         </Text>
       )}
-      {doc.recurrenceRule && <Text style={[styles.recur, { color: theme.colors.primary }]}>{describeRrule(doc.recurrenceRule)}</Text>}
+      {doc.recurrenceRule && <Text style={[styles.recur, { color: c.primary }]}>{describeRrule(doc.recurrenceRule)}</Text>}
       <View style={styles.chipRow}>
         {doc.status && <Chip compact mode="outlined">{doc.status}</Chip>}
         {doc.category && <Chip compact mode="outlined">{doc.category}</Chip>}
@@ -60,9 +60,9 @@ export function ItemDetailScreen() {
         ))}
       </View>
       {doc.description ? <Text style={styles.description}>{doc.description}</Text> : null}
-      {attendees > 0 && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>{attendees} participant{attendees === 1 ? '' : 's'} (manage on web)</Text>}
-      {doc.prompt != null && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>Has a prompt payload (view on web)</Text>}
-      {doc.action != null && <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>Has an action payload (view on web)</Text>}
+      {attendees > 0 && <Text style={[styles.note, { color: c.textMuted }]}>{attendees} participant{attendees === 1 ? '' : 's'} (manage on web)</Text>}
+      {doc.prompt != null && <Text style={[styles.note, { color: c.textMuted }]}>Has a prompt payload (view on web)</Text>}
+      {doc.action != null && <Text style={[styles.note, { color: c.textMuted }]}>Has an action payload (view on web)</Text>}
 
       <CalendarsPanel itemId={itemId} memberships={doc.calendars} />
       <MetadataPanel itemId={itemId} metadata={doc.metadata ?? null} />
@@ -75,12 +75,12 @@ export function ItemDetailScreen() {
   );
 }
 
-/// Filing manager: every mirror calendar with a membership toggle → item.file / item.unfile ops.
+/** Filing manager: every mirror calendar with a membership toggle → item.file / item.unfile ops. */
 function CalendarsPanel({ itemId, memberships }: {
   itemId: string;
   memberships: { calendarId: string; status: string }[];
 }) {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const { data: calendars } = useCalendars();
   const colorOf = useCalendarColors();
   const statusOf = (calId: string) => memberships.find((m) => m.calendarId === calId)?.status;
@@ -88,17 +88,17 @@ function CalendarsPanel({ itemId, memberships }: {
   return (
     <View>
       <List.Subheader>Calendars</List.Subheader>
-      {selectableCalendars(calendars).map((c) => {
-        const status = statusOf(c.id);
+      {selectableCalendars(calendars).map((cal) => {
+        const status = statusOf(cal.id);
         const member = status === 'Accepted' || status === 'Proposed';
         return (
           <List.Item
-            key={c.id}
-            onPress={() => void (member ? unfileItem(itemId, c.id) : fileItem(itemId, c.id))}
-            title={c.displayName ?? c.id}
+            key={cal.id}
+            onPress={() => void (member ? unfileItem(itemId, cal.id) : fileItem(itemId, cal.id))}
+            title={cal.displayName ?? cal.id}
             description={status === 'Proposed' ? 'proposed' : undefined}
-            left={() => <View style={[styles.calDot, { backgroundColor: colorOf(c.id) }]} />}
-            right={() => (member ? <List.Icon icon="check" color={theme.colors.primary} /> : null)}
+            left={() => <View style={[styles.calDot, { backgroundColor: colorOf(cal.id) }]} />}
+            right={() => (member ? <List.Icon icon="check" color={c.primary} /> : null)}
           />
         );
       })}
@@ -106,7 +106,7 @@ function CalendarsPanel({ itemId, memberships }: {
   );
 }
 
-/// Merge-patch editor: add or overwrite one key at a time (the REST surface has no key removal).
+/** Merge-patch editor: add or overwrite one key at a time (the REST surface has no key removal). */
 function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<string, unknown> | null }) {
   const [key, setKey] = useState('');
   const [value, setValue] = useState('');

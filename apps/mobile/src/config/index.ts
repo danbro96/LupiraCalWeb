@@ -1,7 +1,7 @@
 export const APP_VERSION = '1.0.0';   // keep in lockstep with app.json expo.version
 
-/// 'oidc' = sign in against Authentik and send a bearer; 'none' = send nothing — the Development BFF
-/// auto-authenticates via its DevAuthHandler (the LAN dev loop).
+/** 'oidc' = sign in against Authentik and send a bearer; 'none' = send nothing — the Development BFF
+ *  auto-authenticates via its DevAuthHandler (the LAN dev loop). */
 export type AuthMode = 'oidc' | 'none';
 
 export type ApiPreset = { key: string; label: string; url: string; authMode: AuthMode };

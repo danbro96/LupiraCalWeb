@@ -18,8 +18,8 @@ import { pullCal, pullContacts, pullContainers, realPullDeps } from './pull';
 import { invalidateContacts, invalidateContainers, invalidateItems, invalidateMonthKeys } from './reactivity';
 import { useSyncStatus } from './syncStatus';
 
-/// Orchestrator: push first (our writes carry LWW stamps, so order is about promptness, not correctness),
-/// then containers, then both delta pulls, then horizon upkeep. Coalesced — concurrent triggers share a run.
+/** Orchestrator: push first (our writes carry LWW stamps, so order is about promptness, not correctness),
+ *  then containers, then both delta pulls, then horizon upkeep. Coalesced — concurrent triggers share a run. */
 
 let syncing: Promise<void> | null = null;
 
@@ -81,8 +81,8 @@ async function run(dbOverride: Db | undefined, deps: PullDeps): Promise<void> {
   }
 }
 
-/// Re-materializes every aggregate when the rolling window has drifted a month past the stored one, so old
-/// occurrences age out and new months appear without any server traffic.
+/** Re-materializes every aggregate when the rolling window has drifted a month past the stored one, so old
+ *  occurrences age out and new months appear without any server traffic. */
 async function maintainHorizon(db: Db, horizon: Horizon): Promise<void> {
   const stored = await mirror.getMeta(db, 'horizon');
   const parsed = stored ? (JSON.parse(stored) as { start: string; end: string }) : null;
@@ -110,9 +110,9 @@ async function maintainHorizon(db: Db, horizon: Horizon): Promise<void> {
   logDebug('sync', 'horizon re-materialized');
 }
 
-/// Discard a parked op AND restore its aggregate to server truth — the optimistic write must not keep lying
-/// in the mirror (the tasks app left it until the next incidental pull). Guards reset to zero: the next
-/// delta pull re-seeds the real ones.
+/** Discard a parked op AND restore its aggregate to server truth — the optimistic write must not keep lying
+ *  in the mirror (the tasks app left it until the next incidental pull). Guards reset to zero: the next
+ *  delta pull re-seeds the real ones. */
 export async function discardParkedAndRestore(seq: number, dbOverride?: Db): Promise<void> {
   const db = dbOverride ?? (await getDb());
   const { discardParked } = await import('./outbox');
@@ -166,8 +166,8 @@ export async function discardParkedAndRestore(seq: number, dbOverride?: Db): Pro
   invalidateMonthKeys(monthKeys);
 }
 
-/// Foreground triggers: app becomes active, connectivity returns, sign-in completes. (Post-enqueue drains
-/// are wired inside enqueue; the periodic background tick lives in backgroundTask.ts.)
+/** Foreground triggers: app becomes active, connectivity returns, sign-in completes. (Post-enqueue drains
+ *  are wired inside enqueue; the periodic background tick lives in backgroundTask.ts.) */
 export function startSync(): () => void {
   const appState = AppState.addEventListener('change', (s) => {
     if (s === 'active') void runSync();

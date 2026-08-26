@@ -9,7 +9,7 @@ export function availabilityColor(status: string | null): string {
   return isAvailabilityStatus(status) ? AVAILABILITY_COLORS[status] : UNKNOWN_AVAILABILITY;
 }
 
-/// Calendar color: the container's own color when it set one, else a stable hash — same idea as the web grid.
+/** Calendar color: the container's own color when it set one, else a stable hash — same idea as the web grid. */
 export function useCalendarColors(): (calendarId: string | null) => string {
   const { data } = useCalendars();
   const explicit = new Map((data ?? []).map((c) => [c.id, c.color ?? null] as const));

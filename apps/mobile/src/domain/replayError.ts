@@ -1,11 +1,11 @@
 import { ApiError } from './apiError';
 
-/// Park-don't-wedge: what the outbox drain does with a failed replay. Pure and total so the whole decision
-/// table is unit-tested (ported from LupiraTasksMobile, with its 429 misclassification fixed — throttling is
-/// transient, not a semantic conflict).
+/** Park-don't-wedge: what the outbox drain does with a failed replay. Pure and total so the whole decision
+ *  table is unit-tested (ported from LupiraTasksMobile, with its 429 misclassification fixed — throttling is
+ *  transient, not a semantic conflict). */
 export type ReplayDecision = {
   outcome: 'pause' | 'park' | 'retry';
-  /// Stop the drain loop (park lets the queue continue past the corpse).
+  /** Stop the drain loop (park lets the queue continue past the corpse). */
   stop: boolean;
   reason: string;
 };

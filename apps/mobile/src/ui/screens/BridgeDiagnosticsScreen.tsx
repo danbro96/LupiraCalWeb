@@ -9,8 +9,8 @@ import { runSync } from '../../sync/sync';
 import { useConfirm } from '../components/ConfirmDialog';
 import { Button } from '../components/form';
 
-/// Manual halves of the automated bridge flows, for diagnosis and repair: capture/publish (Kotlin),
-/// inbox drain (JS→outbox), the OS scheduler, and account lifecycle. Reached via Settings → Developer.
+/** Manual halves of the automated bridge flows, for diagnosis and repair: capture/publish (Kotlin),
+ *  inbox drain (JS→outbox), the OS scheduler, and account lifecycle. Reached via Settings → Developer. */
 export function BridgeDiagnosticsScreen() {
   const confirm = useConfirm();
   const [state, setState] = useState<BridgeState | null>(null);

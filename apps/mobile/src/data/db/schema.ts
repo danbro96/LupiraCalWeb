@@ -1,9 +1,9 @@
 import type { Db } from './types';
 
-/// Append-only migration ladder keyed on PRAGMA user_version. Each entry runs once, in order, inside an
-/// exclusive transaction. THE OUTBOX IS NEVER DROPPED — un-pushed offline writes must survive any upgrade
-/// (ops carry envelope_version so a future shape change can translate rather than wipe). New schema work =
-/// push another migration; never edit a shipped entry.
+/** Append-only migration ladder keyed on PRAGMA user_version. Each entry runs once, in order, inside an
+ *  exclusive transaction. THE OUTBOX IS NEVER DROPPED — un-pushed offline writes must survive any upgrade
+ *  (ops carry envelope_version so a future shape change can translate rather than wipe). New schema work =
+ *  push another migration; never edit a shipped entry. */
 export const MIGRATIONS: string[] = [
   `
   CREATE TABLE items (

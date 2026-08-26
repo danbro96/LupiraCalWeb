@@ -1,9 +1,9 @@
-/// The one place reach kinds are defined: which are channels (API ReachMedium: Email|Phone) vs social
-/// profiles (open-string service — Telegram et al. live here by design), plus display icons. Once a row
-/// exists its kind is fixed: changing Telegram→Signal in place would silently rewrite what the value means.
+/** The one place reach kinds are defined: which are channels (API ReachMedium: Email|Phone) vs social
+ *  profiles (open-string service — Telegram et al. live here by design), plus display icons. Once a row
+ *  exists its kind is fixed: changing Telegram→Signal in place would silently rewrite what the value means. */
 
-/// `glyph` names a FontAwesome 6 icon; `brand` marks the ones from the brands style (real service
-/// marks, drawn in the service's own color) as opposed to generic solid glyphs.
+/** `glyph` names a FontAwesome 6 icon; `brand` marks the ones from the brands style (real service
+ *  marks, drawn in the service's own color) as opposed to generic solid glyphs. */
 export type ReachKind = {
   key: string;
   glyph: string;
@@ -24,14 +24,14 @@ export const REACH_KINDS: ReachKind[] = [
 
 const FALLBACK_GLYPH = { name: 'link', color: '#64748b', brand: false };
 
-/// Icon spec for any reach kind — service names arrive as free strings from the API, so match loosely.
+/** Icon spec for any reach kind — service names arrive as free strings from the API, so match loosely. */
 export function reachGlyph(key: string | null | undefined): { name: string; color: string; brand: boolean } {
   if (!key) return FALLBACK_GLYPH;
   const exact = REACH_KINDS.find((k) => k.key.toLowerCase() === key.toLowerCase());
   return exact ? { name: exact.glyph, color: exact.color, brand: exact.brand === true } : FALLBACK_GLYPH;
 }
 
-/// Deep link for a reach entry, or null when the value isn't actionable.
+/** Deep link for a reach entry, or null when the value isn't actionable. */
 export function reachLink(kind: string, value: string): string | null {
   const v = value.trim();
   if (!v) return null;

@@ -1,6 +1,6 @@
-/// Structural mirrors of the wire DTOs the mirror stores (domain stays generated-code-free; the shapes are
-/// asserted where data-layer code hands DTOs in). Unknown fields ride along untouched — the mirror stores the
-/// full server JSON and only reads/writes the fields the reducers know.
+/** Structural mirrors of the wire DTOs the mirror stores (domain stays generated-code-free; the shapes are
+ *  asserted where data-layer code hands DTOs in). Unknown fields ride along untouched — the mirror stores the
+ *  full server JSON and only reads/writes the fields the reducers know. */
 
 export type SectionGuard = { ts: string; cmd: string };
 

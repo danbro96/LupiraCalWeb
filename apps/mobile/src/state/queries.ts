@@ -7,9 +7,9 @@ import { listItems } from '../data/api/generated/tasks/items/items';
 import { monthUtcRange, taskDeadlineRows, type TaskDeadlineRow } from '../domain/taskRows';
 import { useSyncStatus } from '../sync/syncStatus';
 
-/// Read hooks over the mirror. Invalidation contract (sync/reactivity.ts): grids per ['occurrences', monthKey];
-/// item docs under ['items']; contacts (list + docs) under ['contacts']; containers under ['containers'];
-/// outbox rows under ['outbox'].
+/** Read hooks over the mirror. Invalidation contract (sync/reactivity.ts): grids per ['occurrences', monthKey];
+ *  item docs under ['items']; contacts (list + docs) under ['contacts']; containers under ['containers'];
+ *  outbox rows under ['outbox']. */
 
 const monthQuery = (monthKey: string, includeSystem: boolean) => ({
   // includeSystem rides the key AFTER the monthKey so per-month invalidation (prefix match) still works.
@@ -22,8 +22,8 @@ export function useMonthOccurrences(monthKey: string) {
   return useQuery<GridRow[]>(monthQuery(monthKey, includeSystem));
 }
 
-/// A run of days can straddle a month boundary (grid weeks do) — one query per touched month bucket keeps
-/// the monthKey invalidation contract intact.
+/** A run of days can straddle a month boundary (grid weeks do) — one query per touched month bucket keeps
+ *  the monthKey invalidation contract intact. */
 export function useDaysOccurrences(dayKeys: string[]): { rows: GridRow[]; loading: boolean } {
   const includeSystem = usePrefs((p) => p.showSystemCalendars);
   const monthKeys = [...new Set(dayKeys.map((d) => d.slice(0, 7)))];
@@ -36,16 +36,16 @@ export function useDaysOccurrences(dayKeys: string[]): { rows: GridRow[]; loadin
   return { rows, loading: results.some((r) => r.isLoading) };
 }
 
-/// The grids' union row type: mirror rows plus the online-only task-deadline source.
+/** The grids' union row type: mirror rows plus the online-only task-deadline source. */
 export type CalRow = GridRow | TaskDeadlineRow;
 
-/// Task deadlines for the visible days — the only network-backed grid query. Keyed ['tasks', monthKey]:
-/// outside every sync-invalidation prefix (['items']/['occurrences'] are blanket-nuked by pulls). The
-/// pref rides `enabled`, not the key (off means "don't fetch", not "different result set"). staleTime and
-/// retry MUST override the mirror-tuned defaults (Infinity/false) or deadlines freeze forever. Offline or
-/// toggled off the queries idle and grids simply lack deadlines — never an error surface, never a loading
-/// gate on grid paint. serverReachable flipping back on is the de-facto reconnect refetch trigger
-/// (onlineManager isn't wired to NetInfo in this app).
+/** Task deadlines for the visible days — the only network-backed grid query. Keyed ['tasks', monthKey]:
+ *  outside every sync-invalidation prefix (['items']/['occurrences'] are blanket-nuked by pulls). The
+ *  pref rides `enabled`, not the key (off means "don't fetch", not "different result set"). staleTime and
+ *  retry MUST override the mirror-tuned defaults (Infinity/false) or deadlines freeze forever. Offline or
+ *  toggled off the queries idle and grids simply lack deadlines — never an error surface, never a loading
+ *  gate on grid paint. serverReachable flipping back on is the de-facto reconnect refetch trigger
+ *  (onlineManager isn't wired to NetInfo in this app). */
 export function useTaskDeadlines(dayKeys: string[]): TaskDeadlineRow[] {
   const showTasks = usePrefs((p) => p.showTaskDeadlines);
   const reachable = useSyncStatus((s) => s.serverReachable);
@@ -88,9 +88,9 @@ export type CalendarContainer = {
   kind?: string | null;
 };
 
-/// Calendars a user may deliberately put items into: never System-class scaffolding, never the
-/// synthesized Birthdays calendar (the API 400s on it), never Availability (its entries go through
-/// the dedicated quick-add, not the event editor).
+/** Calendars a user may deliberately put items into: never System-class scaffolding, never the
+ *  synthesized Birthdays calendar (the API 400s on it), never Availability (its entries go through
+ *  the dedicated quick-add, not the event editor). */
 export function selectableCalendars(calendars: CalendarContainer[] | undefined): CalendarContainer[] {
   return (calendars ?? []).filter((c) => c.class !== 'System' && c.kind !== 'Birthdays' && c.kind !== 'Availability');
 }

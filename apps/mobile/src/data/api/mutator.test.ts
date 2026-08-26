@@ -39,8 +39,8 @@ afterEach(() => {
 const json = (status: number, body: unknown = {}, headers?: Record<string, string>) => () =>
   new Response(JSON.stringify(body), { status, headers });
 
-/// Runs apiFetch while draining the retry-delay timers fake time creates. The synchronous no-op catch marks
-/// a rejection as handled before the timer drain, so expect(...).rejects doesn't race an unhandled-rejection.
+/** Runs apiFetch while draining the retry-delay timers fake time creates. The synchronous no-op catch marks
+ *  a rejection as handled before the timer drain, so expect(...).rejects doesn't race an unhandled-rejection. */
 async function run<T>(promise: Promise<T>): Promise<T> {
   promise.catch(() => undefined);
   await vi.runAllTimersAsync();

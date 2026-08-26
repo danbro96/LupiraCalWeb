@@ -1,27 +1,27 @@
 import { v7 as uuidv7 } from 'uuid';
 import type { ContactDoc, ItemDoc, ReachChannel, SocialProfile } from './docTypes';
 
-/// The offline command vocabulary — one op per replayable REST write. Ops are enqueued transactionally with
-/// their optimistic mirror effect and replayed with `Idempotency-Key: commandId` + `occurredAt`, so a
-/// redelivery is a server no-op and a stale one loses its section's LWW instead of clobbering.
-/// `envelope_version` (on the outbox row) versions this shape: migrations translate old envelopes, never drop.
+/** The offline command vocabulary — one op per replayable REST write. Ops are enqueued transactionally with
+ *  their optimistic mirror effect and replayed with `Idempotency-Key: commandId` + `occurredAt`, so a
+ *  redelivery is a server no-op and a stale one loses its section's LWW instead of clobbering.
+ *  `envelope_version` (on the outbox row) versions this shape: migrations translate old envelopes, never drop. */
 
 export const OP_ENVELOPE_VERSION = 1;
 
 type Base = { commandId: string; occurredAt: string };
 
-/// Desired core-section state for a calendar item (whole-section write — PUT with every sentinel set).
-/// null on title/description/status/category/tags means "keep" (the REST contract has no clear for those).
+/** Desired core-section state for a calendar item (whole-section write — PUT with every sentinel set).
+ *  null on title/description/status/category/tags means "keep" (the REST contract has no clear for those). */
 export type ItemCore = Pick<ItemDoc,
   'title' | 'description' | 'status' | 'isAllDay' | 'startsAt' | 'endsAt' | 'startDate' | 'endDate'
   | 'startTimezone' | 'endTimezone' | 'recurrenceRule' | 'category' | 'tags' | 'parentItemId'> & {
-  /// Create-only: availability-calendar entries carry their presence status (details.presence.status
-  /// server-side). Ignored by revise — details have their own endpoints.
+  /** Create-only: availability-calendar entries carry their presence status (details.presence.status
+   *  server-side). Ignored by revise — details have their own endpoints. */
   availability?: string | null;
 };
 
-/// Contact fields as ReviseContact interprets them: name/notes/etc null = keep; channels and tags UNION-merge
-/// (the wholesale ops below are the removing counterparts, mirroring the REST surface).
+/** Contact fields as ReviseContact interprets them: name/notes/etc null = keep; channels and tags UNION-merge
+ *  (the wholesale ops below are the removing counterparts, mirroring the REST surface). */
 export type ContactCore = Pick<ContactDoc,
   'givenName' | 'middleName' | 'familyName' | 'nickname' | 'displayNameFormat' | 'kind'
   | 'channels' | 'birthday' | 'tags' | 'notes' | 'pronouns'>;
@@ -55,7 +55,7 @@ export function domainOf(op: ClientOp): 'cal' | 'contact' {
   return op.kind.startsWith('item.') ? 'cal' : 'contact';
 }
 
-/// Total over the union — adding an op kind without a user-facing label is a compile error.
+/** Total over the union — adding an op kind without a user-facing label is a compile error. */
 export const OP_LABELS: Record<OpKind, string> = {
   'item.create': 'Create event',
   'item.revise': 'Edit event',

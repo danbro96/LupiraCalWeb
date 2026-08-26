@@ -2,14 +2,14 @@ import { ApiError, REQUEST_TIMEOUT_MS } from '../../domain/apiError';
 import { isRetriableRequest, isTransientStatus, MAX_RETRIES, retryDelayMs } from '../../domain/retryPolicy';
 import { authPort } from './authProvider';
 
-/// What every generated fetcher returns: the status-discriminated envelope (orval's per-status unions
-/// structurally match it, so `if (r.status === 200)` narrows `r.data`).
+/** What every generated fetcher returns: the status-discriminated envelope (orval's per-status unions
+ *  structurally match it, so `if (r.status === 200)` narrows `r.data`). */
 export type ApiEnvelope<T> = { status: number; data: T; headers: Headers };
 
-/// Orval custom mutator. Reads the backend + token through the AuthPort at call time, injects the bearer
-/// (none in authMode 'none'), bounds every attempt with a timeout, retries transient failures per
-/// retryPolicy, and on a terminal 401 for a retriable request forces ONE coalesced refresh — if that actually
-/// rotated the token, the retry budget resets and the call replays with the fresh bearer.
+/** Orval custom mutator. Reads the backend + token through the AuthPort at call time, injects the bearer
+ *  (none in authMode 'none'), bounds every attempt with a timeout, retries transient failures per
+ *  retryPolicy, and on a terminal 401 for a retriable request forces ONE coalesced refresh — if that actually
+ *  rotated the token, the retry budget resets and the call replays with the fresh bearer. */
 export async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
   const auth = authPort();
   const method = init?.method ?? 'GET';

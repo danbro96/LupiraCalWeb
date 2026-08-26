@@ -7,9 +7,9 @@ import type { ClientOp, ContactCore, ItemCore } from '../domain/ops';
 import { stamp } from '../domain/ops';
 import { enqueue } from '../sync/outbox';
 
-/// The screens' entire write surface: build an op, enqueue it (optimistic mirror write + outbox row in one
-/// exclusive transaction — outbox.ts), let the drain push it when the network allows. Creates mint a
-/// sourceKey and derive the server's deterministic id up front, so navigation targets the final id.
+/** The screens' entire write surface: build an op, enqueue it (optimistic mirror write + outbox row in one
+ *  exclusive transaction — outbox.ts), let the drain push it when the network allows. Creates mint a
+ *  sourceKey and derive the server's deterministic id up front, so navigation targets the final id. */
 
 async function submit(op: ClientOp): Promise<void> {
   await enqueue(await getDb(), [op], currentHorizon());

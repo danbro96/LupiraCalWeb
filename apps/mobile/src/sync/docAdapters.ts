@@ -3,10 +3,10 @@ import type { ContactDto, SyncChangesResponse as ContactChangesDto } from '../da
 import type { ContactDoc, ItemDoc } from '../domain/docTypes';
 import type { ChangesPage, ContactChange, ItemChange } from './pull';
 
-/// Wire DTO → mirror doc. Assignment is unasserted so a spec change that drops or retypes a field the
-/// mirror reads fails to compile here.
+/** Wire DTO → mirror doc. Assignment is unasserted so a spec change that drops or retypes a field the
+ *  mirror reads fails to compile here. */
 
-/// Arbitrary JSON, which orval renders as the structurally-empty `JsonNode`.
+/** Arbitrary JSON, which orval renders as the structurally-empty `JsonNode`. */
 const metadataOf = (m: unknown) => m as Record<string, unknown> | null | undefined;
 
 export function toItemDoc(dto: CalendarItemDto): ItemDoc {

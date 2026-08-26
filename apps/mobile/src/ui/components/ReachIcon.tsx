@@ -2,8 +2,8 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { StyleSheet, View } from 'react-native';
 import { reachGlyph } from '../../domain/reach';
 
-/// Real brand marks (FontAwesome 6 brands: telegram / whatsapp / signal-messenger) instead of
-/// look-alike emoji, in each service's own color. Non-brand kinds fall back to solid glyphs.
+/** Real brand marks (FontAwesome 6 brands: telegram / whatsapp / signal-messenger) instead of
+ *  look-alike emoji, in each service's own color. Non-brand kinds fall back to solid glyphs. */
 export function ReachIcon({ kind, size = 16 }: { kind: string | null | undefined; size?: number }) {
   const { name, color, brand } = reachGlyph(kind);
   return (

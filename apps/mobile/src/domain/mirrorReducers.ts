@@ -3,11 +3,11 @@ import type { ContactDoc, ContactGuards, ItemDoc, ItemGuards, ReachChannel, Soci
 import { emptyContactGuards, emptyItemGuards } from './docTypes';
 import type { ClientOp, ContactCore, ItemCore } from './ops';
 
-/// Client twins of the servers' section reducers: applying an op locally must land on the same state the
-/// server's Apply will produce for the same (occurredAt, commandId) — that is what makes the pull-time rebase
-/// (server base + pending ops replayed through these) converge with the server's eventual truth. Semantics
-/// mirror the REST contracts faithfully, including their warts (null = keep on non-sentinel fields; contact
-/// revise UNION-merges channels/tags).
+/** Client twins of the servers' section reducers: applying an op locally must land on the same state the
+ *  server's Apply will produce for the same (occurredAt, commandId) — that is what makes the pull-time rebase
+ *  (server base + pending ops replayed through these) converge with the server's eventual truth. Semantics
+ *  mirror the REST contracts faithfully, including their warts (null = keep on non-sentinel fields; contact
+ *  revise UNION-merges channels/tags). */
 
 export type MirrorItem = { doc: ItemDoc; guards: ItemGuards; deleted: boolean };
 export type MirrorContact = { doc: ContactDoc; guards: ContactGuards; deleted: boolean };
@@ -77,8 +77,8 @@ export function applyItemOp(state: MirrorItem | null, op: ClientOp): MirrorItem 
   }
 }
 
-/// The totalized PUT's merge: sentinel-backed fields land verbatim; title/description/status/category/tags/
-/// parent keep the current value when the op carries null (the REST contract has no clear for them).
+/** The totalized PUT's merge: sentinel-backed fields land verbatim; title/description/status/category/tags/
+ *  parent keep the current value when the op carries null (the REST contract has no clear for them). */
 function mergeItemCore(doc: ItemDoc, core: ItemCore): ItemDoc {
   return {
     ...doc,
@@ -158,7 +158,7 @@ export function applyContactOp(state: MirrorContact | null, op: ClientOp): Mirro
   }
 }
 
-/// ReviseContact's enrichment semantics: null = keep; channels/tags UNION onto existing (adds, never removes).
+/** ReviseContact's enrichment semantics: null = keep; channels/tags UNION onto existing (adds, never removes). */
 function mergeContactCore(doc: ContactDoc, core: ContactCore): ContactDoc {
   return {
     ...doc,

@@ -2,9 +2,9 @@ import { inputToPartialDate, partialDateToInput } from '@lupira/cal-domain/parti
 import type { ContactDoc, ItemDoc } from './docTypes';
 import type { ContactCore, ItemCore } from './ops';
 
-/// Form ⇄ op-core translation, kept pure so the wart-heavy parts are vitest-covered: which empty field means
-/// "keep" (title/description/status/category have no REST clear) vs "clear" (the sentinel-backed schedule
-/// fields and tags), and the timed/all-day duality. Screens own only widgets and submission.
+/** Form ⇄ op-core translation, kept pure so the wart-heavy parts are vitest-covered: which empty field means
+ *  "keep" (title/description/status/category have no REST clear) vs "clear" (the sentinel-backed schedule
+ *  fields and tags), and the timed/all-day duality. Screens own only widgets and submission. */
 
 export type ItemForm = {
   title: string;
@@ -37,8 +37,8 @@ export function emptyItemForm(day?: string, time?: string): ItemForm {
   };
 }
 
-/// Smart default when picking a category on a NEW event with an untouched schedule: some categories are
-/// obviously day-scoped, some obviously timed. null = no opinion, leave the form alone.
+/** Smart default when picking a category on a NEW event with an untouched schedule: some categories are
+ *  obviously day-scoped, some obviously timed. null = no opinion, leave the form alone. */
 export function categoryAllDayDefault(category: string): boolean | null {
   if (category === 'Occasion' || category === 'Trip' || category === 'Stay') return true;
   if (category === 'Meeting' || category === 'Appointment' || category === 'Focus') return false;
@@ -70,7 +70,7 @@ export function itemFormFromDoc(doc: ItemDoc): ItemForm {
 
 export type EditResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
-/// `base` supplies the fields the form doesn't edit (parentItemId) so the whole-section write keeps them.
+/** `base` supplies the fields the form doesn't edit (parentItemId) so the whole-section write keeps them. */
 export function itemCoreFromForm(form: ItemForm, base?: ItemDoc): EditResult<ItemCore> {
   const core: ItemCore = {
     title: form.title.trim() || null,
@@ -114,8 +114,8 @@ export type ContactForm = {
   nickname: string;
   displayNameFormat: string;   // '' = keep unset
   kind: string;
-  /// Two input shapes: with a known year, `birthday` holds 'yyyy-MM-dd' (date picker); without one,
-  /// month/day live in their own fields and no fake year ever exists anywhere.
+  /** Two input shapes: with a known year, `birthday` holds 'yyyy-MM-dd' (date picker); without one,
+   *  month/day live in their own fields and no fake year ever exists anywhere. */
   birthday: string;
   birthdayYearKnown: boolean;
   birthdayMonth: string;       // '1'..'12' when the year is unknown
@@ -149,8 +149,8 @@ export function contactFormFromDoc(doc: ContactDoc): ContactForm {
   };
 }
 
-/// Channels and tags stay null here — ReviseContact UNION-merges them (adds, never removes), so editing
-/// them goes through the wholesale contact.channels / contact.tags ops instead.
+/** Channels and tags stay null here — ReviseContact UNION-merges them (adds, never removes), so editing
+ *  them goes through the wholesale contact.channels / contact.tags ops instead. */
 export function contactCoreFromForm(form: ContactForm): EditResult<ContactCore> {
   if (!form.givenName.trim() && !form.familyName.trim() && !form.nickname.trim())
     return { ok: false, error: 'A contact needs at least a name or nickname' };

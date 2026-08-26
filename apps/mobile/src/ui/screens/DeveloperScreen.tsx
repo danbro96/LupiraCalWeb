@@ -2,18 +2,19 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Button, List, RadioButton, Text, useTheme } from 'react-native-paper';
+import { Button, List, RadioButton, Text } from 'react-native-paper';
 import { API_PRESETS, type AuthMode } from '../../config';
 import { presetFor, useAuth } from '../../state/auth-store';
 import { useSyncStatus } from '../../sync/syncStatus';
 import { Input } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
+import { useColors } from '../theme';
 
-/// Developer tooling, deliberately out of the user path: backend switching (a family member on the
-/// LAN preset has a silently dead app), diagnostics links, raw sync state. Reachable from Settings
-/// and from the login screen (switching backends must not require signing in first).
+/** Developer tooling, deliberately out of the user path: backend switching (a family member on the
+ *  LAN preset has a silently dead app), diagnostics links, raw sync state. Reachable from Settings
+ *  and from the login screen (switching backends must not require signing in first). */
 export function DeveloperScreen() {
-  const theme = useTheme();
+  const c = useColors();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { apiUrl, authMode } = useAuth();
   const sync = useSyncStatus();
@@ -71,7 +72,7 @@ export function DeveloperScreen() {
         </Button>
 
       <List.Subheader>Sync state</List.Subheader>
-      <Text style={[styles.mono, { color: theme.colors.onSurfaceVariant }]}>{JSON.stringify(sync, null, 2)}</Text>
+      <Text style={[styles.mono, { color: c.textMuted }]}>{JSON.stringify(sync, null, 2)}</Text>
     </ScrollView>
   );
 }

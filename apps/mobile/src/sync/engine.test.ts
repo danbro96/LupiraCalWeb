@@ -13,9 +13,9 @@ import { drain, enqueue } from './outbox';
 import type { ChangesPage, ContactChange, ItemChange, PullDeps } from './pull';
 import { pullCal, pullContainers, pullContacts } from './pull';
 
-/// The whole engine under node:sqlite — enqueue/drain (backoff, park, causal hold), the delta/full pull with
-/// rebase-through-pending-ops, tombstones, prune, and cursor plumbing. Every scenario here is a defect class
-/// from LupiraTasksMobile that must stay dead.
+/** The whole engine under node:sqlite — enqueue/drain (backoff, park, causal hold), the delta/full pull with
+ *  rebase-through-pending-ops, tombstones, prune, and cursor plumbing. Every scenario here is a defect class
+ *  from LupiraTasksMobile that must stay dead. */
 
 const horizon: Horizon = { start: new Date('2026-01-01T00:00:00Z'), end: new Date('2027-01-01T00:00:00Z') };
 const T = (m: number) => `2026-07-01T12:${String(m).padStart(2, '0')}:00.000Z`;
@@ -46,8 +46,8 @@ const serverItem = (id: string, over: Partial<ItemDoc> = {}): ItemDoc => ({
 
 const serverGuards = (over: Partial<ItemGuards> = {}): ItemGuards => ({ ...emptyItemGuards(), ...over });
 
-/// Enqueue while "offline": the auto-drain hits an unreachable server, so the op STAYS pending — the state
-/// every rebase/prune/migration scenario needs (a no-op replay would ack and delete it immediately).
+/** Enqueue while "offline": the auto-drain hits an unreachable server, so the op STAYS pending — the state
+ *  every rebase/prune/migration scenario needs (a no-op replay would ack and delete it immediately). */
 async function enqueueOffline(ops: ClientOp[]): Promise<void> {
   const deps = {
     replay: async () => {

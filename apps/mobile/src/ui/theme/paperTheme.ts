@@ -3,11 +3,12 @@ import { DarkTheme as NavDarkBase, DefaultTheme as NavLightBase } from '@react-n
 import { DARK, LIGHT, type ColorScheme } from '@lupira/cal-tokens/color';
 import { RADII } from '@lupira/cal-tokens/spacing';
 
-/** MD3 has no warning/success slot, so they ride as extra colours the app reads off useTheme(). */
+// The whole palette rides on the theme: MD3 gets its own slot names, and the app's vocabulary
+// (bg/text/warning/success) comes along so useColors() can read it back off the theme rather than
+// deriving the scheme a second time.
 function md3Colors(c: ColorScheme) {
   return {
-    warning: c.warning,
-    success: c.success,
+    ...c,
     primary: c.primary,
     onPrimary: c.onPrimary,
     background: c.bg,

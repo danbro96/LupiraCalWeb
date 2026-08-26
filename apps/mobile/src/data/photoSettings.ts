@@ -2,8 +2,8 @@ import { DEFAULT_BACKUP_SETTINGS, type PhotoBackupSettings } from '../domain/pho
 import type { Db } from './db/types';
 import { getMeta, setMeta } from './mirror';
 
-/// Backup settings live in mirror_meta so the uploader (sync layer) can read them without reaching up
-/// into the store — same reasoning as prefs-store's persistence, but readable from below.
+/** Backup settings live in mirror_meta so the uploader (sync layer) can read them without reaching up
+ *  into the store — same reasoning as prefs-store's persistence, but readable from below. */
 
 const SETTINGS_KEY = 'photos.backupSettings';
 

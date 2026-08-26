@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Card, List, Text, useTheme } from 'react-native-paper';
+import { Card, List, Text } from 'react-native-paper';
 import { getDb } from '../../data/db/expoDb';
 import type { OutboxRow } from '../../data/mirror';
 import { opOfRow } from '../../data/mirror';
@@ -12,12 +12,12 @@ import { useOutboxRows } from '../../state/queries';
 import { useConfirm } from '../components/ConfirmDialog';
 import { Button } from '../components/form';
 import { IndeterminateBar } from '../components/IndeterminateBar';
-import type { AppTheme } from '../theme/paperTheme';
+import { useColors } from '../theme';
 
-/// The review surface for offline writes: parked ops (gave up after backoff or hit a definitive rejection)
-/// get per-row retry / discard — discard also rolls the optimistic mirror write back to server truth.
+/** The review surface for offline writes: parked ops (gave up after backoff or hit a definitive rejection)
+ *  get per-row retry / discard — discard also rolls the optimistic mirror write back to server truth. */
 export function SyncIssuesScreen() {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const { data } = useOutboxRows();
   const { syncing, serverReachable, lastSyncAt, lastError, progress } = useSyncStatus();
 
@@ -27,25 +27,25 @@ export function SyncIssuesScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.statusRow}>
-        <Text style={[styles.statusText, { color: theme.colors.onSurfaceVariant }]}>
+        <Text style={[styles.statusText, { color: c.textMuted }]}>
           {syncing ? 'Syncing…' : serverReachable ? 'Server reachable' : 'Offline'}
           {lastSyncAt ? ` · last sync ${new Date(lastSyncAt).toLocaleTimeString()}` : ''}
         </Text>
         <Button title="Sync now" kind="plain" onPress={() => void runSync()} disabled={syncing} />
       </View>
-      {lastError && <Text style={[styles.lastError, { color: theme.colors.warning }]}>{lastError}</Text>}
+      {lastError && <Text style={[styles.lastError, { color: c.warning }]}>{lastError}</Text>}
 
       {syncing && (
         <View style={styles.progressBlock}>
           <IndeterminateBar />
-          <Text style={[styles.progressText, { color: theme.colors.onSurfaceVariant }]}>
+          <Text style={[styles.progressText, { color: c.textMuted }]}>
             {progress ? `${progress.count} ${PHASE_LABELS[progress.phase]}…` : 'Starting…'}
           </Text>
         </View>
       )}
 
       {!syncing && parked.length === 0 && pending.length === 0 && (
-        <Text style={[styles.empty, { color: theme.colors.onSurfaceVariant }]}>All changes are synced.</Text>
+        <Text style={[styles.empty, { color: c.textMuted }]}>All changes are synced.</Text>
       )}
 
       {parked.length > 0 && <List.Subheader>Needs attention</List.Subheader>}
@@ -53,9 +53,9 @@ export function SyncIssuesScreen() {
 
       {pending.length > 0 && <List.Subheader>Waiting to sync</List.Subheader>}
       {pending.map((row) => (
-        <View key={row.seq} style={[styles.pendingRow, { borderColor: theme.colors.outlineVariant }]}>
+        <View key={row.seq} style={[styles.pendingRow, { borderColor: c.divider }]}>
           <Text style={styles.opLabel}>{labelOf(row)}</Text>
-          <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>
+          <Text style={[styles.muted, { color: c.textMuted }]}>
             {new Date(row.occurred_at).toLocaleString()}
             {row.attempts > 0 ? ` · attempt ${row.attempts}` : ''}
             {row.next_attempt_at ? ` · retries ${new Date(row.next_attempt_at).toLocaleTimeString()}` : ''}
@@ -67,7 +67,7 @@ export function SyncIssuesScreen() {
 }
 
 function ParkedCard({ row }: { row: OutboxRow }) {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const confirm = useConfirm();
   const [expanded, setExpanded] = useState(false);
 
@@ -83,18 +83,18 @@ function ParkedCard({ row }: { row: OutboxRow }) {
   };
 
   return (
-    <Card mode="outlined" style={styles.card} theme={{ colors: { outline: theme.colors.warning } }}>
+    <Card mode="outlined" style={styles.card} theme={{ colors: { outline: c.warning } }}>
       <Card.Content>
         <Pressable onPress={() => setExpanded(!expanded)}>
         <Text style={styles.opLabel}>{labelOf(row)}</Text>
-        <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>
+        <Text style={[styles.muted, { color: c.textMuted }]}>
           {new Date(row.occurred_at).toLocaleString()} · {row.attempts} attempt{row.attempts === 1 ? '' : 's'}
         </Text>
         {row.last_error && (
-          <Text style={[styles.error, { color: theme.colors.error }]} numberOfLines={expanded ? undefined : 2}>{row.last_error}</Text>
+          <Text style={[styles.error, { color: c.danger }]} numberOfLines={expanded ? undefined : 2}>{row.last_error}</Text>
         )}
       </Pressable>
-        {expanded && <Text style={[styles.payload, { backgroundColor: theme.colors.background }]}>{payloadOf(row)}</Text>}
+        {expanded && <Text style={[styles.payload, { backgroundColor: c.bg }]}>{payloadOf(row)}</Text>}
       </Card.Content>
       <Card.Actions>
         <Button title="Retry" onPress={() => void retry()} />

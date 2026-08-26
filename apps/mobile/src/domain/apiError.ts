@@ -1,4 +1,4 @@
-/// The one error the data layer throws. Status 0 = transport failure/timeout (no HTTP response at all).
+/** The one error the data layer throws. Status 0 = transport failure/timeout (no HTTP response at all). */
 export class ApiError extends Error {
   readonly status: number;
 

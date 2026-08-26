@@ -8,25 +8,25 @@ import { logDebug } from '../debug/log';
 export type AuthUser = { sub: string; name?: string };
 
 type AuthState = {
-  /// Hydration gate — the app renders nothing until the persisted session is loaded.
+  /** Hydration gate — the app renders nothing until the persisted session is loaded. */
   loaded: boolean;
   apiUrl: string;
   authMode: AuthMode;
   token: string | null;
   refreshToken: string | null;
-  /// Epoch ms.
+  /** Epoch ms. */
   expiresAt: number;
   user: AuthUser | null;
 };
 
 type AuthActions = {
   load(): Promise<void>;
-  /// Switch backend (settings screen). Clears the session — a token minted for one backend is meaningless
-  /// against another, and the LAN mode sends none at all.
+  /** Switch backend (settings screen). Clears the session — a token minted for one backend is meaningless
+   *  against another, and the LAN mode sends none at all. */
   setBackend(url: string, authMode: AuthMode): Promise<void>;
   setSession(tokens: TokenResponse): Promise<void>;
   clearSession(): Promise<void>;
-  /// Coalesced, rotation-safe refresh — see the state walk-through inline.
+  /** Coalesced, rotation-safe refresh — see the state walk-through inline. */
   refreshIfNeeded(opts?: { force?: boolean; sentToken?: string }): Promise<string | null>;
   isAuthenticated(): boolean;
 };
@@ -41,7 +41,7 @@ const K = {
   userName: 'lupira.calendar.userName',
 } as const;
 
-/// Refresh this many ms before nominal expiry so an in-flight request never races the boundary.
+/** Refresh this many ms before nominal expiry so an in-flight request never races the boundary. */
 const EXPIRY_MARGIN_MS = 60_000;
 
 // Single-flight: the first refresher owns the POST, concurrent callers await the same promise. With

@@ -8,7 +8,7 @@ export function Input({ style, ...props }: ComponentProps<typeof TextInput>) {
   return <TextInput mode="outlined" dense style={[styles.input, style]} {...props} />;
 }
 
-/// Wrapper for non-text controls (chips, date/time pickers, switches) — text inputs carry their own label.
+/** Wrapper for non-text controls (chips, date/time pickers, switches) — text inputs carry their own label. */
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <View style={styles.field}>
@@ -20,7 +20,7 @@ export function Field({ label, children }: { label: string; children: ReactNode 
 
 export type ChipOption = { value: string; label: string };
 
-/// Single-select chips; tapping the active chip clears it (value '') unless required.
+/** Single-select chips; tapping the active chip clears it (value '') unless required. */
 export function ChoiceChips({ options, value, onChange, required = false }: {
   options: ChipOption[]; value: string; onChange: (v: string) => void; required?: boolean;
 }) {
@@ -44,7 +44,7 @@ export function ChoiceChips({ options, value, onChange, required = false }: {
   );
 }
 
-/// Android system pickers writing back the editors' string forms ('yyyy-MM-dd' / 'HH:MM').
+/** Android system pickers writing back the editors' string forms ('yyyy-MM-dd' / 'HH:MM'). */
 export function DateField({ value, onChange, placeholder = 'Set date' }: {
   value: string; onChange: (v: string) => void; placeholder?: string;
 }) {
@@ -104,6 +104,8 @@ const BUTTON_MODE = { primary: 'contained', danger: 'contained', plain: 'outline
 export function Button({ title, onPress, kind = 'primary', disabled = false }: {
   title: string; onPress: () => void; kind?: 'primary' | 'danger' | 'plain' | 'link'; disabled?: boolean;
 }) {
+  // useTheme, not useColors: a filled danger button needs MD3's onError, which the estate palette
+  // has no equivalent for.
   const theme = useTheme();
   return (
     <PaperButton

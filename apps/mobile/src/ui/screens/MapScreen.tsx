@@ -35,10 +35,10 @@ const AUTH_HEADER_ID = 'lupira-auth';
 
 const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/// The native map fetches style assets (tiles/glyphs/sprite) itself, outside the mutator — the bearer
-/// rides a TransformRequestManager header scoped to the BFF origin. Scoping matters: presigned or
-/// third-party URLs must never receive an Authorization header. Re-adding the same id updates in place,
-/// which is what makes token rotation safe mid-session.
+/** The native map fetches style assets (tiles/glyphs/sprite) itself, outside the mutator — the bearer
+ *  rides a TransformRequestManager header scoped to the BFF origin. Scoping matters: presigned or
+ *  third-party URLs must never receive an Authorization header. Re-adding the same id updates in place,
+ *  which is what makes token rotation safe mid-session. */
 function useMapAuthHeader() {
   const token = useAuth((s) => s.token);
   const apiUrl = useAuth((s) => s.apiUrl);
@@ -64,13 +64,15 @@ type LayerKey = 'events' | 'saved' | 'photos';
 
 type PhotoPin = { id: string; takenAt: string; placeLabel: string | null; thumbUrl: string | null };
 
-/// MapLibre's bounds are already [west, south, east, north] — the same order the API's bbox takes.
-/// Rounded to ~11 m so a pixel of camera drift doesn't invalidate the query key on every idle event.
+/** MapLibre's bounds are already [west, south, east, north] — the same order the API's bbox takes.
+ *  Rounded to ~11 m so a pixel of camera drift doesn't invalidate the query key on every idle event. */
 function bboxOf(bounds: LngLatBounds): string {
   return bounds.map((n) => n.toFixed(4)).join(',');
 }
 
 export function MapScreen() {
+  // useTheme, not useColors: the bottom sheet paints from MD3's elevation ramp,
+  // which the estate palette has no equivalent for.
   const paper = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const scheme = useColorScheme();

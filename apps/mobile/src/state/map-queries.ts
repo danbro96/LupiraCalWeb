@@ -11,9 +11,9 @@ import { mapEventRowsBetween } from '../data/mirror';
 import { useCalendars } from './queries';
 import { useSyncStatus } from '../sync/syncStatus';
 
-/// Map read hooks. Mirror-backed queries key under ['occurrences', ...] so sync pulls invalidate them;
-/// network-backed ones override the mirror-tuned defaults (staleTime Infinity / retry false) exactly like
-/// useTaskDeadlines — offline the map simply lacks those layers, never an error surface.
+/** Map read hooks. Mirror-backed queries key under ['occurrences', ...] so sync pulls invalidate them;
+ *  network-backed ones override the mirror-tuned defaults (staleTime Infinity / retry false) exactly like
+ *  useTaskDeadlines — offline the map simply lacks those layers, never an error surface. */
 
 const LOOKUP_MAX = 200; // server cap per POST /places/lookup call
 

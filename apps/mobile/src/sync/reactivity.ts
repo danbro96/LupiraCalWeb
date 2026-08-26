@@ -1,8 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
 
-/// Mirror reactivity: sync and enqueue report which month buckets they touched and only those grid queries
-/// refetch — the fix for the tasks app's global revision counter that reloaded every mounted query on any
-/// write. Query keys: ['occurrences', 'YYYY-MM'].
+/** Mirror reactivity: sync and enqueue report which month buckets they touched and only those grid queries
+ *  refetch — the fix for the tasks app's global revision counter that reloaded every mounted query on any
+ *  write. Query keys: ['occurrences', 'YYYY-MM']. */
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: { staleTime: Infinity, retry: false },   // the mirror is local — no polling, no network retries

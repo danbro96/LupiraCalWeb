@@ -7,9 +7,9 @@ import { defaultBackupSettings, loadBackupSettings, saveBackupSettings } from '.
 import type { PhotoBackupSettings } from '../domain/photoBackup';
 import { usePhotoBackupStatus } from '../sync/photoBackupStatus';
 
-/// Camera-roll backup SETTINGS for the UI. The persisted copy in mirror_meta is what the uploader
-/// reads (data layer), so this store is a view over it plus the permission gate. Live counters and
-/// transfer progress live in sync/photoBackupStatus — the uploader can't write upward into here.
+/** Camera-roll backup SETTINGS for the UI. The persisted copy in mirror_meta is what the uploader
+ *  reads (data layer), so this store is a view over it plus the permission gate. Live counters and
+ *  transfer progress live in sync/photoBackupStatus — the uploader can't write upward into here. */
 
 type PhotoBackupState = {
   loaded: boolean;
@@ -18,8 +18,8 @@ type PhotoBackupState = {
 
 type PhotoBackupActions = {
   init(): Promise<void>;
-  /// Turning backup on asks for the media permissions first: without a grant there is nothing to scan,
-  /// and ACCESS_MEDIA_LOCATION is what preserves EXIF GPS. Returns false when the grant was refused.
+  /** Turning backup on asks for the media permissions first: without a grant there is nothing to scan,
+   *  and ACCESS_MEDIA_LOCATION is what preserves EXIF GPS. Returns false when the grant was refused. */
   setEnabled(value: boolean): Promise<boolean>;
   setWifiOnly(value: boolean): Promise<void>;
   setBackupFrom(iso: string): Promise<void>;

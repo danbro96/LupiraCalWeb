@@ -2,13 +2,13 @@ import { useMemo, useRef, useState } from 'react';
 import { PanResponder } from 'react-native';
 
 const DISTANCE = 60;
-/// Only claim clearly-horizontal gestures: vertical ones belong to the day sheet's drag and the
-/// week view's hour scroll.
+/** Only claim clearly-horizontal gestures: vertical ones belong to the day sheet's drag and the
+ *  week view's hour scroll. */
 const HORIZONTAL_RATIO = 1.6;
 
-/// While a horizontal drag is live, `hint` says which way it is heading and whether releasing now
-/// would actually step the period — the grids render that as a floating arrow. State updates only on
-/// direction/armed transitions, not per pixel, so dragging doesn't re-render the whole grid.
+/** While a horizontal drag is live, `hint` says which way it is heading and whether releasing now
+ *  would actually step the period — the grids render that as a floating arrow. State updates only on
+ *  direction/armed transitions, not per pixel, so dragging doesn't re-render the whole grid. */
 export type SwipeHint = { dir: 'prev' | 'next'; armed: boolean };
 
 export function useHorizontalSwipe(onNext: () => void, onPrev: () => void) {

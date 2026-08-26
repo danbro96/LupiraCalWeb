@@ -1,11 +1,11 @@
 import type { PhotoQueueRow, QueueState } from '../domain/photoBackup';
 import type { Tx } from './db/types';
 
-/// Row-level persistence for the camera-roll backup queue. Same contract as mirror.ts: every function
-/// takes a Tx, so a scan can never interleave with a drain.
+/** Row-level persistence for the camera-roll backup queue. Same contract as mirror.ts: every function
+ *  takes a Tx, so a scan can never interleave with a drain. */
 
-/// INSERT OR IGNORE: a rescan re-sees every asset, and an already-queued (or already-done) row must keep
-/// its state, attempts, and asset_id rather than being reset to pending.
+/** INSERT OR IGNORE: a rescan re-sees every asset, and an already-queued (or already-done) row must keep
+ *  its state, attempts, and asset_id rather than being reset to pending. */
 export async function enqueueAsset(tx: Tx, row: Omit<PhotoQueueRow, 'state' | 'attempts' | 'next_attempt_at' | 'error' | 'asset_id'>): Promise<void> {
   await tx.run(
     `INSERT OR IGNORE INTO photo_upload_queue
@@ -16,7 +16,7 @@ export async function enqueueAsset(tx: Tx, row: Omit<PhotoQueueRow, 'state' | 'a
   );
 }
 
-/// Due work, oldest capture first — a backfill drains chronologically instead of newest-first.
+/** Due work, oldest capture first — a backfill drains chronologically instead of newest-first. */
 export async function dueUploads(tx: Tx, nowIso: string, limit: number): Promise<PhotoQueueRow[]> {
   return tx.all<PhotoQueueRow>(
     `SELECT * FROM photo_upload_queue
@@ -66,8 +66,8 @@ export async function listParkedUploads(tx: Tx): Promise<PhotoQueueRow[]> {
   return tx.all<PhotoQueueRow>(`SELECT * FROM photo_upload_queue WHERE state = 'parked' ORDER BY taken_at`);
 }
 
-/// Backup being switched off (or a re-enable with an earlier `backupFrom`) must not resurrect finished
-/// work; only un-uploaded rows are dropped so a rescan re-derives them from the new window.
+/** Backup being switched off (or a re-enable with an earlier `backupFrom`) must not resurrect finished
+ *  work; only un-uploaded rows are dropped so a rescan re-derives them from the new window. */
 export async function clearUnfinishedUploads(tx: Tx): Promise<void> {
   await tx.run(`DELETE FROM photo_upload_queue WHERE state != 'done'`);
 }

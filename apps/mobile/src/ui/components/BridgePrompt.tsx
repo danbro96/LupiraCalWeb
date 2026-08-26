@@ -3,8 +3,8 @@ import { Card, Text } from 'react-native-paper';
 import { useBridge } from '../../state/bridge-store';
 import { Button } from './form';
 
-/// One-time post-sign-in card: sets up the Android integration (permissions + account + first
-/// publish) or goes quiet forever. An inline card, not an Alert — it may wait across launches.
+/** One-time post-sign-in card: sets up the Android integration (permissions + account + first
+ *  publish) or goes quiet forever. An inline card, not an Alert — it may wait across launches. */
 export function BridgePrompt() {
   const { loaded, prompted, enabled } = useBridge();
   if (!loaded || prompted || enabled) return null;

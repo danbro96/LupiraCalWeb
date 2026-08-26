@@ -3,17 +3,17 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { Avatar, FAB, List, Searchbar, Text, useTheme } from 'react-native-paper';
+import { Avatar, FAB, List, Searchbar, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ContactListRow } from '../../data/mirror';
 import { useContactList } from '../../state/queries';
 import { hashColor } from '../components/palette';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
-import type { AppTheme } from '../theme/paperTheme';
+import { useColors } from '../theme';
 
 export function ContactsScreen() {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { data } = useContactList();
   const [query, setQuery] = useState('');
@@ -26,7 +26,7 @@ export function ContactsScreen() {
     || (r.doc.tags ?? []).some((t) => t.toLowerCase().includes(q)));
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: theme.colors.background }]} edges={['top']}>
+    <SafeAreaView style={[styles.root, { backgroundColor: c.bg }]} edges={['top']}>
       <SyncBanner />
       <View style={styles.toolbar}>
         <Searchbar
@@ -42,7 +42,7 @@ export function ContactsScreen() {
         data={rows}
         keyExtractor={(r) => r.id}
         ListEmptyComponent={
-          <Text style={[styles.empty, { color: theme.colors.onSurfaceVariant }]}>
+          <Text style={[styles.empty, { color: c.textMuted }]}>
             {data?.length ? 'No matches' : 'No contacts in the mirror yet'}
           </Text>
         }
@@ -55,7 +55,7 @@ export function ContactsScreen() {
 }
 
 function ContactRow({ row, onPress }: { row: ContactListRow; onPress: () => void }) {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const firstChannel = (row.doc.channels ?? []).find((c) => c.preferred) ?? (row.doc.channels ?? [])[0];
   return (
     <List.Item
@@ -68,7 +68,7 @@ function ContactRow({ row, onPress }: { row: ContactListRow; onPress: () => void
       )}
       right={() =>
         row.doc.birthday ? (
-          <Text style={[styles.bday, { color: theme.colors.warning }]}>🎂 {partialDateBadge(row.doc.birthday)}</Text>
+          <Text style={[styles.bday, { color: c.warning }]}>🎂 {partialDateBadge(row.doc.birthday)}</Text>
         ) : null
       }
     />

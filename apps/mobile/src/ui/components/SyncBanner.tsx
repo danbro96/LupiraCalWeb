@@ -7,10 +7,12 @@ import { getMe } from '../../data/api/generated/cal/me/me';
 import { PHASE_LABELS, useSyncStatus } from '../../sync/syncStatus';
 import type { RootStackParamList } from '../navigation/types';
 
-/// One-line connection/queue status above the grids; doubles as the M3 exit-criterion probe
-/// ("Connected as …" proves token → BFF → cal-api). Tapping it opens the sync issues screen.
+/** One-line connection/queue status above the grids; doubles as the M3 exit-criterion probe
+ *  ("Connected as …" proves token → BFF → cal-api). Tapping it opens the sync issues screen. */
 export function SyncBanner() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  // useTheme, not useColors: the alert tint is MD3's errorContainer pair, which the estate
+  // palette has no equivalent for.
   const theme = useTheme();
   const { syncing, serverReachable, pending, parked, lastError, progress } = useSyncStatus();
   const [who, setWho] = useState<string | null>(null);

@@ -7,10 +7,10 @@ import { migrate } from '../data/db/schema';
 import { getMeta, setMeta } from '../data/mirror';
 import { logDebug } from '../debug/log';
 
-/// The Android-integration preference and its lifecycle. Flags persist in mirror_meta (NOT the
-/// auth store's SecureStore map: the sync layer must read `bridge.enabled` and can't import state/;
-/// and auth-store's positional K-destructure makes new keys brittle). Everything here is idempotent —
-/// enable() doubles as repair.
+/** The Android-integration preference and its lifecycle. Flags persist in mirror_meta (NOT the
+ *  auth store's SecureStore map: the sync layer must read `bridge.enabled` and can't import state/;
+ *  and auth-store's positional K-destructure makes new keys brittle). Everything here is idempotent —
+ *  enable() doubles as repair. */
 
 const ENABLED_KEY = 'bridge.enabled';
 const PROMPTED_KEY = 'bridge.prompted';
@@ -31,12 +31,12 @@ type BridgePref = {
 };
 
 type BridgeActions = {
-  /// Hydrate flags + status; when enabled, re-assert permissions and the account (self-repair).
+  /** Hydrate flags + status; when enabled, re-assert permissions and the account (self-repair). */
   init(): Promise<void>;
   refreshStatus(): Promise<void>;
-  /// Request permissions → ensure account → first publish. Returns false when permissions were denied.
+  /** Request permissions → ensure account → first publish. Returns false when permissions were denied. */
   enable(): Promise<boolean>;
-  /// Removes the Android account — the OS purges the published calendar + contacts.
+  /** Removes the Android account — the OS purges the published calendar + contacts. */
   disable(): Promise<void>;
   markPrompted(): Promise<void>;
 };

@@ -5,7 +5,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
-import { Avatar, Button, Chip, List, Text, useTheme } from 'react-native-paper';
+import { Avatar, Button, Chip, List, Text } from 'react-native-paper';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
@@ -20,14 +20,14 @@ import { hashColor } from '../components/palette';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { initialsOf } from './ContactsScreen';
-import type { AppTheme } from '../theme/paperTheme';
+import { useColors } from '../theme';
 
-/// Read-only overview — ALL editing lives on the edit screen. Shows everything the mirror doc carries:
-/// names, kind, pronouns, birthday+age, deceased, unified reach (channels + profiles), tags, addresses
-/// (tap → Google Maps via a geo place lookup), notes, metadata, emergency contacts and relations with
-/// names resolved from the mirror.
+/** Read-only overview — ALL editing lives on the edit screen. Shows everything the mirror doc carries:
+ *  names, kind, pronouns, birthday+age, deceased, unified reach (channels + profiles), tags, addresses
+ *  (tap → Google Maps via a geo place lookup), notes, metadata, emergency contacts and relations with
+ *  names resolved from the mirror. */
 export function ContactDetailScreen() {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const route = useRoute<RouteProp<RootStackParamList, 'ContactDetail'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { contactId } = route.params;
@@ -47,7 +47,7 @@ export function ContactDetailScreen() {
           <Button
             mode="text"
             compact
-            textColor={theme.colors.error}
+            textColor={c.danger}
             onPress={() =>
               void confirm({
                 title: 'Delete contact',
@@ -64,7 +64,7 @@ export function ContactDetailScreen() {
         </View>
       ),
     });
-  }, [navigation, contactId, name, confirm, theme]);
+  }, [navigation, contactId, name, confirm, c]);
 
   if (isLoading) return <Centered text="Loading…" />;
   if (!state) return <Centered text="This contact is not in the offline mirror." />;
@@ -78,12 +78,12 @@ export function ContactDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {state.deleted && <Text style={[styles.deletedNote, { color: theme.colors.error }]}>Deleted — pending sync</Text>}
+      {state.deleted && <Text style={[styles.deletedNote, { color: c.danger }]}>Deleted — pending sync</Text>}
       <View style={styles.header}>
         <Avatar.Text size={52} label={initialsOf(displayName)} style={{ backgroundColor: hashColor(contactId) }} />
         <View style={styles.headerBody}>
           <Text style={styles.h1}>{displayName}{deceased ? ' ✝' : ''}</Text>
-          <Text style={[styles.sub, { color: theme.colors.onSurfaceVariant }]}>
+          <Text style={[styles.sub, { color: c.textMuted }]}>
             {[doc.pronouns, doc.kind === 'Organization' ? 'Organization' : null, doc.nickname ? `“${doc.nickname}”` : null]
               .filter(Boolean).join(' · ')}
           </Text>
@@ -92,22 +92,22 @@ export function ContactDetailScreen() {
 
       {doc.birthday != null && <BirthdayRow birthday={doc.birthday} deceased={deceased} />}
       {deceased && (
-        <Text style={[styles.deceased, { color: theme.colors.onSurfaceVariant }]}>
+        <Text style={[styles.deceased, { color: c.textMuted }]}>
           Deceased{typeof doc.deathDate === 'string' ? ` — ${doc.deathDate}` : ''}
         </Text>
       )}
 
       <List.Subheader>Reach</List.Subheader>
       {(doc.channels ?? []).length === 0 && (doc.profiles ?? []).length === 0 && (
-        <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Nothing yet</Text>
+        <Text style={[styles.muted, { color: c.textMuted }]}>Nothing yet</Text>
       )}
-      {(doc.channels ?? []).map((c, i) => (
+      {(doc.channels ?? []).map((ch, i) => (
         <List.Item
           key={`ch-${i}`}
-          onPress={() => openReach(c.medium, c.value)}
-          title={`${c.value}${c.preferred ? '  ★' : ''}`}
-          description={`${c.medium}${c.type ? ` (${c.type})` : ''}`}
-          left={() => <ReachIcon kind={c.medium} />}
+          onPress={() => openReach(ch.medium, ch.value)}
+          title={`${ch.value}${ch.preferred ? '  ★' : ''}`}
+          description={`${ch.medium}${ch.type ? ` (${ch.type})` : ''}`}
+          left={() => <ReachIcon kind={ch.medium} />}
         />
       ))}
       {(doc.profiles ?? []).map((p, i) => (
@@ -176,7 +176,7 @@ export function ContactDetailScreen() {
           <List.Subheader>Metadata</List.Subheader>
           {metadata.map(([k, v]) => (
             <Text key={k} style={styles.row}>
-              <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{k}  </Text>
+              <Text style={[styles.rowKind, { color: c.textMuted }]}>{k}  </Text>
               {typeof v === 'string' ? v : JSON.stringify(v)}
             </Text>
           ))}
@@ -184,7 +184,7 @@ export function ContactDetailScreen() {
       )}
 
       {typeof doc.updatedAt === 'string' && (
-        <Text style={[styles.footer, { color: theme.colors.onSurfaceVariant }]}>Updated {new Date(doc.updatedAt).toLocaleString()}</Text>
+        <Text style={[styles.footer, { color: c.textMuted }]}>Updated {new Date(doc.updatedAt).toLocaleString()}</Text>
       )}
 
     </ScrollView>
@@ -197,20 +197,20 @@ function openReach(kind: string, value: string): void {
 }
 
 function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; deceased: boolean }) {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const { year, month, day } = birthday;
   const next = nextBirthday(month, day, new Date());
   const age = deceased ? null : turningAge(year, next);
   return (
-    <Text style={[styles.birthday, { color: theme.colors.warning }]}>
+    <Text style={[styles.birthday, { color: c.warning }]}>
       🎂 {fmtPartialDate(birthday)}
       {age != null ? ` — turns ${age} on ${next.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : ''}
     </Text>
   );
 }
 
-/// Address rows are place refs — resolving to something mappable needs the geo API (online). Tap-to-open
-/// keeps the offline path clean: nothing is fetched until asked.
+/** Address rows are place refs — resolving to something mappable needs the geo API (online). Tap-to-open
+ *  keeps the offline path clean: nothing is fetched until asked. */
 function AddressRow({ placeId, type }: { placeId: string | null; type: string }) {
   const [busy, setBusy] = useState(false);
 

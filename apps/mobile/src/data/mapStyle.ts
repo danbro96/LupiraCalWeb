@@ -1,7 +1,7 @@
 import { authPort } from './api/authProvider';
 
-/// Minimal slice of the MapLibre style spec this loader touches — the native map consumes the
-/// document as opaque JSON, so no dependency on the full style-spec types from data/.
+/** Minimal slice of the MapLibre style spec this loader touches — the native map consumes the
+ *  document as opaque JSON, so no dependency on the full style-spec types from data/. */
 export type BasemapStyle = {
   version: number;
   glyphs?: string;

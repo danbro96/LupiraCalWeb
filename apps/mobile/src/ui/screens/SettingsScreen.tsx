@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { List, Switch, Text, useTheme } from 'react-native-paper';
+import { List, Switch, Text } from 'react-native-paper';
 import { APP_VERSION } from '../../config';
 import { useAuth } from '../../state/auth-store';
 import { useBridge } from '../../state/bridge-store';
@@ -14,13 +14,13 @@ import { useSyncStatus } from '../../sync/syncStatus';
 import { useConfirm } from '../components/ConfirmDialog';
 import { Button, DateField } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
-import type { AppTheme } from '../theme/paperTheme';
+import { useColors } from '../theme';
 
-/// User-facing settings only: session, the Android-integration toggle, and the sync surface.
-/// Everything developer-shaped (backend switching, debug log, bridge diagnostics) lives behind
-/// the Developer row.
+/** User-facing settings only: session, the Android-integration toggle, and the sync surface.
+ *  Everything developer-shaped (backend switching, debug log, bridge diagnostics) lives behind
+ *  the Developer row. */
 export function SettingsScreen() {
-  const theme = useTheme<AppTheme>();
+  const c = useColors();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { authMode, user, token } = useAuth();
   const bridge = useBridge();
@@ -71,7 +71,7 @@ export function SettingsScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <List.Subheader>Account</List.Subheader>
-      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
+      <Text style={[styles.detail, { color: c.textMuted }]}>
         {authMode === 'none' ? 'Dev auto-auth (no sign-in)' : user ? `Signed in as ${user.sub}` : 'Signed out'}
       </Text>
       {token !== null && (
@@ -84,14 +84,14 @@ export function SettingsScreen() {
         right={() => <Switch value={bridge.enabled} onValueChange={toggleBridge} disabled={!bridge.loaded} />}
       />
       {bridge.enabled && (
-        <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
+        <Text style={[styles.detail, { color: c.textMuted }]}>
           {bridge.status?.accountPresent ? 'Account active' : 'Account missing — toggle off and on to repair'}
           {bridge.status?.lastSyncAt ? ` · last OS sync ${new Date(bridge.status.lastSyncAt).toLocaleString()}` : ''}
         </Text>
       )}
       {!bridge.permissionsOk && (
         <Pressable onPress={() => void Linking.openSettings()}>
-          <Text style={[styles.warning, { color: theme.colors.warning }]}>Calendar/contacts permissions missing — tap to open app settings</Text>
+          <Text style={[styles.warning, { color: c.warning }]}>Calendar/contacts permissions missing — tap to open app settings</Text>
         </Pressable>
       )}
 
@@ -106,7 +106,7 @@ export function SettingsScreen() {
           />
         )}
       />
-      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Agent-managed calendars (inbox, availability …) and their events stay hidden unless enabled.</Text>
+      <Text style={[styles.detail, { color: c.textMuted }]}>Agent-managed calendars (inbox, availability …) and their events stay hidden unless enabled.</Text>
       <List.Item
         title="Show task deadlines"
         right={() => (
@@ -117,7 +117,7 @@ export function SettingsScreen() {
           />
         )}
       />
-      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Deadlines from Lupira Tasks appear on their due day. Needs a connection.</Text>
+      <Text style={[styles.detail, { color: c.textMuted }]}>Deadlines from Lupira Tasks appear on their due day. Needs a connection.</Text>
 
       <List.Subheader>Photo backup</List.Subheader>
       <List.Item
@@ -138,13 +138,13 @@ export function SettingsScreen() {
             )}
           />
           <View style={styles.row}>
-            <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Back up from</Text>
+            <Text style={[styles.detail, { color: c.textMuted }]}>Back up from</Text>
             <DateField
               value={photos.settings.backupFrom.slice(0, 10)}
               onChange={(day) => day && void usePhotoBackup.getState().setBackupFrom(new Date(`${day}T00:00:00`).toISOString())}
             />
           </View>
-          <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
+          <Text style={[styles.detail, { color: c.textMuted }]}>
             {photoStatus.progress
               ? `Uploading… ${Math.round(photoStatus.progress.fraction * 100)}%`
               : photoStatus.pending > 0
@@ -153,17 +153,17 @@ export function SettingsScreen() {
           </Text>
           {photoStatus.parked > 0 && (
             <Pressable onPress={() => void retryParkedPhotos()}>
-              <Text style={[styles.warning, { color: theme.colors.warning }]}>{photoStatus.parked} failed — tap to retry</Text>
+              <Text style={[styles.warning, { color: c.warning }]}>{photoStatus.parked} failed — tap to retry</Text>
             </Pressable>
           )}
         </>
       )}
-      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
+      <Text style={[styles.detail, { color: c.textMuted }]}>
         Originals upload straight to your own storage. Bulk backup runs while the app is open; in the background it catches up slowly.
       </Text>
 
       <List.Subheader>Sync</List.Subheader>
-      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
+      <Text style={[styles.detail, { color: c.textMuted }]}>
         {syncing ? 'Syncing…' : lastSyncAt ? `Last synced ${new Date(lastSyncAt).toLocaleString()}` : 'Not synced yet'}
       </Text>
       <View style={styles.row}>
@@ -176,7 +176,7 @@ export function SettingsScreen() {
       </View>
 
       <List.Subheader>About</List.Subheader>
-      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Lupira Calendar {APP_VERSION}</Text>
+      <Text style={[styles.detail, { color: c.textMuted }]}>Lupira Calendar {APP_VERSION}</Text>
 
       <List.Subheader>Developer</List.Subheader>
       <Button kind="link" title="Developer options" onPress={() => navigation.navigate('Developer')} />

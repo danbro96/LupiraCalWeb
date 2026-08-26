@@ -1,25 +1,25 @@
 import { expandRecurrence } from '@lupira/cal-domain/recurrence';
 import type { ContactDoc, ItemDoc } from './docTypes';
 
-/// The single grid read path: every visible instant becomes one row in the `occurrences` table, recomputed
-/// per source aggregate inside the same exclusive transaction that changed it. Grids never expand recurrence
-/// at render time — they run one indexed start_day range query.
+/** The single grid read path: every visible instant becomes one row in the `occurrences` table, recomputed
+ *  per source aggregate inside the same exclusive transaction that changed it. Grids never expand recurrence
+ *  at render time — they run one indexed start_day range query. */
 
 export type OccurrenceRow = {
   source: 'item' | 'birthday';
   sourceId: string;
   startUtc: string;
   endUtc: string | null;
-  /// Grid bucket. Timed occurrences bucket by the DEVICE's local day (grids are local); all-day occurrences
-  /// keep their calendar date verbatim (an all-day event belongs to its date in every timezone).
+  /** Grid bucket. Timed occurrences bucket by the DEVICE's local day (grids are local); all-day occurrences
+   *  keep their calendar date verbatim (an all-day event belongs to its date in every timezone). */
   startDay: string;
   allDay: boolean;
 };
 
 export type Horizon = { start: Date; end: Date };
 
-/// Rolling window the mirror keeps materialized. Re-materialize everything when the stored horizon drifts
-/// more than a month from the current one (see horizonDrifted).
+/** Rolling window the mirror keeps materialized. Re-materialize everything when the stored horizon drifts
+ *  more than a month from the current one (see horizonDrifted). */
 export function currentHorizon(now: Date = new Date()): Horizon {
   return {
     start: new Date(Date.UTC(now.getUTCFullYear() - 1, now.getUTCMonth(), 1)),
@@ -66,8 +66,8 @@ export function occurrenceRowsForItem(doc: ItemDoc, deleted: boolean, horizon: H
   }));
 }
 
-/// Birthdays synthesize straight into the occurrence table — never stored as items (matching the server's
-/// read-time projection). Year-less birthdays still recur; Feb 29 lands only in leap years.
+/** Birthdays synthesize straight into the occurrence table — never stored as items (matching the server's
+ *  read-time projection). Year-less birthdays still recur; Feb 29 lands only in leap years. */
 export function birthdayRows(contact: ContactDoc, deleted: boolean, horizon: Horizon): OccurrenceRow[] {
   if (deleted || !contact.birthday) return [];
   const { month, day } = contact.birthday;

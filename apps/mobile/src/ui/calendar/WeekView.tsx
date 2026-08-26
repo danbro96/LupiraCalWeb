@@ -2,19 +2,20 @@ import { clampToDay, layoutColumns } from '@lupira/cal-domain/occurrences';
 import { daysFrom, isToday, ymd } from '@lupira/cal-domain/time';
 import { memo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import type { GridRow } from '../../data/mirror';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
+import { useColors } from '../theme';
 
 const HOUR_H = 44;
 
 const slotTime = (slot: number) => `${String(Math.floor(slot / 2)).padStart(2, '0')}:${slot % 2 ? '30' : '00'}`;
 const DEFAULT_END_MIN = 30;   // open-ended timed occurrences render as a half-hour block
 
-/// Week grid: all-day chips on top, timed lanes below. Placement is the domain's clampToDay + layoutColumns
-/// (the same math the web grid uses); data is the mirror's occurrence rows for the 7 day buckets.
+/** Week grid: all-day chips on top, timed lanes below. Placement is the domain's clampToDay + layoutColumns
+ *  (the same math the web grid uses); data is the mirror's occurrence rows for the 7 day buckets. */
 export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, onCreateSlot }: {
   weekStart: Date;
   onPressOccurrence: (row: CalRow) => void;
@@ -22,7 +23,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
 }) {
   // First tap on an empty lane drops a ＋ chip on that hour; tapping the chip opens the prefilled editor.
   // Slot granularity is 30 min; the ＋ chip covers the tapped half hour (prefill length stays 1h).
-  const theme = useTheme();
+  const c = useColors();
   const [pendingSlot, setPendingSlot] = useState<{ day: string; slot: number } | null>(null);
   const days = daysFrom(weekStart, 7);
   const dayKeys = days.map(ymd);
@@ -54,11 +55,11 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
 
   return (
     <View style={styles.root}>
-      <View style={[styles.headerRow, { borderColor: theme.colors.outlineVariant }]}>
+      <View style={[styles.headerRow, { borderColor: c.divider }]}>
         <View style={styles.gutter} />
         {days.map((d) => (
           <View key={ymd(d)} style={styles.dayHeader}>
-            <Text style={[styles.dayHeaderText, { color: isToday(d) ? theme.colors.primary : theme.colors.onSurfaceVariant }, isToday(d) && styles.today]}>
+            <Text style={[styles.dayHeaderText, { color: isToday(d) ? c.primary : c.textMuted }, isToday(d) && styles.today]}>
               {d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)} {d.getDate()}
             </Text>
           </View>
@@ -66,7 +67,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
       </View>
 
       {hasAllDay && (
-        <View style={[styles.allDayRow, { borderColor: theme.colors.outlineVariant }]}>
+        <View style={[styles.allDayRow, { borderColor: c.divider }]}>
           <View style={styles.gutter} />
           {days.map((d) => (
             <View key={ymd(d)} style={styles.allDayCell}>
@@ -78,15 +79,15 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
                     isTaskRow(r)
                       ? [
                           styles.taskChip,
-                          { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
-                          r.task.overdue && { borderColor: theme.colors.error, backgroundColor: theme.colors.error + '22' },
+                          { backgroundColor: c.surface, borderColor: c.border },
+                          r.task.overdue && { borderColor: c.danger, backgroundColor: c.danger + '22' },
                         ]
                       : { backgroundColor: rowColor(r) },
                   ]}
                   onPress={() => onPressOccurrence(r)}
                 >
                   <Text
-                    style={[styles.chipText, isTaskRow(r) && { color: r.task.overdue ? theme.colors.error : theme.colors.onSurfaceVariant }]}
+                    style={[styles.chipText, isTaskRow(r) && { color: r.task.overdue ? c.danger : c.textMuted }]}
                     numberOfLines={1}
                   >
                     {isTaskRow(r) ? `⏰ ${r.title ?? ''}` : r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)')}
@@ -102,7 +103,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
         <View style={styles.lanes}>
           <View style={styles.gutter}>
             {Array.from({ length: 24 }, (_, h) => (
-              <Text key={h} style={[styles.hourLabel, { top: h * HOUR_H - 6, color: theme.colors.onSurfaceVariant }]}>
+              <Text key={h} style={[styles.hourLabel, { top: h * HOUR_H - 6, color: c.textMuted }]}>
                 {String(h).padStart(2, '0')}
               </Text>
             ))}
@@ -121,7 +122,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
                 key={dayKey}
                 style={[
                   styles.dayColumn,
-                  { borderColor: theme.colors.outlineVariant },
+                  { borderColor: c.divider },
                   availByDay.has(dayKey) && { backgroundColor: `${availabilityColor(availByDay.get(dayKey) ?? null)}14` },
                 ]}
                 onPress={(e) => {
@@ -134,7 +135,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
                     key={i}
                     style={[
                       i % 2 ? styles.halfLine : styles.hourLine,
-                      { top: (i * HOUR_H) / 2, backgroundColor: i % 2 ? theme.colors.surface : theme.colors.outlineVariant },
+                      { top: (i * HOUR_H) / 2, backgroundColor: i % 2 ? c.surface : c.divider },
                     ]}
                   />
                 ))}
@@ -142,15 +143,15 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
                   <Pressable
                     style={[styles.slotChip, {
                       top: pendingSlot.slot * (HOUR_H / 2) + 1,
-                      borderColor: theme.colors.primary,
-                      backgroundColor: theme.colors.primary + '22',
+                      borderColor: c.primary,
+                      backgroundColor: c.primary + '22',
                     }]}
                     onPress={() => {
                       onCreateSlot(dayKey, slotTime(pendingSlot.slot));
                       setPendingSlot(null);
                     }}
                   >
-                    <Text style={[styles.slotChipText, { color: theme.colors.primary }]}>＋ {slotTime(pendingSlot.slot)}</Text>
+                    <Text style={[styles.slotChipText, { color: c.primary }]}>＋ {slotTime(pendingSlot.slot)}</Text>
                   </Pressable>
                 )}
                 {placed.map((p) => (

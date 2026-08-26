@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Chip, FAB, IconButton, Text, useTheme } from 'react-native-paper';
+import { Button, Chip, FAB, IconButton, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
@@ -15,14 +15,15 @@ import { BridgePrompt } from '../components/BridgePrompt';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
+import { useColors } from '../theme';
 
 type Mode = 'month' | 'week';
 
-/// Month mode: the grid flex-fills the screen; selecting a day slides up a draggable agenda sheet
-/// (snap points ≈ 38% / 78%, drag below ~20% deselects). Changing month or jumping to today clears
-/// the selection. Week mode: timed lanes with tap-to-create slots.
+/** Month mode: the grid flex-fills the screen; selecting a day slides up a draggable agenda sheet
+ *  (snap points ≈ 38% / 78%, drag below ~20% deselects). Changing month or jumping to today clears
+ *  the selection. Week mode: timed lanes with tap-to-create slots. */
 export function CalendarScreen() {
-  const theme = useTheme();
+  const c = useColors();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [mode, setMode] = useState<Mode>('month');
   const [anchor, setAnchor] = useState(() => new Date());
@@ -97,13 +98,13 @@ export function CalendarScreen() {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: theme.colors.background }]} edges={['top']}>
+    <SafeAreaView style={[styles.root, { backgroundColor: c.bg }]} edges={['top']}>
       <SyncBanner />
       <BridgePrompt />
       <View style={styles.toolbar}>
-        <IconButton icon="chevron-left" iconColor={theme.colors.primary} style={styles.nav} onPress={() => step(-1)} hitSlop={8} />
+        <IconButton icon="chevron-left" iconColor={c.primary} style={styles.nav} onPress={() => step(-1)} hitSlop={8} />
         <Text style={styles.title}>{title}</Text>
-        <IconButton icon="chevron-right" iconColor={theme.colors.primary} style={styles.nav} onPress={() => step(1)} hitSlop={8} />
+        <IconButton icon="chevron-right" iconColor={c.primary} style={styles.nav} onPress={() => step(1)} hitSlop={8} />
         <Button mode="outlined" compact onPress={goToday}>
           Today
         </Button>
@@ -123,16 +124,16 @@ export function CalendarScreen() {
           <MonthView anchor={anchor} selectedDay={selectedDay} onSelectDay={selectDay} />
           <SwipeHint hint={swipe.hint} prevLabel={periodLabel(-1)} nextLabel={periodLabel(1)} />
           {selectedDay && (
-            <Animated.View style={[styles.sheet, { height: sheetH, backgroundColor: theme.colors.surface, borderColor: theme.colors.outlineVariant }]}>
+            <Animated.View style={[styles.sheet, { height: sheetH, backgroundColor: c.surface, borderColor: c.divider }]}>
               <View style={styles.sheetHeader} {...pan.panHandlers}>
-                <View style={[styles.handle, { backgroundColor: theme.colors.outlineVariant }]} />
+                <View style={[styles.handle, { backgroundColor: c.divider }]} />
                 <View style={styles.sheetHeaderRow}>
                   <Text style={styles.sheetTitle}>
                     {parseYmd(selectedDay).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
                   </Text>
                   <View style={styles.sheetActions}>
                     <Pressable onPress={() => navigation.navigate('AvailabilityEdit', { day: selectedDay })} hitSlop={6}>
-                      <Text style={[styles.sheetLink, { color: theme.colors.primary }]}>Availability</Text>
+                      <Text style={[styles.sheetLink, { color: c.primary }]}>Availability</Text>
                     </Pressable>
                     <FAB size="small" icon="plus" onPress={() => navigation.navigate('ItemEdit', { day: selectedDay })} />
                   </View>
@@ -155,7 +156,7 @@ export function CalendarScreen() {
 }
 
 function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) => void }) {
-  const theme = useTheme();
+  const c = useColors();
   const { rows } = useDaysOccurrences([day]);
   const taskRows = useTaskDeadlines([day]);
   const colorOf = useCalendarColors();
@@ -163,7 +164,7 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
 
   return (
     <View style={styles.agenda}>
-      {sorted.length === 0 && <Text style={[styles.agendaEmpty, { color: theme.colors.onSurfaceVariant }]}>Nothing scheduled</Text>}
+      {sorted.length === 0 && <Text style={[styles.agendaEmpty, { color: c.textMuted }]}>Nothing scheduled</Text>}
       {sorted.map((r) => (
         r.is_availability === 1 ? (
           <Pressable key={`${r.source}-${r.source_id}-${r.start_utc}`} style={styles.agendaRow} onPress={() => onPress(r)}>
@@ -180,15 +181,15 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
           <View
             style={[
               styles.dot,
-              { backgroundColor: isTaskRow(r) ? (r.task.overdue ? theme.colors.error : '#64748b') : r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) },
+              { backgroundColor: isTaskRow(r) ? (r.task.overdue ? c.danger : '#64748b') : r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) },
             ]}
           />
-          <Text style={[styles.agendaTime, { color: theme.colors.onSurfaceVariant }]}>
+          <Text style={[styles.agendaTime, { color: c.textMuted }]}>
             {isTaskRow(r) ? '⏰' : r.source === 'birthday' ? '🎂' : r.all_day === 1 ? 'all day' : fmtTime(new Date(r.start_utc))}
           </Text>
           <Text style={styles.agendaText} numberOfLines={1}>{r.title ?? '(untitled)'}</Text>
-          {isTaskRow(r) && r.task.overdue && <Text style={[styles.cancelled, { color: theme.colors.error }]}>overdue</Text>}
-          {r.status === 'Cancelled' && <Text style={[styles.cancelled, { color: theme.colors.error }]}>cancelled</Text>}
+          {isTaskRow(r) && r.task.overdue && <Text style={[styles.cancelled, { color: c.danger }]}>overdue</Text>}
+          {r.status === 'Cancelled' && <Text style={[styles.cancelled, { color: c.danger }]}>cancelled</Text>}
         </Pressable>
         )
       ))}
