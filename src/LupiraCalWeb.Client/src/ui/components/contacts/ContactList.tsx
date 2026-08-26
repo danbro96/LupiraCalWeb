@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-dom';
 import { useCreateContact, useSetContactTags } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto, ContactReachChannel } from '../../../data/api-contact/models';
@@ -20,6 +21,7 @@ import { useSnackbar } from '../SnackbarHost';
 import { inputToPartialDate, partialDateBadge } from '@lupira/cal-domain/partialDate';
 import { useGroup } from './useGroup';
 import { WrapRow } from '../WrapRow';
+import { SidePane } from './panes';
 
 /** Split a comma-separated input into reach channels of one medium (create-form convenience). */
 function toChannels(raw: string, medium: ReachMedium): ContactReachChannel[] {
@@ -64,13 +66,24 @@ export function ContactList() {
     );
 
   return (
-    <div className="contacts-list-pane">
-      <div className="list-pane-head">
+    <SidePane width={340}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          py: 1.5,
+          position: 'sticky',
+          top: 0,
+          bgcolor: 'background.default',
+          zIndex: 1,
+        }}
+      >
         <TextField placeholder="Search names…" value={query} onChange={(e) => setQuery(e.target.value)} />
         <Button variant="contained" onClick={() => setCreating((c) => !c)}>
           + New
         </Button>
-      </div>
+      </Box>
       {creating && <NewContactForm defaultBookId={bookId || addressBooks[0]?.id} onDone={() => setCreating(false)} />}
       <div className="contact-list">
         {bypassTiers ? (
@@ -97,7 +110,7 @@ export function ContactList() {
           </>
         )}
       </div>
-    </div>
+    </SidePane>
   );
 }
 

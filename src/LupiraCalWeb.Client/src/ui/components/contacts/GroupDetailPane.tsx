@@ -22,6 +22,7 @@ import { useGroup } from './useGroup';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 import { PageHead } from '../Page';
+import { DetailPane } from './panes';
 
 /** Right pane for a group/org: members with add/remove, inline rename, delete. */
 export function GroupDetailPane() {
@@ -41,11 +42,11 @@ export function GroupDetailPane() {
 
   if (!group) {
     return (
-      <div className="contacts-detail-pane">
+      <DetailPane>
         <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>
           {bookId ? 'Group not found.' : 'Open this group from its address book.'}
         </Typography>
-      </div>
+      </DetailPane>
     );
   }
 
@@ -54,7 +55,7 @@ export function GroupDetailPane() {
   const backSearch = `?book=${bookId}`;
 
   return (
-    <div className="contacts-detail-pane">
+    <DetailPane>
       <PageHead>
         <h2>
           <Chip variant="outlined" label={group.kind === 'Organization' ? '🏢 org' : '👥 group'} />{' '}
@@ -116,6 +117,6 @@ export function GroupDetailPane() {
           Delete {group.kind === 'Organization' ? 'organization' : 'group'}
         </Button>
       </div>
-    </div>
+    </DetailPane>
   );
 }

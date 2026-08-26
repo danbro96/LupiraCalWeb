@@ -3,6 +3,8 @@ import Button from '@mui/material/Button';
 import { ContactsTree } from '../components/contacts/ContactsTree';
 import { ContactList } from '../components/contacts/ContactList';
 import { useIsPhone } from '../useIsPhone';
+import Box from '@mui/material/Box';
+import { PaneFrame } from '../components/contacts/panes';
 
 /** Contacts three-pane shell: address-book/group tree | filtered contact list | detail Outlet.
  *  The tree and list stay mounted; the right pane is driven by the nested route.
@@ -16,11 +18,11 @@ export function ContactsLayout() {
 
   if (!isPhone)
     return (
-      <div className="contacts-3pane">
+      <PaneFrame>
         <ContactsTree />
         <ContactList />
         <Outlet />
-      </div>
+      </PaneFrame>
     );
 
   if (contactMatch || groupMatch) {
@@ -30,32 +32,52 @@ export function ContactsLayout() {
     if (book) back.set('book', book);
     if (q) back.set('q', q);
     return (
-      <div className="contacts-stack">
-        <div className="pane-back">
+      <PaneFrame column>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            minHeight: 44,
+            px: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            flex: 'none',
+          }}
+        >
           <Button variant="text" component={Link} to={{ pathname: '/contacts', search: back.toString() }}>
             ‹ Contacts
           </Button>
-        </div>
+        </Box>
         <Outlet />
-      </div>
+      </PaneFrame>
     );
   }
 
   if (params.has('book') || params.get('pane') === 'list')
     return (
-      <div className="contacts-stack">
-        <div className="pane-back">
+      <PaneFrame column>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            minHeight: 44,
+            px: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            flex: 'none',
+          }}
+        >
           <Button variant="text" component={Link} to="/contacts">
             ‹ Books
           </Button>
-        </div>
+        </Box>
         <ContactList />
-      </div>
+      </PaneFrame>
     );
 
   return (
-    <div className="contacts-stack">
+    <PaneFrame column>
       <ContactsTree />
-    </div>
+    </PaneFrame>
   );
 }

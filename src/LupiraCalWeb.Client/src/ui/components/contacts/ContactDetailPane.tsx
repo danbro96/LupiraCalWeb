@@ -40,6 +40,7 @@ import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 import { PageHead } from '../Page';
+import { DetailPane } from './panes';
 
 const linkSx: SxProps<Theme> = { fontSize: 13, fontWeight: 600, p: '2px', whiteSpace: 'nowrap', '@media (pointer: coarse)': { p: '6px 2px' } };
 
@@ -62,8 +63,8 @@ export function ContactDetailPane() {
   const [editing, setEditing] = useState(false);
   const [showCircles, setShowCircles] = useState(false);
 
-  if (isLoading) return <div className="contacts-detail-pane"><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></div>;
-  if (!contact) return <div className="contacts-detail-pane"><Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Contact not found.</Typography></div>;
+  if (isLoading) return <DetailPane><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></DetailPane>;
+  if (!contact) return <DetailPane><Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Contact not found.</Typography></DetailPane>;
 
   const memberOf = (groups ?? []).filter((g) => g.members.some((m) => m.contactId === contact.id));
   const joinable = (groups ?? []).filter((g) => !g.members.some((m) => m.contactId === contact.id));
@@ -72,7 +73,7 @@ export function ContactDetailPane() {
   const nameOf = (cid: string) => bookContacts?.find((c) => c.id === cid)?.displayName ?? cid.slice(0, 8);
 
   return (
-    <div className="contacts-detail-pane">
+    <DetailPane>
       <PageHead>
         <h2>
           {contact.displayName}
@@ -237,6 +238,6 @@ export function ContactDetailPane() {
           Delete contact
         </Button>
       </div>
-    </div>
+    </DetailPane>
   );
 }

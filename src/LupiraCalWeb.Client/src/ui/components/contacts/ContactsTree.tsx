@@ -17,6 +17,7 @@ import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBook
 import { useInvalidateAddressBooks, useInvalidateContacts } from '../../../state/useInvalidate';
 import { AddressBookManage } from './AddressBookManage';
 import { WrapRow } from '../WrapRow';
+import { SidePane } from './panes';
 
 /** Left rail: address books → their groups/orgs, with contact and member counts.
  *  Book click filters the list (?book); group click opens the group pane + filters to members. */
@@ -34,7 +35,7 @@ export function ContactsTree() {
   const countFor = (bookId: string) => (allContacts ?? []).filter((c) => c.addressBookId === bookId).length;
 
   return (
-    <aside className="contacts-tree">
+    <SidePane width={240} component="aside">
       {me?.contactId ? (
         <button
           className={`tree-node you-node ${openContactId === me.contactId ? 'active' : ''}`}
@@ -80,7 +81,7 @@ export function ContactsTree() {
           </Button>
         </div>
       )}
-    </aside>
+    </SidePane>
   );
 }
 

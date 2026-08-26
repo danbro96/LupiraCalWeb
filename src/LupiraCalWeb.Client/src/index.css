@@ -632,33 +632,6 @@ code {
 }
 
 /* ---- Contacts three-pane (tree | list | detail). ---- */
-.contacts-3pane {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-}
-.contacts-tree {
-  width: 240px;
-  flex: none;
-  border-right: 1px solid var(--mui-palette-divider);
-  overflow-y: auto;
-  padding-bottom: var(--sp-lg);
-}
-.contacts-list-pane {
-  width: 340px;
-  flex: none;
-  border-right: 1px solid var(--mui-palette-divider);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 0 var(--sp-lg);
-}
-.contacts-detail-pane {
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
-  padding: var(--sp-lg) var(--sp-xl);
-}
 
 /* Tree rows: a button per address book, expandable to its groups. */
 .tree-node {
@@ -717,16 +690,6 @@ code {
 }
 
 /* List pane: sticky search/new header above the contact rows. */
-.list-pane-head {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-sm);
-  padding: var(--sp-md) 0;
-  position: sticky;
-  top: 0;
-  background: var(--mui-palette-background-default);
-  z-index: 1;
-}
 
 /* ---- Contacts. ---- */
 .contact-list {
@@ -1053,35 +1016,9 @@ code {
 }
 
 /* Stacked contacts navigation (one pane at a time) with a sticky back bar. */
-.contacts-stack {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-.pane-back {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 var(--sp-sm);
-  background: var(--mui-palette-background-default);
-  border-bottom: 1px solid var(--mui-palette-divider);
-  flex: none;
-}
 
 /* Phone breakpoint — keep in sync with ui/useIsPhone.ts. */
 @media (max-width: 820px) {
-  /* Contacts panes fill the stacked layout. */
-  .contacts-tree,
-  .contacts-list-pane {
-    width: auto;
-    flex: 1;
-    border-right: 0;
-  }
-  .contacts-detail-pane {
-    padding: var(--sp-lg);
-  }
-
   .relation-graph.fullscreen {
     flex: 1;
     height: auto;
