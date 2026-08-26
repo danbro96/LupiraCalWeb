@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, List, RadioButton, Text, useTheme } from 'react-native-paper';
 import { API_PRESETS, type AuthMode } from '../../config';
 import { presetFor, useAuth } from '../../state/auth-store';
@@ -50,9 +50,9 @@ export function DeveloperScreen() {
           value={customUrl}
           onChangeText={setCustomUrl}
         />
-        <Pressable onPress={() => setCustomMode(customMode === 'oidc' ? 'none' : 'oidc')}>
-          <Text style={[styles.link, { color: theme.colors.primary }]}>Auth: {customMode === 'oidc' ? 'sign-in' : 'dev auto-auth'} (tap to toggle)</Text>
-        </Pressable>
+        <Button mode="text" compact onPress={() => setCustomMode(customMode === 'oidc' ? 'none' : 'oidc')}>
+          Auth: {customMode === 'oidc' ? 'sign-in' : 'dev auto-auth'} (tap to toggle)
+        </Button>
         <Button
           mode="outlined"
           disabled={!customUrl.trim()}
@@ -63,12 +63,12 @@ export function DeveloperScreen() {
       </View>
 
       <List.Subheader>Diagnostics</List.Subheader>
-      <Pressable onPress={() => navigation.navigate('DebugLog')}>
-        <Text style={[styles.link, { color: theme.colors.primary }]}>Debug log</Text>
-      </Pressable>
-      <Pressable onPress={() => navigation.navigate('BridgeDiagnostics')}>
-        <Text style={[styles.link, { color: theme.colors.primary }]}>Bridge diagnostics</Text>
-      </Pressable>
+      <Button mode="text" compact onPress={() => navigation.navigate('DebugLog')}>
+          Debug log
+        </Button>
+      <Button mode="text" compact onPress={() => navigation.navigate('BridgeDiagnostics')}>
+          Bridge diagnostics
+        </Button>
 
       <List.Subheader>Sync state</List.Subheader>
       <Text style={[styles.mono, { color: theme.colors.onSurfaceVariant }]}>{JSON.stringify(sync, null, 2)}</Text>
@@ -79,6 +79,5 @@ export function DeveloperScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   custom: { paddingVertical: 8, gap: 8 },
-  link: { paddingVertical: 6 },
   mono: { fontFamily: 'monospace', fontSize: 11 },
 });

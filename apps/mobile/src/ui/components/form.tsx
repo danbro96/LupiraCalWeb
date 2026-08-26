@@ -99,13 +99,15 @@ function PickerButton({ text, isSet, onPress, onClear }: {
   );
 }
 
+const BUTTON_MODE = { primary: 'contained', danger: 'contained', plain: 'outlined', link: 'text' } as const;
+
 export function Button({ title, onPress, kind = 'primary', disabled = false }: {
-  title: string; onPress: () => void; kind?: 'primary' | 'danger' | 'plain'; disabled?: boolean;
+  title: string; onPress: () => void; kind?: 'primary' | 'danger' | 'plain' | 'link'; disabled?: boolean;
 }) {
   const theme = useTheme();
   return (
     <PaperButton
-      mode={kind === 'plain' ? 'outlined' : 'contained'}
+      mode={BUTTON_MODE[kind]}
       buttonColor={kind === 'danger' ? theme.colors.error : undefined}
       textColor={kind === 'danger' ? theme.colors.onError : undefined}
       style={styles.button}

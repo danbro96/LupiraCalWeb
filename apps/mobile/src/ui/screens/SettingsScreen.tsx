@@ -168,20 +168,18 @@ export function SettingsScreen() {
       </Text>
       <View style={styles.row}>
         <Button title="Sync now" onPress={() => void runSync()} disabled={syncing} />
-        <Pressable onPress={() => navigation.navigate('SyncIssues')}>
-          <Text style={[styles.link, { color: theme.colors.primary }]}>
-            Sync issues{pending + parked > 0 ? ` (${pending + parked})` : ''}
-          </Text>
-        </Pressable>
+        <Button
+          kind="link"
+          title={`Sync issues${pending + parked > 0 ? ` (${pending + parked})` : ''}`}
+          onPress={() => navigation.navigate('SyncIssues')}
+        />
       </View>
 
       <List.Subheader>About</List.Subheader>
       <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Lupira Calendar {APP_VERSION}</Text>
 
       <List.Subheader>Developer</List.Subheader>
-      <Pressable onPress={() => navigation.navigate('Developer')}>
-        <Text style={[styles.link, { color: theme.colors.primary }]}>Developer options</Text>
-      </Pressable>
+      <Button kind="link" title="Developer options" onPress={() => navigation.navigate('Developer')} />
     </ScrollView>
   );
 }
@@ -191,5 +189,4 @@ const styles = StyleSheet.create({
   detail: { fontSize: 13 },
   warning: { fontSize: 13, paddingVertical: 4 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  link: { paddingVertical: 6 },
 });

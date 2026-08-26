@@ -2,8 +2,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
-import { Button, Text, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
 import { exchangeAuthCode } from '../../data/auth/oidc';
 import { OIDC_CLIENT_ID, OIDC_ISSUER, OIDC_REDIRECT_PATH, OIDC_SCHEME, OIDC_SCOPES } from '../../data/auth/oidcConfig';
 import { logDebug } from '../../debug/log';
@@ -58,9 +58,9 @@ export function LoginScreen({ navigation }: NativeStackScreenProps<RootStackPara
         </Button>
       )}
       {error ? <Text style={[styles.error, { color: theme.colors.error }]}>{error}</Text> : null}
-      <Pressable onPress={() => navigation.navigate('Developer')}>
-        <Text style={[styles.link, { color: theme.colors.primary }]}>Backend settings</Text>
-      </Pressable>
+      <Button mode="text" compact onPress={() => navigation.navigate('Developer')}>
+          Backend settings
+        </Button>
     </View>
   );
 }
@@ -69,5 +69,4 @@ const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 },
   title: { fontSize: 24, fontWeight: '600' },
   error: { textAlign: 'center' },
-  link: { marginTop: 24 },
 });
