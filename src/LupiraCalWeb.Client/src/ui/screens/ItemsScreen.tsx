@@ -21,6 +21,7 @@ import { SEARCH_PAGE_SIZE, useItemSearch } from '../../state/useItemSearch';
 import { errText } from '../components/errText';
 import { calendarColor, ITEM_CATEGORY_ICONS } from '../theme/kinds';
 import { useIsPhone } from '../useIsPhone';
+import { PageHead } from '../components/Page';
 
 /** Global list/search over every readable calendar; rows deep-link into the ?item= drawer. */
 export function ItemsScreen() {
@@ -169,10 +170,10 @@ export function ItemsScreen() {
 
   return (
     <div className="page items-page">
-      <div className="page-head">
+      <PageHead>
         <h2>Items</h2>
         {isFetching && !isFetchingNextPage && <Typography variant="caption" sx={{ color: 'text.secondary' }}>loading…</Typography>}
-      </div>
+      </PageHead>
       <div className="cal-filters items-filters">
         <form
           onSubmit={(e) => {

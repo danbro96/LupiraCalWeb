@@ -32,6 +32,8 @@ import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
 import { WrapRow } from '../components/WrapRow';
 import { DrawerSection } from '../components/DrawerSection';
+import { Page } from '../components/Page';
+import { PageHead } from '../components/Page';
 
 const MapPinDialog = lazy(() => import('../components/map/MapPinDialog'));
 
@@ -41,14 +43,14 @@ export default function PlacesScreen() {
   const [historyFor, setHistoryFor] = useState<{ id: string; name: string } | null>(null);
 
   return (
-    <div className="page">
-      <div className="page-head">
+    <Page>
+      <PageHead>
         <h2>Places</h2>
-      </div>
+      </PageHead>
       <UnlocatedSection onHistory={setHistoryFor} />
       <OrphansSection onHistory={setHistoryFor} />
       {historyFor && <HistoryDrawer placeId={historyFor.id} name={historyFor.name} onClose={() => setHistoryFor(null)} />}
-    </div>
+    </Page>
   );
 }
 

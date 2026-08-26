@@ -20,6 +20,8 @@ import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
 import { WrapRow } from '../components/WrapRow';
+import { Page } from '../components/Page';
+import { PageHead } from '../components/Page';
 
 /** Container management: calendars (class/kind/color/tz, from cal-api) and address books (from
  *  contact-api), with creation and per-owner sharing. */
@@ -30,19 +32,24 @@ export function CalendarsScreen() {
   const [creating, setCreating] = useState(false);
 
   return (
-    <div className="page">
-      <div className="account-card">
-        <div className="account-who">
-          <span className="account-name">{user?.name ?? user?.email}</span>
+    <Page>
+      <Paper
+        variant="outlined"
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, p: '12px 16px', mb: 2 }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+          <Typography sx={{ fontWeight: 700 }}>{user?.name ?? user?.email}</Typography>
           {user?.name && user?.email && user.name !== user.email && (
-            <span className="account-sub">{user.email}</span>
+            <Typography variant="body2" sx={{ color: 'text.subtle' }}>
+              {user.email}
+            </Typography>
           )}
-        </div>
+        </Box>
         <Button variant="outlined" onClick={logout}>
           Sign out
         </Button>
-      </div>
-      <div className="page-head">
+      </Paper>
+      <PageHead>
         <h2>Calendars & address books</h2>
         <Button variant="contained" onClick={() => setCreating((c) => !c)}>
           + New
@@ -50,7 +57,7 @@ export function CalendarsScreen() {
         <Button component={NavLink} to="/places">
           Places…
         </Button>
-      </div>
+      </PageHead>
       {creating && <NewContainerForm onDone={() => setCreating(false)} />}
       <table className="containers-table">
         <thead>
@@ -74,7 +81,7 @@ export function CalendarsScreen() {
           ))}
         </tbody>
       </table>
-    </div>
+    </Page>
   );
 }
 

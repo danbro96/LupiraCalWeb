@@ -12,6 +12,7 @@ import { ContactDetailPane } from '../components/contacts/ContactDetailPane';
 import { GroupDetailPane } from '../components/contacts/GroupDetailPane';
 import { CalendarsScreen } from '../screens/CalendarsScreen';
 import Typography from '@mui/material/Typography';
+import { Page } from '../components/Page';
 
 // Lazy: MapScreen pulls in maplibre-gl (+ CSS), which stays out of the main bundle.
 const MapScreen = lazy(() => import('../screens/MapScreen'));
@@ -44,7 +45,7 @@ export const router = createBrowserRouter([
               {
                 path: 'locations',
                 element: (
-                  <Suspense fallback={<div className="page"><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading map…</Typography></div>}>
+                  <Suspense fallback={<Page><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading map…</Typography></Page>}>
                     <MapScreen />
                   </Suspense>
                 ),
@@ -53,7 +54,7 @@ export const router = createBrowserRouter([
               {
                 path: 'places',
                 element: (
-                  <Suspense fallback={<div className="page"><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></div>}>
+                  <Suspense fallback={<Page><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></Page>}>
                     <PlacesScreen />
                   </Suspense>
                 ),

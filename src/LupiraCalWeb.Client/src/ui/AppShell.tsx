@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
+import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
+import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
@@ -17,6 +19,24 @@ import { BirthdayCard } from './components/drawer/BirthdayCard';
 import { TaskCard } from './components/drawer/TaskCard';
 import { AvailabilityModal } from './components/AvailabilityModal';
 import { NewItemModal } from './components/NewItemModal';
+
+const NAV = [
+  { to: '/', label: 'Calendar', end: true },
+  { to: '/items', label: 'Items' },
+  { to: '/inbox', label: 'Inbox' },
+  { to: '/contacts', label: 'Contacts' },
+  { to: '/locations', label: 'Map' },
+  { to: '/calendars', label: 'Manage' },
+];
+
+// NavLink sets .active itself, so the current section needs no state.
+// textTransform because Button uppercases, which is an affordance for actions, not for nav labels.
+const NAV_LINK_SX = {
+  color: 'text.secondary',
+  fontWeight: 600,
+  textTransform: 'none',
+  '&.active': { bgcolor: 'background.paper', color: 'text.primary' },
+};
 
 /** Full-width app frame: section nav, calendar sidebar, routed content, and the ?item= drawer host. */
 export function AppShell() {
@@ -43,7 +63,7 @@ export function AppShell() {
 
   return (
     <CalendarVisibilityProvider>
-      <div className="shell">
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100dvh' }}>
         <AppBar
           position="static"
           color="transparent"
@@ -51,24 +71,21 @@ export function AppShell() {
           sx={{ display: { xs: 'none', md: 'block' }, borderBottom: 1, borderColor: 'divider' }}
         >
           <Toolbar variant="dense">
-            <nav className="topnav">
-              <NavLink to="/" end>
-                Calendar
-              </NavLink>
-              <NavLink to="/items">Items</NavLink>
-              <NavLink to="/inbox">Inbox</NavLink>
-              <NavLink to="/contacts">Contacts</NavLink>
-              <NavLink to="/locations">Map</NavLink>
-              <NavLink to="/calendars">Manage</NavLink>
-            </nav>
+            <Stack component="nav" direction="row" spacing={1} sx={{ flex: 1 }}>
+              {NAV.map(({ to, label, end }) => (
+                <Button key={to} component={NavLink} to={to} end={end} sx={NAV_LINK_SX}>
+                  {label}
+                </Button>
+              ))}
+            </Stack>
           </Toolbar>
         </AppBar>
-        <div className="shell-body">
+        <Box sx={{ display: 'flex', flex: 1, minHeight: 0 }}>
           {showSidebar && <Sidebar />}
-          <main className="content">
+          <Box component="main" sx={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
             <Outlet />
-          </main>
-        </div>
+          </Box>
+        </Box>
         <Box
           sx={{
             position: 'fixed',
@@ -93,7 +110,7 @@ export function AppShell() {
           </Tooltip>
         </Box>
         <BottomNav />
-      </div>
+      </Box>
       {itemId && <ItemDrawer itemId={itemId} onClose={() => dropParams('item')} />}
       {birthdayContactId && (
         <BirthdayCard contactId={birthdayContactId} year={birthdayYear} onClose={() => dropParams('birthday', 'year')} />

@@ -11,6 +11,7 @@ import { useProposedByCalendar } from '../../state/useProposed';
 import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
 import { calendarColor } from '../theme/kinds';
+import { Page } from '../components/Page';
 
 /** The curation queue: everything proposed into any calendar, with accept/reject per membership. */
 export function InboxScreen() {
@@ -33,7 +34,7 @@ export function InboxScreen() {
   const groups = proposed.filter((g) => g.items.length > 0);
 
   return (
-    <div className="page">
+    <Page>
       <h2>Inbox</h2>
       <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Items proposed into your calendars, awaiting curation.</Typography>
       {groups.length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Nothing to curate. 🎉</Typography>}
@@ -62,7 +63,7 @@ export function InboxScreen() {
           ))}
         </section>
       ))}
-    </div>
+    </Page>
   );
 }
 

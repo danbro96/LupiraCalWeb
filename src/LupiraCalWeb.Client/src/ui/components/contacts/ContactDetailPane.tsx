@@ -39,6 +39,7 @@ import { ContactRelationsPanel } from './ContactRelationsPanel';
 import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
+import { PageHead } from '../Page';
 
 const linkSx: SxProps<Theme> = { fontSize: 13, fontWeight: 600, p: '2px', whiteSpace: 'nowrap', '@media (pointer: coarse)': { p: '6px 2px' } };
 
@@ -72,7 +73,7 @@ export function ContactDetailPane() {
 
   return (
     <div className="contacts-detail-pane">
-      <div className="page-head">
+      <PageHead>
         <h2>
           {contact.displayName}
           {contact.nickname && contact.nickname !== contact.displayName && <Typography variant="caption" sx={{ color: 'text.secondary' }}> “{contact.nickname}”</Typography>}
@@ -90,7 +91,7 @@ export function ContactDetailPane() {
             </Button>
           )}
         </div>
-      </div>
+      </PageHead>
 
       {editing ? (
         <ContactEditForm contact={contact} onDone={() => setEditing(false)} />

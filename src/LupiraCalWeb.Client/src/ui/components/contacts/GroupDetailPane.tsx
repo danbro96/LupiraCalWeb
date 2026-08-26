@@ -21,6 +21,7 @@ import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useGroup } from './useGroup';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
+import { PageHead } from '../Page';
 
 /** Right pane for a group/org: members with add/remove, inline rename, delete. */
 export function GroupDetailPane() {
@@ -54,7 +55,7 @@ export function GroupDetailPane() {
 
   return (
     <div className="contacts-detail-pane">
-      <div className="page-head">
+      <PageHead>
         <h2>
           <Chip variant="outlined" label={group.kind === 'Organization' ? '🏢 org' : '👥 group'} />{' '}
           <TextField
@@ -67,7 +68,7 @@ export function GroupDetailPane() {
           />
         </h2>
         <Typography variant="caption" sx={{ color: 'text.secondary' }}>{group.members.length} members</Typography>
-      </div>
+      </PageHead>
 
       <DrawerSection title="Members">
         {members.map((c) => (

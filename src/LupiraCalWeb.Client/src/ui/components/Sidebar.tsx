@@ -1,4 +1,6 @@
 import Checkbox from '@mui/material/Checkbox';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import type { ContainerDto } from '../../data/api/models';
@@ -14,18 +16,29 @@ export function Sidebar() {
   const system = calendars.filter((c) => c.class === 'System');
 
   return (
-    <aside className="sidebar">
+    <Box
+      component="aside"
+      sx={{
+        width: 230,
+        flex: 'none',
+        borderRight: 1,
+        borderColor: 'divider',
+        overflowY: 'auto',
+        pb: 3,
+        display: { xs: 'none', md: 'block' },
+      }}
+    >
       <CalendarGroup title="Agenda" calendars={agenda} />
       <CalendarGroup title="System" calendars={system} />
-      <div className="cal-group">
+      <List disablePadding>
         <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>Tasks</Typography>
-        <label className="cal-toggle" title="Deadlines from Lupira Tasks">
+        <ListItemButton component="label" sx={{ gap: 1, px: 2, py: '5px' }} title="Deadlines from Lupira Tasks">
           <Checkbox size="small" sx={{ p: 0 }} checked={tasksVisible} onChange={toggleTasks} />
           <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: 'var(--mui-palette-text-secondary)' }} />
-          <span className="cal-toggle-name">⏰ Deadlines</span>
-        </label>
-      </div>
-    </aside>
+          <Typography noWrap variant="body2">⏰ Deadlines</Typography>
+        </ListItemButton>
+      </List>
+    </Box>
   );
 }
 
@@ -33,18 +46,18 @@ function CalendarGroup({ title, calendars }: { title: string; calendars: Contain
   const { isVisible, toggle } = useCalendarVisibility();
   if (calendars.length === 0) return null;
   return (
-    <div className="cal-group">
+    <List disablePadding>
       <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>{title}</Typography>
       {calendars.map((c) => (
-        <label key={c.id} className="cal-toggle" title={`${c.kind ?? ''} · ${c.access}`}>
+        <ListItemButton key={c.id} component="label" sx={{ gap: 1, px: 2, py: '5px' }} title={`${c.kind ?? ''} · ${c.access}`}>
           <Checkbox size="small" sx={{ p: 0 }} checked={isVisible(c)} onChange={() => toggle(c)} />
           <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: calendarColor(c) }} />
-          <span className="cal-toggle-name">
+          <Typography noWrap variant="body2">
             {c.kind ? `${CALENDAR_KIND_ICONS[c.kind]} ` : ''}
             {calendarLabel(c)}
-          </span>
-        </label>
+          </Typography>
+        </ListItemButton>
       ))}
-    </div>
+    </List>
   );
 }
