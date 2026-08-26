@@ -28,6 +28,7 @@ import { FitToData, FlyToPlace, ViewportReporter } from '../components/map/mapEf
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import { Row, RowName } from '../components/rows';
 
 /** The map over everything located: events, GPS movement, contacts, saved places. Route stays
  * /locations so ?place=/?q= deep links keep working; state rides the URL (?from ?to ?layers). */
@@ -260,10 +261,10 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
       <>
         {props.placeName != null && <h4>{String(props.placeName)}</h4>}
         {names.map((name, i) => (
-          <Link key={ids[i] ?? name} to={`/contacts/${ids[i]}`} className="location-row">
-            <span className="location-name">{name}</span>
+          <Row component={Link} key={ids[i] ?? name} to={`/contacts/${ids[i]}`}>
+            <RowName>{name}</RowName>
             {kind === 'contact-former' && periods[i] && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{periods[i]}</Typography>}
-          </Link>
+          </Row>
         ))}
       </>
     );

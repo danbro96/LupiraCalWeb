@@ -22,6 +22,7 @@ import { errText } from '../components/errText';
 import { calendarColor, ITEM_CATEGORY_ICONS } from '../theme/kinds';
 import { useIsPhone } from '../useIsPhone';
 import { PageHead } from '../components/Page';
+import { Row, RowName } from '../components/rows';
 
 /** Global list/search over every readable calendar; rows deep-link into the ?item= drawer. */
 export function ItemsScreen() {
@@ -292,14 +293,14 @@ function ItemRow({
     fn();
   };
   return (
-    <Link to={href} className={`location-row${indent ? ' item-child' : ''}`}>
+    <Row component={Link} to={href} sx={indent ? { ml: '26px', borderLeft: 2, borderColor: 'divider', pl: 1 } : undefined}>
       {onToggle && (
         <button className="items-caret" aria-label={open ? 'Collapse sub-items' : 'Expand sub-items'} onClick={(e) => stop(e, onToggle)}>
           {open ? '▾' : '▸'}
         </button>
       )}
       <Box component="span" sx={{ fontSize: 22 }}>{(o.category && ITEM_CATEGORY_ICONS[o.category]) || '📅'}</Box>
-      <span className="location-name">{o.title || '(untitled)'}</span>
+      <RowName>{o.title || '(untitled)'}</RowName>
       {!indent && o.parentItemId && !drilled && (
         <button className="items-parent-chip" onClick={(e) => stop(e, () => onDrill?.(o.parentItemId!))}>
           ↳ {o.parentTitle ?? 'parent'}
@@ -315,13 +316,13 @@ function ItemRow({
         </button>
       )}
       {first && (
-        <span className="meta items-cal">
+        <Box component="span" sx={{ display: { xs: 'none', md: 'inline-flex' }, fontSize: 12, color: 'text.secondary', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap', flex: 'none' }}>
           <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: calendarColor(first) }} />
           {calendarLabel(first)}
           {containers.length > 1 ? ` +${containers.length - 1}` : ''}
-        </span>
+        </Box>
       )}
-      <span className="meta items-when">{fmtWhen(o.start, o.isAllDay)}</span>
-    </Link>
+      <Box component="span" sx={{ display: 'inline-flex', fontSize: 12, color: 'text.secondary', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap', flex: 'none' }}>{fmtWhen(o.start, o.isAllDay)}</Box>
+    </Row>
   );
 }

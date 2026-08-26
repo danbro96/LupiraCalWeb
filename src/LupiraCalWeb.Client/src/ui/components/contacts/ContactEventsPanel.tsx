@@ -6,6 +6,7 @@ import { useSearchItems } from '../../../data/api/lupiraCalApi';
 import { fmtWhen } from '@lupira/cal-domain/time';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 import { DrawerSection } from '../DrawerSection';
+import { Row, RowName } from '../rows';
 
 const FETCH_SIZE = 50;
 const SHOWN = 10;
@@ -29,11 +30,11 @@ export function ContactEventsPanel({ contactId }: { contactId: string }) {
   return (
     <DrawerSection title="Events">
       {events.map((e) => (
-        <Link key={e.id} to={itemHref(e.id)} className="location-row">
+        <Row component={Link} key={e.id} to={itemHref(e.id)}>
           <Box component="span" sx={{ fontSize: 22 }}>{(e.category && ITEM_CATEGORY_ICONS[e.category]) || '📅'}</Box>
-          <span className="location-name">{e.title || '(untitled)'}</span>
+          <RowName>{e.title || '(untitled)'}</RowName>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>{fmtWhen(e.start, e.isAllDay)}</Typography>
-        </Link>
+        </Row>
       ))}
       <MuiLink
         component={Link}

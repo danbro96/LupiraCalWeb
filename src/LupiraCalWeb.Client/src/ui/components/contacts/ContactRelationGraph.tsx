@@ -4,6 +4,7 @@ import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -204,7 +205,17 @@ export function ContactRelationGraph({
   if (fullscreen)
     return (
       <Dialog open onClose={() => setFullscreen(false)} fullScreen>
-        <div className="relation-graph fullscreen">{flow}</div>
+        <Box
+          sx={{
+            // Fullscreen: fill the dialog, and on a phone take the flex slack instead of a fixed vh.
+            height: { xs: 'auto', md: '84vh' },
+            flex: { xs: 1, md: 'none' },
+            resize: 'none',
+            overflow: 'hidden',
+          }}
+        >
+          {flow}
+        </Box>
       </Dialog>
     );
   // The inline embed is unusable at phone width — offer the fullscreen modal instead.
@@ -214,5 +225,23 @@ export function ContactRelationGraph({
         Open relation graph
       </Button>
     );
-  return <div className="relation-graph">{flow}</div>;
+  return (
+    <Box
+      sx={{
+        height: 400,
+        minHeight: 300,
+        maxHeight: '85vh',
+        resize: 'vertical',
+        border: 1,
+        borderColor: 'border',
+        borderRadius: 1,
+        bgcolor: 'background.paper',
+        my: 1,
+        mb: 1.5,
+        overflow: 'hidden',
+      }}
+    >
+      {flow}
+    </Box>
+  );
 }

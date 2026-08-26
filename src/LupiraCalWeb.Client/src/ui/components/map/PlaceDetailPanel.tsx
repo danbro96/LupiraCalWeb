@@ -13,6 +13,7 @@ import { DrawerSection } from '../DrawerSection';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
+import { Row, RowName } from '../rows';
 
 /** The ?place= detail pane (extracted from the former LocationsScreen): containment, items, contacts. */
 export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClose: () => void }) {
@@ -101,14 +102,14 @@ function ItemsPanel({ placeId }: { placeId: string }) {
       {isLoading && <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography>}
       {!isLoading && (items ?? []).length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>No items reference this place.</Typography>}
       {(items ?? []).map((item) => (
-        <Link key={item.id} to={itemHref(item.id)} className="location-row">
+        <Row component={Link} key={item.id} to={itemHref(item.id)}>
           {item.category && ITEM_CATEGORY_ICONS[item.category] && (
             <Box component="span" sx={{ fontSize: 22 }}>{ITEM_CATEGORY_ICONS[item.category]}</Box>
           )}
-          <span className="location-name">{item.title || '(untitled)'}</span>
+          <RowName>{item.title || '(untitled)'}</RowName>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>{whenOf(item)}</Typography>
           {roleOf(item, placeId) && <span className="loc-role">{roleOf(item, placeId)}</span>}
-        </Link>
+        </Row>
       ))}
     </DrawerSection>
   );
@@ -121,9 +122,9 @@ function ContactsPanel({ placeId }: { placeId: string }) {
   return (
     <DrawerSection title="Contacts here">
       {here.map((c) => (
-        <Link key={c.id} to={`/contacts/${c.id}`} className="location-row">
-          <span className="location-name">{c.displayName}</span>
-        </Link>
+        <Row component={Link} key={c.id} to={`/contacts/${c.id}`}>
+          <RowName>{c.displayName}</RowName>
+        </Row>
       ))}
     </DrawerSection>
   );

@@ -7,6 +7,7 @@ import type { CalendarItemDto } from '../../../data/api/models';
 import { fmtWhen } from '@lupira/cal-domain/time';
 import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
 import { DrawerSection } from '../DrawerSection';
+import { Row, RowName } from '../rows';
 
 /** Parent link + direct children (ParentItemId nesting — distinct from cross-API Relations). */
 export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
@@ -27,17 +28,17 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
   return (
     <DrawerSection title="Hierarchy">
       {parent && (
-        <Link to={itemHref(parent.id)} className="location-row">
+        <Row component={Link} to={itemHref(parent.id)}>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>↳ part of</Typography>
-          <span className="location-name">{parent.title || '(untitled)'}</span>
-        </Link>
+          <RowName>{parent.title || '(untitled)'}</RowName>
+        </Row>
       )}
       {children.map((c) => (
-        <Link key={c.id} to={itemHref(c.id)} className="location-row">
+        <Row component={Link} key={c.id} to={itemHref(c.id)}>
           <Box component="span" sx={{ fontSize: 22 }}>{(c.category && ITEM_CATEGORY_ICONS[c.category]) || '📅'}</Box>
-          <span className="location-name">{c.title || '(untitled)'}</span>
+          <RowName>{c.title || '(untitled)'}</RowName>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>{fmtWhen(c.start, c.isAllDay)}</Typography>
-        </Link>
+        </Row>
       ))}
       {children.length > 0 && (
         <Button variant="text" component={Link} to={`/items?parent=${item.id}`}>

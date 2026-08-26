@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { useForwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
 import Box from '@mui/material/Box';
+import { RowName } from '../rows';
 
 export interface SearchTarget {
   lat: number;
@@ -84,7 +85,7 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
               geocode.isLoading ? 'Searching…' : `Search address "${q.trim()}"`
             ) : (
               <>
-                <span className="location-name">{o.name}</span>
+                <RowName>{o.name}</RowName>
                 {o.context && <Typography variant="caption" sx={{ color: 'text.secondary' }}> {o.context}</Typography>}
                 <Chip variant="outlined" label={o.type === SuggestionType.Place ? o.category ?? 'Place' : 'Area'} />
               </>

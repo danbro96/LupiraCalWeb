@@ -2,6 +2,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import CloseIcon from '@mui/icons-material/Close';
+import { Row, RowName } from '../rows';
 export interface IndexRow {
   key: string;
   primary: string;
@@ -31,9 +32,9 @@ export function MapIndexPanel({ groups, onClose }: { groups: IndexGroup[]; onClo
         overflowY: 'auto',
         borderRadius: '12px',
         p: '8px 12px 12px',
-        // Rows are still bespoke; the index wants them full-width with the caption on its own line.
-        '& .location-row': { width: '100%', flexWrap: 'wrap' },
-        '& .location-row .MuiTypography-caption': { flexBasis: '100%', textAlign: 'left' },
+        // The index wants its rows full-width with the caption on its own line.
+        '& .MuiListItemButton-root': { width: '100%', flexWrap: 'wrap' },
+        '& .MuiListItemButton-root .MuiTypography-caption': { flexBasis: '100%', textAlign: 'left' },
       }}
     >
       <IconButton onClick={onClose} aria-label="Close" sx={{ position: 'absolute', top: 4, right: 4 }}>
@@ -50,10 +51,10 @@ export function MapIndexPanel({ groups, onClose }: { groups: IndexGroup[]; onClo
             {group.title}
           </Typography>
           {group.rows.map((row) => (
-            <button key={row.key} className="location-row" onClick={row.onClick}>
-              <span className="location-name">{row.primary}</span>
+            <Row key={row.key} onClick={row.onClick}>
+              <RowName>{row.primary}</RowName>
               {row.secondary && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{row.secondary}</Typography>}
-            </button>
+            </Row>
           ))}
         </section>
       ))}
