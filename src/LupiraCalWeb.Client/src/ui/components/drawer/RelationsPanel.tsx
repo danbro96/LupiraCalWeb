@@ -17,7 +17,7 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
       <h3>Relations</h3>
       {(relations ?? []).map((r) => (
         <div key={r.id} className="relation-row">
-          <Chip size="small" variant="outlined" label={r.relationType} />
+          <Chip variant="outlined" label={r.relationType} />
           <span className="meta">
             {r.toKind}: <code>{r.toRef}</code>
           </span>
@@ -31,10 +31,10 @@ export function RelationsPanel({ itemId }: { itemId: string }) {
           setForm({ toKind: '', toRef: '', relationType: '' });
         }}
       >
-        <TextField size="small" placeholder="kind (task, url…)" value={form.toKind} onChange={(e) => setForm({ ...form, toKind: e.target.value })} required />
-        <TextField size="small" placeholder="reference" value={form.toRef} onChange={(e) => setForm({ ...form, toRef: e.target.value })} required />
-        <TextField size="small" placeholder="relation (blocks…)" value={form.relationType} onChange={(e) => setForm({ ...form, relationType: e.target.value })} required />
-        <Button variant="outlined" size="small" type="submit" disabled={create.isPending}>
+        <TextField placeholder="kind (task, url…)" value={form.toKind} onChange={(e) => setForm({ ...form, toKind: e.target.value })} required />
+        <TextField placeholder="reference" value={form.toRef} onChange={(e) => setForm({ ...form, toRef: e.target.value })} required />
+        <TextField placeholder="relation (blocks…)" value={form.relationType} onChange={(e) => setForm({ ...form, relationType: e.target.value })} required />
+        <Button variant="outlined" type="submit" disabled={create.isPending}>
           Link
         </Button>
       </form>

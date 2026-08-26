@@ -87,7 +87,7 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
       <span className="place-picker resolved">
         📍 <PlaceLabel placeId={placeId} />
         <Tooltip title="Clear place">
-          <IconButton size="small" onClick={() => onChange(null)}>
+          <IconButton onClick={() => onChange(null)}>
             <CloseIcon fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -126,14 +126,13 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
         renderOption={({ key, ...props }, o) => (
           <li key={key} {...props}>
             {o.name}
-            {o.type === SuggestionType.Locality && <Chip size="small" label="Area" sx={{ ml: 1 }} />}
+            {o.type === SuggestionType.Locality && <Chip label="Area" sx={{ ml: 1 }} />}
             {o.context && <span className="meta"> {o.context}</span>}
           </li>
         )}
         renderInput={(params) => (
           <TextField
             {...params}
-            size="small"
             autoFocus={autoFocus}
             placeholder={placeholder ?? 'Search or type an address…'}
           />

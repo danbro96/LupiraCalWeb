@@ -44,7 +44,7 @@ export function KindDetailsCard({ details }: { details?: ItemDetails | null }) {
         ))}
       </dl>
       {details.booking?.url && (
-        <Button variant="text" size="small" href={details.booking.url} target="_blank" rel="noreferrer">
+        <Button variant="text" href={details.booking.url} target="_blank" rel="noreferrer">
           Booking ↗
         </Button>
       )}

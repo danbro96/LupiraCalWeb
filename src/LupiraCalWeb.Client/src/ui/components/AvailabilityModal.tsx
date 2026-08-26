@@ -64,7 +64,7 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
     <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, py: 1 }}>
         Set availability
-        <IconButton size="small" onClick={onClose} aria-label="Close">
+        <IconButton onClick={onClose} aria-label="Close">
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
@@ -76,7 +76,7 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
             name="status"
             control={control}
             render={({ field }) => (
-              <TextField select size="small" label="Status" {...field}>
+              <TextField select label="Status" {...field}>
                 {Object.values(AvailabilityStatus).map((s) => (
                   <MenuItem key={s} value={s}>
                     {s}
@@ -92,7 +92,7 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <TextField type="date" size="small" label="From" slotProps={{ inputLabel: { shrink: true } }} {...field} required />
+              <TextField type="date" label="From" slotProps={{ inputLabel: { shrink: true } }} {...field} required />
             )}
           />
         </div>
@@ -103,7 +103,6 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
             render={({ field }) => (
               <TextField
                 type="date"
-                size="small"
                 label="Until (exclusive)"
                 {...field}
                 slotProps={{ htmlInput: { min: startDate }, inputLabel: { shrink: true } }}
@@ -113,10 +112,10 @@ export function AvailabilityModal({ onClose }: { onClose: () => void }) {
         </div>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" size="small" type="button" onClick={onClose}>
+          <Button variant="outlined" type="button" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="contained" size="small" type="submit" disabled={!availabilityCalendar || create.isPending}>
+          <Button variant="contained" type="submit" disabled={!availabilityCalendar || create.isPending}>
             Save
           </Button>
         </DialogActions>

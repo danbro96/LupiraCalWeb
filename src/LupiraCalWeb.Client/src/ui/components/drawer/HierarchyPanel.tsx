@@ -38,7 +38,7 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
         </Link>
       ))}
       {children.length > 0 && (
-        <Button variant="text" size="small" component={Link} to={`/items?parent=${item.id}`}>
+        <Button variant="text" component={Link} to={`/items?parent=${item.id}`}>
           open in list
         </Button>
       )}

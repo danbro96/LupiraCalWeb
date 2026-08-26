@@ -28,7 +28,6 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
       <h3>
         <Button
           variant="text"
-          size="small"
           endIcon={open ? <ExpandMoreIcon /> : <ChevronRightIcon />}
           onClick={() => setOpen((o) => !o)}
         >
@@ -39,7 +38,6 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
         <>
           <pre className="json-view">{isEmpty ? '{}' : JSON.stringify(metadata, null, 2)}</pre>
           <TextField
-            size="small"
             multiline
             minRows={3}
             slotProps={{ input: { sx: { fontFamily: 'monospace' } } }}
@@ -50,7 +48,6 @@ export function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: 
           {jsonError && <p className="error-text">{jsonError}</p>}
           <Button
             variant="outlined"
-            size="small"
             disabled={!patch || merge.isPending}
             onClick={() => {
               try {

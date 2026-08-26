@@ -50,13 +50,13 @@ export function TimeRangeBar({ range, onChange }: { range: DateRange; onChange: 
         </button>
       ))}
       <TextField
-        type="date" size="small" value={range.fromYmd} sx={{ width: '9.5em' }}
+        type="date" value={range.fromYmd} sx={{ width: '9.5em' }}
         slotProps={{ htmlInput: { max: range.toYmd, 'aria-label': 'From date' } }}
         onChange={(e) => e.target.value && onChange({ ...range, fromYmd: e.target.value })}
       />
       <span className="sep">–</span>
       <TextField
-        type="date" size="small" value={range.toYmd} sx={{ width: '9.5em' }}
+        type="date" value={range.toYmd} sx={{ width: '9.5em' }}
         slotProps={{ htmlInput: { min: range.fromYmd, 'aria-label': 'To date' } }}
         onChange={(e) => e.target.value && onChange({ ...range, toYmd: e.target.value })}
       />

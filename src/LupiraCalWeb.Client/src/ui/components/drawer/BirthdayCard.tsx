@@ -54,7 +54,7 @@ function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | n
         )}
       </section>
 
-      <Button variant="text" size="small" component={Link} to={`/contacts/${contact.id}`}>
+      <Button variant="text" component={Link} to={`/contacts/${contact.id}`}>
         View contact →
       </Button>
     </div>

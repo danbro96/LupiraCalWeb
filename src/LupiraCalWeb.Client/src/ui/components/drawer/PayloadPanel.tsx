@@ -48,10 +48,10 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
       {item.prompt && editing !== 'prompt' && (
         <div className="payload-card">
           <div className="payload-head">
-            <Chip size="small" variant="outlined" label="LLM prompt" />
-            <Chip size="small" variant="outlined" label={item.prompt.intent} />
-            <Chip size="small" variant="outlined" label={`→ ${item.prompt.output}`} />
-            {!item.prompt.enabled && <Chip size="small" variant="outlined" label="disabled" />}
+            <Chip variant="outlined" label="LLM prompt" />
+            <Chip variant="outlined" label={item.prompt.intent} />
+            <Chip variant="outlined" label={`→ ${item.prompt.output}`} />
+            {!item.prompt.enabled && <Chip variant="outlined" label="disabled" />}
           </div>
           <p className="payload-instruction">{item.prompt.instruction}</p>
           <p className="meta">
@@ -60,32 +60,32 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
             {item.prompt.tools?.length ? ` · tools: ${item.prompt.tools.join(', ')}` : ''}
           </p>
           <div className="chip-row">
-            <Chip size="small" variant="outlined" label="Edit" onClick={() => setEditing('prompt')} />
-            <Chip size="small" variant="outlined" color="error" label="Remove" onClick={() => clearPrompt.mutate({ id: item.id })} />
+            <Chip variant="outlined" label="Edit" onClick={() => setEditing('prompt')} />
+            <Chip variant="outlined" color="error" label="Remove" onClick={() => clearPrompt.mutate({ id: item.id })} />
           </div>
         </div>
       )}
       {item.action && editing !== 'action' && (
         <div className="payload-card">
           <div className="payload-head">
-            <Chip size="small" variant="outlined" label="Action" />
-            <Chip size="small" variant="outlined" label={item.action.kind} />
-            {!item.action.enabled && <Chip size="small" variant="outlined" label="disabled" />}
+            <Chip variant="outlined" label="Action" />
+            <Chip variant="outlined" label={item.action.kind} />
+            {!item.action.enabled && <Chip variant="outlined" label="disabled" />}
           </div>
           <pre className="json-view">{prettyJson(item.action.paramsJson)}</pre>
           <p className="meta">
             Fires {describeFire(item.action.fire.kind, item.action.fire.offsetMinutes, item.action.fire.allDayAt)}
           </p>
           <div className="chip-row">
-            <Chip size="small" variant="outlined" label="Edit" onClick={() => setEditing('action')} />
-            <Chip size="small" variant="outlined" color="error" label="Remove" onClick={() => clearAction.mutate({ id: item.id })} />
+            <Chip variant="outlined" label="Edit" onClick={() => setEditing('action')} />
+            <Chip variant="outlined" color="error" label="Remove" onClick={() => clearAction.mutate({ id: item.id })} />
           </div>
         </div>
       )}
       {!item.prompt && !item.action && editing === null && (
         <div className="chip-row">
-          <Chip size="small" variant="outlined" label="+ LLM prompt" onClick={() => setEditing('prompt')} />
-          <Chip size="small" variant="outlined" label="+ Action" onClick={() => setEditing('action')} />
+          <Chip variant="outlined" label="+ LLM prompt" onClick={() => setEditing('prompt')} />
+          <Chip variant="outlined" label="+ Action" onClick={() => setEditing('action')} />
         </div>
       )}
       {editing === 'prompt' && <PromptForm item={item} onDone={() => setEditing(null)} />}
@@ -107,7 +107,6 @@ function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: Prompt
     <div className="form-row">
       <TextField
         select
-        size="small"
         label="Fires"
         value={fire.kind}
         onChange={(e) => onChange({ ...fire, kind: e.target.value as PromptFire['kind'] })}
@@ -122,7 +121,6 @@ function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: Prompt
         <Tooltip title="Minutes relative to start (negative = before)">
           <TextField
             type="number"
-            size="small"
             value={fire.offsetMinutes ?? -30}
             onChange={(e) => onChange({ ...fire, offsetMinutes: Number(e.target.value) })}
           />
@@ -131,7 +129,6 @@ function FireEditor({ fire, onChange }: { fire: PromptFire; onChange: (f: Prompt
       {fire.kind === 'AllDayAt' && (
         <TextField
           type="time"
-          size="small"
           value={(fire.allDayAt ?? '09:00:00').slice(0, 5)}
           onChange={(e) => onChange({ ...fire, allDayAt: `${e.target.value}:00` })}
         />
@@ -197,7 +194,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           name="intent"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" label="Intent" {...field}>
+            <TextField select label="Intent" {...field}>
               {Object.values(PromptIntent).map((v) => (
                 <MenuItem key={v} value={v}>
                   {v}
@@ -210,7 +207,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           name="output"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" label="Output" {...field}>
+            <TextField select label="Output" {...field}>
               {Object.values(OutputKind).map((v) => (
                 <MenuItem key={v} value={v}>
                   {v}
@@ -224,7 +221,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
         name="instruction"
         control={control}
         render={({ field }) => (
-          <TextField size="small" multiline minRows={3} placeholder="Instruction for the agent…" {...field} required />
+          <TextField multiline minRows={3} placeholder="Instruction for the agent…" {...field} required />
         )}
       />
       <div className="form-row">
@@ -234,7 +231,6 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           render={({ field }) => (
             <TextField
               select
-              size="small"
               label="Tier"
               {...field}
               slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
@@ -252,7 +248,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           name="onMiss"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" label="On miss" {...field}>
+            <TextField select label="On miss" {...field}>
               {Object.values(FallbackMode).map((v) => (
                 <MenuItem key={v} value={v}>
                   {v}
@@ -265,7 +261,7 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
       <Controller
         name="tools"
         control={control}
-        render={({ field }) => <TextField size="small" placeholder="Tools (comma-separated, optional)" {...field} />}
+        render={({ field }) => <TextField placeholder="Tools (comma-separated, optional)" {...field} />}
       />
       <Controller
         name="fire"
@@ -283,10 +279,10 @@ function PromptForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
         )}
       />
       <div className="chip-row">
-        <Button variant="contained" size="small" type="submit" disabled={set.isPending}>
+        <Button variant="contained" type="submit" disabled={set.isPending}>
           Save prompt
         </Button>
-        <Button variant="outlined" size="small" type="button" onClick={onDone}>
+        <Button variant="outlined" type="button" onClick={onDone}>
           Cancel
         </Button>
       </div>
@@ -343,7 +339,7 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
           name="kind"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" label="Kind" {...field}>
+            <TextField select label="Kind" {...field}>
               {Object.values(ActionKind).map((v) => (
                 <MenuItem key={v} value={v}>
                   {v}
@@ -368,7 +364,7 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
         }}
         render={({ field }) => (
           <Tooltip title="Frozen params JSON (e.g. a SendCheckIn message)">
-            <TextField size="small" multiline minRows={3} slotProps={{ input: { sx: { fontFamily: 'monospace' } } }} {...field} />
+            <TextField multiline minRows={3} slotProps={{ input: { sx: { fontFamily: 'monospace' } } }} {...field} />
           </Tooltip>
         )}
       />
@@ -389,10 +385,10 @@ function ActionForm({ item, onDone }: { item: CalendarItemDto; onDone: () => voi
       />
       {errors.paramsJson && <p className="error-text">{errors.paramsJson.message}</p>}
       <div className="chip-row">
-        <Button variant="contained" size="small" type="submit" disabled={set.isPending}>
+        <Button variant="contained" type="submit" disabled={set.isPending}>
           Save action
         </Button>
-        <Button variant="outlined" size="small" type="button" onClick={onDone}>
+        <Button variant="outlined" type="button" onClick={onDone}>
           Cancel
         </Button>
       </div>

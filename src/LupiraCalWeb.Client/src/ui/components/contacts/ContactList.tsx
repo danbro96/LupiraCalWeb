@@ -63,8 +63,8 @@ export function ContactList() {
   return (
     <div className="contacts-list-pane">
       <div className="list-pane-head">
-        <TextField size="small" placeholder="Search names…" value={query} onChange={(e) => setQuery(e.target.value)} />
-        <Button variant="contained" size="small" onClick={() => setCreating((c) => !c)}>
+        <TextField placeholder="Search names…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <Button variant="contained" onClick={() => setCreating((c) => !c)}>
           + New
         </Button>
       </div>
@@ -131,7 +131,7 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
         {c.displayName}
         {c.nickname && c.nickname !== c.displayName ? <span className="meta"> “{c.nickname}”</span> : null}
       </span>
-      {c.birthday && <Chip size="small" variant="outlined" label={`🎂 ${partialDateBadge(c.birthday)}`} />}
+      {c.birthday && <Chip variant="outlined" label={`🎂 ${partialDateBadge(c.birthday)}`} />}
       {c.completeness && (
         <span className="completeness-bar" title={`Completeness ${Math.round(c.completeness.score * 100)}%`}>
           <span style={{ width: `${Math.round(c.completeness.score * 100)}%` }} />
@@ -184,7 +184,7 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
       }}
     >
       <div className="form-row">
-        <TextField select size="small" value={form.addressBookId} onChange={(e) => setForm({ ...form, addressBookId: e.target.value })} required slotProps={{ select: { displayEmpty: true } }}>
+        <TextField select value={form.addressBookId} onChange={(e) => setForm({ ...form, addressBookId: e.target.value })} required slotProps={{ select: { displayEmpty: true } }}>
           <MenuItem value="">Address book…</MenuItem>
           {addressBooks.map((b) => (
             <MenuItem key={b.id} value={b.id}>
@@ -194,11 +194,11 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
         </TextField>
       </div>
       <div className="form-row">
-        <TextField size="small" placeholder="Given name" value={form.givenName} onChange={(e) => setForm({ ...form, givenName: e.target.value })} />
-        <TextField size="small" placeholder="Family name" value={form.familyName} onChange={(e) => setForm({ ...form, familyName: e.target.value })} />
+        <TextField placeholder="Given name" value={form.givenName} onChange={(e) => setForm({ ...form, givenName: e.target.value })} />
+        <TextField placeholder="Family name" value={form.familyName} onChange={(e) => setForm({ ...form, familyName: e.target.value })} />
       </div>
       <div className="form-row">
-        <TextField size="small" placeholder="Nickname" value={form.nickname} onChange={(e) => setForm({ ...form, nickname: e.target.value })} />
+        <TextField placeholder="Nickname" value={form.nickname} onChange={(e) => setForm({ ...form, nickname: e.target.value })} />
         <label className="meta">
           <input
             type="checkbox"
@@ -209,24 +209,24 @@ function NewContactForm({ defaultBookId, onDone }: { defaultBookId?: string; onD
         </label>
         {form.birthdayYearKnown ? (
           <Tooltip title="Birthday">
-            <TextField size="small" type="date" value={form.birthday} onChange={(e) => setForm({ ...form, birthday: e.target.value })} />
+            <TextField type="date" value={form.birthday} onChange={(e) => setForm({ ...form, birthday: e.target.value })} />
           </Tooltip>
         ) : (
           <>
-            <TextField size="small" type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }} placeholder="Birth month" value={form.birthdayMonth} onChange={(e) => setForm({ ...form, birthdayMonth: e.target.value })} />
-            <TextField size="small" type="number" slotProps={{ htmlInput: { min: 1, max: 31 } }} placeholder="Birth day" value={form.birthdayDay} onChange={(e) => setForm({ ...form, birthdayDay: e.target.value })} />
+            <TextField type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }} placeholder="Birth month" value={form.birthdayMonth} onChange={(e) => setForm({ ...form, birthdayMonth: e.target.value })} />
+            <TextField type="number" slotProps={{ htmlInput: { min: 1, max: 31 } }} placeholder="Birth day" value={form.birthdayDay} onChange={(e) => setForm({ ...form, birthdayDay: e.target.value })} />
           </>
         )}
       </div>
       <div className="form-row">
-        <TextField size="small" placeholder="Emails (comma-separated)" value={form.emails} onChange={(e) => setForm({ ...form, emails: e.target.value })} />
-        <TextField size="small" placeholder="Phones (comma-separated)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} />
+        <TextField placeholder="Emails (comma-separated)" value={form.emails} onChange={(e) => setForm({ ...form, emails: e.target.value })} />
+        <TextField placeholder="Phones (comma-separated)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} />
       </div>
       <div className="chip-row">
-        <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
+        <Button variant="contained" type="submit" disabled={create.isPending}>
           Create
         </Button>
-        <Button variant="outlined" size="small" onClick={onDone}>
+        <Button variant="outlined" onClick={onDone}>
           Cancel
         </Button>
       </div>

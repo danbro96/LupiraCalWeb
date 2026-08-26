@@ -50,9 +50,9 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
           update.mutate({ addressBookId: book.id, data: { slug: slug.trim() || null, displayName: displayName.trim() || null } });
         }}
       >
-        <TextField size="small" placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
-        <TextField size="small" placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        <Button variant="outlined" size="small" type="submit" disabled={update.isPending}>
+        <TextField placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
+        <TextField placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+        <Button variant="outlined" type="submit" disabled={update.isPending}>
           Rename
         </Button>
       </form>
@@ -60,11 +60,10 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
       <div className="section-label">Shared with</div>
       {(owners ?? []).map((o) => (
         <div key={o.principalId} className="membership-row">
-          <Chip size="small" variant="outlined" label={o.access} />
+          <Chip variant="outlined" label={o.access} />
           <span className="membership-name">{o.displayName ?? o.email}</span>
           <Tooltip title="Revoke access">
             <IconButton
-              size="small"
               disabled={revoke.isPending}
               onClick={() => revoke.mutate({ addressBookId: book.id, params: { email: o.email } })}
             >
@@ -82,20 +81,20 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
           setEmail('');
         }}
       >
-        <TextField size="small" type="email" placeholder="email to share with" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <TextField select size="small" value={access} onChange={(e) => setAccess(e.target.value)}>
+        <TextField type="email" placeholder="email to share with" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <TextField select value={access} onChange={(e) => setAccess(e.target.value)}>
           {ACCESS_OPTIONS.map((a) => (
             <MenuItem key={a.value} value={a.value}>
               {a.label}
             </MenuItem>
           ))}
         </TextField>
-        <Button variant="outlined" size="small" type="submit" disabled={!email.trim() || grant.isPending}>
+        <Button variant="outlined" type="submit" disabled={!email.trim() || grant.isPending}>
           Share
         </Button>
       </form>
 
-      <Button variant="outlined" color="error" size="small" disabled={del.isPending} onClick={() => del.mutate({ addressBookId: book.id })}>
+      <Button variant="outlined" color="error" disabled={del.isPending} onClick={() => del.mutate({ addressBookId: book.id })}>
         Delete address book
       </Button>
     </div>

@@ -75,7 +75,6 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
       <div className="form-row">
         <TextField
           select
-          size="small"
           label="Source"
           value={source}
           onChange={(e) => setSource(e.target.value as '' | PlaceSource)}
@@ -90,7 +89,6 @@ function UnlocatedSection({ onHistory }: { onHistory: (p: { id: string; name: st
         </TextField>
         <TextField
           select
-          size="small"
           label="Verified"
           value={verified}
           onChange={(e) => setVerified(e.target.value as VerifiedFilter)}
@@ -173,30 +171,30 @@ function UnlocatedRow({ place, onFixOnMap, onManualCoords, onVerify, onHistory }
       <TableCell>
         {place.name}
         {regeocode.data && regeocode.data.latitude != null && (
-          <Chip size="small" color="success" sx={{ ml: 1 }} label={`${regeocode.data.latitude.toFixed(5)}, ${regeocode.data.longitude?.toFixed(5)}`} />
+          <Chip color="success" sx={{ ml: 1 }} label={`${regeocode.data.latitude.toFixed(5)}, ${regeocode.data.longitude?.toFixed(5)}`} />
         )}
         {regeocode.error != null && <span className="error-text"> {errText(regeocode.error) ?? 'Regeocode failed.'}</span>}
       </TableCell>
       <TableCell className="meta">{place.kind}</TableCell>
       <TableCell className="meta">{place.category}</TableCell>
       <TableCell className="meta">{place.source}</TableCell>
-      <TableCell>{place.verified ? <Chip size="small" label="Verified" /> : <span className="meta">—</span>}</TableCell>
+      <TableCell>{place.verified ? <Chip label="Verified" /> : <span className="meta">—</span>}</TableCell>
       <TableCell>
-        <Button size="small" disabled={regeocode.isPending || !!regeocode.data} onClick={() => regeocode.mutate({ id: place.id })}>
+        <Button disabled={regeocode.isPending || !!regeocode.data} onClick={() => regeocode.mutate({ id: place.id })}>
           {regeocode.isPending ? 'Regeocoding…' : 'Regeocode'}
         </Button>
-        <Button size="small" onClick={onFixOnMap}>
+        <Button onClick={onFixOnMap}>
           Fix on map
         </Button>
-        <Button size="small" onClick={onManualCoords}>
+        <Button onClick={onManualCoords}>
           Manual coords
         </Button>
         {!place.verified && (
-          <Button size="small" onClick={onVerify}>
+          <Button onClick={onVerify}>
             Verify
           </Button>
         )}
-        <Button size="small" onClick={onHistory}>
+        <Button onClick={onHistory}>
           History
         </Button>
       </TableCell>
@@ -223,15 +221,15 @@ function ManualCoordsDialog({ place, pending, onSave, onCancel }: {
       <DialogTitle>Coordinates for “{place.name}”</DialogTitle>
       <DialogContent>
         <div className="form-row">
-          <TextField size="small" label="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} autoFocus />
-          <TextField size="small" label="Longitude" value={lon} onChange={(e) => setLon(e.target.value)} />
+          <TextField label="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} autoFocus />
+          <TextField label="Longitude" value={lon} onChange={(e) => setLon(e.target.value)} />
         </div>
       </DialogContent>
       <DialogActions>
-        <Button size="small" onClick={onCancel}>
+        <Button onClick={onCancel}>
           Cancel
         </Button>
-        <Button size="small" variant="contained" disabled={!valid || pending} onClick={() => onSave(parsed.lat, parsed.lon)}>
+        <Button variant="contained" disabled={!valid || pending} onClick={() => onSave(parsed.lat, parsed.lon)}>
           Save
         </Button>
       </DialogActions>
@@ -320,7 +318,6 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
             <Button
               variant="contained"
               color="error"
-              size="small"
               disabled={selected.size === 0 || prune.isPending}
               onClick={() => setConfirming(true)}
             >
@@ -335,10 +332,10 @@ function OrphansSection({ onHistory }: { onHistory: (p: { id: string; name: stri
           <p className="meta">References are re-checked at prune time; anything referenced since is left alone.</p>
         </DialogContent>
         <DialogActions>
-          <Button size="small" onClick={() => setConfirming(false)}>
+          <Button onClick={() => setConfirming(false)}>
             Cancel
           </Button>
-          <Button size="small" variant="contained" color="error" onClick={doPrune}>
+          <Button variant="contained" color="error" onClick={doPrune}>
             Prune
           </Button>
         </DialogActions>
@@ -372,10 +369,10 @@ function OrphanRow({ orphan, checked, onToggle, onHistory }: {
       <TableCell align="right">{orphan.calendarDeletedRefs}</TableCell>
       <TableCell align="right">{orphan.savedPlaceRefs}</TableCell>
       <TableCell>
-        <Chip size="small" color={chip.color} label={chip.label} />
+        <Chip color={chip.color} label={chip.label} />
       </TableCell>
       <TableCell>
-        <Button size="small" onClick={onHistory}>
+        <Button onClick={onHistory}>
           History
         </Button>
       </TableCell>

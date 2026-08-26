@@ -32,7 +32,7 @@ export function ContactsLayout() {
     return (
       <div className="contacts-stack">
         <div className="pane-back">
-          <Button variant="text" size="small" component={Link} to={{ pathname: '/contacts', search: back.toString() }}>
+          <Button variant="text" component={Link} to={{ pathname: '/contacts', search: back.toString() }}>
             ‹ Contacts
           </Button>
         </div>
@@ -45,7 +45,7 @@ export function ContactsLayout() {
     return (
       <div className="contacts-stack">
         <div className="pane-back">
-          <Button variant="text" size="small" component={Link} to="/contacts">
+          <Button variant="text" component={Link} to="/contacts">
             ‹ Books
           </Button>
         </div>

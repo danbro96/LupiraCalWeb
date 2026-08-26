@@ -39,7 +39,7 @@ export function ContactsTree() {
           onClick={() => navigate(`/contacts/${me.contactId}`)}
         >
           <span className="tree-label">👤 {me.displayName || 'You'}</span>
-          {me.displayName && <Chip size="small" variant="outlined" label="You" />}
+          {me.displayName && <Chip variant="outlined" label="You" />}
         </button>
       ) : (
         me &&
@@ -73,7 +73,7 @@ export function ContactsTree() {
         <NewBookForm onDone={() => setAddingBook(false)} />
       ) : (
         <div className="tree-add">
-          <Button variant="text" size="small" onClick={() => setAddingBook(true)}>
+          <Button variant="text" onClick={() => setAddingBook(true)}>
             + Address book
           </Button>
         </div>
@@ -161,7 +161,7 @@ function BookNode({
             <NewGroupForm addressBookId={book.id} onDone={() => setAdding(false)} />
           ) : (
             <div className="tree-add">
-              <Button variant="text" size="small" onClick={() => setAdding(true)}>
+              <Button variant="text" onClick={() => setAdding(true)}>
                 + group
               </Button>
             </div>
@@ -186,16 +186,16 @@ function NewGroupForm({ addressBookId, onDone }: { addressBookId: string; onDone
         if (name) create.mutate({ addressBookId, params: { name, kind } });
       }}
     >
-      <TextField size="small" placeholder="Group name…" value={name} autoFocus onChange={(e) => setName(e.target.value)} />
-      <TextField select size="small" value={kind} onChange={(e) => setKind(e.target.value)}>
+      <TextField placeholder="Group name…" value={name} autoFocus onChange={(e) => setName(e.target.value)} />
+      <TextField select value={kind} onChange={(e) => setKind(e.target.value)}>
         <MenuItem value="group">Group</MenuItem>
         <MenuItem value="organization">Organization</MenuItem>
       </TextField>
       <div className="form-row">
-        <Button variant="outlined" size="small" type="submit" disabled={!name || create.isPending}>
+        <Button variant="outlined" type="submit" disabled={!name || create.isPending}>
           Add
         </Button>
-        <Button variant="outlined" size="small" onClick={onDone}>
+        <Button variant="outlined" onClick={onDone}>
           Cancel
         </Button>
       </div>
@@ -217,13 +217,13 @@ function NewBookForm({ onDone }: { onDone: () => void }) {
         if (slug) create.mutate({ data: { slug, displayName: displayName || null } });
       }}
     >
-      <TextField size="small" placeholder="slug" value={slug} autoFocus onChange={(e) => setSlug(e.target.value)} />
-      <TextField size="small" placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+      <TextField placeholder="slug" value={slug} autoFocus onChange={(e) => setSlug(e.target.value)} />
+      <TextField placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
       <div className="form-row">
-        <Button variant="outlined" size="small" type="submit" disabled={!slug || create.isPending}>
+        <Button variant="outlined" type="submit" disabled={!slug || create.isPending}>
           Add
         </Button>
-        <Button variant="outlined" size="small" onClick={onDone}>
+        <Button variant="outlined" onClick={onDone}>
           Cancel
         </Button>
       </div>

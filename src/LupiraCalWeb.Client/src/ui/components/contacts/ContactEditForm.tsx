@@ -98,13 +98,12 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
       {values.length > 0 && (
         <div className="chip-row">
           {values.map((v, i) => (
-            <Chip key={`${v}-${i}`} size="small" label={v} onDelete={() => onChange(values.filter((_, j) => j !== i))} />
+            <Chip key={`${v}-${i}`} label={v} onDelete={() => onChange(values.filter((_, j) => j !== i))} />
           ))}
         </div>
       )}
       <div className="form-row">
         <TextField
-          size="small"
           type={inputType}
           value={draft}
           placeholder={placeholder}
@@ -116,7 +115,7 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
             }
           }}
         />
-        <Button variant="outlined" size="small" onClick={commit} disabled={!draft.trim()}>
+        <Button variant="outlined" onClick={commit} disabled={!draft.trim()}>
           Add
         </Button>
       </div>
@@ -243,23 +242,23 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   return (
     <form className="contact-edit" onSubmit={save}>
       <div className="edit-field">
-        <Controller name="givenName" control={control} render={({ field }) => <TextField size="small" label="Given name" {...field} />} />
+        <Controller name="givenName" control={control} render={({ field }) => <TextField label="Given name" {...field} />} />
       </div>
       <div className="edit-field">
-        <Controller name="middleName" control={control} render={({ field }) => <TextField size="small" label="Middle name" {...field} />} />
+        <Controller name="middleName" control={control} render={({ field }) => <TextField label="Middle name" {...field} />} />
       </div>
       <div className="edit-field">
-        <Controller name="familyName" control={control} render={({ field }) => <TextField size="small" label="Family name" {...field} />} />
+        <Controller name="familyName" control={control} render={({ field }) => <TextField label="Family name" {...field} />} />
       </div>
       <div className="edit-field">
-        <Controller name="nickname" control={control} render={({ field }) => <TextField size="small" label="Nickname" {...field} />} />
+        <Controller name="nickname" control={control} render={({ field }) => <TextField label="Nickname" {...field} />} />
       </div>
       <div className="edit-field">
         <Controller
           name="displayNameFormat"
           control={control}
           render={({ field }) => (
-            <TextField select size="small" label="Display as" {...field}>
+            <TextField select label="Display as" {...field}>
               {Object.values(DisplayNameFormat).map((f) => (
                 <MenuItem key={f} value={f}>
                   {DISPLAY_NAME_FORMAT_LABELS[f]}
@@ -291,21 +290,21 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
           )}
         />
         {birthdayYearKnown ? (
-          <Controller name="birthday" control={control} render={({ field }) => <TextField size="small" type="date" {...field} />} />
+          <Controller name="birthday" control={control} render={({ field }) => <TextField type="date" {...field} />} />
         ) : (
           <div className="form-row">
             <Controller
               name="birthdayMonth"
               control={control}
               render={({ field }) => (
-                <TextField size="small" type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }} placeholder="Month" {...field} />
+                <TextField type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }} placeholder="Month" {...field} />
               )}
             />
             <Controller
               name="birthdayDay"
               control={control}
               render={({ field }) => (
-                <TextField size="small" type="number" slotProps={{ htmlInput: { min: 1, max: 31 } }} placeholder="Day" {...field} />
+                <TextField type="number" slotProps={{ htmlInput: { min: 1, max: 31 } }} placeholder="Day" {...field} />
               )}
             />
           </div>
@@ -320,7 +319,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               name={`channels.${i}.medium`}
               control={control}
               render={({ field }) => (
-                <TextField select size="small" {...field}>
+                <TextField select {...field}>
                   {Object.values(ReachMedium).map((m) => (
                     <MenuItem key={m} value={m}>
                       {m}
@@ -334,7 +333,6 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               control={control}
               render={({ field }) => (
                 <TextField
-                  size="small"
                   placeholder={watchedChannels[i]?.medium === ReachMedium.Phone ? '+46…' : 'name@example.com'}
                   {...field}
                 />
@@ -345,7 +343,6 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               control={control}
               render={({ field }) => (
                 <TextField
-                  size="small"
                   placeholder="type (home/work…)"
                   value={field.value ?? ''}
                   onChange={(e) => field.onChange(e.target.value || null)}
@@ -375,7 +372,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               )}
             />
             <Tooltip title="Remove channel">
-              <IconButton size="small" onClick={() => removeChannel(i)}>
+              <IconButton onClick={() => removeChannel(i)}>
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -383,7 +380,6 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         ))}
         <Button
           variant="text"
-          size="small"
           onClick={() => appendChannel({ medium: ReachMedium.Email, value: '', type: null, preferred: false })}
         >
           + Add channel
@@ -404,7 +400,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               name={`addresses.${i}.type`}
               control={control}
               render={({ field }) => (
-                <TextField select size="small" value={field.value ?? ContactAddressType.Home} onChange={field.onChange}>
+                <TextField select value={field.value ?? ContactAddressType.Home} onChange={field.onChange}>
                   {Object.values(ContactAddressType).map((t) => (
                     <MenuItem key={t} value={t}>
                       {t}
@@ -423,7 +419,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               control={control}
               render={({ field }) => (
                 <Tooltip title="Moved in — YYYY, YYYY-MM, or YYYY-MM-DD; as precise as actually known">
-                  <TextField size="small" placeholder="Moved in" {...field} />
+                  <TextField placeholder="Moved in" {...field} />
                 </Tooltip>
               )}
             />
@@ -432,7 +428,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               control={control}
               render={({ field }) => (
                 <Tooltip title="Moved out — filling this marks the address as former">
-                  <TextField size="small" placeholder="Moved out" {...field} />
+                  <TextField placeholder="Moved out" {...field} />
                 </Tooltip>
               )}
             />
@@ -441,7 +437,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               movedOutText={watchedAddresses[i]?.movedOutText ?? ''}
             />
             <Tooltip title="Remove address">
-              <IconButton size="small" onClick={() => removeAddress(i)}>
+              <IconButton onClick={() => removeAddress(i)}>
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -449,7 +445,6 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         ))}
         <Button
           variant="text"
-          size="small"
           onClick={() => appendAddress({ type: ContactAddressType.Home, placeId: null, movedInText: '', movedOutText: '' })}
         >
           + Add address
@@ -464,14 +459,14 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               name={`profiles.${i}.service`}
               control={control}
               render={({ field }) => (
-                <TextField size="small" placeholder="service (telegram…)" value={field.value ?? ''} onChange={field.onChange} />
+                <TextField placeholder="service (telegram…)" value={field.value ?? ''} onChange={field.onChange} />
               )}
             />
             <Controller
               name={`profiles.${i}.handle`}
               control={control}
               render={({ field }) => (
-                <TextField size="small" placeholder="handle" value={field.value ?? ''} onChange={field.onChange} />
+                <TextField placeholder="handle" value={field.value ?? ''} onChange={field.onChange} />
               )}
             />
             <Controller
@@ -484,13 +479,13 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               )}
             />
             <Tooltip title="Remove profile">
-              <IconButton size="small" onClick={() => removeProfile(i)}>
+              <IconButton onClick={() => removeProfile(i)}>
                 <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </div>
         ))}
-        <Button variant="text" size="small" onClick={() => appendProfile({ service: '', handle: '', preferred: false })}>
+        <Button variant="text" onClick={() => appendProfile({ service: '', handle: '', preferred: false })}>
           + Add profile
         </Button>
       </div>
@@ -507,10 +502,10 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
               <>
                 {field.value.map((cid, i) => (
                   <div key={cid} className="membership-row">
-                    <Chip size="small" variant="outlined" label={i + 1} />
+                    <Chip variant="outlined" label={i + 1} />
                     <span className="membership-name">{nameOf(cid)}</span>
                     <Tooltip title="Remove">
-                      <IconButton size="small" onClick={() => field.onChange(field.value.filter((x) => x !== cid))}>
+                      <IconButton onClick={() => field.onChange(field.value.filter((x) => x !== cid))}>
                         <CloseIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -519,7 +514,6 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 {emergencyPickable.length > 0 && (
                   <TextField
                     select
-                    size="small"
                     value=""
                     onChange={(e) => {
                       if (e.target.value) field.onChange([...field.value, e.target.value]);
@@ -551,16 +545,16 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
           )}
         />
         {deceased && (
-          <Controller name="deathDate" control={control} render={({ field }) => <TextField size="small" type="date" {...field} />} />
+          <Controller name="deathDate" control={control} render={({ field }) => <TextField type="date" {...field} />} />
         )}
       </div>
 
       {errors.root && <p className="error-text">{errors.root.message}</p>}
       <div className="edit-actions">
-        <Button variant="contained" size="small" type="submit" disabled={isSubmitting}>
+        <Button variant="contained" type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Saving…' : 'Save'}
         </Button>
-        <Button variant="outlined" size="small" onClick={onDone} disabled={isSubmitting}>
+        <Button variant="outlined" onClick={onDone} disabled={isSubmitting}>
           Cancel
         </Button>
       </div>

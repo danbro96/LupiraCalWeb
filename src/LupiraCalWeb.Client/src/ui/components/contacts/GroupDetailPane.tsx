@@ -52,9 +52,8 @@ export function GroupDetailPane() {
     <div className="contacts-detail-pane">
       <div className="page-head">
         <h2>
-          <Chip size="small" variant="outlined" label={group.kind === 'Organization' ? '🏢 org' : '👥 group'} />{' '}
+          <Chip variant="outlined" label={group.kind === 'Organization' ? '🏢 org' : '👥 group'} />{' '}
           <TextField
-            size="small"
             variant="standard"
             defaultValue={group.name}
             onBlur={(e) => {
@@ -78,7 +77,6 @@ export function GroupDetailPane() {
             </Link>
             <Tooltip title="Remove from group">
               <IconButton
-                size="small"
                 onClick={() => removeMember.mutate({ groupId: group.id, contactId: c.id })}
               >
                 <CloseIcon fontSize="small" />
@@ -88,7 +86,7 @@ export function GroupDetailPane() {
         ))}
         {members.length === 0 && <p className="meta">No members yet.</p>}
         <div className="form-row">
-          <TextField select size="small" value={addId} onChange={(e) => setAddId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+          <TextField select value={addId} onChange={(e) => setAddId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
             <MenuItem value="">Add member…</MenuItem>
             {nonMembers.map((c) => (
               <MenuItem key={c.id} value={c.id}>
@@ -98,7 +96,6 @@ export function GroupDetailPane() {
           </TextField>
           <Button
             variant="outlined"
-            size="small"
             disabled={!addId}
             onClick={() => {
               addMember.mutate({ groupId: group.id, params: { contactId: addId } });
@@ -111,7 +108,7 @@ export function GroupDetailPane() {
       </section>
 
       <div className="drawer-footer">
-        <Button variant="outlined" color="error" size="small" onClick={() => del.mutate({ groupId: group.id })} disabled={del.isPending}>
+        <Button variant="outlined" color="error" onClick={() => del.mutate({ groupId: group.id })} disabled={del.isPending}>
           Delete {group.kind === 'Organization' ? 'organization' : 'group'}
         </Button>
       </div>

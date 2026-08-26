@@ -23,7 +23,7 @@ export function CompletenessBadge({ score }: { score?: CompletenessScore | null 
         <ul className="gap-list">
           {score.gaps.map((g) => (
             <li key={g.field}>
-              <Chip size="small" variant="outlined" label={g.severity} /> {g.field}
+              <Chip variant="outlined" label={g.severity} /> {g.field}
               <span className="meta"> ·  weight {g.weight}</span>
             </li>
           ))}

@@ -24,6 +24,8 @@ function palette(c: ColorScheme) {
     border: c.border,
     text: { primary: c.text, secondary: c.textMuted, disabled: c.textDisabled, subtle: c.textSubtle },
     error: { main: c.danger },
+    warning: { main: c.warning },
+    success: { main: c.success },
   };
 }
 
@@ -51,5 +53,12 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: { ':root': { ...px(SPACING, 'sp'), ...px(RADII, 'r') } },
     },
+    // The app is uniformly compact; opt out per-instance rather than repeating size="small".
+    MuiButton: { defaultProps: { size: 'small' } },
+    MuiIconButton: { defaultProps: { size: 'small' } },
+    MuiTextField: { defaultProps: { size: 'small' } },
+    MuiChip: { defaultProps: { size: 'small' } },
+    MuiToggleButtonGroup: { defaultProps: { size: 'small' } },
+    MuiLink: { defaultProps: { underline: 'hover' } },
   },
 });

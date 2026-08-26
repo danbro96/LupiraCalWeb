@@ -29,11 +29,11 @@ export function MiniMonthPicker({ selected, anchorEl, onPick, onClose }: Props) 
       slotProps={{ paper: { className: 'date-picker', 'aria-label': 'Pick a date' } }}
     >
         <div className="dp-head">
-          <IconButton size="small" onClick={() => setCursor(addMonths(cursor, -1))} aria-label="Previous month">
+          <IconButton onClick={() => setCursor(addMonths(cursor, -1))} aria-label="Previous month">
             <ChevronLeftIcon fontSize="small" />
           </IconButton>
           <span className="dp-title">{fmtMonthTitle(cursor)}</span>
-          <IconButton size="small" onClick={() => setCursor(addMonths(cursor, 1))} aria-label="Next month">
+          <IconButton onClick={() => setCursor(addMonths(cursor, 1))} aria-label="Next month">
             <ChevronRightIcon fontSize="small" />
           </IconButton>
         </div>

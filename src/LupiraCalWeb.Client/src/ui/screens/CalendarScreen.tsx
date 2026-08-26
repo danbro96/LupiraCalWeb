@@ -131,7 +131,7 @@ export function CalendarScreen() {
     <div className="cal-screen">
       <div className="cal-toolbar">
         <div className="cal-nav">
-          <IconButton size="small" onClick={() => navigate(-1)} aria-label="Previous">
+          <IconButton onClick={() => navigate(-1)} aria-label="Previous">
             <ChevronLeftIcon fontSize="small" />
           </IconButton>
           <button
@@ -148,11 +148,11 @@ export function CalendarScreen() {
               ▾
             </span>
           </button>
-          <IconButton size="small" onClick={() => navigate(1)} aria-label="Next">
+          <IconButton onClick={() => navigate(1)} aria-label="Next">
             <ChevronRightIcon fontSize="small" />
           </IconButton>
           {!todayVisible && (
-            <Button variant="outlined" size="small" onClick={() => setDate(null)}>
+            <Button variant="outlined" onClick={() => setDate(null)}>
               Today
             </Button>
           )}
@@ -169,7 +169,7 @@ export function CalendarScreen() {
         </div>
         <div className="cal-right">
           <div className="cal-actions">
-            <ToggleButtonGroup exclusive size="small" value={view} onChange={(_, nv) => nv != null && setView(nv)}>
+            <ToggleButtonGroup exclusive value={view} onChange={(_, nv) => nv != null && setView(nv)}>
               {(['month', 'week', 'day'] as const).map((v) => (
                 <ToggleButton key={v} value={v}>
                   {v}
@@ -177,7 +177,6 @@ export function CalendarScreen() {
               ))}
             </ToggleButtonGroup>
             <IconButton
-              size="small"
               sx={{ display: { md: 'none' } }}
               onClick={() => setSearchOpen((o) => !o)}
               aria-label="Search"
@@ -186,7 +185,6 @@ export function CalendarScreen() {
               <SearchIcon fontSize="small" />
             </IconButton>
             <IconButton
-              size="small"
               sx={{ display: { md: 'none' } }}
               onClick={() => setSheetOpen(true)}
               aria-label="Calendars"
@@ -202,14 +200,12 @@ export function CalendarScreen() {
               }}
             >
               <TextField
-                size="small"
                 placeholder="Search title/description…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </form>
             <TextField
-              size="small"
               placeholder="tag"
               defaultValue={tag}
               onKeyDown={(e) => {

@@ -629,11 +629,6 @@ code {
   padding: 5px 12px;
   font-size: 13px;
 }
-.chip.danger {
-  color: var(--mui-palette-error-main);
-  border-color: var(--mui-palette-error-main);
-  background: transparent;
-}
 .color-dot {
   width: 13px;
   height: 13px;
@@ -749,13 +744,13 @@ code {
   flex: 1;
 }
 .rsvp-accepted {
-  color: #16a34a;
+  color: var(--mui-palette-success-main);
 }
 .rsvp-declined {
   color: var(--mui-palette-error-main);
 }
 .rsvp-tentative {
-  color: #b45309;
+  color: var(--mui-palette-warning-main);
 }
 
 /* ---- Completeness. ---- */

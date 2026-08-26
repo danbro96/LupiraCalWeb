@@ -27,7 +27,7 @@ export function ContactCircles({ focusId }: { focusId: string }) {
           <p className="section-label">{CIRCLE_LABEL[c.kind]}</p>
           {c.members.map((m) => (
             <div key={m.contactId} className="membership-row">
-              {m.kind && <Chip size="small" variant="outlined" label={m.kind} />}
+              {m.kind && <Chip variant="outlined" label={m.kind} />}
               <Link className="membership-name" to={{ pathname: `/contacts/${m.contactId}`, search: location.search }}>
                 {m.displayName}
               </Link>

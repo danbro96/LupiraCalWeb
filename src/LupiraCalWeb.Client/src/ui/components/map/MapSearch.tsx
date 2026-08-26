@@ -84,7 +84,7 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
               <>
                 <span className="location-name">{o.name}</span>
                 {o.context && <span className="meta"> {o.context}</span>}
-                <Chip size="small" variant="outlined" label={o.type === SuggestionType.Place ? o.category ?? 'Place' : 'Area'} />
+                <Chip variant="outlined" label={o.type === SuggestionType.Place ? o.category ?? 'Place' : 'Area'} />
               </>
             )}
           </li>
@@ -92,7 +92,6 @@ export function MapSearch({ onPick }: { onPick: (target: SearchTarget) => void }
         renderInput={(params) => (
           <TextField
             {...params}
-            size="small"
             placeholder="Search places…"
             onKeyDown={(e) => {
               if (e.key === 'Escape') setQ('');

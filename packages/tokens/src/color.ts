@@ -10,6 +10,8 @@ export type ColorScheme = {
   textSubtle: string;
   textDisabled: string;
   danger: string;
+  warning: string;
+  success: string;
 };
 
 export const LIGHT: ColorScheme = {
@@ -24,6 +26,8 @@ export const LIGHT: ColorScheme = {
   textSubtle: '#8a909c',
   textDisabled: '#9aa0ac',
   danger: '#b3261e',
+  warning: '#5b4b18',
+  success: '#1f7a4d',
 };
 
 export const DARK: ColorScheme = {
@@ -38,4 +42,6 @@ export const DARK: ColorScheme = {
   textSubtle: '#7c8492',
   textDisabled: '#5b626e',
   danger: '#f2675e',
+  warning: '#d8b24a',
+  success: '#5fd49b',
 };

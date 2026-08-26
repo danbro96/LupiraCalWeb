@@ -61,11 +61,11 @@ function TaskBody({ task }: { task: ItemResponse }) {
       )}
 
       <section className="drawer-section">
-        <Button variant="contained" size="small" href={`lupiratasks://task/${task.listId}/${task.id}`}>
+        <Button variant="contained" href={`lupiratasks://task/${task.listId}/${task.id}`}>
           Open in Lupira Tasks
         </Button>
       </section>
-      <Button variant="text" size="small" href={`https://tasks.lupira.com/lists/${task.listId}`} target="_blank" rel="noreferrer">
+      <Button variant="text" href={`https://tasks.lupira.com/lists/${task.listId}`} target="_blank" rel="noreferrer">
         Open list on the web →
       </Button>
     </div>

@@ -35,10 +35,10 @@ export default function MapPinDialog({ title, center, zoom, onConfirm, onCancel 
         </p>
       </DialogContent>
       <DialogActions>
-        <Button size="small" onClick={onCancel}>
+        <Button onClick={onCancel}>
           Cancel
         </Button>
-        <Button size="small" variant="contained" disabled={!pin} onClick={() => pin && onConfirm(pin.lat, pin.lon)}>
+        <Button variant="contained" disabled={!pin} onClick={() => pin && onConfirm(pin.lat, pin.lon)}>
           Confirm
         </Button>
       </DialogActions>

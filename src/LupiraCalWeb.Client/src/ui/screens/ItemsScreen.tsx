@@ -84,7 +84,6 @@ export function ItemsScreen() {
   const filterControls = (
     <>
       <TextField
-        size="small"
         placeholder="tag"
         defaultValue={filters.tag}
         onKeyDown={(e) => {
@@ -94,7 +93,6 @@ export function ItemsScreen() {
       />
       <TextField
         select
-        size="small"
         value={filters.cal}
         onChange={(e) => setParam('cal', e.target.value || null)}
         slotProps={{ htmlInput: { 'aria-label': 'Calendar' }, select: { displayEmpty: true } }}
@@ -108,7 +106,6 @@ export function ItemsScreen() {
       </TextField>
       <TextField
         select
-        size="small"
         value={filters.category}
         onChange={(e) => setParam('category', e.target.value || null)}
         slotProps={{ htmlInput: { 'aria-label': 'Category' }, select: { displayEmpty: true } }}
@@ -122,7 +119,6 @@ export function ItemsScreen() {
       </TextField>
       <TextField
         select
-        size="small"
         value={filters.status}
         onChange={(e) => setParam('status', e.target.value || null)}
         slotProps={{ htmlInput: { 'aria-label': 'Status' }, select: { displayEmpty: true } }}
@@ -141,7 +137,6 @@ export function ItemsScreen() {
     <>
       <ToggleButtonGroup
         exclusive
-        size="small"
         value={filters.range}
         onChange={(_, nv) => nv != null && setParam('range', nv === 'upcoming' ? null : nv)}
       >
@@ -154,14 +149,12 @@ export function ItemsScreen() {
       {filters.range === 'custom' && (
         <>
           <TextField
-            size="small"
             type="date"
             value={filters.from}
             onChange={(e) => setParam('from', e.target.value || null)}
             slotProps={{ htmlInput: { 'aria-label': 'From' } }}
           />
           <TextField
-            size="small"
             type="date"
             value={filters.to}
             onChange={(e) => setParam('to', e.target.value || null)}
@@ -186,7 +179,6 @@ export function ItemsScreen() {
           }}
         >
           <TextField
-            size="small"
             placeholder="Search title/description…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -215,7 +207,7 @@ export function ItemsScreen() {
           rangeControls
         )}
         {isPhone ? (
-          <Button variant="outlined" size="small" startIcon={<FilterListIcon />} onClick={() => setSheetOpen(true)}>
+          <Button variant="outlined" startIcon={<FilterListIcon />} onClick={() => setSheetOpen(true)}>
             Filters{secondaryCount > 0 ? ` (${secondaryCount})` : ''}
           </Button>
         ) : (
@@ -249,7 +241,7 @@ export function ItemsScreen() {
         {error && <p className="empty">{errText(error) ?? 'Search failed.'}</p>}
       </div>
       {hasNextPage && (
-        <Button variant="outlined" size="small" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
+        <Button variant="outlined" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
           {isFetchingNextPage ? 'Loading…' : `Load ${SEARCH_PAGE_SIZE} more`}
         </Button>
       )}
@@ -311,9 +303,9 @@ function ItemRow({
         </button>
       )}
       {o.tags?.map((t) => (
-        <Chip key={t} size="small" label={t} />
+        <Chip key={t} label={t} />
       ))}
-      {o.status && o.status !== ItemStatus.Confirmed && <Chip size="small" variant="outlined" label={o.status.toLowerCase()} />}
+      {o.status && o.status !== ItemStatus.Confirmed && <Chip variant="outlined" label={o.status.toLowerCase()} />}
       {childCount > 0 && (
         <button className="items-subcount" onClick={(e) => stop(e, () => onDrill?.(o.id))}>
           {childCount} sub-item{childCount === 1 ? '' : 's'}

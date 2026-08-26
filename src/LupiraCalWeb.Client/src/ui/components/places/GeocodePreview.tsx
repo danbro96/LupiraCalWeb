@@ -43,10 +43,10 @@ export function GeocodePreview({ query, hits, busy, error, onPick, onPin, onCanc
         {busy && <LinearProgress />}
       </DialogContent>
       <DialogActions>
-        <Button size="small" disabled={busy} onClick={onPin}>
+        <Button disabled={busy} onClick={onPin}>
           None of these — drop a pin on the map
         </Button>
-        <Button size="small" disabled={busy} onClick={onCancel}>
+        <Button disabled={busy} onClick={onCancel}>
           Cancel
         </Button>
       </DialogActions>

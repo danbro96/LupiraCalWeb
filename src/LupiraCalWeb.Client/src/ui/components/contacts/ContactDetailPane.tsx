@@ -75,14 +75,14 @@ export function ContactDetailPane() {
           {contact.nickname && contact.nickname !== contact.displayName && <span className="meta"> “{contact.nickname}”</span>}
           {contact.deceased && (
             <Tooltip title={contact.deathDate ? `died ${contact.deathDate}` : 'deceased'}>
-              <Chip size="small" variant="outlined" label="†" />
+              <Chip variant="outlined" label="†" />
             </Tooltip>
           )}
         </h2>
         <div className="head-actions">
           <CompletenessBadge score={contact.completeness} />
           {!editing && (
-            <Button variant="outlined" size="small" onClick={() => setEditing(true)}>
+            <Button variant="outlined" onClick={() => setEditing(true)}>
               Edit
             </Button>
           )}
@@ -146,7 +146,7 @@ export function ContactDetailPane() {
           {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).length > 0 && (
             <div className="chip-row">
               {(contact.tags ?? []).filter((t) => t !== PINNED_TAG).map((t) => (
-                <Chip key={t} size="small" label={t} />
+                <Chip key={t} label={t} />
               ))}
             </div>
           )}
@@ -156,7 +156,7 @@ export function ContactDetailPane() {
               <h3>Emergency contacts</h3>
               {contact.emergencyContactIds.map((cid, i) => (
                 <div key={cid} className="membership-row">
-                  <Chip size="small" variant="outlined" label={i + 1} />
+                  <Chip variant="outlined" label={i + 1} />
                   <Link className="membership-name" to={link(cid)}>
                     {nameOf(cid)}
                   </Link>
@@ -171,13 +171,12 @@ export function ContactDetailPane() {
         <h3>Groups</h3>
         {memberOf.map((g) => (
           <div key={g.id} className="membership-row">
-            <Chip size="small" variant="outlined" label={g.kind === 'Organization' ? '🏢' : '👥'} />
+            <Chip variant="outlined" label={g.kind === 'Organization' ? '🏢' : '👥'} />
             <Link className="membership-name" to={{ pathname: `/contacts/groups/${g.id}`, search: groupSearch }}>
               {g.name}
             </Link>
             <Tooltip title="Remove from group">
               <IconButton
-                size="small"
                 onClick={() => removeMember.mutate({ groupId: g.id, contactId: contact.id })}
               >
                 <CloseIcon fontSize="small" />
@@ -186,7 +185,7 @@ export function ContactDetailPane() {
           </div>
         ))}
         <div className="form-row">
-          <TextField select size="small" value={groupId} onChange={(e) => setGroupId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+          <TextField select value={groupId} onChange={(e) => setGroupId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
             <MenuItem value="">Add to group…</MenuItem>
             {joinable.map((g) => (
               <MenuItem key={g.id} value={g.id}>
@@ -196,7 +195,6 @@ export function ContactDetailPane() {
           </TextField>
           <Button
             variant="outlined"
-            size="small"
             disabled={!groupId}
             onClick={() => {
               addMember.mutate({ groupId, params: { contactId: contact.id } });
@@ -215,7 +213,7 @@ export function ContactDetailPane() {
       <section className="drawer-section">
         <div className="page-head">
           <h3>Social circles</h3>
-          <Button variant="text" size="small" onClick={() => setShowCircles((v) => !v)}>
+          <Button variant="text" onClick={() => setShowCircles((v) => !v)}>
             {showCircles ? 'Hide' : 'Show'}
           </Button>
         </div>
@@ -229,10 +227,10 @@ export function ContactDetailPane() {
         </p>
       )}
       <div className="detail-footer">
-        <Button variant="text" size="small" disabled={setMe.isPending} onClick={() => setMe.mutate({ data: { contactId: contact.id } })}>
+        <Button variant="text" disabled={setMe.isPending} onClick={() => setMe.mutate({ data: { contactId: contact.id } })}>
           This is me
         </Button>
-        <Button variant="outlined" color="error" size="small" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
+        <Button variant="outlined" color="error" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
           Delete contact
         </Button>
       </div>

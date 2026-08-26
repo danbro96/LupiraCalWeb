@@ -86,7 +86,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <div className="form-row">
         <TextField
           select
-          size="small"
           label="Status"
           value={item.status ?? ''}
           onChange={(e) => patch({ status: e.target.value || null })}
@@ -102,7 +101,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         {item.details?.presence && (
           <TextField
             select
-            size="small"
             label="Availability"
             value={item.details.presence.status ?? ''}
             onChange={(e) => e.target.value && patch({ availability: e.target.value as AvailabilityStatus })}
@@ -129,7 +127,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
           <div className="form-row">
             <TextField
               type="datetime-local"
-              size="small"
               defaultValue={isoToLocalInput(item.startsAt)}
               onBlur={(e) => {
                 const iso = localInputToIso(e.target.value);
@@ -139,7 +136,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             <span className="meta">→</span>
             <TextField
               type="datetime-local"
-              size="small"
               defaultValue={isoToLocalInput(item.endsAt)}
               onBlur={(e) => {
                 const iso = localInputToIso(e.target.value);
@@ -151,7 +147,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         <div className="form-row">
           <TextField
             select
-            size="small"
             label="Repeats"
             value={RRULE_PRESETS.some((p) => p.rrule === rrule) ? rrule : rrule ? 'custom' : ''}
             onChange={(e) => {
@@ -171,7 +166,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
             {rrule && !RRULE_PRESETS.some((p) => p.rrule === rrule) && <MenuItem value="custom">custom</MenuItem>}
           </TextField>
           <TextField
-            size="small"
             slotProps={{ input: { sx: { fontFamily: 'monospace' } } }}
             placeholder="RRULE…"
             value={rrule}
@@ -198,7 +192,6 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <section className="drawer-section">
         <h3>Description</h3>
         <TextField
-          size="small"
           multiline
           minRows={3}
           value={description}
@@ -212,10 +205,9 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         <h3>Tags</h3>
         <div className="chip-row">
           {(item.tags ?? []).map((t) => (
-            <Chip key={t} size="small" label={t} onDelete={() => patch({ tags: (item.tags ?? []).filter((x) => x !== t) })} />
+            <Chip key={t} label={t} onDelete={() => patch({ tags: (item.tags ?? []).filter((x) => x !== t) })} />
           ))}
           <TextField
-            size="small"
             placeholder="+ tag"
             value={newTag}
             onChange={(e) => setNewTag(e.target.value)}
@@ -241,7 +233,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
         <span className="meta" title={`iCal UID ${item.externalId} · etag ${item.etag}`}>
           {item.category ?? 'General'} item
         </span>
-        <Button variant="outlined" color="error" size="small" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>
+        <Button variant="outlined" color="error" onClick={() => del.mutate({ id: item.id })} disabled={del.isPending}>
           Delete item
         </Button>
       </div>

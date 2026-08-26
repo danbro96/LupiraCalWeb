@@ -109,7 +109,7 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
   return (
     <Dialog open onClose={onClose} maxWidth="sm" fullWidth fullScreen={isPhone}>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
-        <IconButton size="small" onClick={onClose} aria-label="Close">
+        <IconButton onClick={onClose} aria-label="Close">
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
@@ -136,7 +136,6 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             render={({ field }) => (
               <TextField
                 select
-                size="small"
                 label="Calendar"
                 {...field}
                 slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
@@ -167,20 +166,20 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             <Controller
               name="startDate"
               control={control}
-              render={({ field }) => <TextField type="date" size="small" {...field} required />}
+              render={({ field }) => <TextField type="date" {...field} required />}
             />
             <span className="meta">→</span>
-            <Controller name="endDate" control={control} render={({ field }) => <TextField type="date" size="small" {...field} />} />
+            <Controller name="endDate" control={control} render={({ field }) => <TextField type="date" {...field} />} />
           </div>
         ) : (
           <div className="form-row">
             <Controller
               name="start"
               control={control}
-              render={({ field }) => <TextField type="datetime-local" size="small" {...field} required />}
+              render={({ field }) => <TextField type="datetime-local" {...field} required />}
             />
             <span className="meta">→</span>
-            <Controller name="end" control={control} render={({ field }) => <TextField type="datetime-local" size="small" {...field} />} />
+            <Controller name="end" control={control} render={({ field }) => <TextField type="datetime-local" {...field} />} />
           </div>
         )}
         <div className="form-row">
@@ -190,7 +189,6 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
             render={({ field }) => (
               <TextField
                 select
-                size="small"
                 label="Repeats"
                 {...field}
                 slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
@@ -211,7 +209,6 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
               render={({ field }) => (
                 <TextField
                   select
-                  size="small"
                   label="Availability"
                   {...field}
                   slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
@@ -230,24 +227,24 @@ export function NewItemModal({ onClose }: { onClose: () => void }) {
         <Controller
           name="location"
           control={control}
-          render={({ field }) => <TextField size="small" placeholder="Location (free text — becomes a Place)" {...field} />}
+          render={({ field }) => <TextField placeholder="Location (free text — becomes a Place)" {...field} />}
         />
         <Controller
           name="tags"
           control={control}
-          render={({ field }) => <TextField size="small" placeholder="Tags (comma-separated)" {...field} />}
+          render={({ field }) => <TextField placeholder="Tags (comma-separated)" {...field} />}
         />
         <Controller
           name="description"
           control={control}
-          render={({ field }) => <TextField size="small" multiline minRows={3} placeholder="Description" {...field} />}
+          render={({ field }) => <TextField multiline minRows={3} placeholder="Description" {...field} />}
         />
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" size="small" type="button" onClick={onClose}>
+          <Button variant="outlined" type="button" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="contained" size="small" type="submit" disabled={create.isPending}>
+          <Button variant="contained" type="submit" disabled={create.isPending}>
             Create
           </Button>
         </DialogActions>

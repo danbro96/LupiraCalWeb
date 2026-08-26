@@ -94,28 +94,28 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
               {status === 'NeedsAction' && (
                 <>
                   <Tooltip title="Accept">
-                    <Chip size="small" variant="outlined" icon={<CheckIcon />} onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'accepted' } })} />
+                    <Chip variant="outlined" icon={<CheckIcon />} onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'accepted' } })} />
                   </Tooltip>
                   <Tooltip title="Tentative">
-                    <Chip size="small" variant="outlined" label="?" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'tentative' } })} />
+                    <Chip variant="outlined" label="?" onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'tentative' } })} />
                   </Tooltip>
                   <Tooltip title="Decline">
-                    <Chip size="small" variant="outlined" icon={<ClearIcon />} onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'declined' } })} />
+                    <Chip variant="outlined" icon={<ClearIcon />} onClick={() => respond.mutate({ id: item.id, participationId: pid, params: { status: 'declined' } })} />
                   </Tooltip>
                 </>
               )}
               {status === 'Accepted' && !a.attendedAt && (
                 <Tooltip title="Confirm attendance">
-                  <Chip size="small" variant="outlined" label="attended" onClick={() => attend.mutate({ id: item.id, participationId: pid })} />
+                  <Chip variant="outlined" label="attended" onClick={() => attend.mutate({ id: item.id, participationId: pid })} />
                 </Tooltip>
               )}
               {!a.leftAt && (
                 <Tooltip title="Left">
-                  <Chip size="small" variant="outlined" label="left" onClick={() => leave.mutate({ id: item.id, participationId: pid })} />
+                  <Chip variant="outlined" label="left" onClick={() => leave.mutate({ id: item.id, participationId: pid })} />
                 </Tooltip>
               )}
               <Tooltip title="Remove">
-                <IconButton size="small" onClick={() => remove.mutate({ id: item.id, participationId: pid })}>
+                <IconButton onClick={() => remove.mutate({ id: item.id, participationId: pid })}>
                   <CloseIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -124,7 +124,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
         );
       })}
       <div className="form-row">
-        <TextField select size="small" value={contactId} onChange={(e) => setContactId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
+        <TextField select value={contactId} onChange={(e) => setContactId(e.target.value)} slotProps={{ select: { displayEmpty: true } }}>
           <MenuItem value="">Invite a contact…</MenuItem>
           {invitable.map((c) => (
             <MenuItem key={c.id} value={c.id}>
@@ -132,7 +132,7 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
             </MenuItem>
           ))}
         </TextField>
-        <TextField select size="small" value={role} onChange={(e) => setRole(e.target.value)}>
+        <TextField select value={role} onChange={(e) => setRole(e.target.value)}>
           {ROLE_OPTIONS.map((r) => (
             <MenuItem key={r.value} value={r.value}>
               {r.label}
@@ -141,7 +141,6 @@ export function AttendeesPanel({ item }: { item: CalendarItemDto }) {
         </TextField>
         <Button
           variant="outlined"
-          size="small"
           disabled={!contactId || invite.isPending}
           onClick={() => {
             invite.mutate({ id: item.id, params: { contactId, role } });

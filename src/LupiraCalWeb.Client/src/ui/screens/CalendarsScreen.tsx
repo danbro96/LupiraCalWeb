@@ -34,16 +34,16 @@ export function CalendarsScreen() {
             <span className="account-sub">{user.email}</span>
           )}
         </div>
-        <Button variant="outlined" size="small" onClick={logout}>
+        <Button variant="outlined" onClick={logout}>
           Sign out
         </Button>
       </div>
       <div className="page-head">
         <h2>Calendars & address books</h2>
-        <Button variant="contained" size="small" onClick={() => setCreating((c) => !c)}>
+        <Button variant="contained" onClick={() => setCreating((c) => !c)}>
           + New
         </Button>
-        <Button size="small" component={NavLink} to="/places">
+        <Button component={NavLink} to="/places">
           Places…
         </Button>
       </div>
@@ -89,13 +89,13 @@ function CalendarRow({ c }: { c: ContainerDto }) {
         <td>
           <code>{c.slug}</code>
         </td>
-        <td>{c.class && <Chip size="small" variant="outlined" label={c.class} />}</td>
+        <td>{c.class && <Chip variant="outlined" label={c.class} />}</td>
         <td className="meta">{c.kind ?? '—'}</td>
         <td className="meta">{c.defaultTimezone ?? '—'}</td>
         <td className="meta">{c.access}</td>
         <td>
           {c.access === 'Owner' && (
-            <Button variant="text" size="small" onClick={() => setSharing((s) => !s)}>
+            <Button variant="text" onClick={() => setSharing((s) => !s)}>
               {sharing ? 'close' : 'share…'}
             </Button>
           )}
@@ -130,7 +130,7 @@ function BookRow({ b }: { b: AddressBookDto }) {
         <td className="meta">{b.access}</td>
         <td>
           {b.access === 'Owner' && (
-            <Button variant="text" size="small" onClick={() => setSharing((s) => !s)}>
+            <Button variant="text" onClick={() => setSharing((s) => !s)}>
               {sharing ? 'close' : 'share…'}
             </Button>
           )}
@@ -169,15 +169,14 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
 
   return (
     <div className="share-panel">
-      <TextField size="small" type="email" placeholder="member@email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <TextField select size="small" value={access} onChange={(e) => setAccess(e.target.value)}>
+      <TextField type="email" placeholder="member@email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <TextField select value={access} onChange={(e) => setAccess(e.target.value)}>
         <MenuItem value="owner">Owner</MenuItem>
         <MenuItem value="read-write">Read-write</MenuItem>
         <MenuItem value="read">Read</MenuItem>
       </TextField>
       <Button
         variant="outlined"
-        size="small"
         disabled={!email}
         onClick={() =>
           isCalendar
@@ -190,7 +189,6 @@ function SharePanel({ kind, id }: { kind: 'calendar' | 'book'; id: string }) {
       <Button
         variant="outlined"
         color="error"
-        size="small"
         disabled={!email}
         onClick={() =>
           isCalendar
@@ -248,25 +246,25 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
       }}
     >
       <div className="form-row">
-        <TextField select size="small" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+        <TextField select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
           <MenuItem value="calendar">Calendar</MenuItem>
           <MenuItem value="addressbook">Address book</MenuItem>
         </TextField>
-        <TextField size="small" placeholder="slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} required />
-        <TextField size="small" placeholder="Display name" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
+        <TextField placeholder="slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} required />
+        <TextField placeholder="Display name" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
       </div>
       {!isBook && (
         <div className="form-row">
           <input type="color" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} title="Color" />
-          <TextField size="small" placeholder="IANA timezone" value={form.defaultTimezone} onChange={(e) => setForm({ ...form, defaultTimezone: e.target.value })} />
-          <TextField select size="small" value={form.class} onChange={(e) => setForm({ ...form, class: e.target.value as CalendarClass })}>
+          <TextField placeholder="IANA timezone" value={form.defaultTimezone} onChange={(e) => setForm({ ...form, defaultTimezone: e.target.value })} />
+          <TextField select value={form.class} onChange={(e) => setForm({ ...form, class: e.target.value as CalendarClass })}>
             {Object.values(CalendarClass).map((v) => (
               <MenuItem key={v} value={v}>
                 {v}
               </MenuItem>
             ))}
           </TextField>
-          <TextField select size="small" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value as CalendarKind })}>
+          <TextField select value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value as CalendarKind })}>
             {Object.values(CalendarKind).map((v) => (
               <MenuItem key={v} value={v}>
                 {v}
@@ -276,10 +274,10 @@ function NewContainerForm({ onDone }: { onDone: () => void }) {
         </div>
       )}
       <div className="chip-row">
-        <Button variant="contained" size="small" type="submit" disabled={pending}>
+        <Button variant="contained" type="submit" disabled={pending}>
           Create
         </Button>
-        <Button variant="outlined" size="small" type="button" onClick={onDone}>
+        <Button variant="outlined" type="button" onClick={onDone}>
           Cancel
         </Button>
       </div>

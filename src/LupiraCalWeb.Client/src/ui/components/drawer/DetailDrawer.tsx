@@ -15,7 +15,7 @@ export function DetailDrawer({ onClose, children }: { onClose: () => void; child
       slotProps={{ paper: { sx: isPhone ? { maxHeight: '85dvh' } : { width: 'min(480px, 100vw)' } } }}
     >
       <div className="drawer-head">
-        <IconButton size="small" onClick={onClose} aria-label="Close">
+        <IconButton onClick={onClose} aria-label="Close">
           <CloseIcon fontSize="small" />
         </IconButton>
       </div>

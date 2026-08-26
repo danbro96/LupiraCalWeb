@@ -22,7 +22,7 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
           <section className="card">
             <div className="drawer-title-row">
               <h3 style={{ margin: 0, flex: 1 }}>{place.name}</h3>
-              <Chip size="small" variant="outlined" label={place.category} />
+              <Chip variant="outlined" label={place.category} />
             </div>
             {(place.containment ?? []).length > 0 && (
               <div className="loc-breadcrumb">
@@ -43,7 +43,6 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
                     {' '}
                     <Button
                       variant="text"
-                      size="small"
                       href={osmUrl(place.latitude, place.longitude)!}
                       target="_blank"
                       rel="noreferrer"

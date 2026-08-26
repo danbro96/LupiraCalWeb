@@ -46,13 +46,12 @@ export function InboxScreen() {
                 <span className="title">{item.title || '(untitled)'}</span>
                 <span className="meta">{itemWhen(item)}</span>
               </button>
-              <Button variant="outlined" size="small" onClick={() => accept.mutate({ itemId: item.id, calendarId: calendar.id })}>
+              <Button variant="outlined" onClick={() => accept.mutate({ itemId: item.id, calendarId: calendar.id })}>
                 Accept
               </Button>
               <Button
                 variant="outlined"
                 color="error"
-                size="small"
                 onClick={() => remove.mutate({ itemId: item.id, calendarId: calendar.id })}
               >
                 Reject
