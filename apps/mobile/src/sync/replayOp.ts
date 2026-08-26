@@ -2,7 +2,7 @@ import { createItem, deleteItem, mergeItemMetadata, updateItem } from '../data/a
 import { fileItemToCalendar, removeItemFromCalendar } from '../data/api/generated/cal/curation/curation';
 import type { UpdateCalendarItemRequest } from '../data/api/generated/cal/models';
 import { createContact, deleteContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../data/api/generated/contact/contacts/contacts';
-import type { ContactReachChannel, ContactSocialProfile } from '../data/api/generated/contact/models';
+import type { ContactReachChannel } from '../data/api/generated/contact/models';
 import type { ClientOp, ItemCore } from '../domain/ops';
 
 /// Op → REST. Every call carries `Idempotency-Key: commandId` (the server ledger makes redelivery a no-op —
@@ -85,7 +85,7 @@ export async function replayOp(op: ClientOp): Promise<void> {
       await setContactTags(op.contactId, { tags: op.tags, occurredAt: op.occurredAt }, idem);
       return;
     case 'contact.profiles':
-      await setContactProfiles(op.contactId, { profiles: op.profiles as ContactSocialProfile[], occurredAt: op.occurredAt }, idem);
+      await setContactProfiles(op.contactId, { profiles: op.profiles, occurredAt: op.occurredAt }, idem);
       return;
     case 'contact.delete':
       await deleteContact(op.contactId, idem);

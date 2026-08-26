@@ -10,6 +10,7 @@ import type { Horizon } from '../domain/materialize';
 import { birthdayRows, currentHorizon, horizonDrifted, monthKeyOf, occurrenceRowsForItem } from '../domain/materialize';
 import { logDebug } from '../debug/log';
 import { bridgePublish, drainBridgeInbox } from './bridge';
+import { toContactDoc, toItemDoc } from './docAdapters';
 import { drain } from './outbox';
 import { runPhotoBackup } from './photoUploader';
 import type { PullDeps } from './pull';
@@ -126,7 +127,7 @@ export async function discardParkedAndRestore(seq: number, dbOverride?: Db): Pro
     let fetched: import('../domain/docTypes').ItemDoc | null = null;
     try {
       const r = await getItem(target.aggregateId);
-      if (r.status === 200) fetched = r.data as unknown as import('../domain/docTypes').ItemDoc;
+      if (r.status === 200) fetched = toItemDoc(r.data);
     } catch (e) {
       if (!(e instanceof ApiError) || e.status !== 404) throw e;
     }
@@ -146,7 +147,7 @@ export async function discardParkedAndRestore(seq: number, dbOverride?: Db): Pro
     let fetched: import('../domain/docTypes').ContactDoc | null = null;
     try {
       const r = await getContact(target.aggregateId);
-      if (r.status === 200) fetched = r.data as unknown as import('../domain/docTypes').ContactDoc;
+      if (r.status === 200) fetched = toContactDoc(r.data);
     } catch (e) {
       if (!(e instanceof ApiError) || e.status !== 404) throw e;
     }

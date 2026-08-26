@@ -9,6 +9,7 @@ import { birthdayRows, monthKeyOf, occurrenceRowsForItem } from '../domain/mater
 import type { MirrorContact, MirrorItem } from '../domain/mirrorReducers';
 import { applyContactOp, applyItemOp } from '../domain/mirrorReducers';
 import { ApiError } from '../domain/apiError';
+import { toContactChangesPage, toItemChangesPage } from './docAdapters';
 import { useSyncStatus } from './syncStatus';
 
 /// Pull side of the engine: a paged delta loop that actually READS the cursor (the tasks app wrote and
@@ -32,22 +33,22 @@ export const realPullDeps: PullDeps = {
   calChanges: async (since) => {
     const r = await calGetChanges(since ? { since } : undefined);
     if (r.status !== 200) throw new ApiError(r.status, 'changes failed');
-    return r.data as unknown as ChangesPage<ItemChange>;
+    return toItemChangesPage(r.data);
   },
   contactChanges: async (since) => {
     const r = await contactGetChanges(since ? { since } : undefined);
     if (r.status !== 200) throw new ApiError(r.status, 'changes failed');
-    return r.data as unknown as ChangesPage<ContactChange>;
+    return toContactChangesPage(r.data);
   },
   calContainers: async () => {
     const r = await calGetContainers();
     if (r.status !== 200) throw new ApiError(r.status, 'containers failed');
-    return r.data as unknown as { calendars: { id: string }[] };
+    return r.data;
   },
   contactContainers: async () => {
     const r = await contactGetContainers();
     if (r.status !== 200) throw new ApiError(r.status, 'containers failed');
-    return r.data as unknown as { addressBooks: { id: string }[]; groups: { id: string }[] };
+    return r.data;
   },
   now: () => new Date(),
 };
