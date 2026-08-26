@@ -20,13 +20,14 @@ import { hashColor } from '../components/palette';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { initialsOf } from './ContactsScreen';
+import type { AppTheme } from '../theme/paperTheme';
 
 /// Read-only overview — ALL editing lives on the edit screen. Shows everything the mirror doc carries:
 /// names, kind, pronouns, birthday+age, deceased, unified reach (channels + profiles), tags, addresses
 /// (tap → Google Maps via a geo place lookup), notes, metadata, emergency contacts and relations with
 /// names resolved from the mirror.
 export function ContactDetailScreen() {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const route = useRoute<RouteProp<RootStackParamList, 'ContactDetail'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { contactId } = route.params;
@@ -198,11 +199,12 @@ function openReach(kind: string, value: string): void {
 }
 
 function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; deceased: boolean }) {
+  const theme = useTheme<AppTheme>();
   const { year, month, day } = birthday;
   const next = nextBirthday(month, day, new Date());
   const age = deceased ? null : turningAge(year, next);
   return (
-    <Text style={styles.birthday}>
+    <Text style={[styles.birthday, { color: theme.colors.warning }]}>
       🎂 {fmtPartialDate(birthday)}
       {age != null ? ` — turns ${age} on ${next.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : ''}
     </Text>
@@ -212,7 +214,7 @@ function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; decease
 /// Address rows are place refs — resolving to something mappable needs the geo API (online). Tap-to-open
 /// keeps the offline path clean: nothing is fetched until asked.
 function AddressRow({ placeId, type }: { placeId: string | null; type: string }) {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const [busy, setBusy] = useState(false);
 
   const open = async () => {
@@ -250,7 +252,7 @@ function ResolvedName({ contactId, prefix, navigation }: {
   prefix: string;
   navigation: NativeStackNavigationProp<RootStackParamList>;
 }) {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const [name, setName] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -280,7 +282,7 @@ const styles = StyleSheet.create({
   headerBody: { flex: 1 },
   h1: { fontSize: 20, fontWeight: '600' },
   sub: { fontSize: 13 },
-  birthday: { fontSize: 14, color: '#b45309', marginTop: 6 },
+  birthday: { fontSize: 14, marginTop: 6 },
   deceased: { fontSize: 13, fontStyle: 'italic' },
   row: { fontSize: 14, paddingVertical: 4 },
   rowKind: { fontSize: 13 },

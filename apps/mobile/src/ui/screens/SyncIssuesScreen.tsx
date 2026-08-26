@@ -12,11 +12,12 @@ import { useOutboxRows } from '../../state/queries';
 import { useConfirm } from '../components/ConfirmDialog';
 import { Button, formStyles } from '../components/form';
 import { IndeterminateBar } from '../components/IndeterminateBar';
+import type { AppTheme } from '../theme/paperTheme';
 
 /// The review surface for offline writes: parked ops (gave up after backoff or hit a definitive rejection)
 /// get per-row retry / discard — discard also rolls the optimistic mirror write back to server truth.
 export function SyncIssuesScreen() {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const { data } = useOutboxRows();
   const { syncing, serverReachable, lastSyncAt, lastError, progress } = useSyncStatus();
 
@@ -32,7 +33,7 @@ export function SyncIssuesScreen() {
         </Text>
         <Button title="Sync now" kind="plain" onPress={() => void runSync()} disabled={syncing} />
       </View>
-      {lastError && <Text style={styles.lastError}>{lastError}</Text>}
+      {lastError && <Text style={[styles.lastError, { color: theme.colors.warning }]}>{lastError}</Text>}
 
       {syncing && (
         <View style={styles.progressBlock}>
@@ -66,7 +67,7 @@ export function SyncIssuesScreen() {
 }
 
 function ParkedCard({ row }: { row: OutboxRow }) {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const confirm = useConfirm();
   const [expanded, setExpanded] = useState(false);
 
@@ -82,7 +83,7 @@ function ParkedCard({ row }: { row: OutboxRow }) {
   };
 
   return (
-    <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
+    <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.warning }]}>
       <Pressable onPress={() => setExpanded(!expanded)}>
         <Text style={[styles.opLabel, { color: theme.colors.onSurface }]}>{labelOf(row)}</Text>
         <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>
@@ -118,11 +119,11 @@ const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   statusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   statusText: { fontSize: 13 },
-  lastError: { fontSize: 12, color: '#b45309' },
+  lastError: { fontSize: 12 },
   progressBlock: { gap: 6, marginTop: 8 },
   progressText: { fontSize: 13, textAlign: 'center' },
   empty: { textAlign: 'center', marginTop: 32 },
-  card: { borderWidth: 1, borderColor: '#e8c9a8', borderRadius: 8, padding: 10, gap: 6 },
+  card: { borderWidth: 1, borderRadius: 8, padding: 10, gap: 6 },
   opLabel: { fontSize: 15, fontWeight: '600' },
   muted: { fontSize: 12 },
   error: { fontSize: 12 },

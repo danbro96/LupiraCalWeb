@@ -3,8 +3,11 @@ import { DarkTheme as NavDarkBase, DefaultTheme as NavLightBase } from '@react-n
 import { DARK, LIGHT, type ColorScheme } from '@lupira/cal-tokens/color';
 import { RADII } from '@lupira/cal-tokens/spacing';
 
+/** MD3 has no warning/success slot, so they ride as extra colours the app reads off useTheme(). */
 function md3Colors(c: ColorScheme) {
   return {
+    warning: c.warning,
+    success: c.success,
     primary: c.primary,
     onPrimary: c.onPrimary,
     background: c.bg,
@@ -20,6 +23,8 @@ function md3Colors(c: ColorScheme) {
 
 export const paperLight = { ...MD3LightTheme, roundness: RADII.sm, colors: { ...MD3LightTheme.colors, ...md3Colors(LIGHT) } };
 export const paperDark = { ...MD3DarkTheme, roundness: RADII.sm, colors: { ...MD3DarkTheme.colors, ...md3Colors(DARK) } };
+
+export type AppTheme = typeof paperLight;
 
 const adapted = adaptNavigationTheme({
   reactNavigationLight: NavLightBase,

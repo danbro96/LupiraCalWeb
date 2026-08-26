@@ -13,9 +13,10 @@ import { useConfirm } from '../components/ConfirmDialog';
 import { Button, Input, formStyles } from '../components/form';
 import { useCalendarColors } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
+import type { AppTheme } from '../theme/paperTheme';
 
 export function ItemDetailScreen() {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const route = useRoute<RouteProp<RootStackParamList, 'ItemDetail'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { itemId } = route.params;
@@ -79,7 +80,7 @@ function CalendarsPanel({ itemId, memberships }: {
   itemId: string;
   memberships: { calendarId: string; status: string }[];
 }) {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const { data: calendars } = useCalendars();
   const colorOf = useCalendarColors();
   const statusOf = (calId: string) => memberships.find((m) => m.calendarId === calId)?.status;
@@ -98,7 +99,7 @@ function CalendarsPanel({ itemId, memberships }: {
           >
             <View style={[styles.calDot, { backgroundColor: colorOf(c.id) }]} />
             <Text style={styles.calName}>{c.displayName ?? c.id}</Text>
-            {status === 'Proposed' && <Text style={styles.proposed}>proposed</Text>}
+            {status === 'Proposed' && <Text style={[styles.proposed, { color: theme.colors.warning }]}>proposed</Text>}
             <Text style={[styles.calCheck, { color: theme.colors.primary }]}>{member ? '✓' : ''}</Text>
           </Pressable>
         );
@@ -109,7 +110,7 @@ function CalendarsPanel({ itemId, memberships }: {
 
 /// Merge-patch editor: add or overwrite one key at a time (the REST surface has no key removal).
 function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<string, unknown> | null }) {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const [key, setKey] = useState('');
   const [value, setValue] = useState('');
   const entries = Object.entries(metadata ?? {});
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
   calRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8 },
   calDot: { width: 10, height: 10, borderRadius: 5 },
   calName: { flex: 1, fontSize: 15 },
-  proposed: { fontSize: 11, color: '#b45309' },
+  proposed: { fontSize: 11 },
   calCheck: { width: 20, fontSize: 16, textAlign: 'center' },
   metaRow: { flexDirection: 'row', gap: 8, paddingVertical: 4 },
   metaKey: { fontWeight: '600', fontSize: 13 },

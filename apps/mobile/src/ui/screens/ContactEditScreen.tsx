@@ -14,6 +14,7 @@ import { ChoiceChips, DateField, Field, Input, formStyles } from '../components/
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
+import type { AppTheme } from '../theme/paperTheme';
 
 const KIND_OPTIONS = [{ value: 'Individual', label: 'Person' }, { value: 'Organization', label: 'Organization' }];
 const NAME_FORMAT_OPTIONS = [
@@ -22,10 +23,9 @@ const NAME_FORMAT_OPTIONS = [
   { value: 'NickName', label: 'Nickname' },
 ];
 const CHANNEL_TYPES = [null, 'Home', 'Work', 'Mobile'] as const;
-const STAR_ON_COLOR = '#d97706';
 
 export function ContactEditScreen() {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const route = useRoute<RouteProp<RootStackParamList, 'ContactEdit'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const contactId = route.params?.contactId;
@@ -229,7 +229,7 @@ export function ContactEditScreen() {
           <IconButton
             icon={c.preferred ? 'star' : 'star-outline'}
             size={18}
-            iconColor={c.preferred ? STAR_ON_COLOR : theme.colors.outline}
+            iconColor={c.preferred ? theme.colors.warning : theme.colors.outline}
             style={styles.star}
             onPress={() => setChannels((d) => d.map((x, j) => (j === i ? { ...x, preferred: !x.preferred } : x)))}
             hitSlop={6}

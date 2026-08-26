@@ -14,12 +14,13 @@ import { useSyncStatus } from '../../sync/syncStatus';
 import { useConfirm } from '../components/ConfirmDialog';
 import { Button, DateField, formStyles } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
+import type { AppTheme } from '../theme/paperTheme';
 
 /// User-facing settings only: session, the Android-integration toggle, and the sync surface.
 /// Everything developer-shaped (backend switching, debug log, bridge diagnostics) lives behind
 /// the Developer row.
 export function SettingsScreen() {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { authMode, user, token } = useAuth();
   const bridge = useBridge();
@@ -90,7 +91,7 @@ export function SettingsScreen() {
       )}
       {!bridge.permissionsOk && (
         <Pressable onPress={() => void Linking.openSettings()}>
-          <Text style={styles.warning}>Calendar/contacts permissions missing — tap to open app settings</Text>
+          <Text style={[styles.warning, { color: theme.colors.warning }]}>Calendar/contacts permissions missing — tap to open app settings</Text>
         </Pressable>
       )}
 
@@ -152,7 +153,7 @@ export function SettingsScreen() {
           </Text>
           {photoStatus.parked > 0 && (
             <Pressable onPress={() => void retryParkedPhotos()}>
-              <Text style={styles.warning}>{photoStatus.parked} failed — tap to retry</Text>
+              <Text style={[styles.warning, { color: theme.colors.warning }]}>{photoStatus.parked} failed — tap to retry</Text>
             </Pressable>
           )}
         </>
@@ -188,7 +189,7 @@ export function SettingsScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   detail: { fontSize: 13 },
-  warning: { color: '#b45309', fontSize: 13, paddingVertical: 4 },
+  warning: { fontSize: 13, paddingVertical: 4 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   link: { paddingVertical: 6 },
 });

@@ -26,7 +26,7 @@ export const LIGHT: ColorScheme = {
   textSubtle: '#8a909c',
   textDisabled: '#9aa0ac',
   danger: '#b3261e',
-  warning: '#5b4b18',
+  warning: '#b45309',
   success: '#1f7a4d',
 };
 

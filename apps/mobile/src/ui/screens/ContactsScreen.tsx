@@ -10,9 +10,10 @@ import { useContactList } from '../../state/queries';
 import { hashColor } from '../components/palette';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
+import type { AppTheme } from '../theme/paperTheme';
 
 export function ContactsScreen() {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { data } = useContactList();
   const [query, setQuery] = useState('');
@@ -54,7 +55,7 @@ export function ContactsScreen() {
 }
 
 function ContactRow({ row, onPress }: { row: ContactListRow; onPress: () => void }) {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const firstChannel = (row.doc.channels ?? []).find((c) => c.preferred) ?? (row.doc.channels ?? [])[0];
   return (
     <Pressable style={styles.row} onPress={onPress}>
@@ -63,7 +64,7 @@ function ContactRow({ row, onPress }: { row: ContactListRow; onPress: () => void
         <Text style={styles.name}>{row.displayName}</Text>
         {firstChannel && <Text style={[styles.sub, { color: theme.colors.onSurfaceVariant }]} numberOfLines={1}>{firstChannel.value}</Text>}
       </View>
-      {row.doc.birthday && <Text style={styles.bday}>🎂 {partialDateBadge(row.doc.birthday)}</Text>}
+      {row.doc.birthday && <Text style={[styles.bday, { color: theme.colors.warning }]}>🎂 {partialDateBadge(row.doc.birthday)}</Text>}
     </Pressable>
   );
 }
@@ -83,5 +84,5 @@ const styles = StyleSheet.create({
   rowBody: { flex: 1 },
   name: { fontSize: 15 },
   sub: { fontSize: 12 },
-  bday: { fontSize: 12, color: '#b45309' },
+  bday: { fontSize: 12 },
 });
