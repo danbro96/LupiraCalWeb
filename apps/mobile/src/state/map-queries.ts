@@ -4,7 +4,7 @@ import type { Feature, FeatureCollection, Point } from 'geojson';
 import { getDb } from '../data/db/expoDb';
 import { lookupPlaces } from '../data/api/generated/geo/places/places';
 import { listSavedPlaces } from '../data/api/generated/geo/saved-places/saved-places';
-import { getPhotosMap } from '../data/api/generated/photo/photos/photos';
+import { getPhotoMap } from '../data/api/generated/photo/photos/photos';
 import type { PlaceDto } from '../data/api/generated/geo/models';
 import { loadMapStyle, type BasemapStyle, type MapTheme } from '../data/mapStyle';
 import { mapEventRowsBetween } from '../data/mirror';
@@ -102,7 +102,7 @@ export function usePhotoFeatures(bbox: string | null, enabled: boolean): Feature
     staleTime: 60_000,
     retry: 1,
     queryFn: async () => {
-      const r = await getPhotosMap({ bbox: bbox! });
+      const r = await getPhotoMap({ bbox: bbox! });
       if (r.status !== 200) throw new Error(`photos map ${r.status}`);
       return r.data;
     },

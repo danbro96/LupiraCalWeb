@@ -4,7 +4,7 @@ import { fmtFuzzyDate, fmtResidencyPeriod, residencyStatus } from '@lupira/cal-d
 import { splitTrack } from '@lupira/cal-domain/geo';
 import { useSearchContacts } from '../data/api-contact/lupiraContactApi';
 import { useListSavedPlaces } from '../data/api-geo/lupiraGeoApi';
-import { useGetPhotosMap } from '../data/api-photo/lupiraPhotoApi';
+import { useGetPhotoMap } from '../data/api-photo/lupiraPhotoApi';
 import type { LocationTripDto } from '../data/api-location/models';
 import { useContainers } from './useContainers';
 import { useCurrentFixes, useThinnedTrack, useTrips, useVisits } from './useMovement';
@@ -237,7 +237,7 @@ export function useSavedPlaceFeatures(enabled: boolean): { features: FeatureColl
 /** Geotagged photo/video pins in the current viewport. Bbox-scoped (the endpoint caps its result set),
  *  so panning refetches instead of holding the whole library; thumbnail URLs are presigned. */
 export function usePhotoFeatures(bbox: string | null, enabled: boolean): { features: FeatureCollection; isLoading: boolean } {
-  const photosQ = useGetPhotosMap({ bbox: bbox ?? '' }, { query: { enabled: enabled && bbox !== null } });
+  const photosQ = useGetPhotoMap({ bbox: bbox ?? '' }, { query: { enabled: enabled && bbox !== null } });
 
   return useMemo(() => {
     const features = (photosQ.data?.features ?? []).map((f) =>

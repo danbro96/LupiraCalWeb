@@ -43,7 +43,6 @@ export const theme = createTheme({
   cssVariables: { colorSchemeSelector: 'media' },
   // Emotion injects unlayered, which outranks every layer — utilities would silently lose.
   // 'bespoke' before 'mui' keeps MUI winning that tie for the few structural hooks left.
-  modularCssLayers: '@layer theme, base, bespoke, mui, utilities;',
   colorSchemes: {
     light: { palette: palette(LIGHT) },
     dark: { palette: palette(DARK) },

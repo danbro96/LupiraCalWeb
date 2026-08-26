@@ -5,15 +5,9 @@
  * Family photo/video library backend for Lupira: presigned uploads, geotagging, map queries. Authenticate with a Bearer token issued by the OIDC provider (Authentik).
  * OpenAPI spec version: v1
  */
-import type { AssetKind } from './assetKind';
-import type { AssetStatus } from './assetStatus';
 
-export type GetPhotosParams = {
+export type GetPhotoMapParams = {
+bbox: string;
 from?: string;
 to?: string;
-bbox?: string;
-kind?: AssetKind;
-status?: AssetStatus;
-limit?: number;
-cursor?: string;
 };

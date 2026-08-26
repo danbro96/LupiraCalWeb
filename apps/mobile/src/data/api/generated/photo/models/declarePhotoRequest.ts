@@ -6,6 +6,10 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Client-side MediaStore metadata for one asset. (DeviceId, MediaStoreId) under the caller is
+ *             the idempotency key — retrying a declare returns the same asset.
+ */
 export interface DeclarePhotoRequest {
   deviceId: string;
   mediaStoreId: string;

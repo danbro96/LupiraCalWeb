@@ -1,6 +1,6 @@
 import NetInfo from '@react-native-community/netinfo';
 import { v7 as uuidv7 } from 'uuid';
-import { postPhotos, postPhotosIdComplete } from '../data/api/generated/photo/photos/photos';
+import { declarePhoto, completePhotoUpload } from '../data/api/generated/photo/photos/photos';
 import { getDb } from '../data/db/expoDb';
 import type { Db } from '../data/db/types';
 import * as mirror from '../data/mirror';
@@ -114,7 +114,7 @@ async function drainOnce(dbOverride?: Db): Promise<void> {
 async function uploadOne(db: Db, device: string, row: PhotoQueueRow): Promise<void> {
   const status = usePhotoBackupStatus.getState();
   try {
-    const declared = await postPhotos({
+    const declared = await declarePhoto({
       deviceId: device,
       mediaStoreId: row.media_store_id,
       contentType: row.content_type,
@@ -139,7 +139,7 @@ async function uploadOne(db: Db, device: string, row: PhotoQueueRow): Promise<vo
       if (httpStatus < 200 || httpStatus >= 300) throw new Error(`upload failed (${httpStatus})`);
     }
 
-    const completed = await postPhotosIdComplete(assetId);
+    const completed = await completePhotoUpload(assetId);
     if (completed.status !== 200) throw new Error(`complete failed (${completed.status})`);
 
     await db.exclusive((tx) => queue.markDone(tx, row.media_store_id, assetId));

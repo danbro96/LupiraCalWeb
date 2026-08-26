@@ -27,12 +27,13 @@ import type {
 import type {
   DeclarePhotoRequest,
   DeclaredPhotoResponse,
-  GetPhotosMapParams,
-  GetPhotosParams,
+  GetPhotoMapParams,
+  ListPhotosParams,
   MeDto,
   PhotoAssetDto,
   PhotoListResponse,
-  PhotoMapResponse
+  PhotoMapResponse,
+  ProblemDetails
 } from './models';
 
 import { customFetchPhoto } from '../fetcher';
@@ -93,7 +94,7 @@ export const getGetMeQueryKey = () => {
     }
 
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -112,10 +113,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
-export type GetMeQueryError = void
+export type GetMeQueryError = ProblemDetails
 
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMe>>,
@@ -125,7 +126,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
       >, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMe>>,
@@ -135,7 +136,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
       >, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -143,7 +144,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = void>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -161,7 +162,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = voi
 
 
 
-export const getPostPhotosUrl = () => {
+export const getDeclarePhotoUrl = () => {
 
 
 
@@ -172,7 +173,7 @@ export const getPostPhotosUrl = () => {
 /**
  * @summary Declare an asset (idempotent) and receive a presigned upload URL while bytes are pending.
  */
-export const postPhotos = async (declarePhotoRequest: DeclarePhotoRequest, options?: Parameters<typeof customFetchPhoto>[1]): Promise<DeclaredPhotoResponse> => {
+export const declarePhoto = async (declarePhotoRequest: DeclarePhotoRequest, options?: Parameters<typeof customFetchPhoto>[1]): Promise<DeclaredPhotoResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -180,7 +181,7 @@ export const postPhotos = async (declarePhotoRequest: DeclarePhotoRequest, optio
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return customFetchPhoto<DeclaredPhotoResponse>(getPostPhotosUrl(),
+return customFetchPhoto<DeclaredPhotoResponse>(getDeclarePhotoUrl(),
   {
     ...options,
     method: 'POST',
@@ -193,11 +194,11 @@ return customFetchPhoto<DeclaredPhotoResponse>(getPostPhotosUrl(),
 
 
 
-export const getPostPhotosMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPhotos>>, TError,{data: DeclarePhotoRequest}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
-): UseMutationOptions<Awaited<ReturnType<typeof postPhotos>>, TError,{data: DeclarePhotoRequest}, TContext> => {
+export const getDeclarePhotoMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof declarePhoto>>, TError,{data: DeclarePhotoRequest}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+): UseMutationOptions<Awaited<ReturnType<typeof declarePhoto>>, TError,{data: DeclarePhotoRequest}, TContext> => {
 
-const mutationKey = ['postPhotos'];
+const mutationKey = ['declarePhoto'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -207,10 +208,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postPhotos>>, {data: DeclarePhotoRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof declarePhoto>>, {data: DeclarePhotoRequest}> = (props) => {
           const {data} = props ?? {};
 
-          return  postPhotos(data,requestOptions)
+          return  declarePhoto(data,requestOptions)
         }
 
 
@@ -220,25 +221,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostPhotosMutationResult = NonNullable<Awaited<ReturnType<typeof postPhotos>>>
-    export type PostPhotosMutationBody = DeclarePhotoRequest
-    export type PostPhotosMutationError = unknown
+    export type DeclarePhotoMutationResult = NonNullable<Awaited<ReturnType<typeof declarePhoto>>>
+    export type DeclarePhotoMutationBody = DeclarePhotoRequest
+    export type DeclarePhotoMutationError = ProblemDetails
 
     /**
  * @summary Declare an asset (idempotent) and receive a presigned upload URL while bytes are pending.
  */
-export const usePostPhotos = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPhotos>>, TError,{data: DeclarePhotoRequest}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+export const useDeclarePhoto = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof declarePhoto>>, TError,{data: DeclarePhotoRequest}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postPhotos>>,
+        Awaited<ReturnType<typeof declarePhoto>>,
         TError,
         {data: DeclarePhotoRequest},
         TContext
       > => {
-      return useMutation(getPostPhotosMutationOptions(options), queryClient);
+      return useMutation(getDeclarePhotoMutationOptions(options), queryClient);
     }
 
-export const getGetPhotosUrl = (params?: GetPhotosParams,) => {
+export const getListPhotosUrl = (params?: ListPhotosParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -256,9 +257,9 @@ export const getGetPhotosUrl = (params?: GetPhotosParams,) => {
 /**
  * @summary List assets (keyset-paged, newest first) with presigned thumbnail URLs.
  */
-export const getPhotos = async (params?: GetPhotosParams, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoListResponse> => {
+export const listPhotos = async (params?: ListPhotosParams, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoListResponse> => {
 
-  return customFetchPhoto<PhotoListResponse>(getGetPhotosUrl(params),
+  return customFetchPhoto<PhotoListResponse>(getListPhotosUrl(params),
   {
     ...options,
     method: 'GET'
@@ -271,69 +272,69 @@ export const getPhotos = async (params?: GetPhotosParams, options?: Parameters<t
 
 
 
-export const getGetPhotosQueryKey = (params?: GetPhotosParams,) => {
+export const getListPhotosQueryKey = (params?: ListPhotosParams,) => {
     return [
     `/photos`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetPhotosQueryOptions = <TData = Awaited<ReturnType<typeof getPhotos>>, TError = unknown>(params?: GetPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotos>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export const getListPhotosQueryOptions = <TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetPhotosQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getListPhotosQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPhotos>>> = ({ signal }) => getPhotos(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPhotos>>> = ({ signal }) => listPhotos(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotos>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetPhotosQueryResult = NonNullable<Awaited<ReturnType<typeof getPhotos>>>
-export type GetPhotosQueryError = unknown
+export type ListPhotosQueryResult = NonNullable<Awaited<ReturnType<typeof listPhotos>>>
+export type ListPhotosQueryError = ProblemDetails
 
 
-export function useGetPhotos<TData = Awaited<ReturnType<typeof getPhotos>>, TError = unknown>(
- params: undefined |  GetPhotosParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotos>>, TError, TData>> & Pick<
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
+ params: undefined |  ListPhotosParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPhotos>>,
+          Awaited<ReturnType<typeof listPhotos>>,
           TError,
-          Awaited<ReturnType<typeof getPhotos>>
+          Awaited<ReturnType<typeof listPhotos>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPhotos<TData = Awaited<ReturnType<typeof getPhotos>>, TError = unknown>(
- params?: GetPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotos>>, TError, TData>> & Pick<
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPhotos>>,
+          Awaited<ReturnType<typeof listPhotos>>,
           TError,
-          Awaited<ReturnType<typeof getPhotos>>
+          Awaited<ReturnType<typeof listPhotos>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPhotos<TData = Awaited<ReturnType<typeof getPhotos>>, TError = unknown>(
- params?: GetPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotos>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List assets (keyset-paged, newest first) with presigned thumbnail URLs.
  */
 
-export function useGetPhotos<TData = Awaited<ReturnType<typeof getPhotos>>, TError = unknown>(
- params?: GetPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotos>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetPhotosQueryOptions(params,options)
+  const queryOptions = getListPhotosQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -346,7 +347,7 @@ export function useGetPhotos<TData = Awaited<ReturnType<typeof getPhotos>>, TErr
 
 
 
-export const getPostPhotosIdCompleteUrl = (id: string,) => {
+export const getCompletePhotoUploadUrl = (id: string,) => {
 
 
 
@@ -357,9 +358,9 @@ export const getPostPhotosIdCompleteUrl = (id: string,) => {
 /**
  * @summary Verify the uploaded bytes and queue processing (idempotent).
  */
-export const postPhotosIdComplete = async (id: string, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoAssetDto> => {
+export const completePhotoUpload = async (id: string, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoAssetDto> => {
 
-  return customFetchPhoto<PhotoAssetDto>(getPostPhotosIdCompleteUrl(id),
+  return customFetchPhoto<PhotoAssetDto>(getCompletePhotoUploadUrl(id),
   {
     ...options,
     method: 'POST'
@@ -372,11 +373,11 @@ export const postPhotosIdComplete = async (id: string, options?: Parameters<type
 
 
 
-export const getPostPhotosIdCompleteMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPhotosIdComplete>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
-): UseMutationOptions<Awaited<ReturnType<typeof postPhotosIdComplete>>, TError,{id: string}, TContext> => {
+export const getCompletePhotoUploadMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completePhotoUpload>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+): UseMutationOptions<Awaited<ReturnType<typeof completePhotoUpload>>, TError,{id: string}, TContext> => {
 
-const mutationKey = ['postPhotosIdComplete'];
+const mutationKey = ['completePhotoUpload'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -386,10 +387,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postPhotosIdComplete>>, {id: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof completePhotoUpload>>, {id: string}> = (props) => {
           const {id} = props ?? {};
 
-          return  postPhotosIdComplete(id,requestOptions)
+          return  completePhotoUpload(id,requestOptions)
         }
 
 
@@ -399,25 +400,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostPhotosIdCompleteMutationResult = NonNullable<Awaited<ReturnType<typeof postPhotosIdComplete>>>
+    export type CompletePhotoUploadMutationResult = NonNullable<Awaited<ReturnType<typeof completePhotoUpload>>>
 
-    export type PostPhotosIdCompleteMutationError = void
+    export type CompletePhotoUploadMutationError = ProblemDetails
 
     /**
  * @summary Verify the uploaded bytes and queue processing (idempotent).
  */
-export const usePostPhotosIdComplete = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPhotosIdComplete>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+export const useCompletePhotoUpload = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completePhotoUpload>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postPhotosIdComplete>>,
+        Awaited<ReturnType<typeof completePhotoUpload>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getPostPhotosIdCompleteMutationOptions(options), queryClient);
+      return useMutation(getCompletePhotoUploadMutationOptions(options), queryClient);
     }
 
-export const getPostPhotosIdReprocessUrl = (id: string,) => {
+export const getReprocessPhotoUrl = (id: string,) => {
 
 
 
@@ -428,9 +429,9 @@ export const getPostPhotosIdReprocessUrl = (id: string,) => {
 /**
  * @summary Re-queue a Ready or Failed asset through the processing pipeline.
  */
-export const postPhotosIdReprocess = async (id: string, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoAssetDto> => {
+export const reprocessPhoto = async (id: string, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoAssetDto> => {
 
-  return customFetchPhoto<PhotoAssetDto>(getPostPhotosIdReprocessUrl(id),
+  return customFetchPhoto<PhotoAssetDto>(getReprocessPhotoUrl(id),
   {
     ...options,
     method: 'POST'
@@ -443,11 +444,11 @@ export const postPhotosIdReprocess = async (id: string, options?: Parameters<typ
 
 
 
-export const getPostPhotosIdReprocessMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPhotosIdReprocess>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
-): UseMutationOptions<Awaited<ReturnType<typeof postPhotosIdReprocess>>, TError,{id: string}, TContext> => {
+export const getReprocessPhotoMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reprocessPhoto>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+): UseMutationOptions<Awaited<ReturnType<typeof reprocessPhoto>>, TError,{id: string}, TContext> => {
 
-const mutationKey = ['postPhotosIdReprocess'];
+const mutationKey = ['reprocessPhoto'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -457,10 +458,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postPhotosIdReprocess>>, {id: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof reprocessPhoto>>, {id: string}> = (props) => {
           const {id} = props ?? {};
 
-          return  postPhotosIdReprocess(id,requestOptions)
+          return  reprocessPhoto(id,requestOptions)
         }
 
 
@@ -470,25 +471,25 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostPhotosIdReprocessMutationResult = NonNullable<Awaited<ReturnType<typeof postPhotosIdReprocess>>>
+    export type ReprocessPhotoMutationResult = NonNullable<Awaited<ReturnType<typeof reprocessPhoto>>>
 
-    export type PostPhotosIdReprocessMutationError = void
+    export type ReprocessPhotoMutationError = ProblemDetails
 
     /**
  * @summary Re-queue a Ready or Failed asset through the processing pipeline.
  */
-export const usePostPhotosIdReprocess = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPhotosIdReprocess>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+export const useReprocessPhoto = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reprocessPhoto>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postPhotosIdReprocess>>,
+        Awaited<ReturnType<typeof reprocessPhoto>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getPostPhotosIdReprocessMutationOptions(options), queryClient);
+      return useMutation(getReprocessPhotoMutationOptions(options), queryClient);
     }
 
-export const getGetPhotosMapUrl = (params: GetPhotosMapParams,) => {
+export const getGetPhotoMapUrl = (params: GetPhotoMapParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -506,9 +507,9 @@ export const getGetPhotosMapUrl = (params: GetPhotosMapParams,) => {
 /**
  * @summary Geotagged Ready assets in a viewport as a GeoJSON FeatureCollection.
  */
-export const getPhotosMap = async (params: GetPhotosMapParams, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoMapResponse> => {
+export const getPhotoMap = async (params: GetPhotoMapParams, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoMapResponse> => {
 
-  return customFetchPhoto<PhotoMapResponse>(getGetPhotosMapUrl(params),
+  return customFetchPhoto<PhotoMapResponse>(getGetPhotoMapUrl(params),
   {
     ...options,
     method: 'GET'
@@ -521,69 +522,69 @@ export const getPhotosMap = async (params: GetPhotosMapParams, options?: Paramet
 
 
 
-export const getGetPhotosMapQueryKey = (params?: GetPhotosMapParams,) => {
+export const getGetPhotoMapQueryKey = (params?: GetPhotoMapParams,) => {
     return [
     `/photos/map`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetPhotosMapQueryOptions = <TData = Awaited<ReturnType<typeof getPhotosMap>>, TError = unknown>(params: GetPhotosMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosMap>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export const getGetPhotoMapQueryOptions = <TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(params: GetPhotoMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetPhotosMapQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetPhotoMapQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPhotosMap>>> = ({ signal }) => getPhotosMap(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPhotoMap>>> = ({ signal }) => getPhotoMap(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotosMap>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetPhotosMapQueryResult = NonNullable<Awaited<ReturnType<typeof getPhotosMap>>>
-export type GetPhotosMapQueryError = unknown
+export type GetPhotoMapQueryResult = NonNullable<Awaited<ReturnType<typeof getPhotoMap>>>
+export type GetPhotoMapQueryError = ProblemDetails
 
 
-export function useGetPhotosMap<TData = Awaited<ReturnType<typeof getPhotosMap>>, TError = unknown>(
- params: GetPhotosMapParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosMap>>, TError, TData>> & Pick<
+export function useGetPhotoMap<TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(
+ params: GetPhotoMapParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPhotosMap>>,
+          Awaited<ReturnType<typeof getPhotoMap>>,
           TError,
-          Awaited<ReturnType<typeof getPhotosMap>>
+          Awaited<ReturnType<typeof getPhotoMap>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPhotosMap<TData = Awaited<ReturnType<typeof getPhotosMap>>, TError = unknown>(
- params: GetPhotosMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosMap>>, TError, TData>> & Pick<
+export function useGetPhotoMap<TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(
+ params: GetPhotoMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPhotosMap>>,
+          Awaited<ReturnType<typeof getPhotoMap>>,
           TError,
-          Awaited<ReturnType<typeof getPhotosMap>>
+          Awaited<ReturnType<typeof getPhotoMap>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPhotosMap<TData = Awaited<ReturnType<typeof getPhotosMap>>, TError = unknown>(
- params: GetPhotosMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosMap>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export function useGetPhotoMap<TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(
+ params: GetPhotoMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Geotagged Ready assets in a viewport as a GeoJSON FeatureCollection.
  */
 
-export function useGetPhotosMap<TData = Awaited<ReturnType<typeof getPhotosMap>>, TError = unknown>(
- params: GetPhotosMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosMap>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export function useGetPhotoMap<TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(
+ params: GetPhotoMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetPhotosMapQueryOptions(params,options)
+  const queryOptions = getGetPhotoMapQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -596,7 +597,7 @@ export function useGetPhotosMap<TData = Awaited<ReturnType<typeof getPhotosMap>>
 
 
 
-export const getGetPhotosIdUrl = (id: string,) => {
+export const getGetPhotoUrl = (id: string,) => {
 
 
 
@@ -607,9 +608,9 @@ export const getGetPhotosIdUrl = (id: string,) => {
 /**
  * @summary One asset with presigned original + thumbnail URLs.
  */
-export const getPhotosId = async (id: string, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoAssetDto> => {
+export const getPhoto = async (id: string, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoAssetDto> => {
 
-  return customFetchPhoto<PhotoAssetDto>(getGetPhotosIdUrl(id),
+  return customFetchPhoto<PhotoAssetDto>(getGetPhotoUrl(id),
   {
     ...options,
     method: 'GET'
@@ -622,69 +623,69 @@ export const getPhotosId = async (id: string, options?: Parameters<typeof custom
 
 
 
-export const getGetPhotosIdQueryKey = (id: string,) => {
+export const getGetPhotoQueryKey = (id: string,) => {
     return [
     `/photos/${id}`
     ] as const;
     }
 
 
-export const getGetPhotosIdQueryOptions = <TData = Awaited<ReturnType<typeof getPhotosId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosId>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export const getGetPhotoQueryOptions = <TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetPhotosIdQueryKey(id);
+  const queryKey =  queryOptions?.queryKey ?? getGetPhotoQueryKey(id);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPhotosId>>> = ({ signal }) => getPhotosId(id, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPhoto>>> = ({ signal }) => getPhoto(id, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotosId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetPhotosIdQueryResult = NonNullable<Awaited<ReturnType<typeof getPhotosId>>>
-export type GetPhotosIdQueryError = void
+export type GetPhotoQueryResult = NonNullable<Awaited<ReturnType<typeof getPhoto>>>
+export type GetPhotoQueryError = ProblemDetails
 
 
-export function useGetPhotosId<TData = Awaited<ReturnType<typeof getPhotosId>>, TError = void>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosId>>, TError, TData>> & Pick<
+export function useGetPhoto<TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPhotosId>>,
+          Awaited<ReturnType<typeof getPhoto>>,
           TError,
-          Awaited<ReturnType<typeof getPhotosId>>
+          Awaited<ReturnType<typeof getPhoto>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPhotosId<TData = Awaited<ReturnType<typeof getPhotosId>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosId>>, TError, TData>> & Pick<
+export function useGetPhoto<TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPhotosId>>,
+          Awaited<ReturnType<typeof getPhoto>>,
           TError,
-          Awaited<ReturnType<typeof getPhotosId>>
+          Awaited<ReturnType<typeof getPhoto>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPhotosId<TData = Awaited<ReturnType<typeof getPhotosId>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosId>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export function useGetPhoto<TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary One asset with presigned original + thumbnail URLs.
  */
 
-export function useGetPhotosId<TData = Awaited<ReturnType<typeof getPhotosId>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotosId>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+export function useGetPhoto<TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetPhotosIdQueryOptions(id,options)
+  const queryOptions = getGetPhotoQueryOptions(id,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -697,7 +698,7 @@ export function useGetPhotosId<TData = Awaited<ReturnType<typeof getPhotosId>>, 
 
 
 
-export const getDeletePhotosIdUrl = (id: string,) => {
+export const getDeletePhotoUrl = (id: string,) => {
 
 
 
@@ -708,9 +709,9 @@ export const getDeletePhotosIdUrl = (id: string,) => {
 /**
  * @summary Delete an asset: objects first, then the document.
  */
-export const deletePhotosId = async (id: string, options?: Parameters<typeof customFetchPhoto>[1]): Promise<void> => {
+export const deletePhoto = async (id: string, options?: Parameters<typeof customFetchPhoto>[1]): Promise<void> => {
 
-  return customFetchPhoto<void>(getDeletePhotosIdUrl(id),
+  return customFetchPhoto<void>(getDeletePhotoUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -723,11 +724,11 @@ export const deletePhotosId = async (id: string, options?: Parameters<typeof cus
 
 
 
-export const getDeletePhotosIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePhotosId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
-): UseMutationOptions<Awaited<ReturnType<typeof deletePhotosId>>, TError,{id: string}, TContext> => {
+export const getDeletePhotoMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePhoto>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+): UseMutationOptions<Awaited<ReturnType<typeof deletePhoto>>, TError,{id: string}, TContext> => {
 
-const mutationKey = ['deletePhotosId'];
+const mutationKey = ['deletePhoto'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -737,10 +738,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePhotosId>>, {id: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePhoto>>, {id: string}> = (props) => {
           const {id} = props ?? {};
 
-          return  deletePhotosId(id,requestOptions)
+          return  deletePhoto(id,requestOptions)
         }
 
 
@@ -750,20 +751,20 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeletePhotosIdMutationResult = NonNullable<Awaited<ReturnType<typeof deletePhotosId>>>
+    export type DeletePhotoMutationResult = NonNullable<Awaited<ReturnType<typeof deletePhoto>>>
 
-    export type DeletePhotosIdMutationError = void
+    export type DeletePhotoMutationError = ProblemDetails
 
     /**
  * @summary Delete an asset: objects first, then the document.
  */
-export const useDeletePhotosId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePhotosId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+export const useDeletePhoto = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePhoto>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deletePhotosId>>,
+        Awaited<ReturnType<typeof deletePhoto>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getDeletePhotosIdMutationOptions(options), queryClient);
+      return useMutation(getDeletePhotoMutationOptions(options), queryClient);
     }

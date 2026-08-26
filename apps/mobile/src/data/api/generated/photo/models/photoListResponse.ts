@@ -9,6 +9,9 @@ import type { PhotoListItemDto } from './photoListItemDto';
 
 export interface PhotoListResponse {
   items: PhotoListItemDto[];
-  /** @nullable */
+  /**
+     * Opaque keyset cursor; absent on the last page.
+     * @nullable
+     */
   nextCursor?: string | null;
 }

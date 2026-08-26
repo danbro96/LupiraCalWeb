@@ -6,4 +6,7 @@
  * OpenAPI spec version: v1
  */
 
+/**
+ * Headers the PUT must echo — they are part of the presigned signature.
+ */
 export type DeclaredPhotoResponseRequiredHeaders = {[key: string]: string};

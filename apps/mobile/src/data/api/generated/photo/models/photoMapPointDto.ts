@@ -9,5 +9,6 @@
 export interface PhotoMapPointDto {
   /** @nullable */
   type?: string | null;
+  /** [lon, lat]. */
   coordinates: number[];
 }

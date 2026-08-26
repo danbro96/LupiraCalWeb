@@ -36,8 +36,14 @@ export interface PhotoAssetDto {
   processedAt?: string | null;
   /** @nullable */
   lastError?: string | null;
-  /** @nullable */
+  /**
+     * Presigned GET, long expiry; null until processed.
+     * @nullable
+     */
   thumbUrl?: string | null;
-  /** @nullable */
+  /**
+     * Presigned GET, short expiry; only on the single-asset endpoint.
+     * @nullable
+     */
   originalUrl?: string | null;
 }

@@ -6,9 +6,20 @@
  * OpenAPI spec version: v1
  */
 
-export interface PhotoMapPointDto {
+/**
+ * RFC 9457 problem details.
+ */
+export interface ProblemDetails {
   /** @nullable */
   type?: string | null;
-  /** [lon, lat]. */
-  coordinates: number[];
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  status?: number | null;
+  /** @nullable */
+  detail?: string | null;
+  /** @nullable */
+  instance?: string | null;
+  /** @nullable */
+  traceId?: string | null;
 }

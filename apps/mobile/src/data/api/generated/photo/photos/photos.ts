@@ -8,28 +8,41 @@
 import type {
   DeclarePhotoRequest,
   DeclaredPhotoResponse,
-  GetPhotosMapParams,
-  GetPhotosParams,
+  GetPhotoMapParams,
+  ListPhotosParams,
   PhotoAssetDto,
   PhotoListResponse,
-  PhotoMapResponse
+  PhotoMapResponse,
+  ProblemDetails
 } from '../models';
 
 import { apiFetch } from '../../../mutator';
 
-export type postPhotosResponse200 = {
+export type declarePhotoResponse200 = {
   data: DeclaredPhotoResponse
   status: 200
 }
 
-export type postPhotosResponseSuccess = (postPhotosResponse200) & {
+export type declarePhotoResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type declarePhotoResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type declarePhotoResponseSuccess = (declarePhotoResponse200) & {
   headers: Headers;
 };
-;
+export type declarePhotoResponseError = (declarePhotoResponse401 | declarePhotoResponse500) & {
+  headers: Headers;
+};
 
-export type postPhotosResponse = (postPhotosResponseSuccess)
+export type declarePhotoResponse = (declarePhotoResponseSuccess | declarePhotoResponseError)
 
-export const getPostPhotosUrl = () => {
+export const getDeclarePhotoUrl = () => {
 
 
 
@@ -40,7 +53,7 @@ export const getPostPhotosUrl = () => {
 /**
  * @summary Declare an asset (idempotent) and receive a presigned upload URL while bytes are pending.
  */
-export const postPhotos = async (declarePhotoRequest: DeclarePhotoRequest, options?: Parameters<typeof apiFetch>[1]): Promise<postPhotosResponse> => {
+export const declarePhoto = async (declarePhotoRequest: DeclarePhotoRequest, options?: Parameters<typeof apiFetch>[1]): Promise<declarePhotoResponse> => {
 
     const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
     if (!h) return {};
@@ -48,7 +61,7 @@ export const postPhotos = async (declarePhotoRequest: DeclarePhotoRequest, optio
     if (Array.isArray(h)) return Object.fromEntries(h);
     return h;
   };
-return apiFetch<postPhotosResponse>(getPostPhotosUrl(),
+return apiFetch<declarePhotoResponse>(getDeclarePhotoUrl(),
   {
     ...options,
     method: 'POST',
@@ -58,19 +71,31 @@ return apiFetch<postPhotosResponse>(getPostPhotosUrl(),
 );}
 
 
-export type getPhotosResponse200 = {
+export type listPhotosResponse200 = {
   data: PhotoListResponse
   status: 200
 }
 
-export type getPhotosResponseSuccess = (getPhotosResponse200) & {
+export type listPhotosResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type listPhotosResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type listPhotosResponseSuccess = (listPhotosResponse200) & {
   headers: Headers;
 };
-;
+export type listPhotosResponseError = (listPhotosResponse401 | listPhotosResponse500) & {
+  headers: Headers;
+};
 
-export type getPhotosResponse = (getPhotosResponseSuccess)
+export type listPhotosResponse = (listPhotosResponseSuccess | listPhotosResponseError)
 
-export const getGetPhotosUrl = (params?: GetPhotosParams,) => {
+export const getListPhotosUrl = (params?: ListPhotosParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -88,9 +113,9 @@ export const getGetPhotosUrl = (params?: GetPhotosParams,) => {
 /**
  * @summary List assets (keyset-paged, newest first) with presigned thumbnail URLs.
  */
-export const getPhotos = async (params?: GetPhotosParams, options?: Parameters<typeof apiFetch>[1]): Promise<getPhotosResponse> => {
+export const listPhotos = async (params?: ListPhotosParams, options?: Parameters<typeof apiFetch>[1]): Promise<listPhotosResponse> => {
 
-  return apiFetch<getPhotosResponse>(getGetPhotosUrl(params),
+  return apiFetch<listPhotosResponse>(getListPhotosUrl(params),
   {
     ...options,
     method: 'GET'
@@ -100,26 +125,36 @@ export const getPhotos = async (params?: GetPhotosParams, options?: Parameters<t
 );}
 
 
-export type postPhotosIdCompleteResponse200 = {
+export type completePhotoUploadResponse200 = {
   data: PhotoAssetDto
   status: 200
 }
 
-export type postPhotosIdCompleteResponse404 = {
-  data: void
+export type completePhotoUploadResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type completePhotoUploadResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postPhotosIdCompleteResponseSuccess = (postPhotosIdCompleteResponse200) & {
+export type completePhotoUploadResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type completePhotoUploadResponseSuccess = (completePhotoUploadResponse200) & {
   headers: Headers;
 };
-export type postPhotosIdCompleteResponseError = (postPhotosIdCompleteResponse404) & {
+export type completePhotoUploadResponseError = (completePhotoUploadResponse401 | completePhotoUploadResponse404 | completePhotoUploadResponse500) & {
   headers: Headers;
 };
 
-export type postPhotosIdCompleteResponse = (postPhotosIdCompleteResponseSuccess | postPhotosIdCompleteResponseError)
+export type completePhotoUploadResponse = (completePhotoUploadResponseSuccess | completePhotoUploadResponseError)
 
-export const getPostPhotosIdCompleteUrl = (id: string,) => {
+export const getCompletePhotoUploadUrl = (id: string,) => {
 
 
 
@@ -130,9 +165,9 @@ export const getPostPhotosIdCompleteUrl = (id: string,) => {
 /**
  * @summary Verify the uploaded bytes and queue processing (idempotent).
  */
-export const postPhotosIdComplete = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<postPhotosIdCompleteResponse> => {
+export const completePhotoUpload = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<completePhotoUploadResponse> => {
 
-  return apiFetch<postPhotosIdCompleteResponse>(getPostPhotosIdCompleteUrl(id),
+  return apiFetch<completePhotoUploadResponse>(getCompletePhotoUploadUrl(id),
   {
     ...options,
     method: 'POST'
@@ -142,26 +177,36 @@ export const postPhotosIdComplete = async (id: string, options?: Parameters<type
 );}
 
 
-export type postPhotosIdReprocessResponse200 = {
+export type reprocessPhotoResponse200 = {
   data: PhotoAssetDto
   status: 200
 }
 
-export type postPhotosIdReprocessResponse404 = {
-  data: void
+export type reprocessPhotoResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type reprocessPhotoResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type postPhotosIdReprocessResponseSuccess = (postPhotosIdReprocessResponse200) & {
+export type reprocessPhotoResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type reprocessPhotoResponseSuccess = (reprocessPhotoResponse200) & {
   headers: Headers;
 };
-export type postPhotosIdReprocessResponseError = (postPhotosIdReprocessResponse404) & {
+export type reprocessPhotoResponseError = (reprocessPhotoResponse401 | reprocessPhotoResponse404 | reprocessPhotoResponse500) & {
   headers: Headers;
 };
 
-export type postPhotosIdReprocessResponse = (postPhotosIdReprocessResponseSuccess | postPhotosIdReprocessResponseError)
+export type reprocessPhotoResponse = (reprocessPhotoResponseSuccess | reprocessPhotoResponseError)
 
-export const getPostPhotosIdReprocessUrl = (id: string,) => {
+export const getReprocessPhotoUrl = (id: string,) => {
 
 
 
@@ -172,9 +217,9 @@ export const getPostPhotosIdReprocessUrl = (id: string,) => {
 /**
  * @summary Re-queue a Ready or Failed asset through the processing pipeline.
  */
-export const postPhotosIdReprocess = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<postPhotosIdReprocessResponse> => {
+export const reprocessPhoto = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<reprocessPhotoResponse> => {
 
-  return apiFetch<postPhotosIdReprocessResponse>(getPostPhotosIdReprocessUrl(id),
+  return apiFetch<reprocessPhotoResponse>(getReprocessPhotoUrl(id),
   {
     ...options,
     method: 'POST'
@@ -184,19 +229,31 @@ export const postPhotosIdReprocess = async (id: string, options?: Parameters<typ
 );}
 
 
-export type getPhotosMapResponse200 = {
+export type getPhotoMapResponse200 = {
   data: PhotoMapResponse
   status: 200
 }
 
-export type getPhotosMapResponseSuccess = (getPhotosMapResponse200) & {
+export type getPhotoMapResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type getPhotoMapResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type getPhotoMapResponseSuccess = (getPhotoMapResponse200) & {
   headers: Headers;
 };
-;
+export type getPhotoMapResponseError = (getPhotoMapResponse401 | getPhotoMapResponse500) & {
+  headers: Headers;
+};
 
-export type getPhotosMapResponse = (getPhotosMapResponseSuccess)
+export type getPhotoMapResponse = (getPhotoMapResponseSuccess | getPhotoMapResponseError)
 
-export const getGetPhotosMapUrl = (params: GetPhotosMapParams,) => {
+export const getGetPhotoMapUrl = (params: GetPhotoMapParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -214,9 +271,9 @@ export const getGetPhotosMapUrl = (params: GetPhotosMapParams,) => {
 /**
  * @summary Geotagged Ready assets in a viewport as a GeoJSON FeatureCollection.
  */
-export const getPhotosMap = async (params: GetPhotosMapParams, options?: Parameters<typeof apiFetch>[1]): Promise<getPhotosMapResponse> => {
+export const getPhotoMap = async (params: GetPhotoMapParams, options?: Parameters<typeof apiFetch>[1]): Promise<getPhotoMapResponse> => {
 
-  return apiFetch<getPhotosMapResponse>(getGetPhotosMapUrl(params),
+  return apiFetch<getPhotoMapResponse>(getGetPhotoMapUrl(params),
   {
     ...options,
     method: 'GET'
@@ -226,26 +283,36 @@ export const getPhotosMap = async (params: GetPhotosMapParams, options?: Paramet
 );}
 
 
-export type getPhotosIdResponse200 = {
+export type getPhotoResponse200 = {
   data: PhotoAssetDto
   status: 200
 }
 
-export type getPhotosIdResponse404 = {
-  data: void
+export type getPhotoResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type getPhotoResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type getPhotosIdResponseSuccess = (getPhotosIdResponse200) & {
+export type getPhotoResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type getPhotoResponseSuccess = (getPhotoResponse200) & {
   headers: Headers;
 };
-export type getPhotosIdResponseError = (getPhotosIdResponse404) & {
+export type getPhotoResponseError = (getPhotoResponse401 | getPhotoResponse404 | getPhotoResponse500) & {
   headers: Headers;
 };
 
-export type getPhotosIdResponse = (getPhotosIdResponseSuccess | getPhotosIdResponseError)
+export type getPhotoResponse = (getPhotoResponseSuccess | getPhotoResponseError)
 
-export const getGetPhotosIdUrl = (id: string,) => {
+export const getGetPhotoUrl = (id: string,) => {
 
 
 
@@ -256,9 +323,9 @@ export const getGetPhotosIdUrl = (id: string,) => {
 /**
  * @summary One asset with presigned original + thumbnail URLs.
  */
-export const getPhotosId = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<getPhotosIdResponse> => {
+export const getPhoto = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<getPhotoResponse> => {
 
-  return apiFetch<getPhotosIdResponse>(getGetPhotosIdUrl(id),
+  return apiFetch<getPhotoResponse>(getGetPhotoUrl(id),
   {
     ...options,
     method: 'GET'
@@ -268,26 +335,36 @@ export const getPhotosId = async (id: string, options?: Parameters<typeof apiFet
 );}
 
 
-export type deletePhotosIdResponse204 = {
+export type deletePhotoResponse204 = {
   data: void
   status: 204
 }
 
-export type deletePhotosIdResponse404 = {
-  data: void
+export type deletePhotoResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type deletePhotoResponse404 = {
+  data: ProblemDetails
   status: 404
 }
 
-export type deletePhotosIdResponseSuccess = (deletePhotosIdResponse204) & {
+export type deletePhotoResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type deletePhotoResponseSuccess = (deletePhotoResponse204) & {
   headers: Headers;
 };
-export type deletePhotosIdResponseError = (deletePhotosIdResponse404) & {
+export type deletePhotoResponseError = (deletePhotoResponse401 | deletePhotoResponse404 | deletePhotoResponse500) & {
   headers: Headers;
 };
 
-export type deletePhotosIdResponse = (deletePhotosIdResponseSuccess | deletePhotosIdResponseError)
+export type deletePhotoResponse = (deletePhotoResponseSuccess | deletePhotoResponseError)
 
-export const getDeletePhotosIdUrl = (id: string,) => {
+export const getDeletePhotoUrl = (id: string,) => {
 
 
 
@@ -298,9 +375,9 @@ export const getDeletePhotosIdUrl = (id: string,) => {
 /**
  * @summary Delete an asset: objects first, then the document.
  */
-export const deletePhotosId = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<deletePhotosIdResponse> => {
+export const deletePhoto = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<deletePhotoResponse> => {
 
-  return apiFetch<deletePhotosIdResponse>(getDeletePhotosIdUrl(id),
+  return apiFetch<deletePhotoResponse>(getDeletePhotoUrl(id),
   {
     ...options,
     method: 'DELETE'

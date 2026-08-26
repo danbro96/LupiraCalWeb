@@ -8,6 +8,10 @@
 import type { AssetStatus } from './assetStatus';
 import type { DeclaredPhotoResponseRequiredHeaders } from './declaredPhotoResponseRequiredHeaders';
 
+/**
+ * Declare outcome. UploadUrl is present only while the asset still needs bytes (status
+ *             Declared); an already-uploaded asset returns its status so the client skips the transfer.
+ */
 export interface DeclaredPhotoResponse {
   assetId: string;
   status: AssetStatus;
@@ -15,5 +19,6 @@ export interface DeclaredPhotoResponse {
   uploadUrl?: string | null;
   /** @nullable */
   uploadExpiresAt?: string | null;
+  /** Headers the PUT must echo — they are part of the presigned signature. */
   requiredHeaders: DeclaredPhotoResponseRequiredHeaders;
 }

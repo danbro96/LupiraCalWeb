@@ -7,6 +7,9 @@
  */
 import type { PhotoMapFeatureDto } from './photoMapFeatureDto';
 
+/**
+ * GeoJSON-shaped map payload — feeds a MapLibre GeoJSON source directly.
+ */
 export interface PhotoMapResponse {
   /** @nullable */
   type?: string | null;
