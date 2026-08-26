@@ -97,8 +97,12 @@ export function MapCanvas({ children, center, zoom }: { children?: ReactNode; ce
     return () => { stale = true; };
   }, [theme, map]);
 
+  // maplibre-gl.css is unlayered, so overriding its own rules needs '!'.
   return (
-    <div className="map-canvas" ref={containerRef}>
+    <div
+      className="map-canvas [&_.maplibregl-map]:size-full dark:[&_.maplibregl-ctrl-attrib]:bg-[rgba(26,26,25,0.7)]! dark:[&_.maplibregl-ctrl-attrib]:text-[var(--mui-palette-text-secondary)]"
+      ref={containerRef}
+    >
       {basemapMissing && (
         <div className="map-error">Basemap unavailable — pins and tracks still render.</div>
       )}

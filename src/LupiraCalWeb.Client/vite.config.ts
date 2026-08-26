@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 // Same-origin BFF: the .NET backend (dev: http://localhost:5181) owns /api and the /auth routes. The
 // browser only talks to the Vite origin (:5174), which proxies these through — so the session cookie
@@ -9,7 +10,7 @@ const backend = process.env.BACKEND_ORIGIN ?? "http://localhost:5181";
 const proxied = ["/api", "/geo-api", "/contact-api", "/tasks-api", "/location-api", "/auth", "/signin-oidc", "/signout-callback-oidc", "/livez", "/readyz"];
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: {
     port: 5174,
     proxy: Object.fromEntries(

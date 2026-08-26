@@ -3,6 +3,11 @@ import { DARK, LIGHT, type ColorScheme } from '@lupira/cal-tokens/color';
 import { PHONE_BREAKPOINT } from '@lupira/cal-tokens/breakpoints';
 import { RADII, SPACING } from '@lupira/cal-tokens/spacing';
 import { FONT_FAMILY } from '@lupira/cal-tokens/typography';
+import {
+  CATEGORY_COLORS_DARK,
+  CATEGORY_COLORS_LIGHT,
+  type ContactCategoryName,
+} from '@lupira/cal-tokens/contactCategories';
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -33,9 +38,16 @@ function palette(c: ColorScheme) {
 const px = (o: Record<string, number>, prefix: string) =>
   Object.fromEntries(Object.entries(o).map(([k, v]) => [`--${prefix}-${k}`, `${v}px`]));
 
+// Domain palette with no MUI slot; @theme re-exports these as Tailwind cat-* utilities.
+const catVars = (o: Record<ContactCategoryName, string>) =>
+  Object.fromEntries(Object.entries(o).map(([k, v]) => [`--cat-${k.toLowerCase()}`, v]));
+
 export const theme = createTheme({
   // 'media' = system-driven scheme; MUI emits the dark var overrides in a prefers-color-scheme block.
   cssVariables: { colorSchemeSelector: 'media' },
+  // Emotion injects unlayered, which outranks every layer — utilities would silently lose.
+  // 'bespoke' before 'mui' keeps MUI winning that tie; 19 elements still carry both.
+  modularCssLayers: '@layer theme, base, bespoke, mui, utilities;',
   colorSchemes: {
     light: { palette: palette(LIGHT) },
     dark: { palette: palette(DARK) },
@@ -51,7 +63,14 @@ export const theme = createTheme({
   },
   components: {
     MuiCssBaseline: {
-      styleOverrides: { ':root': { ...px(SPACING, 'sp'), ...px(RADII, 'r') } },
+      styleOverrides: {
+        ':root': {
+          ...px(SPACING, 'sp'),
+          ...px(RADII, 'r'),
+          ...catVars(CATEGORY_COLORS_LIGHT),
+          '@media (prefers-color-scheme: dark)': catVars(CATEGORY_COLORS_DARK),
+        },
+      },
     },
     // The app is uniformly compact; opt out per-instance rather than repeating size="small".
     MuiButton: { defaultProps: { size: 'small' } },

@@ -16,6 +16,17 @@ import { buildRelationGraph } from '@lupira/cal-domain/contactRelations';
 import type { RelationCategory } from '@lupira/cal-domain/contactRelations';
 import { useIsPhone } from '../../useIsPhone';
 
+// xyflow reads its own custom props, so category colour needs no descendant selector.
+// Written out per category because Tailwind scans for literal class names.
+const EDGE_STROKE: Record<RelationCategory, string> = {
+  Family: '[--xy-edge-stroke:var(--color-cat-family)]',
+  Social: '[--xy-edge-stroke:var(--color-cat-social)]',
+  Professional: '[--xy-edge-stroke:var(--color-cat-professional)]',
+  Other: '[--xy-edge-stroke:var(--color-cat-other)]',
+};
+const EDGE_BASE =
+  '[--xy-edge-stroke-width:1.5] [--xy-edge-label-color:var(--mui-palette-text-secondary)]';
+
 type RelationNodeData = {
   label: string;
   category: string;
@@ -34,8 +45,8 @@ function RelationNode({ id, data }: NodeProps<RelationFlowNode>) {
   const state = `${data.isCenter ? ' center' : ''}${data.selected ? ' selected' : ''}${data.hit ? ' hit' : ''}${data.dimmed ? ' dimmed' : ''}`;
   return (
     <div className={`rel-node cat-${data.category}${state}`} title={data.label}>
-      <Handle type="target" position={Position.Top} className="rel-handle" isConnectable={false} />
-      <Handle type="source" position={Position.Top} className="rel-handle" isConnectable={false} />
+      <Handle type="target" position={Position.Top} className="top-1/2! min-w-0! min-h-0! opacity-0" isConnectable={false} />
+      <Handle type="source" position={Position.Top} className="top-1/2! min-w-0! min-h-0! opacity-0" isConnectable={false} />
       <span className="rel-node-label">{data.label}</span>
       {data.selected && !data.isCenter && (
         <button
@@ -149,7 +160,9 @@ export function ContactRelationGraph({
     target: e.target,
     label: e.label ?? e.kind,
     type: 'straight',
-    className: `rel-edge cat-${e.category}${e.inferred ? ' inferred' : ''}`,
+    className: `${EDGE_BASE} ${EDGE_STROKE[e.category] ?? EDGE_STROKE.Other}${
+      e.inferred ? ' opacity-75 [stroke-dasharray:5_4]' : ''
+    }`,
     markerEnd: e.directed ? { type: MarkerType.ArrowClosed } : undefined,
   }));
 
@@ -179,7 +192,7 @@ export function ContactRelationGraph({
       <Controls showInteractive={false} />
       <Panel position="top-right">
         <Tooltip title={fullscreen ? 'Close' : 'Fullscreen'}>
-          <IconButton size="small" onClick={() => setFullscreen((v) => !v)}>
+          <IconButton onClick={() => setFullscreen((v) => !v)}>
             {fullscreen ? <CloseFullscreenIcon fontSize="small" /> : <OpenInFullIcon fontSize="small" />}
           </IconButton>
         </Tooltip>
@@ -196,7 +209,7 @@ export function ContactRelationGraph({
   // The inline embed is unusable at phone width — offer the fullscreen modal instead.
   if (isPhone)
     return (
-      <Button variant="outlined" size="small" startIcon={<OpenInFullIcon />} onClick={() => setFullscreen(true)}>
+      <Button variant="outlined" startIcon={<OpenInFullIcon />} onClick={() => setFullscreen(true)}>
         Open relation graph
       </Button>
     );
