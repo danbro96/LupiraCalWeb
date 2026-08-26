@@ -273,7 +273,7 @@ describe('migrations', () => {
     await migrate(db, extended);
 
     const version = await db.first<{ user_version: number }>('PRAGMA user_version');
-    expect(version?.user_version).toBe(2);
+    expect(version?.user_version).toBe(extended.length);
     expect(await mirror.outboxCounts(db)).toEqual({ pending: 1, parked: 0 });
     await db.all('SELECT flagged FROM items');   // new column exists
   });
@@ -281,7 +281,7 @@ describe('migrations', () => {
   it('migrate is idempotent', async () => {
     await migrate(db);
     await migrate(db);
-    expect((await db.first<{ user_version: number }>('PRAGMA user_version'))?.user_version).toBe(1);
+    expect((await db.first<{ user_version: number }>('PRAGMA user_version'))?.user_version).toBe(MIGRATIONS.length);
   });
 });
 

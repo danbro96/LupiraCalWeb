@@ -6,8 +6,12 @@
     "scheme": "lupiracalendar",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
-    "runtimeVersion": { "policy": "fingerprint" },
-    "updates": { "url": "https://u.expo.dev/0ba754c0-d8ce-42b5-a6b0-d0e7dd20c710" },
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0ba754c0-d8ce-42b5-a6b0-d0e7dd20c710"
+    },
     "platforms": [
       "android"
     ],
@@ -20,7 +24,15 @@
       "expo-secure-store",
       "expo-web-browser",
       "@react-native-community/datetimepicker",
-      "@maplibre/maplibre-react-native"
+      "@maplibre/maplibre-react-native",
+      "expo-image",
+      [
+        "expo-media-library",
+        {
+          "granularPermissions": [ "photo", "video" ],
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
     ],
     "owner": "danbro96",
     "extra": {

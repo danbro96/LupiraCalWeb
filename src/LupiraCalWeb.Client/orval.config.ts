@@ -69,6 +69,23 @@ export default defineConfig({
       },
     },
   },
+  // LupiraPhotoApi (geotagged photo/video assets for the map). Proxied same-origin by the BFF at
+  // /photo-api; requests go through customFetchPhoto (PHOTO_API_BASE_URL). Object bytes never cross
+  // this prefix — list/map responses carry presigned URLs straight to the object store.
+  lupiraPhotoApi: {
+    input: { target: './backend-photo-openapi.json' },
+    output: {
+      target: './src/data/api-photo/lupiraPhotoApi.ts',
+      schemas: './src/data/api-photo/models',
+      client: 'react-query',
+      httpClient: 'fetch',
+      clean: true,
+      override: {
+        mutator: { path: './src/data/fetcher.ts', name: 'customFetchPhoto' },
+        fetch: { includeHttpResponseReturnType: false },
+      },
+    },
+  },
   // LupiraTasksApi (task deadlines on the calendar). Proxied same-origin by the BFF at /tasks-api;
   // requests go through customFetchTasks (TASKS_API_BASE_URL).
   lupiraTasksApi: {

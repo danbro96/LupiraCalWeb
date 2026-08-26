@@ -4,6 +4,7 @@ import type { Feature, FeatureCollection, Point } from 'geojson';
 import { getDb } from '../data/db/expoDb';
 import { lookupPlaces } from '../data/api/generated/geo/places/places';
 import { listSavedPlaces } from '../data/api/generated/geo/saved-places/saved-places';
+import { getPhotosMap } from '../data/api/generated/photo/photos/photos';
 import type { PlaceDto } from '../data/api/generated/geo/models';
 import { loadMapStyle, type BasemapStyle, type MapTheme } from '../data/mapStyle';
 import { mapEventRowsBetween } from '../data/mirror';
@@ -89,6 +90,36 @@ export function useEventFeatures(fromDay: string, toDay: string, enabled: boolea
     }
     return { type: 'FeatureCollection', features } satisfies FeatureCollection;
   }, [enabled, rows, places, calendarsQ.data]);
+}
+
+/** Geotagged photo pins in the viewport. Bbox-scoped and server-capped, so panning refetches rather
+ *  than holding the whole library; thumbnails are presigned URLs valid for hours. */
+export function usePhotoFeatures(bbox: string | null, enabled: boolean): FeatureCollection {
+  const reachable = useSyncStatus((s) => s.serverReachable);
+  const q = useQuery({
+    queryKey: ['map', 'photos', bbox],
+    enabled: enabled && reachable && bbox !== null,
+    staleTime: 60_000,
+    retry: 1,
+    queryFn: async () => {
+      const r = await getPhotosMap({ bbox: bbox! });
+      if (r.status !== 200) throw new Error(`photos map ${r.status}`);
+      return r.data;
+    },
+  });
+
+  return useMemo(() => {
+    if (!enabled) return EMPTY;
+    const features = (q.data?.features ?? []).map((f) => point(f.geometry.coordinates[0], f.geometry.coordinates[1], {
+      layer: 'photo',
+      photoId: f.properties.id,
+      kind: f.properties.kind,
+      takenAt: f.properties.takenAt,
+      placeLabel: f.properties.placeLabel ?? null,
+      thumbUrl: f.properties.thumbUrl ?? null,
+    }));
+    return { type: 'FeatureCollection', features } satisfies FeatureCollection;
+  }, [enabled, q.data]);
 }
 
 /** Saved-place pins (favorites first is the API's order; gazetteer link or raw pin). */

@@ -7,6 +7,7 @@ import {
   useContactFeatures,
   useEventFeatures,
   useMovementFeatures,
+  usePhotoFeatures,
   useSavedPlaceFeatures,
 } from '../../state/useMapData';
 import { MapCanvas, useMap, useMapTheme } from '../components/map/MapCanvas';
@@ -22,8 +23,8 @@ import { MapIndexPanel, type IndexGroup } from '../components/map/MapIndexPanel'
 import { MapPopover } from '../components/map/MapPopover';
 import { MapSearch, type SearchTarget } from '../components/map/MapSearch';
 import { PlaceDetailPanel } from '../components/map/PlaceDetailPanel';
-import { ContactsLayer, EventsLayer, FormerContactsLayer, MovementLayer, SavedPlacesLayer, type PinSelection } from '../components/map/layers';
-import { FitToData, FlyToPlace } from '../components/map/mapEffects';
+import { ContactsLayer, EventsLayer, FormerContactsLayer, MovementLayer, PhotosLayer, SavedPlacesLayer, type PinSelection } from '../components/map/layers';
+import { FitToData, FlyToPlace, ViewportReporter } from '../components/map/mapEffects';
 
 /** The map over everything located: events, GPS movement, contacts, saved places. Route stays
  * /locations so ?place=/?q= deep links keep working; state rides the URL (?from ?to ?layers). */
@@ -72,6 +73,10 @@ export default function MapScreen() {
   const movement = useMovementFeatures(fromIso, toIso, activeLayers.includes('movement'));
   const contacts = useContactFeatures(activeLayers.includes('contacts'));
   const saved = useSavedPlaceFeatures(activeLayers.includes('saved'));
+  // Photos are viewport-scoped rather than range-scoped: the endpoint caps its result set, so the
+  // bbox is what keeps a large library usable.
+  const [bbox, setBbox] = useState<string | null>(null);
+  const photos = usePhotoFeatures(bbox, activeLayers.includes('photos'));
 
   const [popover, setPopover] = useState<PinSelection>();
   const onSelect = useCallback((selection: PinSelection) => setPopover(selection), []);
@@ -92,7 +97,7 @@ export default function MapScreen() {
     () => [events.features, movement.visits, contacts.features, saved.features],
     [events.features, movement.visits, contacts.features, saved.features],
   );
-  const anyLoading = events.isLoading || movement.isLoading || contacts.isLoading || saved.isLoading;
+  const anyLoading = events.isLoading || movement.isLoading || contacts.isLoading || saved.isLoading || photos.isLoading;
 
   const showIndex = params.get('index') === '1';
   const showHistory = params.get('history') === '1';
@@ -184,6 +189,10 @@ export default function MapScreen() {
         {activeLayers.includes('saved') && (
           <SavedPlacesLayer theme={theme} features={saved.features} onSelect={onSelect} onOpenPlace={openPlace} />
         )}
+        {activeLayers.includes('photos') && (
+          <PhotosLayer theme={theme} features={photos.features} onSelect={onSelect} />
+        )}
+        {activeLayers.includes('photos') && <ViewportReporter onChange={setBbox} />}
         <FlyToPlace placeId={selectedPlaceId} />
         <FlyTo target={flyTarget} />
         <FitToData collections={fitCollections} skip={!!selectedPlaceId} />
@@ -255,6 +264,20 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
         <p className="meta">
           {props.ts ? fmtTime(new Date(String(props.ts))) : ''}
           {props.batteryPct != null ? ` · 🔋${String(props.batteryPct)}%` : ''}
+        </p>
+      </>
+    );
+  }
+  if (kind === 'photo') {
+    return (
+      <>
+        {props.thumbUrl != null && (
+          <img src={String(props.thumbUrl)} alt="" className="map-photo-thumb" loading="lazy" />
+        )}
+        <h4>{String(props.placeLabel ?? 'Unknown place')}</h4>
+        <p className="meta">
+          {props.takenAt ? new Date(String(props.takenAt)).toLocaleString() : ''}
+          {props.kind === 'Video' ? ' · video' : ''}
         </p>
       </>
     );

@@ -40,6 +40,20 @@ export default defineConfig({
       override: { mutator: { path: './src/data/api/mutator.ts', name: 'apiFetch' } },
     },
   },
+  // Photo/video assets: declare + complete drive the backup queue; list/map feed the Map tab.
+  // Object bytes never cross this client — responses carry presigned URLs to the object store.
+  lupiraPhotoApi: {
+    input: { target: '../../src/LupiraCalWeb.Client/backend-photo-openapi.json' },
+    output: {
+      target: './src/data/api/generated/photo/lupiraPhotoApi.ts',
+      schemas: './src/data/api/generated/photo/models',
+      client: 'fetch',
+      mode: 'tags-split',
+      clean: true,
+      baseUrl: '/photo-api',
+      override: { mutator: { path: './src/data/api/mutator.ts', name: 'apiFetch' } },
+    },
+  },
   // Task deadlines (read-only, online-only): only the Items surface is consumed.
   lupiraTasksApi: {
     input: { target: '../../src/LupiraCalWeb.Client/backend-tasks-openapi.json', filters: { mode: 'include', tags: ['Items'] } },

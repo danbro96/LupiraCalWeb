@@ -5,11 +5,14 @@ import { List, Switch, useTheme } from 'react-native-paper';
 import { APP_VERSION } from '../../config';
 import { useAuth } from '../../state/auth-store';
 import { useBridge } from '../../state/bridge-store';
+import { usePhotoBackup } from '../../state/photo-backup-store';
+import { usePhotoBackupStatus } from '../../sync/photoBackupStatus';
 import { usePrefs } from '../../state/prefs-store';
+import { retryParkedPhotos, runPhotoBackup } from '../../sync/photoUploader';
 import { runSync } from '../../sync/sync';
 import { useSyncStatus } from '../../sync/syncStatus';
 import { useConfirm } from '../components/ConfirmDialog';
-import { Button, formStyles } from '../components/form';
+import { Button, DateField, formStyles } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 
 /// User-facing settings only: session, the Android-integration toggle, and the sync surface.
@@ -21,8 +24,25 @@ export function SettingsScreen() {
   const { authMode, user, token } = useAuth();
   const bridge = useBridge();
   const prefs = usePrefs();
+  const photos = usePhotoBackup();
+  const photoStatus = usePhotoBackupStatus();
   const { syncing, pending, parked, lastSyncAt } = useSyncStatus();
   const confirm = useConfirm();
+
+  const togglePhotoBackup = (value: boolean) => {
+    void usePhotoBackup.getState().setEnabled(value).then(async (ok) => {
+      if (!ok) {
+        const open = await confirm({
+          title: 'Photo permissions needed',
+          message: 'Access to photos and videos — including their location data — is required to back them up. Grant it in the system settings and try again.',
+          confirmLabel: 'Open app settings',
+        });
+        if (open) void Linking.openSettings();
+        return;
+      }
+      if (value) void runPhotoBackup();
+    });
+  };
 
   const toggleBridge = (value: boolean) => {
     if (value) {
@@ -97,6 +117,49 @@ export function SettingsScreen() {
         )}
       />
       <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Deadlines from Lupira Tasks appear on their due day. Needs a connection.</Text>
+
+      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Photo backup</Text>
+      <List.Item
+        title="Back up photos & videos"
+        right={() => (
+          <Switch value={photos.settings.enabled} onValueChange={togglePhotoBackup} disabled={!photos.loaded} />
+        )}
+      />
+      {photos.settings.enabled && (
+        <>
+          <List.Item
+            title="Only on Wi-Fi"
+            right={() => (
+              <Switch
+                value={photos.settings.wifiOnly}
+                onValueChange={(v) => void usePhotoBackup.getState().setWifiOnly(v)}
+              />
+            )}
+          />
+          <View style={styles.row}>
+            <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Back up from</Text>
+            <DateField
+              value={photos.settings.backupFrom.slice(0, 10)}
+              onChange={(day) => day && void usePhotoBackup.getState().setBackupFrom(new Date(`${day}T00:00:00`).toISOString())}
+            />
+          </View>
+          <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
+            {photoStatus.progress
+              ? `Uploading… ${Math.round(photoStatus.progress.fraction * 100)}%`
+              : photoStatus.pending > 0
+                ? `${photoStatus.pending} waiting to upload`
+                : `${photoStatus.done} backed up`}
+          </Text>
+          {photoStatus.parked > 0 && (
+            <Pressable onPress={() => void retryParkedPhotos()}>
+              <Text style={styles.warning}>{photoStatus.parked} failed — tap to retry</Text>
+            </Pressable>
+          )}
+        </>
+      )}
+      <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
+        Originals upload straight to your own storage. Bulk backup runs while the app is open; in the background it catches up slowly.
+      </Text>
 
       <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Sync</Text>
       <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>

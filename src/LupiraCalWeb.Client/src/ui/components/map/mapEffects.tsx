@@ -20,6 +20,24 @@ export function FlyToPlace({ placeId }: { placeId: string | undefined }) {
 }
 
 /** One-time fit to the first non-empty data, unless a deep link already aimed the camera. */
+/** Reports the viewport as the APIs' `minLon,minLat,maxLon,maxLat` bbox on every settled move.
+ *  Rounded to ~11 m so a pixel of drift doesn't invalidate viewport-scoped query keys. */
+export function ViewportReporter({ onChange }: { onChange: (bbox: string) => void }) {
+  const map = useMap();
+  useEffect(() => {
+    const report = () => {
+      const b = map.getBounds();
+      onChange([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].map((n) => n.toFixed(4)).join(','));
+    };
+    report();
+    map.on('moveend', report);
+    return () => {
+      map.off('moveend', report);
+    };
+  }, [map, onChange]);
+  return null;
+}
+
 export function FitToData({ collections, skip }: { collections: FeatureCollection[]; skip: boolean }) {
   const map = useMap();
   const done = useRef(false);

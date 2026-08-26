@@ -9,6 +9,7 @@ import { useAuth } from './src/state/auth-store';
 import { ConfirmDialogHost } from './src/ui/components/ConfirmDialog';
 import { navDark, navLight, paperDark, paperLight } from './src/ui/theme/paperTheme';
 import { useBridge } from './src/state/bridge-store';
+import { usePhotoBackup } from './src/state/photo-backup-store';
 import { usePrefs } from './src/state/prefs-store';
 import { registerBackgroundSync } from './src/sync/backgroundTask';
 import { queryClient } from './src/sync/reactivity';
@@ -30,6 +31,7 @@ export default function App() {
     void registerBackgroundSync();
     void useBridge.getState().init();   // hydrate the integration flag + self-repair account/permissions
     void usePrefs.getState().init();
+    void usePhotoBackup.getState().init();
     return startSync();
   }, [loaded, authed]);
 

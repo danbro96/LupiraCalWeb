@@ -1,4 +1,4 @@
-import { API_BASE_URL, CONTACT_API_BASE_URL, GEO_API_BASE_URL, LOCATION_API_BASE_URL, TASKS_API_BASE_URL } from '../config';
+import { API_BASE_URL, CONTACT_API_BASE_URL, GEO_API_BASE_URL, LOCATION_API_BASE_URL, PHOTO_API_BASE_URL, TASKS_API_BASE_URL } from '../config';
 
 /**
  * Mutator for every orval-generated request. Auth rides the BFF's HttpOnly cookie session
@@ -64,6 +64,10 @@ export function customFetchTasks<T>(url: string, init?: RequestInit): Promise<T>
 
 export function customFetchLocation<T>(url: string, init?: RequestInit): Promise<T> {
   return request<T>(LOCATION_API_BASE_URL, url, init);
+}
+
+export function customFetchPhoto<T>(url: string, init?: RequestInit): Promise<T> {
+  return request<T>(PHOTO_API_BASE_URL, url, init);
 }
 
 export default customFetch;

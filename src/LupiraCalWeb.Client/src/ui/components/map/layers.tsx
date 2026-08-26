@@ -9,7 +9,7 @@ import { featureProp, useGeoJsonLayer, type LayerSpecSansSource } from './useGeo
 /** What a pin click surfaces — MapScreen renders the popover / navigates. */
 export interface PinSelection {
   lngLat: [number, number];
-  kind: 'contact' | 'contact-former' | 'visit' | 'saved' | 'current';
+  kind: 'contact' | 'contact-former' | 'visit' | 'saved' | 'current' | 'photo';
   props: Record<string, unknown>;
 }
 
@@ -312,6 +312,58 @@ export function SavedPlacesLayer({ theme, features, onSelect, onOpenPlace }: Com
         });
       },
     }), [onSelect, onOpenPlace]),
+  });
+  return null;
+}
+
+/** Geotagged photo/video pins; click surfaces the thumbnail in the popover. */
+export function PhotosLayer({ theme, features, onSelect }: CommonLayerProps & { features: FeatureCollection }) {
+  const map = useMap();
+  const colors = MAP_COLORS[theme];
+
+  const layers = useMemo<LayerSpecSansSource[]>(() => [
+    {
+      id: 'photos-clusters', type: 'circle', filter: ['has', 'point_count'],
+      paint: {
+        'circle-radius': ['step', ['get', 'point_count'], 12, 10, 16, 50, 22],
+        'circle-color': colors.photo,
+        'circle-opacity': 0.85,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.ring,
+      },
+    },
+    {
+      id: 'photos-cluster-count', type: 'symbol', filter: ['has', 'point_count'],
+      layout: CLUSTER_TEXT,
+      paint: { 'text-color': colors.ring },
+    },
+    {
+      id: 'photos-pins', type: 'circle', filter: ['!', ['has', 'point_count']],
+      paint: {
+        'circle-radius': 6,
+        'circle-color': colors.photo,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': colors.ring,
+      },
+    },
+  ], [colors]);
+
+  useGeoJsonLayer(map, 'photos', features, layers, {
+    cluster: true,
+    onClick: useMemo(() => ({
+      'photos-pins': (f: MapGeoJSONFeature, e) => onSelect({
+        lngLat: [e.lngLat.lng, e.lngLat.lat],
+        kind: 'photo',
+        props: {
+          photoId: featureProp<string>(f, 'photoId'),
+          kind: featureProp<string>(f, 'kind'),
+          takenAt: featureProp<string>(f, 'takenAt'),
+          placeLabel: featureProp<string>(f, 'placeLabel'),
+          thumbUrl: featureProp<string>(f, 'thumbUrl'),
+        },
+      }),
+      'photos-clusters': expandCluster(map, 'photos'),
+    }), [map, onSelect]),
   });
   return null;
 }
