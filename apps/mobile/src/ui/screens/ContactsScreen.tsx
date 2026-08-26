@@ -2,8 +2,8 @@ import { partialDateBadge } from '@lupira/cal-domain/partialDate';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Avatar, FAB, Searchbar, useTheme } from 'react-native-paper';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Avatar, FAB, List, Searchbar, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ContactListRow } from '../../data/mirror';
 import { useContactList } from '../../state/queries';
@@ -58,14 +58,20 @@ function ContactRow({ row, onPress }: { row: ContactListRow; onPress: () => void
   const theme = useTheme<AppTheme>();
   const firstChannel = (row.doc.channels ?? []).find((c) => c.preferred) ?? (row.doc.channels ?? [])[0];
   return (
-    <Pressable style={styles.row} onPress={onPress}>
-      <Avatar.Text size={38} label={initialsOf(row.displayName)} style={{ backgroundColor: hashColor(row.id) }} />
-      <View style={styles.rowBody}>
-        <Text style={styles.name}>{row.displayName}</Text>
-        {firstChannel && <Text style={[styles.sub, { color: theme.colors.onSurfaceVariant }]} numberOfLines={1}>{firstChannel.value}</Text>}
-      </View>
-      {row.doc.birthday && <Text style={[styles.bday, { color: theme.colors.warning }]}>🎂 {partialDateBadge(row.doc.birthday)}</Text>}
-    </Pressable>
+    <List.Item
+      onPress={onPress}
+      title={row.displayName}
+      description={firstChannel?.value}
+      descriptionNumberOfLines={1}
+      left={() => (
+        <Avatar.Text size={38} label={initialsOf(row.displayName)} style={{ backgroundColor: hashColor(row.id) }} />
+      )}
+      right={() =>
+        row.doc.birthday ? (
+          <Text style={[styles.bday, { color: theme.colors.warning }]}>🎂 {partialDateBadge(row.doc.birthday)}</Text>
+        ) : null
+      }
+    />
   );
 }
 
@@ -80,9 +86,5 @@ const styles = StyleSheet.create({
   toolbar: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10 },
   search: { flex: 1 },
   empty: { textAlign: 'center', marginTop: 32 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 8 },
-  rowBody: { flex: 1 },
-  name: { fontSize: 15 },
-  sub: { fontSize: 12 },
   bday: { fontSize: 12 },
 });

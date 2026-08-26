@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button, List, useTheme } from 'react-native-paper';
+import { Button, List, RadioButton, useTheme } from 'react-native-paper';
 import { API_PRESETS, type AuthMode } from '../../config';
 import { presetFor, useAuth } from '../../state/auth-store';
 import { useSyncStatus } from '../../sync/syncStatus';
@@ -30,15 +30,19 @@ export function DeveloperScreen() {
       <List.Subheader>Backend</List.Subheader>
       {/* http presets need cleartext networking — dev-client-only (release builds block cleartext). */}
       {API_PRESETS.filter((p) => __DEV__ || p.url.startsWith('https')).map((p) => (
-        <Pressable key={p.key} style={styles.row} onPress={() => applyBackend(p.url, p.authMode)}>
-          <Text style={styles.rowLabel}>
-            {activeKey === p.key ? '● ' : '○ '}{p.label}
-          </Text>
-          <Text style={[styles.rowDetail, { color: theme.colors.onSurfaceVariant }]}>{p.url} · {p.authMode === 'oidc' ? 'sign-in' : 'dev auto-auth'}</Text>
-        </Pressable>
+        <List.Item
+          key={p.key}
+          onPress={() => applyBackend(p.url, p.authMode)}
+          title={p.label}
+          description={`${p.url} · ${p.authMode === 'oidc' ? 'sign-in' : 'dev auto-auth'}`}
+          left={() => <RadioButton status={activeKey === p.key ? 'checked' : 'unchecked'} value={p.key} onPress={() => applyBackend(p.url, p.authMode)} />}
+        />
       ))}
       <View style={styles.custom}>
-        <Text style={styles.rowLabel}>{activeKey === 'custom' ? '● ' : '○ '}Custom</Text>
+        <List.Item
+          title="Custom"
+          left={() => <RadioButton status={activeKey === 'custom' ? 'checked' : 'unchecked'} value="custom" />}
+        />
         <Input
           label="http://host:5181"
           autoCapitalize="none"
@@ -74,9 +78,6 @@ export function DeveloperScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
-  row: { paddingVertical: 8 },
-  rowLabel: { fontSize: 16 },
-  rowDetail: { fontSize: 13 },
   custom: { paddingVertical: 8, gap: 8 },
   link: { paddingVertical: 6 },
   mono: { fontFamily: 'monospace', fontSize: 11 },
