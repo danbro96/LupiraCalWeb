@@ -45,60 +45,6 @@ code {
 
 /* ---- Date picker popover (tap the title to jump to any date). ---- */
 /* Popover paper owns placement, surface, and elevation. */
-.date-picker {
-  width: 260px;
-  max-width: calc(100vw - 2 * var(--sp-lg));
-  padding: var(--sp-sm);
-}
-.dp-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--sp-xs);
-}
-.dp-title {
-  font-size: 14px;
-  font-weight: 700;
-}
-.dp-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-}
-.dp-dow {
-  padding: 2px 0;
-  text-align: center;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--mui-palette-text-subtle);
-}
-.dp-day {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1;
-  border: 0;
-  background: none;
-  border-radius: var(--r-sm);
-  color: var(--mui-palette-text-primary);
-  font-size: 13px;
-  cursor: pointer;
-}
-.dp-day:hover {
-  background: var(--mui-palette-background-paper);
-}
-.dp-day.other {
-  color: var(--mui-palette-text-disabled);
-}
-.dp-day.today {
-  font-weight: 700;
-  color: var(--mui-palette-primary-main);
-}
-.dp-day.sel,
-.dp-day.sel.today {
-  background: var(--mui-palette-primary-main);
-  color: var(--mui-palette-primary-contrastText);
-}
 
 /* ---- Month grid. ---- */
 .month-grid {
