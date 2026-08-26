@@ -1,5 +1,15 @@
 import { useState } from 'react';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SettingsIcon from '@mui/icons-material/Settings';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
@@ -19,6 +29,10 @@ import { AddressBookManage } from './AddressBookManage';
 import { WrapRow } from '../WrapRow';
 import { SidePane } from './panes';
 
+const COUNT_SX = { flex: 'none', fontSize: 12, color: 'text.subtle', fontVariantNumeric: 'tabular-nums' } as const;
+// Forms and the add buttons align with the group rows, one caret-width in.
+const ADD_SX = { display: 'flex', flexDirection: 'column', gap: '4px', p: '4px 36px 8px' } as const;
+
 /** Left rail: address books → their groups/orgs, with contact and member counts.
  *  Book click filters the list (?book); group click opens the group pane + filters to members. */
 export function ContactsTree() {
@@ -37,30 +51,31 @@ export function ContactsTree() {
   return (
     <SidePane width={240} component="aside">
       {me?.contactId ? (
-        <button
-          className={`tree-node you-node ${openContactId === me.contactId ? 'active' : ''}`}
+        <ListItemButton
+          selected={openContactId === me.contactId}
           onClick={() => navigate(`/contacts/${me.contactId}`)}
+          sx={{ borderBottom: 1, borderColor: 'border', mb: 0.5, fontWeight: 600 }}
         >
-          <span className="tree-label">👤 {me.displayName || 'You'}</span>
+          <ListItemText primary={`👤 ${me.displayName || 'You'}`} slotProps={{ primary: { noWrap: true } }} />
           {me.displayName && <Chip variant="outlined" label="You" />}
-        </button>
+        </ListItemButton>
       ) : (
         me &&
         (allContacts?.length ?? 0) > 0 && (
-          <div className="tree-add">
+          <Box sx={ADD_SX}>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>Open your card → “This is me” to pin it here.</Typography>
-          </div>
+          </Box>
         )
       )}
       <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>Address books</Typography>
-      <button
-        className={`tree-node ${!activeBookId && !activeGroupId ? 'active' : ''}`}
+      <ListItemButton
+        selected={!activeBookId && !activeGroupId}
         onClick={() => navigate('/contacts?pane=list')}
+        sx={{ pl: '36px' }}
       >
-        <span className="tree-caret" />
-        <span className="tree-label">All contacts</span>
-        <span className="tree-count">{allContacts?.length ?? '·'}</span>
-      </button>
+        <ListItemText primary="All contacts" slotProps={{ primary: { noWrap: true } }} />
+        <Box component="span" sx={COUNT_SX}>{allContacts?.length ?? '·'}</Box>
+      </ListItemButton>
 
       {addressBooks.map((book) => (
         <BookNode
@@ -75,11 +90,11 @@ export function ContactsTree() {
       {addingBook ? (
         <NewBookForm onDone={() => setAddingBook(false)} />
       ) : (
-        <div className="tree-add">
+        <Box sx={ADD_SX}>
           <Button variant="text" onClick={() => setAddingBook(true)}>
             + Address book
           </Button>
-        </div>
+        </Box>
       )}
     </SidePane>
   );
@@ -105,36 +120,25 @@ function BookNode({
 
   return (
     <>
-      <button
-        className={`tree-node ${isActive ? 'active' : ''}`}
-        onClick={() => navigate(`/contacts?book=${book.id}`)}
-      >
-        <span
-          className="tree-caret"
-          role="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setExpanded((x) => !x);
-          }}
+      <ListItem disablePadding sx={{ pr: 1 }}>
+        <IconButton
+          onClick={() => setExpanded((x) => !x)}
+          aria-label={expanded ? 'Collapse' : 'Expand'}
+          aria-expanded={expanded}
+          sx={{ ml: 0.5 }}
         >
-          {expanded ? '▾' : '▸'}
-        </span>
-        <span className="tree-label">📇 {addressBookLabel(book)}</span>
+          {expanded ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
+        </IconButton>
+        <ListItemButton selected={isActive} onClick={() => navigate(`/contacts?book=${book.id}`)}>
+          <ListItemText primary={`📇 ${addressBookLabel(book)}`} slotProps={{ primary: { noWrap: true } }} />
+        </ListItemButton>
         {book.access === 'Owner' && (
-          <span
-            className="tree-manage"
-            role="button"
-            title="Manage address book"
-            onClick={(e) => {
-              e.stopPropagation();
-              setManaging((x) => !x);
-            }}
-          >
-            ⚙
-          </span>
+          <IconButton onClick={() => setManaging((x) => !x)} title="Manage address book" aria-label="Manage address book">
+            <SettingsIcon fontSize="small" />
+          </IconButton>
         )}
-        <span className="tree-count">{count}</span>
-      </button>
+        <Box component="span" sx={COUNT_SX}>{count}</Box>
+      </ListItem>
 
       {managing && (
         <AddressBookManage
@@ -146,31 +150,33 @@ function BookNode({
         />
       )}
 
-      {expanded && (
-        <>
+      <Collapse in={expanded} unmountOnExit>
+        <List disablePadding>
           {(groups ?? []).map((g) => (
-            <button
+            <ListItemButton
               key={g.id}
-              className={`tree-node tree-group ${activeGroupId === g.id ? 'active' : ''}`}
+              selected={activeGroupId === g.id}
               onClick={() => navigate(`/contacts/groups/${g.id}?book=${book.id}`)}
+              sx={{ pl: '36px' }}
             >
-              <span className="tree-label">
-                {g.kind === 'Organization' ? '🏢' : '👥'} {g.name}
-              </span>
-              <span className="tree-count">{g.members.length}</span>
-            </button>
+              <ListItemText
+                primary={`${g.kind === 'Organization' ? '🏢' : '👥'} ${g.name}`}
+                slotProps={{ primary: { noWrap: true } }}
+              />
+              <Box component="span" sx={COUNT_SX}>{g.members.length}</Box>
+            </ListItemButton>
           ))}
           {adding ? (
             <NewGroupForm addressBookId={book.id} onDone={() => setAdding(false)} />
           ) : (
-            <div className="tree-add">
+            <Box sx={ADD_SX}>
               <Button variant="text" onClick={() => setAdding(true)}>
                 + group
               </Button>
-            </div>
+            </Box>
           )}
-        </>
-      )}
+        </List>
+      </Collapse>
     </>
   );
 }
@@ -182,8 +188,9 @@ function NewGroupForm({ addressBookId, onDone }: { addressBookId: string; onDone
   const [kind, setKind] = useState('group');
 
   return (
-    <form
-      className="tree-add"
+    <Box
+      component="form"
+      sx={ADD_SX}
       onSubmit={(e) => {
         e.preventDefault();
         if (name) create.mutate({ addressBookId, params: { name, kind } });
@@ -202,7 +209,7 @@ function NewGroupForm({ addressBookId, onDone }: { addressBookId: string; onDone
           Cancel
         </Button>
       </WrapRow>
-    </form>
+    </Box>
   );
 }
 
@@ -213,8 +220,9 @@ function NewBookForm({ onDone }: { onDone: () => void }) {
   const [displayName, setDisplayName] = useState('');
 
   return (
-    <form
-      className="tree-add"
+    <Box
+      component="form"
+      sx={ADD_SX}
       onSubmit={(e) => {
         e.preventDefault();
         if (slug) create.mutate({ data: { slug, displayName: displayName || null } });
@@ -230,6 +238,6 @@ function NewBookForm({ onDone }: { onDone: () => void }) {
           Cancel
         </Button>
       </WrapRow>
-    </form>
+    </Box>
   );
 }
