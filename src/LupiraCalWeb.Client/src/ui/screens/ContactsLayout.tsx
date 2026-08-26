@@ -2,7 +2,7 @@ import { Link, Outlet, useMatch, useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { ContactsTree } from '../components/contacts/ContactsTree';
 import { ContactList } from '../components/contacts/ContactList';
-import { useIsPhone } from '../useIsPhone';
+import { useIsPhone } from '../hooks/useIsPhone';
 import Box from '@mui/material/Box';
 import { PaneFrame } from '../components/contacts/panes';
 

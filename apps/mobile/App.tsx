@@ -5,8 +5,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from './src/state/auth-store';
 import { ConfirmDialogHost } from './src/ui/components/ConfirmDialog';
+import { ToastHost } from './src/ui/components/ToastHost';
 import { navDark, navLight, paperDark, paperLight } from './src/ui/theme/paperTheme';
 import { useBridge } from './src/state/bridge-store';
 import { usePhotoBackup } from './src/state/photo-backup-store';
@@ -38,14 +40,17 @@ export default function App() {
   if (!loaded) return null;   // hydration gate — avoids a login flash over a persisted session
   return (
     <QueryClientProvider client={queryClient}>
-      <PaperProvider theme={scheme === 'dark' ? paperDark : paperLight}>
-        <ConfirmDialogHost>
-          <NavigationContainer linking={linking} theme={scheme === 'dark' ? navDark : navLight}>
-            <StatusBar style="auto" />
-            <RootNav />
-          </NavigationContainer>
-        </ConfirmDialogHost>
-      </PaperProvider>
+      <SafeAreaProvider>
+        <PaperProvider theme={scheme === 'dark' ? paperDark : paperLight}>
+          <ConfirmDialogHost>
+            <NavigationContainer linking={linking} theme={scheme === 'dark' ? navDark : navLight}>
+              <StatusBar style="auto" />
+              <RootNav />
+            </NavigationContainer>
+          </ConfirmDialogHost>
+          <ToastHost />
+        </PaperProvider>
+      </SafeAreaProvider>
     </QueryClientProvider>
   );
 }

@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { listItems } from '../data/api-tasks/lupiraTasksApi';
-import { ItemStatus, type ItemResponse } from '../data/api-tasks/models';
+import { ItemStatus, type ItemDto } from '../data/api-tasks/models';
 
 /**
  * Open tasks due inside [from, to) — the calendar's third entry source. Hand-rolled rather than the
@@ -8,7 +8,7 @@ import { ItemStatus, type ItemResponse } from '../data/api-tasks/models';
  * key (same path, different API) and getting nuked by useInvalidateItems's startsWith('/items')
  * predicate on every item mutation. Cancelled is closed but `completed: false`, so drop it here.
  */
-export function useTaskDeadlines(from: string, to: string, enabled: boolean): ItemResponse[] {
+export function useTaskDeadlines(from: string, to: string, enabled: boolean): ItemDto[] {
   const params = { dueFrom: from, dueTo: to, completed: false };
   const { data } = useQuery({
     queryKey: ['/tasks-api/items', params],

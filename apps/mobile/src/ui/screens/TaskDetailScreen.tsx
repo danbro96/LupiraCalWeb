@@ -2,7 +2,7 @@ import { fmtWhen } from '@lupira/cal-domain/time';
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
-import { Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
 import { getItem } from '../../data/api/generated/tasks/items/items';
 import { taskDeepLink } from '../../domain/taskRows';
@@ -10,6 +10,7 @@ import { Centered } from '../components/Centered';
 import { Button } from '../components/Button';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
+import { toastError } from '../../feedback/toast';
 
 /** Read-only view of a LupiraTasks deadline. Online-only by design (tasks never enter the mirror);
  *  editing lives in the Lupira Tasks app, reached via the deep link below. */
@@ -34,7 +35,7 @@ export function TaskDetailScreen() {
   const overdue = due != null && due < new Date() && !task.completed;
   const openInTasks = () =>
     Linking.openURL(taskDeepLink(task.listId, task.id)).catch(() =>
-      Alert.alert('Lupira Tasks not installed', 'Task details live in the Lupira Tasks app.'),
+      toastError('Lupira Tasks is not installed — task details live in that app.'),
     );
 
   return (

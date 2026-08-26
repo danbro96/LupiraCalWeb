@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Avatar, Button, Chip, List, Text } from 'react-native-paper';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
@@ -21,6 +21,7 @@ import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { initialsOf } from './ContactsScreen';
 import { useColors } from '../theme';
+import { toastError } from '../../feedback/toast';
 
 /** Read-only overview — ALL editing lives on the edit screen. Shows everything the mirror doc carries:
  *  names, kind, pronouns, birthday+age, deceased, unified reach (channels + profiles), tags, addresses
@@ -228,7 +229,7 @@ function AddressRow({ placeId, type }: { placeId: string | null; type: string })
       if (!query) throw new Error('place has no location');
       await Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);
     } catch {
-      Alert.alert('Cannot open map', 'Resolving the address needs a connection to the server.');
+      toastError('Cannot open map — resolving the address needs a connection.');
     } finally {
       setBusy(false);
     }

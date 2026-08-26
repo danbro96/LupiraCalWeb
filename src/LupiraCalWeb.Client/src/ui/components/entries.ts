@@ -1,5 +1,5 @@
 import type { CalendarItemDto, CalendarItemOccurrenceDto, ContainerDto, OccurrenceOrigin } from '../../data/api/models';
-import type { ItemResponse as TaskDto } from '../../data/api-tasks/models';
+import type { ItemDto as TaskDto } from '../../data/api-tasks/models';
 import { parseYmd } from '@lupira/cal-domain/time';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 

@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../../App';
 import { RequireAuth } from './RequireAuth';
-import { AppShell } from '../AppShell';
+import { AppShell } from '../components/AppShell';
 import { CalendarScreen } from '../screens/CalendarScreen';
 import { InboxScreen } from '../screens/InboxScreen';
 import { ItemsScreen } from '../screens/ItemsScreen';

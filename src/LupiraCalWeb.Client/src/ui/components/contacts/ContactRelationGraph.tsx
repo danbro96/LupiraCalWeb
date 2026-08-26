@@ -17,7 +17,7 @@ import { getListContactRelationsQueryKey, listContactRelations } from '../../../
 import type { ContactRelationEntryDto } from '../../../data/api-contact/models';
 import { buildRelationGraph } from '@lupira/cal-domain/contactRelations';
 import type { RelationCategory } from '@lupira/cal-domain/contactRelations';
-import { useIsPhone } from '../../useIsPhone';
+import { useIsPhone } from '../../hooks/useIsPhone';
 
 // The node border reads the category accent directly; only the xyflow edge (which has no element
 // to hang sx on) still needs a class. Written out per category because Tailwind scans for literals.

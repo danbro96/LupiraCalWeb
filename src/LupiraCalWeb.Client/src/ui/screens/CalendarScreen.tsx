@@ -26,8 +26,8 @@ import { MiniMonthPicker } from '../components/MiniMonthPicker';
 import { MonthGrid } from '../components/MonthGrid';
 import { WeekGrid } from '../components/WeekGrid';
 import { Sidebar } from '../components/Sidebar';
-import { useCalendarRange } from '../useCalendarRange';
-import { useIsPhone } from '../useIsPhone';
+import { useCalendarRange } from '../hooks/useCalendarRange';
+import { useIsPhone } from '../hooks/useIsPhone';
 
 export function CalendarScreen() {
   const [searchParams, setSearchParams] = useSearchParams();

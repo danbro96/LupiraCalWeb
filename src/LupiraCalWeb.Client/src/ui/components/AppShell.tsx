@@ -9,16 +9,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
-import { useEnsureBootstrap } from '../state/useContainers';
-import { useEnsureContactBootstrap } from '../state/useAddressBooks';
-import { BottomNav } from './components/BottomNav';
-import { CalendarVisibilityProvider } from './components/CalendarVisibility';
-import { Sidebar } from './components/Sidebar';
-import { ItemDrawer } from './components/drawer/ItemDrawer';
-import { BirthdayCard } from './components/drawer/BirthdayCard';
-import { TaskCard } from './components/drawer/TaskCard';
-import { AvailabilityModal } from './components/AvailabilityModal';
-import { NewItemModal } from './components/NewItemModal';
+import { useEnsureBootstrap } from '../../state/useContainers';
+import { useEnsureContactBootstrap } from '../../state/useAddressBooks';
+import { BottomNav } from './BottomNav';
+import { CalendarVisibilityProvider } from './CalendarVisibility';
+import { Sidebar } from './Sidebar';
+import { ItemDrawer } from './drawer/ItemDrawer';
+import { BirthdayCard } from './drawer/BirthdayCard';
+import { TaskCard } from './drawer/TaskCard';
+import { AvailabilityModal } from './AvailabilityModal';
+import { NewItemModal } from './NewItemModal';
 
 const NAV = [
   { to: '/', label: 'Calendar', end: true },

@@ -21,7 +21,7 @@ import { useInvalidateItems } from '../../state/useInvalidate';
 import { localInputToIso } from './drawer/inputs';
 import { errText } from './errText';
 import { useSnackbar } from './SnackbarHost';
-import { useIsPhone } from '../useIsPhone';
+import { useIsPhone } from '../hooks/useIsPhone';
 import { WrapRow } from './WrapRow';
 
 type FormValues = {

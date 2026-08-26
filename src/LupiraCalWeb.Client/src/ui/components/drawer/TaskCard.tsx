@@ -2,7 +2,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { useGetItem } from '../../../data/api-tasks/lupiraTasksApi';
-import type { ItemResponse } from '../../../data/api-tasks/models';
+import type { ItemDto } from '../../../data/api-tasks/models';
 import { fmtDate, fmtTime } from '@lupira/cal-domain/time';
 import { DetailDrawer } from './DetailDrawer';
 import { DrawerSection } from '../DrawerSection';
@@ -21,7 +21,7 @@ export function TaskCard({ listId, itemId, onClose }: { listId: string; itemId: 
   );
 }
 
-function TaskBody({ task }: { task: ItemResponse }) {
+function TaskBody({ task }: { task: ItemDto }) {
   const due = task.dueAt ? new Date(task.dueAt) : null;
   const overdue = due != null && due < new Date() && !task.completed;
 

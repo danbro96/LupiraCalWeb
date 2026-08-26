@@ -23,7 +23,7 @@ import { calendarLabel, useContainers } from '../../state/useContainers';
 import { SEARCH_PAGE_SIZE, useItemSearch } from '../../state/useItemSearch';
 import { errText } from '../components/errText';
 import { calendarColor, ITEM_CATEGORY_ICONS } from '../theme/kinds';
-import { useIsPhone } from '../useIsPhone';
+import { useIsPhone } from '../hooks/useIsPhone';
 import { PageHead } from '../components/Page';
 import { Row, RowName } from '../components/rows';
 import { Page } from '../components/Page';
