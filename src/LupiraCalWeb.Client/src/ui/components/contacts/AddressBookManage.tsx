@@ -44,9 +44,8 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
   const [access, setAccess] = useState('read');
 
   return (
-    <div className="book-manage">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: '8px 36px 12px', borderLeft: 2, borderColor: 'border', ml: 2 }}>
       <form
-        className="tree-add"
         onSubmit={(e) => {
           e.preventDefault();
           update.mutate({ addressBookId: book.id, data: { slug: slug.trim() || null, displayName: displayName.trim() || null } });
@@ -63,7 +62,7 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
       {(owners ?? []).map((o) => (
         <Box key={o.principalId} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
           <Chip variant="outlined" label={o.access} />
-          <span className="membership-name">{o.displayName ?? o.email}</span>
+          <Box component="span" sx={{ flex: 1 }}>{o.displayName ?? o.email}</Box>
           <Tooltip title="Revoke access">
             <IconButton
               disabled={revoke.isPending}
@@ -75,7 +74,6 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
         </Box>
       ))}
       <form
-        className="tree-add"
         onSubmit={(e) => {
           e.preventDefault();
           if (!email.trim()) return;
@@ -99,6 +97,6 @@ export function AddressBookManage({ book, onDeleted }: { book: AddressBookDto; o
       <Button variant="outlined" color="error" disabled={del.isPending} onClick={() => del.mutate({ addressBookId: book.id })}>
         Delete address book
       </Button>
-    </div>
+    </Box>
   );
 }

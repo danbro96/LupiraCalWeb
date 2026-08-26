@@ -9,7 +9,10 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useGetItem } from '../../data/api/lupiraCalApi';
 import { useGetContact } from '../../data/api-contact/lupiraContactApi';
 import { ItemCategory, ItemStatus, OriginKind, type CalendarItemOccurrenceDto, type ContainerDto } from '../../data/api/models';
@@ -23,6 +26,7 @@ import { calendarColor, ITEM_CATEGORY_ICONS } from '../theme/kinds';
 import { useIsPhone } from '../useIsPhone';
 import { PageHead } from '../components/Page';
 import { Row, RowName } from '../components/rows';
+import { Page } from '../components/Page';
 
 /** Global list/search over every readable calendar; rows deep-link into the ?item= drawer. */
 export function ItemsScreen() {
@@ -170,12 +174,12 @@ export function ItemsScreen() {
   );
 
   return (
-    <div className="page items-page">
+    <Page>
       <PageHead>
         <h2>Items</h2>
         {isFetching && !isFetchingNextPage && <Typography variant="caption" sx={{ color: 'text.secondary' }}>loading…</Typography>}
       </PageHead>
-      <div className="cal-filters items-filters">
+      <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1, mb: 1.5 }}>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -191,20 +195,18 @@ export function ItemsScreen() {
         {filters.parent || filters.contact ? (
           <>
             {filters.parent && (
-              <span className="items-drill-chip">
-                ↳ sub-items of {drillParent?.title ?? '…'}
-                <button aria-label="Clear parent filter" onClick={() => setParam('parent', null)}>
-                  ×
-                </button>
-              </span>
+              <Chip
+                variant="outlined"
+                label={`↳ sub-items of ${drillParent?.title ?? '…'}`}
+                onDelete={() => setParam('parent', null)}
+              />
             )}
             {filters.contact && (
-              <span className="items-drill-chip">
-                👤 with {drillContact?.displayName ?? '…'}
-                <button aria-label="Clear contact filter" onClick={() => setParam('contact', null)}>
-                  ×
-                </button>
-              </span>
+              <Chip
+                variant="outlined"
+                label={`👤 with ${drillContact?.displayName ?? '…'}`}
+                onDelete={() => setParam('contact', null)}
+              />
             )}
           </>
         ) : (
@@ -217,9 +219,9 @@ export function ItemsScreen() {
         ) : (
           filterControls
         )}
-      </div>
+      </Box>
 
-      <div className="location-list items-list">
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         {groups.map((g, gi) => {
           const hasNested = g.children.length > 0;
           const open = !collapsed.has(g.occ.id);
@@ -243,7 +245,7 @@ export function ItemsScreen() {
         })}
         {!isLoading && occurrences.length === 0 && !error && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>No items match.</Typography>}
         {error && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>{errText(error) ?? 'Search failed.'}</Typography>}
-      </div>
+      </Box>
       {hasNextPage && (
         <Button variant="outlined" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
           {isFetchingNextPage ? 'Loading…' : `Load ${SEARCH_PAGE_SIZE} more`}
@@ -260,7 +262,7 @@ export function ItemsScreen() {
       >
         {filterControls}
       </SwipeableDrawer>
-    </div>
+    </Page>
   );
 }
 
@@ -295,25 +297,33 @@ function ItemRow({
   return (
     <Row component={Link} to={href} sx={indent ? { ml: '26px', borderLeft: 2, borderColor: 'divider', pl: 1 } : undefined}>
       {onToggle && (
-        <button className="items-caret" aria-label={open ? 'Collapse sub-items' : 'Expand sub-items'} onClick={(e) => stop(e, onToggle)}>
-          {open ? '▾' : '▸'}
-        </button>
+        <IconButton
+          aria-label={open ? 'Collapse sub-items' : 'Expand sub-items'}
+          onClick={(e) => stop(e, onToggle)}
+          sx={{ flex: 'none' }}
+        >
+          {open ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
+        </IconButton>
       )}
       <Box component="span" sx={{ fontSize: 22 }}>{(o.category && ITEM_CATEGORY_ICONS[o.category]) || '📅'}</Box>
       <RowName>{o.title || '(untitled)'}</RowName>
       {!indent && o.parentItemId && !drilled && (
-        <button className="items-parent-chip" onClick={(e) => stop(e, () => onDrill?.(o.parentItemId!))}>
-          ↳ {o.parentTitle ?? 'parent'}
-        </button>
+        <Chip
+          variant="outlined"
+          label={`↳ ${o.parentTitle ?? 'parent'}`}
+          onClick={(e) => stop(e, () => onDrill?.(o.parentItemId!))}
+        />
       )}
       {o.tags?.map((t) => (
         <Chip key={t} label={t} />
       ))}
       {o.status && o.status !== ItemStatus.Confirmed && <Chip variant="outlined" label={o.status.toLowerCase()} />}
       {childCount > 0 && (
-        <button className="items-subcount" onClick={(e) => stop(e, () => onDrill?.(o.id))}>
-          {childCount} sub-item{childCount === 1 ? '' : 's'}
-        </button>
+        <Chip
+          variant="outlined"
+          label={`${childCount} sub-item${childCount === 1 ? '' : 's'}`}
+          onClick={(e) => stop(e, () => onDrill?.(o.id))}
+        />
       )}
       {first && (
         <Box component="span" sx={{ display: { xs: 'none', md: 'inline-flex' }, fontSize: 12, color: 'text.secondary', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap', flex: 'none' }}>

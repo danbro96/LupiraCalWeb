@@ -39,7 +39,7 @@ export function CalendarsPanel({ item }: { item: CalendarItemDto }) {
         return (
           <Box key={m.calendarId} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
             <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: cal ? calendarColor(cal) : 'var(--mui-palette-border)' }} />
-            <span className="membership-name">{cal ? calendarLabel(cal) : m.calendarId.slice(0, 8)}</span>
+            <Box component="span" sx={{ flex: 1 }}>{cal ? calendarLabel(cal) : m.calendarId.slice(0, 8)}</Box>
             {m.status === 'Proposed' ? (
               <Chip variant="outlined" label="proposed" />
             ) : (

@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import { forwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
@@ -85,21 +86,21 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
 
   if (placeId) {
     return (
-      <span className="place-picker resolved">
+      <Box component="span" sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 1, flex: 1, flexWrap: 'wrap' }}>
         📍 <PlaceLabel placeId={placeId} />
         <Tooltip title="Clear place">
           <IconButton onClick={() => onChange(null)}>
             <CloseIcon fontSize="small" />
           </IconButton>
         </Tooltip>
-      </span>
+      </Box>
     );
   }
 
   const phase = state.phase;
 
   return (
-    <span className="place-picker">
+    <Box component="span" sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 1, flex: 1, flexWrap: 'wrap' }}>
       <Autocomplete<PlaceSuggestionDto, false, false, true>
         freeSolo
         options={options}
@@ -165,6 +166,6 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
           />
         </Suspense>
       )}
-    </span>
+    </Box>
   );
 }

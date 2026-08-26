@@ -85,14 +85,14 @@ export function ContactDetailPane() {
             </Tooltip>
           )}
         </h2>
-        <div className="head-actions">
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <CompletenessBadge score={contact.completeness} />
           {!editing && (
             <Button variant="outlined" onClick={() => setEditing(true)}>
               Edit
             </Button>
           )}
-        </div>
+        </Box>
       </PageHead>
 
       {editing ? (
@@ -241,14 +241,14 @@ export function ContactDetailPane() {
           {contact.createdAt && ` · added ${fmtDate(new Date(contact.createdAt))}`}
         </Typography>
       )}
-      <div className="detail-footer">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2, justifyContent: 'space-between' }}>
         <Button variant="text" disabled={setMe.isPending} onClick={() => setMe.mutate({ data: { contactId: contact.id } })}>
           This is me
         </Button>
         <Button variant="outlined" color="error" onClick={() => del.mutate({ id: contact.id })} disabled={del.isPending}>
           Delete contact
         </Button>
-      </div>
+      </Box>
     </DetailPane>
   );
 }

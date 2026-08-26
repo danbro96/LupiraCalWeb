@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -18,6 +19,15 @@ import { buildRelationGraph } from '@lupira/cal-domain/contactRelations';
 import type { RelationCategory } from '@lupira/cal-domain/contactRelations';
 import { useIsPhone } from '../../useIsPhone';
 
+// The node border reads the category accent directly; only the xyflow edge (which has no element
+// to hang sx on) still needs a class. Written out per category because Tailwind scans for literals.
+const CAT_ACCENT: Record<RelationCategory, string> = {
+  Family: 'var(--cat-family)',
+  Social: 'var(--cat-social)',
+  Professional: 'var(--cat-professional)',
+  Other: 'var(--cat-other)',
+};
+
 // xyflow reads its own custom props, so category colour needs no descendant selector.
 // Written out per category because Tailwind scans for literal class names.
 const EDGE_STROKE: Record<RelationCategory, string> = {
@@ -26,6 +36,15 @@ const EDGE_STROKE: Record<RelationCategory, string> = {
   Professional: '[--xy-edge-stroke:var(--color-cat-professional)]',
   Other: '[--xy-edge-stroke:var(--color-cat-other)]',
 };
+// Grows on touch, where the bare glyph is under the target size.
+const EXPAND_SX = {
+  color: 'inherit',
+  fontSize: 14,
+  lineHeight: 1,
+  p: 0,
+  '@media (pointer: coarse)': { fontSize: 16, p: 1, m: '-8px -2px' },
+} as const;
+
 const EDGE_BASE =
   '[--xy-edge-stroke-width:1.5] [--xy-edge-label-color:var(--mui-palette-text-secondary)]';
 
@@ -44,37 +63,61 @@ type RelationFlowNode = Node<RelationNodeData, 'relation'>;
 
 /** Chip node with centered (hidden) handles so straight edges read as radial spokes. */
 function RelationNode({ id, data }: NodeProps<RelationFlowNode>) {
-  const state = `${data.isCenter ? ' center' : ''}${data.selected ? ' selected' : ''}${data.hit ? ' hit' : ''}${data.dimmed ? ' dimmed' : ''}`;
+  const accent = CAT_ACCENT[data.category as RelationCategory] ?? CAT_ACCENT.Other;
   return (
-    <div className={`rel-node cat-${data.category}${state}`} title={data.label}>
+    <Box
+      title={data.label}
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '6px',
+        maxWidth: 170,
+        p: '5px 11px',
+        fontSize: 12,
+        fontWeight: data.isCenter ? 700 : 600,
+        color: data.isCenter ? 'primary.contrastText' : 'text.primary',
+        bgcolor: data.isCenter ? 'primary.main' : 'background.default',
+        border: 2,
+        borderColor: data.isCenter ? 'primary.main' : accent,
+        borderRadius: '999px',
+        cursor: 'pointer',
+        // selected outranks hit — a selected node is also a hit when the search matches it.
+        ...(data.hit && { boxShadow: (t) => `0 0 0 2px ${t.palette.primary.main}` }),
+        ...(data.selected && { boxShadow: (t) => `0 0 0 3px ${t.palette.primary.main}` }),
+        ...(data.dimmed && { opacity: 0.25 }),
+      }}
+    >
       <Handle type="target" position={Position.Top} className="top-1/2! min-w-0! min-h-0! opacity-0" isConnectable={false} />
       <Handle type="source" position={Position.Top} className="top-1/2! min-w-0! min-h-0! opacity-0" isConnectable={false} />
-      <span className="rel-node-label">{data.label}</span>
+      <Box component="span" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {data.label}
+      </Box>
       {data.selected && !data.isCenter && (
-        <button
-          className="rel-expand"
+        <ButtonBase
           title="Open contact"
           onClick={(e) => {
             e.stopPropagation();
             data.onNavigate(id);
           }}
+          sx={EXPAND_SX}
         >
           ↗
-        </button>
+        </ButtonBase>
       )}
       {!data.isCenter && !data.expanded && (
-        <button
-          className="rel-expand"
+        <ButtonBase
           title="Expand relations"
           onClick={(e) => {
             e.stopPropagation();
             data.onExpand(id);
           }}
+          sx={EXPAND_SX}
         >
           ＋
-        </button>
+        </ButtonBase>
       )}
-    </div>
+    </Box>
   );
 }
 

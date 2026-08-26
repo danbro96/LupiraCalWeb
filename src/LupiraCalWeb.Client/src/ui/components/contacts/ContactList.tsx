@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import ButtonBase from '@mui/material/ButtonBase';
 import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-dom';
 import { useCreateContact, useSetContactTags } from '../../../data/api-contact/lupiraContactApi';
 import type { ContactDto, ContactReachChannel } from '../../../data/api-contact/models';
@@ -86,7 +87,7 @@ export function ContactList() {
         </Button>
       </Box>
       {creating && <NewContactForm defaultBookId={bookId || addressBooks[0]?.id} onDone={() => setCreating(false)} />}
-      <div className="contact-list">
+      <Box sx={{ mb: 1.5 }}>
         {bypassTiers ? (
           <>
             {flatRows.map((c) => (
@@ -101,16 +102,30 @@ export function ContactList() {
             ))}
             {active.length === 0 && dormant.length === 0 && !isLoading && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>No contacts.</Typography>}
             {dormant.length > 0 && (
-              <div className="contact-section">
-                <button className="contact-section-head" onClick={() => setShowDormant((s) => !s)}>
+              <div>
+                <ButtonBase
+                  onClick={() => setShowDormant((s) => !s)}
+                  sx={{
+                    width: '100%',
+                    justifyContent: 'flex-start',
+                    borderTop: 1,
+                    borderColor: 'divider',
+                    mt: 1.5,
+                    py: 1,
+                    fontSize: 11,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    color: 'text.subtle',
+                  }}
+                >
                   {showDormant ? '▾' : '▸'} Dormant ({dormant.length})
-                </button>
+                </ButtonBase>
                 {showDormant && dormant.map((c) => <ContactRow key={c.id} contact={c} search={location.search} />)}
               </div>
             )}
           </>
         )}
-      </div>
+      </Box>
     </SidePane>
   );
 }
@@ -132,22 +147,49 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
   };
 
   return (
-    <NavLink to={{ pathname: `/contacts/${c.id}`, search }} className="contact-row">
-      <button
-        className={`pin-btn${pinned ? ' pinned' : ''}`}
+    <Box
+      component={NavLink}
+      to={{ pathname: `/contacts/${c.id}`, search }}
+      className="contact-row"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1.5,
+        py: '10px',
+        borderBottom: 1,
+        borderColor: 'divider',
+        textDecoration: 'none',
+        color: 'text.primary',
+        overflow: 'hidden',
+        '&:hover, &.active': { bgcolor: 'background.paper' },
+      }}
+    >
+      <ButtonBase
         onClick={togglePin}
         title={pinned ? 'Unpin' : 'Pin to keep in Active'}
         aria-label={pinned ? 'Unpin contact' : 'Pin contact'}
+        sx={{
+          flex: 'none',
+          p: 0,
+          fontSize: 14,
+          lineHeight: 1,
+          transition: 'opacity 0.12s, color 0.12s',
+          // Revealed by the row it sits in — the .contact-row hook exists only for this.
+          color: pinned ? 'primary.main' : 'text.subtle',
+          opacity: pinned ? 1 : 0.2,
+          '.contact-row:hover &': { opacity: pinned ? 1 : 0.7 },
+          '@media (hover: none)': { opacity: pinned ? 1 : 0.7 },
+        }}
       >
         ★
-      </button>
+      </ButtonBase>
       <Avatar sx={{ width: 30, height: 30, fontSize: 12, fontWeight: 700, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
         {(c.displayName[0] ?? '?').toUpperCase()}
       </Avatar>
-      <span className="contact-name">
+      <Box component="span" sx={{ flex: 1, minWidth: 0, fontSize: 15, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {c.displayName}
         {c.nickname && c.nickname !== c.displayName ? <Typography variant="caption" sx={{ color: 'text.secondary' }}> “{c.nickname}”</Typography> : null}
-      </span>
+      </Box>
       {c.birthday && <Chip variant="outlined" label={`🎂 ${partialDateBadge(c.birthday)}`} />}
       {c.completeness && (
         <LinearProgress
@@ -157,7 +199,7 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
           sx={{ width: 60, height: 6, borderRadius: '999px', flex: 'none' }}
         />
       )}
-    </NavLink>
+    </Box>
   );
 }
 

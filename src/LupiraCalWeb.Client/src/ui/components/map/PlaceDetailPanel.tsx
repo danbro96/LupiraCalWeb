@@ -50,14 +50,14 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
               <Chip variant="outlined" label={place.category} />
             </Box>
             {(place.containment ?? []).length > 0 && (
-              <div className="loc-breadcrumb">
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.5, fontSize: 13 }}>
                 {(place.containment ?? []).map((a, i) => (
                   <span key={a.id}>
-                    {i > 0 && <span className="sep"> › </span>}
+                    {i > 0 && <Box component="span" sx={{ color: 'text.subtle' }}> › </Box>}
                     {a.name}
                   </span>
                 ))}
-              </div>
+              </Box>
             )}
             {place.formattedAddress && <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>{place.formattedAddress}</Typography>}
             {formatCoords(place.latitude, place.longitude) && (
@@ -108,7 +108,7 @@ function ItemsPanel({ placeId }: { placeId: string }) {
           )}
           <RowName>{item.title || '(untitled)'}</RowName>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>{whenOf(item)}</Typography>
-          {roleOf(item, placeId) && <span className="loc-role">{roleOf(item, placeId)}</span>}
+          {roleOf(item, placeId) && <Chip variant="outlined" label={roleOf(item, placeId)} />}
         </Row>
       ))}
     </DrawerSection>

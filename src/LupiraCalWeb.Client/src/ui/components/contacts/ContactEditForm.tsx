@@ -96,7 +96,7 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
     setDraft('');
   };
   return (
-    <div className="edit-field">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
       <label>{label}</label>
       {values.length > 0 && (
         <WrapRow>
@@ -122,7 +122,7 @@ function ChipList({ label, values, onChange, placeholder, inputType = 'text' }: 
           Add
         </Button>
       </WrapRow>
-    </div>
+    </Box>
   );
 }
 
@@ -243,20 +243,20 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
   });
 
   return (
-    <form className="contact-edit" onSubmit={save}>
-      <div className="edit-field">
+    <Box onSubmit={save} component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <Controller name="givenName" control={control} render={({ field }) => <TextField label="Given name" {...field} />} />
-      </div>
-      <div className="edit-field">
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <Controller name="middleName" control={control} render={({ field }) => <TextField label="Middle name" {...field} />} />
-      </div>
-      <div className="edit-field">
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <Controller name="familyName" control={control} render={({ field }) => <TextField label="Family name" {...field} />} />
-      </div>
-      <div className="edit-field">
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <Controller name="nickname" control={control} render={({ field }) => <TextField label="Nickname" {...field} />} />
-      </div>
-      <div className="edit-field">
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <Controller
           name="displayNameFormat"
           control={control}
@@ -270,8 +270,8 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
             </TextField>
           )}
         />
-      </div>
-      <div className="edit-field">
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <label>Birthday</label>
         <Controller
           name="birthdayYearKnown"
@@ -312,9 +312,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
             />
           </WrapRow>
         )}
-      </div>
+      </Box>
 
-      <div className="edit-field">
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <label>Reach channels</label>
         {channelFields.map((f, i) => (
           <WrapRow key={f.id}>
@@ -387,7 +387,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         >
           + Add channel
         </Button>
-      </div>
+      </Box>
 
       <Controller
         name="tags"
@@ -395,7 +395,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         render={({ field }) => <ChipList label="Tags" values={field.value} onChange={field.onChange} placeholder="work, family…" />}
       />
 
-      <div className="edit-field">
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <label>Addresses</label>
         {addressFields.map((f, i) => (
           <WrapRow key={f.id}>
@@ -452,9 +452,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         >
           + Add address
         </Button>
-      </div>
+      </Box>
 
-      <div className="edit-field">
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <label>Social profiles</label>
         {profileFields.map((f, i) => (
           <WrapRow key={f.id}>
@@ -491,9 +491,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         <Button variant="text" onClick={() => appendProfile({ service: '', handle: '', preferred: false })}>
           + Add profile
         </Button>
-      </div>
+      </Box>
 
-      <div className="edit-field">
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <label>Emergency contacts</label>
         <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">In priority order — who to call about this person.</Typography>
         <Controller
@@ -506,7 +506,7 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
                 {field.value.map((cid, i) => (
                   <Box key={cid} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
                     <Chip variant="outlined" label={i + 1} />
-                    <span className="membership-name">{nameOf(cid)}</span>
+                    <Box component="span" sx={{ flex: 1 }}>{nameOf(cid)}</Box>
                     <Tooltip title="Remove">
                       <IconButton onClick={() => field.onChange(field.value.filter((x) => x !== cid))}>
                         <CloseIcon fontSize="small" />
@@ -535,9 +535,9 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
             );
           }}
         />
-      </div>
+      </Box>
 
-      <div className="edit-field">
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', '& > label': { fontSize: 12, color: 'text.subtle' } }}>
         <Controller
           name="deceased"
           control={control}
@@ -550,17 +550,17 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
         {deceased && (
           <Controller name="deathDate" control={control} render={({ field }) => <TextField type="date" {...field} />} />
         )}
-      </div>
+      </Box>
 
       {errors.root && <Typography variant="body2" component="p" sx={{ my: 0.5, color: 'error.main' }}>{errors.root.message}</Typography>}
-      <div className="edit-actions">
+      <Box sx={{ display: 'flex', gap: 1 }}>
         <Button variant="contained" type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Saving…' : 'Save'}
         </Button>
         <Button variant="outlined" onClick={onDone} disabled={isSubmitting}>
           Cancel
         </Button>
-      </div>
-    </form>
+      </Box>
+    </Box>
   );
 }
