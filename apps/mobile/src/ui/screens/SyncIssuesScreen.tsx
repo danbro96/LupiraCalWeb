@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { List, useTheme } from 'react-native-paper';
 import { getDb } from '../../data/db/expoDb';
 import type { OutboxRow } from '../../data/mirror';
 import { opOfRow } from '../../data/mirror';
@@ -10,7 +10,7 @@ import { discardParkedAndRestore, runSync } from '../../sync/sync';
 import { PHASE_LABELS, useSyncStatus } from '../../sync/syncStatus';
 import { useOutboxRows } from '../../state/queries';
 import { useConfirm } from '../components/ConfirmDialog';
-import { Button, formStyles } from '../components/form';
+import { Button } from '../components/form';
 import { IndeterminateBar } from '../components/IndeterminateBar';
 import type { AppTheme } from '../theme/paperTheme';
 
@@ -48,10 +48,10 @@ export function SyncIssuesScreen() {
         <Text style={[styles.empty, { color: theme.colors.onSurfaceVariant }]}>All changes are synced.</Text>
       )}
 
-      {parked.length > 0 && <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Needs attention</Text>}
+      {parked.length > 0 && <List.Subheader>Needs attention</List.Subheader>}
       {parked.map((row) => <ParkedCard key={row.seq} row={row} />)}
 
-      {pending.length > 0 && <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Waiting to sync</Text>}
+      {pending.length > 0 && <List.Subheader>Waiting to sync</List.Subheader>}
       {pending.map((row) => (
         <View key={row.seq} style={[styles.pendingRow, { borderColor: theme.colors.outlineVariant }]}>
           <Text style={styles.opLabel}>{labelOf(row)}</Text>

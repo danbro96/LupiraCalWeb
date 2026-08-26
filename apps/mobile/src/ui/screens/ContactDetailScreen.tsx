@@ -5,7 +5,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Avatar, useTheme } from 'react-native-paper';
+import { Avatar, Chip, List, useTheme } from 'react-native-paper';
 import { getPlace } from '../../data/api/generated/geo/places/places';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
@@ -15,7 +15,7 @@ import { deleteContact } from '../../state/actions';
 import { useContactState } from '../../state/queries';
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';
-import { formStyles } from '../components/form';
+
 import { hashColor } from '../components/palette';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
@@ -95,7 +95,7 @@ export function ContactDetailScreen() {
         </Text>
       )}
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Reach</Text>
+      <List.Subheader>Reach</List.Subheader>
       {(doc.channels ?? []).length === 0 && (doc.profiles ?? []).length === 0 && (
         <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Nothing yet</Text>
       )}
@@ -124,10 +124,10 @@ export function ContactDetailScreen() {
 
       {(doc.tags ?? []).length > 0 && (
         <>
-          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Tags</Text>
+          <List.Subheader>Tags</List.Subheader>
           <View style={styles.chipRow}>
             {(doc.tags ?? []).map((t) => (
-              <Text key={t} style={[styles.tagChip, { color: theme.colors.primary, backgroundColor: theme.colors.primary + '22' }]}>#{t}</Text>
+              <Chip key={t} compact>{`#${t}`}</Chip>
             ))}
           </View>
         </>
@@ -135,21 +135,21 @@ export function ContactDetailScreen() {
 
       {addresses.length > 0 && (
         <>
-          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Addresses</Text>
+          <List.Subheader>Addresses</List.Subheader>
           {addresses.map((a, i) => <AddressRow key={i} placeId={a.placeId ?? null} type={a.type ?? 'Home'} />)}
         </>
       )}
 
       {doc.notes ? (
         <>
-          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Notes</Text>
+          <List.Subheader>Notes</List.Subheader>
           <Text style={[styles.notes, { color: theme.colors.onSurface }]}>{doc.notes}</Text>
         </>
       ) : null}
 
       {emergency.length > 0 && (
         <>
-          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Emergency contacts</Text>
+          <List.Subheader>Emergency contacts</List.Subheader>
           {emergency.map((id, i) => <ResolvedName key={id} contactId={id} prefix={`${i + 1}. `} navigation={navigation} />)}
         </>
       )}
@@ -157,9 +157,9 @@ export function ContactDetailScreen() {
       {relations.filter((r) => !r.ended).length > 0 && (
         <>
           <Pressable style={styles.sectionToggle} onPress={() => setRelationsOpen((o) => !o)}>
-            <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>
+            <List.Subheader>
               Relations ({relations.filter((r) => !r.ended).length})
-            </Text>
+            </List.Subheader>
             <Text style={[styles.chevron, { color: theme.colors.onSurfaceVariant }]}>{relationsOpen ? '▾' : '▸'}</Text>
           </Pressable>
           {relationsOpen && relations.filter((r) => !r.ended).map((r, i) => (
@@ -175,7 +175,7 @@ export function ContactDetailScreen() {
 
       {metadata.length > 0 && (
         <>
-          <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Metadata</Text>
+          <List.Subheader>Metadata</List.Subheader>
           {metadata.map(([k, v]) => (
             <Text key={k} style={styles.row}>
               <Text style={[styles.rowKind, { color: theme.colors.onSurfaceVariant }]}>{k}  </Text>
@@ -289,7 +289,6 @@ const styles = StyleSheet.create({
   muted: { fontSize: 13 },
   notes: { fontSize: 14 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  tagChip: { fontSize: 12, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
   footer: { fontSize: 11, marginTop: 12, marginBottom: 16 },
   headerActions: { flexDirection: 'row', gap: 16, paddingRight: 4 },
   headerAction: { fontSize: 15 },

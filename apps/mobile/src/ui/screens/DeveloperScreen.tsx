@@ -2,11 +2,11 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Button, List, useTheme } from 'react-native-paper';
 import { API_PRESETS, type AuthMode } from '../../config';
 import { presetFor, useAuth } from '../../state/auth-store';
 import { useSyncStatus } from '../../sync/syncStatus';
-import { Input, formStyles } from '../components/form';
+import { Input } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 
 /// Developer tooling, deliberately out of the user path: backend switching (a family member on the
@@ -27,7 +27,7 @@ export function DeveloperScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Backend</Text>
+      <List.Subheader>Backend</List.Subheader>
       {/* http presets need cleartext networking — dev-client-only (release builds block cleartext). */}
       {API_PRESETS.filter((p) => __DEV__ || p.url.startsWith('https')).map((p) => (
         <Pressable key={p.key} style={styles.row} onPress={() => applyBackend(p.url, p.authMode)}>
@@ -49,16 +49,16 @@ export function DeveloperScreen() {
         <Pressable onPress={() => setCustomMode(customMode === 'oidc' ? 'none' : 'oidc')}>
           <Text style={[styles.link, { color: theme.colors.primary }]}>Auth: {customMode === 'oidc' ? 'sign-in' : 'dev auto-auth'} (tap to toggle)</Text>
         </Pressable>
-        <Pressable
-          style={[styles.button, { borderColor: theme.colors.primary }, !customUrl.trim() && styles.buttonDisabled]}
+        <Button
+          mode="outlined"
           disabled={!customUrl.trim()}
           onPress={() => applyBackend(customUrl, customMode)}
         >
-          <Text style={{ color: theme.colors.primary }}>Use custom backend</Text>
-        </Pressable>
+          Use custom backend
+        </Button>
       </View>
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Diagnostics</Text>
+      <List.Subheader>Diagnostics</List.Subheader>
       <Pressable onPress={() => navigation.navigate('DebugLog')}>
         <Text style={[styles.link, { color: theme.colors.primary }]}>Debug log</Text>
       </Pressable>
@@ -66,7 +66,7 @@ export function DeveloperScreen() {
         <Text style={[styles.link, { color: theme.colors.primary }]}>Bridge diagnostics</Text>
       </Pressable>
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Sync state</Text>
+      <List.Subheader>Sync state</List.Subheader>
       <Text style={[styles.mono, { color: theme.colors.onSurfaceVariant }]}>{JSON.stringify(sync, null, 2)}</Text>
     </ScrollView>
   );
@@ -79,7 +79,5 @@ const styles = StyleSheet.create({
   rowDetail: { fontSize: 13 },
   custom: { paddingVertical: 8, gap: 8 },
   link: { paddingVertical: 6 },
-  button: { borderWidth: 1, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8, alignSelf: 'flex-start' },
-  buttonDisabled: { opacity: 0.4 },
   mono: { fontFamily: 'monospace', fontSize: 11 },
 });

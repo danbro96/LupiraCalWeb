@@ -3,7 +3,7 @@ import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Chip, useTheme } from 'react-native-paper';
 import { getListsListIdItemsItemId } from '../../data/api/generated/tasks/items/items';
 import { taskDeepLink } from '../../domain/taskRows';
 import { Centered } from '../components/Centered';
@@ -48,9 +48,9 @@ export function TaskDetailScreen() {
         <Text style={[styles.when, { color: theme.colors.onSurfaceVariant }]}>No deadline</Text>
       )}
       <View style={styles.chipRow}>
-        <Text style={[styles.metaChip, { color: theme.colors.onSurfaceVariant, backgroundColor: theme.colors.surface }]}>{task.status}</Text>
+        <Chip compact mode="outlined">{task.status}</Chip>
         {task.priority > 0 && (
-          <Text style={[styles.metaChip, { color: theme.colors.onSurfaceVariant, backgroundColor: theme.colors.surface }]}>Priority {task.priority}</Text>
+          <Chip compact mode="outlined">{`Priority ${task.priority}`}</Chip>
         )}
       </View>
       {task.statusReason ? <Text style={[styles.note, { color: theme.colors.onSurfaceVariant }]}>{task.statusReason}</Text> : null}
@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
   h1: { fontSize: 20, fontWeight: '700' },
   when: { fontSize: 14 },
   chipRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
-  metaChip: { fontSize: 12, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 },
   note: { fontSize: 13 },
   notes: { fontSize: 14, marginTop: 4 },
   actions: { marginTop: 12 },

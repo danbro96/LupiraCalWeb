@@ -12,7 +12,7 @@ import { retryParkedPhotos, runPhotoBackup } from '../../sync/photoUploader';
 import { runSync } from '../../sync/sync';
 import { useSyncStatus } from '../../sync/syncStatus';
 import { useConfirm } from '../components/ConfirmDialog';
-import { Button, DateField, formStyles } from '../components/form';
+import { Button, DateField } from '../components/form';
 import type { RootStackParamList } from '../navigation/types';
 import type { AppTheme } from '../theme/paperTheme';
 
@@ -70,7 +70,7 @@ export function SettingsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Account</Text>
+      <List.Subheader>Account</List.Subheader>
       <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
         {authMode === 'none' ? 'Dev auto-auth (no sign-in)' : user ? `Signed in as ${user.sub}` : 'Signed out'}
       </Text>
@@ -78,7 +78,7 @@ export function SettingsScreen() {
         <Button title="Sign out" onPress={() => void useAuth.getState().clearSession()} />
       )}
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Android integration</Text>
+      <List.Subheader>Android integration</List.Subheader>
       <List.Item
         title="Sync with Android calendar & contacts"
         right={() => <Switch value={bridge.enabled} onValueChange={toggleBridge} disabled={!bridge.loaded} />}
@@ -95,7 +95,7 @@ export function SettingsScreen() {
         </Pressable>
       )}
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Calendars</Text>
+      <List.Subheader>Calendars</List.Subheader>
       <List.Item
         title="Show system calendars"
         right={() => (
@@ -119,7 +119,7 @@ export function SettingsScreen() {
       />
       <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Deadlines from Lupira Tasks appear on their due day. Needs a connection.</Text>
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Photo backup</Text>
+      <List.Subheader>Photo backup</List.Subheader>
       <List.Item
         title="Back up photos & videos"
         right={() => (
@@ -162,7 +162,7 @@ export function SettingsScreen() {
         Originals upload straight to your own storage. Bulk backup runs while the app is open; in the background it catches up slowly.
       </Text>
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Sync</Text>
+      <List.Subheader>Sync</List.Subheader>
       <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>
         {syncing ? 'Syncing…' : lastSyncAt ? `Last synced ${new Date(lastSyncAt).toLocaleString()}` : 'Not synced yet'}
       </Text>
@@ -175,10 +175,10 @@ export function SettingsScreen() {
         </Pressable>
       </View>
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>About</Text>
+      <List.Subheader>About</List.Subheader>
       <Text style={[styles.detail, { color: theme.colors.onSurfaceVariant }]}>Lupira Calendar {APP_VERSION}</Text>
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Developer</Text>
+      <List.Subheader>Developer</List.Subheader>
       <Pressable onPress={() => navigation.navigate('Developer')}>
         <Text style={[styles.link, { color: theme.colors.primary }]}>Developer options</Text>
       </Pressable>

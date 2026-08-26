@@ -117,10 +117,6 @@ export function Button({ title, onPress, kind = 'primary', disabled = false }: {
   );
 }
 
-export const formStyles = StyleSheet.create({
-  section: { fontSize: 13, fontWeight: '700', textTransform: 'uppercase', marginTop: 16 },
-});
-
 const styles = StyleSheet.create({
   input: { marginTop: 10 },
   field: { gap: 4, marginTop: 10 },

@@ -5,12 +5,12 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Chip, List, useTheme } from 'react-native-paper';
 import { deleteItem, fileItem, mergeItemMetadata, unfileItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';
-import { Button, Input, formStyles } from '../components/form';
+import { Button, Input } from '../components/form';
 import { useCalendarColors } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
 import type { AppTheme } from '../theme/paperTheme';
@@ -53,10 +53,10 @@ export function ItemDetailScreen() {
       )}
       {doc.recurrenceRule && <Text style={[styles.recur, { color: theme.colors.primary }]}>{describeRrule(doc.recurrenceRule)}</Text>}
       <View style={styles.chipRow}>
-        {doc.status && <Text style={[styles.metaChip, { color: theme.colors.onSurfaceVariant, borderColor: theme.colors.outline }]}>{doc.status}</Text>}
-        {doc.category && <Text style={[styles.metaChip, { color: theme.colors.onSurfaceVariant, borderColor: theme.colors.outline }]}>{doc.category}</Text>}
+        {doc.status && <Chip compact mode="outlined">{doc.status}</Chip>}
+        {doc.category && <Chip compact mode="outlined">{doc.category}</Chip>}
         {(doc.tags ?? []).map((t) => (
-          <Text key={t} style={[styles.tagChip, { color: theme.colors.primary, backgroundColor: theme.colors.primary + '22' }]}>#{t}</Text>
+          <Chip key={t} compact>{`#${t}`}</Chip>
         ))}
       </View>
       {doc.description ? <Text style={[styles.description, { color: theme.colors.onSurface }]}>{doc.description}</Text> : null}
@@ -87,7 +87,7 @@ function CalendarsPanel({ itemId, memberships }: {
 
   return (
     <View>
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Calendars</Text>
+      <List.Subheader>Calendars</List.Subheader>
       {selectableCalendars(calendars).map((c) => {
         const status = statusOf(c.id);
         const member = status === 'Accepted' || status === 'Proposed';
@@ -125,7 +125,7 @@ function MetadataPanel({ itemId, metadata }: { itemId: string; metadata: Record<
 
   return (
     <View>
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Metadata</Text>
+      <List.Subheader>Metadata</List.Subheader>
       {entries.map(([k, v]) => (
         <Pressable key={k} style={styles.metaRow} onPress={() => { setKey(k); setValue(typeof v === 'string' ? v : JSON.stringify(v)); }}>
           <Text style={[styles.metaKey, { color: theme.colors.onSurfaceVariant }]}>{k}</Text>
@@ -148,8 +148,6 @@ const styles = StyleSheet.create({
   when: { fontSize: 14 },
   recur: { fontSize: 13 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
-  metaChip: { fontSize: 12, borderWidth: 1, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
-  tagChip: { fontSize: 12, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
   description: { fontSize: 14, marginTop: 6 },
   note: { fontSize: 13, marginTop: 4 },
   calRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8 },

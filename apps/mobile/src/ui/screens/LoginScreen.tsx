@@ -3,7 +3,7 @@ import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
 import { exchangeAuthCode } from '../../data/auth/oidc';
 import { OIDC_CLIENT_ID, OIDC_ISSUER, OIDC_REDIRECT_PATH, OIDC_SCHEME, OIDC_SCOPES } from '../../data/auth/oidcConfig';
 import { logDebug } from '../../debug/log';
@@ -53,9 +53,9 @@ export function LoginScreen({ navigation }: NativeStackScreenProps<RootStackPara
       {busy || !request ? (
         <ActivityIndicator />
       ) : (
-        <Pressable style={[styles.button, { backgroundColor: theme.colors.primary }]} onPress={() => void signIn()}>
-          <Text style={[styles.buttonText, { color: theme.colors.onPrimary }]}>Sign in with Lupira</Text>
-        </Pressable>
+        <Button mode="contained" onPress={() => void signIn()}>
+          Sign in with Lupira
+        </Button>
       )}
       {error ? <Text style={[styles.error, { color: theme.colors.error }]}>{error}</Text> : null}
       <Pressable onPress={() => navigation.navigate('Developer')}>
@@ -68,8 +68,6 @@ export function LoginScreen({ navigation }: NativeStackScreenProps<RootStackPara
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 },
   title: { fontSize: 24, fontWeight: '600' },
-  button: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 },
-  buttonText: { fontSize: 16, fontWeight: '600' },
   error: { textAlign: 'center' },
   link: { marginTop: 24 },
 });

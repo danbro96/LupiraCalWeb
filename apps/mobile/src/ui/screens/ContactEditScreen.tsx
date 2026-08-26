@@ -10,7 +10,7 @@ import type { ContactForm } from '../../domain/editors';
 import { contactCoreFromForm, contactFormFromDoc, emptyContactForm, parseCsv } from '../../domain/editors';
 import { createContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../../state/actions';
 import { useAddressBooks, useContactState } from '../../state/queries';
-import { ChoiceChips, DateField, Field, Input, formStyles } from '../components/form';
+import { ChoiceChips, DateField, Field, Input } from '../components/form';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
@@ -206,7 +206,7 @@ export function ContactEditScreen() {
         {contactId && <Text style={[styles.muted, { color: theme.colors.onSurfaceVariant }]}>Clearing a birthday isn't supported — leave empty to keep it.</Text>}
       </Field>
 
-      <Text style={[formStyles.section, { color: theme.colors.onSurfaceVariant }]}>Reach</Text>
+      <List.Subheader>Reach</List.Subheader>
       {channels.map((c, i) => (
         <View key={`ch-${i}`} style={styles.reachRow}>
           <ReachIcon kind={c.medium} />
