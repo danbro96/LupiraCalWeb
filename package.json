@@ -33,6 +33,7 @@
   },
   "allowScripts": {
     "esbuild": false,
+    "fsevents": false,
     "unrs-resolver": false
   }
 }
