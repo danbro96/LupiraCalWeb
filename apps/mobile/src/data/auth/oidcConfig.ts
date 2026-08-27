@@ -2,7 +2,8 @@
  *  lupira-cal + lupira-contact + lupira-geo + lupira-tasks + lupira-photo via the -aud scope mappings,
  *  so one bearer satisfies the BFF and every upstream it proxies. Refresh grants never widen scopes —
  *  adding an audience here only takes effect after a sign-out/in. */
-export const OIDC_ISSUER = 'https://auth.lupira.com/application/o/lupira-cal-mobile/';
+// No trailing slash — expo-auth-session appends `/.well-known/...` verbatim and Authentik 404s the `//`.
+export const OIDC_ISSUER = 'https://auth.lupira.com/application/o/lupira-cal-mobile';
 export const OIDC_CLIENT_ID = 'lupira-cal-mobile';
 export const OIDC_SCOPES = [
   'openid',
