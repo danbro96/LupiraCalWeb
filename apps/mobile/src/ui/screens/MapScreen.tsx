@@ -9,6 +9,7 @@ import {
   type LngLatBounds,
   type PressEventWithFeatures,
   type StyleSpecification,
+  type SymbolLayerSpecification,
   type ViewStateChangeEvent,
 } from '@maplibre/maplibre-react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -32,6 +33,15 @@ const PAST_DAYS = 90;
 const FUTURE_DAYS = 180;
 
 const AUTH_HEADER_ID = 'lupira-auth';
+
+// Explicit or MapLibre falls back to `Open Sans Regular,Arial Unicode MS Regular`, which geo-api's
+// Noto glyph set 404s. Same stacks as the web layers.tsx.
+const CLUSTER_TEXT: SymbolLayerSpecification['layout'] = {
+  'text-field': ['get', 'point_count_abbreviated'],
+  'text-font': ['Noto Sans Medium'],
+  'text-size': 12,
+  'text-allow-overlap': true,
+};
 
 const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -169,6 +179,7 @@ export function MapScreen() {
                 type="symbol"
                 layout={{
                   'text-field': ['get', 'label'],
+                  'text-font': ['Noto Sans Regular'],
                   'text-size': 11,
                   'text-offset': [0, 1.2],
                   'text-anchor': 'top',
@@ -203,7 +214,7 @@ export function MapScreen() {
                 id="event-cluster-counts"
                 type="symbol"
                 filter={['has', 'point_count']}
-                layout={{ 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12, 'text-allow-overlap': true }}
+                layout={CLUSTER_TEXT}
                 paint={{ 'text-color': colors.ring }}
               />
               <Layer
@@ -244,7 +255,7 @@ export function MapScreen() {
                 id="photo-cluster-counts"
                 type="symbol"
                 filter={['has', 'point_count']}
-                layout={{ 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12, 'text-allow-overlap': true }}
+                layout={CLUSTER_TEXT}
                 paint={{ 'text-color': colors.ring }}
               />
               <Layer
