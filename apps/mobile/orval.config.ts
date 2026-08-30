@@ -54,6 +54,25 @@ export default defineConfig({
       override: { mutator: { path: './src/data/api/mutator.ts', name: 'apiFetch' } },
     },
   },
+  // GPS history for the map, plus device registration for this phone's own uploader.
+  // `Me` is excluded so location's `/me` can never shadow cal's (the estate's one query-key collision);
+  // `Ingest` is excluded because it authenticates with `Authorization: DeviceKey …`, which the generated
+  // mutator can't send and the spec doesn't even declare — see sync/locationUploader.ts for the real call.
+  lupiraLocationApi: {
+    input: {
+      target: '../../src/LupiraCalWeb.Client/backend-location-openapi.json',
+      filters: { mode: 'exclude', tags: ['Me', 'Ingest'] },
+    },
+    output: {
+      target: './src/data/api/generated/location/lupiraLocationApi.ts',
+      schemas: './src/data/api/generated/location/models',
+      client: 'fetch',
+      mode: 'tags-split',
+      clean: true,
+      baseUrl: '/location-api',
+      override: { mutator: { path: './src/data/api/mutator.ts', name: 'apiFetch' } },
+    },
+  },
   // Task deadlines (read-only, online-only): only the Items surface is consumed.
   lupiraTasksApi: {
     input: { target: '../../src/LupiraCalWeb.Client/backend-tasks-openapi.json', filters: { mode: 'include', tags: ['Items'] } },

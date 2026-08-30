@@ -5,9 +5,12 @@ import { getDb } from '../data/db/expoDb';
 import { lookupPlaces } from '../data/api/generated/geo/places/places';
 import { listSavedPlaces } from '../data/api/generated/geo/saved-places/saved-places';
 import { getPhotoMap } from '../data/api/generated/photo/photos/photos';
+import { getCurrentLocation, getThinnedTrack, listVisits } from '../data/api/generated/location/location/location';
 import type { PlaceDto } from '../data/api/generated/geo/models';
 import { loadMapStyle, type BasemapStyle, type MapTheme } from '../data/mapStyle';
-import { mapEventRowsBetween } from '../data/mirror';
+import { mapContactAddresses, mapEventRowsBetween } from '../data/mirror';
+import { residencyStatus } from '@lupira/cal-domain/fuzzyDate';
+import { splitTrack } from '@lupira/cal-domain/geo';
 import { useCalendars } from './queries';
 import { useSyncStatus } from '../sync/syncStatus';
 
@@ -120,6 +123,150 @@ export function usePhotoFeatures(bbox: string | null, enabled: boolean): Feature
     }));
     return { type: 'FeatureCollection', features } satisfies FeatureCollection;
   }, [enabled, q.data]);
+}
+
+/** A recording hole longer than this breaks the drawn track (tracker off, retention edge). */
+const TRACK_MAX_GAP_S = 10 * 60;
+
+/** Raw GPS is append-only and the server's rollup only reworks yesterday and today, so a window that
+ *  ended before yesterday can never change — cache it forever instead of re-fetching on every pan. */
+function staleTimeFor(toIso: string): number {
+  const yesterdayMidnight = new Date();
+  yesterdayMidnight.setHours(0, 0, 0, 0);
+  yesterdayMidnight.setDate(yesterdayMidnight.getDate() - 1);
+  return Date.parse(toIso) < yesterdayMidnight.getTime() ? Infinity : 5 * 60_000;
+}
+
+export type MovementFeatures = { visits: FeatureCollection; track: FeatureCollection; current: FeatureCollection };
+
+const EMPTY_MOVEMENT: MovementFeatures = { visits: EMPTY, track: EMPTY, current: EMPTY };
+
+/** Where you've been: dwell circles, an activity-coloured track, and the last fix each device reported.
+ *  Empty until something uploads — this app's own recorder is the only producer. */
+export function useMovementFeatures(fromIso: string, toIso: string, enabled: boolean): MovementFeatures {
+  const reachable = useSyncStatus((s) => s.serverReachable);
+  const on = enabled && reachable;
+  const staleTime = staleTimeFor(toIso);
+
+  const visitsQ = useQuery({
+    queryKey: ['map', 'visits', fromIso, toIso],
+    enabled: on,
+    staleTime,
+    retry: 1,
+    queryFn: async () => {
+      const r = await listVisits({ from: fromIso, to: toIso });
+      if (r.status !== 200) throw new Error(`visits ${r.status}`);
+      return r.data;
+    },
+  });
+
+  const trackQ = useQuery({
+    queryKey: ['map', 'track', fromIso, toIso],
+    enabled: on,
+    staleTime,
+    retry: 1,
+    queryFn: async () => {
+      // Raw /location/track caps at 50k points; the thinned form is one best fix per bucket.
+      const r = await getThinnedTrack({ from: fromIso, to: toIso, bucketSeconds: 30 });
+      if (r.status !== 200) throw new Error(`track ${r.status}`);
+      return r.data;
+    },
+  });
+
+  const currentQ = useQuery({
+    queryKey: ['map', 'current'],
+    enabled: on,
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+    retry: 1,
+    queryFn: async () => {
+      const r = await getCurrentLocation();
+      if (r.status !== 200) throw new Error(`current ${r.status}`);
+      return r.data;
+    },
+  });
+
+  return useMemo(() => {
+    if (!enabled) return EMPTY_MOVEMENT;
+
+    const visits: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: (visitsQ.data ?? []).map((v) => point(v.lon, v.lat, {
+        layer: 'visit',
+        visitId: v.id,
+        placeLabel: v.placeLabel ?? null,
+        arriveTs: v.arriveTs,
+        departTs: v.departTs,
+        durationMin: Math.max(1, Math.round((Date.parse(v.departTs) - Date.parse(v.arriveTs)) / 60_000)),
+      })),
+    };
+
+    const segments = splitTrack(
+      (trackQ.data ?? []).map((p) => ({ lat: p.lat, lon: p.lon, ts: p.ts, activity: p.activity ?? null })),
+      TRACK_MAX_GAP_S,
+    ).filter((segment) => segment.length >= 2);
+    const track: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: segments.map((segment) => ({
+        type: 'Feature' as const,
+        geometry: { type: 'LineString' as const, coordinates: segment.map((p) => [p.lon, p.lat]) },
+        properties: { layer: 'track', activity: segment[0].activity ?? 'Unknown' },
+      })),
+    };
+
+    const current: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: (currentQ.data ?? []).map((f) => point(f.lon, f.lat, {
+        layer: 'current',
+        deviceId: f.deviceId,
+        ts: f.ts,
+        batteryPct: f.batteryPct ?? null,
+      })),
+    };
+
+    return { visits, track, current };
+  }, [enabled, visitsQ.data, trackQ.data, currentQ.data]);
+}
+
+/** Contact pins from the local mirror — co-located contacts (a household) merge into one pin.
+ *  Current addresses only; residency history is a web-only nicety not worth the phone screen. */
+export function useContactFeatures(enabled: boolean): FeatureCollection {
+  const rowsQ = useQuery({
+    queryKey: ['contacts', 'map'],
+    enabled,
+    queryFn: async () => mapContactAddresses(await getDb()),
+  });
+  const rows = useMemo(() => rowsQ.data ?? [], [rowsQ.data]);
+  const places = usePlaceCoords(useMemo(() => rows.map((r) => r.place_id), [rows]));
+
+  return useMemo(() => {
+    if (!enabled) return EMPTY;
+    const parse = (raw: string | null) => (raw ? (JSON.parse(raw) as { year: number; month?: number; day?: number }) : null);
+
+    const byPlace = new Map<string, { names: string[]; contactIds: string[]; types: string[] }>();
+    for (const row of rows) {
+      if (residencyStatus(parse(row.moved_in), parse(row.moved_out)) !== 'active') continue;
+      if (!places.has(row.place_id)) continue;
+      const entry = byPlace.get(row.place_id) ?? { names: [], contactIds: [], types: [] };
+      entry.names.push(row.display_name);
+      entry.contactIds.push(row.contact_id);
+      if (row.address_type) entry.types.push(row.address_type);
+      byPlace.set(row.place_id, entry);
+    }
+
+    const features = [...byPlace.entries()].map(([placeId, entry]) => {
+      const place = places.get(placeId)!;
+      const shown = entry.names.length > 3 ? [...entry.names.slice(0, 2), `+${entry.names.length - 2}`] : entry.names;
+      return point(place.longitude!, place.latitude!, {
+        layer: 'contact',
+        placeId,
+        placeName: place.name,
+        contactIds: entry.contactIds,
+        label: shown.join(', '),
+      });
+    });
+    return { type: 'FeatureCollection', features } satisfies FeatureCollection;
+  }, [enabled, rows, places]);
 }
 
 /** Saved-place pins (favorites first is the API's order; gazetteer link or raw pin). */

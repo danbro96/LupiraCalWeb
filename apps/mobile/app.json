@@ -18,7 +18,10 @@
     "android": {
       "package": "com.lupira.calendar",
       "predictiveBackGestureEnabled": false,
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "plugins": [
       "expo-secure-store",
@@ -29,8 +32,20 @@
       [
         "expo-media-library",
         {
-          "granularPermissions": [ "photo", "video" ],
+          "granularPermissions": [
+            "photo",
+            "video"
+          ],
           "isAccessMediaLocationEnabled": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Lupira Calendar shows where you are on the map.",
+          "locationAlwaysAndWhenInUsePermission": "Lupira Calendar records your route in the background so your movement history and photo places have no gaps.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
         }
       ]
     ],

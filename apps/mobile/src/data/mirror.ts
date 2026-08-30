@@ -185,6 +185,31 @@ export async function mapEventRowsBetween(tx: Tx, fromDay: string, toDay: string
   );
 }
 
+export type MapContactRow = {
+  contact_id: string;
+  display_name: string;
+  place_id: string;
+  address_type: string | null;
+  moved_in: string | null;
+  moved_out: string | null;
+};
+
+/** Contact addresses for the map. `json_each` walks the address array stored inside the contact doc,
+ *  so this is a pure mirror read — the layer works offline, unlike the web's which refetches every
+ *  contact. Fuzzy dates come back as JSON for the caller's residency logic. */
+export async function mapContactAddresses(tx: Tx): Promise<MapContactRow[]> {
+  return tx.all<MapContactRow>(
+    `SELECT c.id AS contact_id, c.display_name,
+            json_extract(a.value, '$.placeId') AS place_id,
+            json_extract(a.value, '$.type')    AS address_type,
+            json_extract(a.value, '$.movedIn')  AS moved_in,
+            json_extract(a.value, '$.movedOut') AS moved_out
+     FROM contacts c, json_each(json_extract(c.doc, '$.addresses')) a
+     WHERE c.deleted = 0 AND json_extract(a.value, '$.placeId') IS NOT NULL
+     ORDER BY c.display_name COLLATE NOCASE`,
+  );
+}
+
 export type ContactListRow = { id: string; displayName: string; doc: ContactDoc };
 
 export async function listContacts(tx: Tx): Promise<ContactListRow[]> {

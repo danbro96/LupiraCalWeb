@@ -96,6 +96,25 @@ export const MIGRATIONS: string[] = [
   );
   CREATE INDEX idx_photo_queue_state ON photo_upload_queue (state, next_attempt_at);
   `,
+  `
+  CREATE TABLE location_fix_queue (
+    seq INTEGER PRIMARY KEY,
+    ts TEXT NOT NULL,
+    lat REAL NOT NULL,
+    lon REAL NOT NULL,
+    accuracy_m REAL,
+    altitude_m REAL,
+    heading_deg REAL,
+    speed_mps REAL,
+    activity TEXT NOT NULL DEFAULT 'Unknown',
+    provider TEXT NOT NULL DEFAULT 'Unknown',
+    battery_pct INTEGER,
+    is_moving INTEGER NOT NULL DEFAULT 0,
+    is_mock INTEGER NOT NULL DEFAULT 0,
+    next_attempt_at TEXT
+  );
+  CREATE INDEX idx_location_queue_due ON location_fix_queue (next_attempt_at, seq);
+  `,
 ];
 
 // Single-flight per db handle: bridge-store init and the first runSync both migrate on app start —

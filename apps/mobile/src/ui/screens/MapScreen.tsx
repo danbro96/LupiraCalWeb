@@ -1,7 +1,5 @@
 import {
   Camera,
-  GeoJSONSource,
-  Layer,
   Map as MapView,
   TransformRequestManager,
   type CameraRef,
@@ -9,7 +7,6 @@ import {
   type LngLatBounds,
   type PressEventWithFeatures,
   type StyleSpecification,
-  type SymbolLayerSpecification,
   type ViewStateChangeEvent,
 } from '@maplibre/maplibre-react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -18,12 +15,22 @@ import { Image } from 'expo-image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { NativeSyntheticEvent } from 'react-native';
 import { Pressable, StyleSheet, useColorScheme, View } from 'react-native';
-import { ActivityIndicator, Banner, Chip, Portal, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Banner, Portal, Text, useTheme } from 'react-native-paper';
 import type { MapTheme } from '../../data/mapStyle';
 import { fallbackStyle } from '../../data/mapStyle';
+import { toastError } from '../../feedback/toast';
 import { useAuth } from '../../state/auth-store';
-import { useEventFeatures, useMapStyle, usePhotoFeatures, useSavedPlaceFeatures } from '../../state/map-queries';
-import { MAP_COLORS } from '../map/mapTokens';
+import { useLocationTracking } from '../../state/location-tracking-store';
+import {
+  useContactFeatures, useEventFeatures, useMapStyle, useMovementFeatures, usePhotoFeatures, useSavedPlaceFeatures,
+} from '../../state/map-queries';
+import { useLivePosition } from '../../sync/livePosition';
+import {
+  DEFAULT_LAYERS, LayersFab, LayersSheet, LocateFab, type FollowMode, type LayerKey,
+} from '../map/MapChrome';
+import {
+  ContactsLayer, EventsLayer, LivePuck, MovementLayer, PhotosLayer, SavedPlacesLayer,
+} from '../map/layers';
 import type { RootStackParamList } from '../navigation/types';
 
 // Matches the web MapScreen default (Nordics, the basemap extract's home).
@@ -31,17 +38,10 @@ const DEFAULT_CENTER: [number, number] = [18.07, 59.33];
 const DEFAULT_ZOOM = 9;
 const PAST_DAYS = 90;
 const FUTURE_DAYS = 180;
+/** Movement is the only layer scoped to a short window — a 90-day track would be unreadable. */
+const MOVEMENT_DAYS = 7;
 
 const AUTH_HEADER_ID = 'lupira-auth';
-
-// Explicit or MapLibre falls back to `Open Sans Regular,Arial Unicode MS Regular`, which geo-api's
-// Noto glyph set 404s. Same stacks as the web layers.tsx.
-const CLUSTER_TEXT: SymbolLayerSpecification['layout'] = {
-  'text-field': ['get', 'point_count_abbreviated'],
-  'text-font': ['Noto Sans Medium'],
-  'text-size': 12,
-  'text-allow-overlap': true,
-};
 
 const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -70,62 +70,88 @@ function dayKey(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-type LayerKey = 'events' | 'saved' | 'photos';
-
-type PhotoPin = { id: string; takenAt: string; placeLabel: string | null; thumbUrl: string | null };
-
 /** MapLibre's bounds are already [west, south, east, north] — the same order the API's bbox takes.
  *  Rounded to ~11 m so a pixel of camera drift doesn't invalidate the query key on every idle event. */
 function bboxOf(bounds: LngLatBounds): string {
   return bounds.map((n) => n.toFixed(4)).join(',');
 }
 
+type PhotoPin = { id: string; takenAt: string; placeLabel: string | null; thumbUrl: string | null };
+type VisitPin = { placeLabel: string | null; arriveTs: string; departTs: string; durationMin: number };
+
 export function MapScreen() {
-  // useTheme, not useColors: the bottom sheet paints from MD3's elevation ramp,
-  // which the estate palette has no equivalent for.
   const paper = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const scheme = useColorScheme();
   const theme: MapTheme = scheme === 'dark' ? 'dark' : 'light';
-  const colors = MAP_COLORS[theme];
 
   useMapAuthHeader();
 
   const { style, degraded } = useMapStyle(theme);
-  const [enabled, setEnabled] = useState<Record<LayerKey, boolean>>({ events: true, saved: true, photos: true });
+  const [enabled, setEnabled] = useState<Record<LayerKey, boolean>>(DEFAULT_LAYERS);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [bbox, setBbox] = useState<string | null>(null);
+  const [follow, setFollow] = useState<FollowMode>('off');
   const [openPhoto, setOpenPhoto] = useState<PhotoPin | null>(null);
+  const [openVisit, setOpenVisit] = useState<VisitPin | null>(null);
 
-  const { fromDay, toDay } = useMemo(() => {
+  const { fromDay, toDay, movementFrom, movementTo } = useMemo(() => {
     const now = Date.now();
     return {
       fromDay: dayKey(new Date(now - PAST_DAYS * 86_400_000)),
       toDay: dayKey(new Date(now + FUTURE_DAYS * 86_400_000)),
+      movementFrom: new Date(now - MOVEMENT_DAYS * 86_400_000).toISOString(),
+      movementTo: new Date(now).toISOString(),
     };
   }, []);
 
   const events = useEventFeatures(fromDay, toDay, enabled.events);
   const saved = useSavedPlaceFeatures(enabled.saved);
   const photos = usePhotoFeatures(bbox, enabled.photos);
+  const contacts = useContactFeatures(enabled.contacts);
+  const movement = useMovementFeatures(movementFrom, movementTo, enabled.movement);
+  const livePosition = useLivePosition((s) => s.position);
 
   const cameraRef = useRef<CameraRef>(null);
   const eventSourceRef = useRef<GeoJSONSourceRef>(null);
   const photoSourceRef = useRef<GeoJSONSourceRef>(null);
+  const contactSourceRef = useRef<GeoJSONSourceRef>(null);
+
+  // The puck follows the map's lifetime, not the app's: GPS stops when you leave the tab.
+  useEffect(() => {
+    void useLivePosition.getState().start();
+    return () => useLivePosition.getState().stop();
+  }, []);
 
   const onRegionDidChange = useCallback((e: NativeSyntheticEvent<ViewStateChangeEvent>) => {
     setBbox(bboxOf(e.nativeEvent.bounds));
+    // A deliberate pan means the user took the wheel — drop follow-mode rather than fighting them.
+    if (e.nativeEvent.userInteraction) setFollow('off');
   }, []);
+
+  const expandCluster = useCallback(async (
+    sourceRef: React.RefObject<GeoJSONSourceRef | null>,
+    feature: GeoJSON.Feature,
+  ) => {
+    const clusterId = feature.properties?.cluster_id as number;
+    const [lng, lat] = (feature.geometry as GeoJSON.Point).coordinates;
+    const zoom = await sourceRef.current?.getClusterExpansionZoom(clusterId);
+    if (zoom != null) cameraRef.current?.easeTo({ center: [lng, lat], zoom: zoom + 0.5, duration: 400 });
+  }, []);
+
+  const onEventPress = async (e: NativeSyntheticEvent<PressEventWithFeatures>) => {
+    const feature = e.nativeEvent.features[0];
+    if (!feature) return;
+    if (feature.properties?.cluster) return expandCluster(eventSourceRef, feature);
+    const itemId = feature.properties?.itemId;
+    if (typeof itemId === 'string') navigation.navigate('ItemDetail', { itemId });
+  };
 
   const onPhotoPress = async (e: NativeSyntheticEvent<PressEventWithFeatures>) => {
     const feature = e.nativeEvent.features[0];
     if (!feature) return;
+    if (feature.properties?.cluster) return expandCluster(photoSourceRef, feature);
     const props = feature.properties ?? {};
-    const [lng, lat] = (feature.geometry as GeoJSON.Point).coordinates;
-    if (props.cluster) {
-      const zoom = await photoSourceRef.current?.getClusterExpansionZoom(props.cluster_id as number);
-      if (zoom != null) cameraRef.current?.easeTo({ center: [lng, lat], zoom: zoom + 0.5, duration: 400 });
-      return;
-    }
     setOpenPhoto({
       id: String(props.photoId),
       takenAt: String(props.takenAt),
@@ -134,149 +160,99 @@ export function MapScreen() {
     });
   };
 
-  const onEventPress = async (e: NativeSyntheticEvent<PressEventWithFeatures>) => {
+  const onContactPress = async (e: NativeSyntheticEvent<PressEventWithFeatures>) => {
     const feature = e.nativeEvent.features[0];
     if (!feature) return;
-    const props = feature.properties ?? {};
-    const [lng, lat] = (feature.geometry as GeoJSON.Point).coordinates;
-    if (props.cluster) {
-      const zoom = await eventSourceRef.current?.getClusterExpansionZoom(props.cluster_id as number);
-      if (zoom != null) cameraRef.current?.easeTo({ center: [lng, lat], zoom: zoom + 0.5, duration: 400 });
-      return;
+    if (feature.properties?.cluster) return expandCluster(contactSourceRef, feature);
+    // MapLibre stringifies nested properties, so the id array comes back as JSON.
+    const raw = feature.properties?.contactIds;
+    const ids = typeof raw === 'string' ? (JSON.parse(raw) as string[]) : (raw as string[] | undefined);
+    if (ids?.length) navigation.navigate('ContactDetail', { contactId: ids[0] });
+  };
+
+  const onVisitPress = (e: NativeSyntheticEvent<PressEventWithFeatures>) => {
+    const props = e.nativeEvent.features[0]?.properties;
+    if (!props) return;
+    setOpenVisit({
+      placeLabel: (props.placeLabel as string | null) ?? null,
+      arriveTs: String(props.arriveTs),
+      departTs: String(props.departTs),
+      durationMin: Number(props.durationMin),
+    });
+  };
+
+  const onLocatePress = async () => {
+    const started = await useLivePosition.getState().start();
+    if (!started) {
+      const granted = await useLocationTracking.getState().requestForeground();
+      if (!granted) {
+        toastError('Location permission is off — turn it on in Settings to see where you are.');
+        return;
+      }
+      await useLivePosition.getState().start();
     }
-    if (typeof props.itemId === 'string') navigation.navigate('ItemDetail', { itemId: props.itemId });
+    const position = useLivePosition.getState().position;
+    if (position) {
+      cameraRef.current?.easeTo({ center: [position.lon, position.lat], zoom: 15, duration: 500 });
+    }
+    setFollow((m) => (m === 'off' ? 'follow' : m === 'follow' ? 'heading' : 'off'));
   };
 
   const toggle = (key: LayerKey) => setEnabled((s) => ({ ...s, [key]: !s[key] }));
-
   const mapStyle = style ?? (degraded ? fallbackStyle(theme) : undefined);
 
   return (
     <View style={[styles.root, { backgroundColor: paper.colors.background }]}>
-      {degraded && <Banner visible icon="map-marker-off">Basemap unavailable — showing pins on a plain background.</Banner>}
-      <View style={styles.chips}>
-        <Chip compact selected={enabled.events} onPress={() => toggle('events')} showSelectedCheck>Events</Chip>
-        <Chip compact selected={enabled.saved} onPress={() => toggle('saved')} showSelectedCheck>Saved</Chip>
-        <Chip compact selected={enabled.photos} onPress={() => toggle('photos')} showSelectedCheck>Photos</Chip>
-      </View>
+      {degraded && (
+        <Banner visible icon="map-marker-off">Basemap unavailable — showing pins on a plain background.</Banner>
+      )}
       {mapStyle ? (
-        <MapView style={styles.map} mapStyle={mapStyle as unknown as StyleSpecification} onRegionDidChange={onRegionDidChange}>
-          <Camera ref={cameraRef} initialViewState={{ center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM }} />
-          {enabled.saved && (
-            <GeoJSONSource id="saved-places" data={saved}>
-              <Layer
-                id="saved-circles"
-                type="circle"
-                paint={{
-                  'circle-color': colors.saved,
-                  'circle-radius': 6,
-                  'circle-stroke-color': colors.ring,
-                  'circle-stroke-width': 2,
-                }}
+        <View style={styles.mapWrap}>
+          <MapView
+            style={styles.map}
+            mapStyle={mapStyle as unknown as StyleSpecification}
+            onRegionDidChange={onRegionDidChange}
+          >
+            <Camera
+              ref={cameraRef}
+              initialViewState={{ center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM }}
+              trackUserLocation={follow === 'off' ? undefined : follow === 'follow' ? 'default' : 'heading'}
+            />
+            {enabled.movement && (
+              <MovementLayer
+                theme={theme}
+                visits={movement.visits}
+                track={movement.track}
+                current={movement.current}
+                onVisitPress={onVisitPress}
               />
-              <Layer
-                id="saved-labels"
-                type="symbol"
-                layout={{
-                  'text-field': ['get', 'label'],
-                  'text-font': ['Noto Sans Regular'],
-                  'text-size': 11,
-                  'text-offset': [0, 1.2],
-                  'text-anchor': 'top',
-                  'text-optional': true,
-                }}
-                paint={{ 'text-color': colors.ink, 'text-halo-color': colors.ring, 'text-halo-width': 1 }}
-              />
-            </GeoJSONSource>
-          )}
-          {enabled.events && (
-            <GeoJSONSource
-              ref={eventSourceRef}
-              id="events"
-              data={events}
-              cluster
-              clusterRadius={48}
-              clusterMaxZoom={14}
-              onPress={onEventPress}
-            >
-              <Layer
-                id="event-clusters"
-                type="circle"
-                filter={['has', 'point_count']}
-                paint={{
-                  'circle-color': colors.eventFallback,
-                  'circle-radius': ['step', ['get', 'point_count'], 14, 10, 18, 50, 24],
-                  'circle-stroke-color': colors.ring,
-                  'circle-stroke-width': 2,
-                }}
-              />
-              <Layer
-                id="event-cluster-counts"
-                type="symbol"
-                filter={['has', 'point_count']}
-                layout={CLUSTER_TEXT}
-                paint={{ 'text-color': colors.ring }}
-              />
-              <Layer
-                id="event-pins"
-                type="circle"
-                filter={['!', ['has', 'point_count']]}
-                paint={{
-                  'circle-color': ['coalesce', ['get', 'color'], colors.eventFallback],
-                  'circle-radius': 7,
-                  'circle-stroke-color': colors.ring,
-                  'circle-stroke-width': 2,
-                }}
-              />
-            </GeoJSONSource>
-          )}
-          {enabled.photos && (
-            <GeoJSONSource
-              ref={photoSourceRef}
-              id="photos"
-              data={photos}
-              cluster
-              clusterRadius={48}
-              clusterMaxZoom={14}
-              onPress={onPhotoPress}
-            >
-              <Layer
-                id="photo-clusters"
-                type="circle"
-                filter={['has', 'point_count']}
-                paint={{
-                  'circle-color': colors.photo,
-                  'circle-radius': ['step', ['get', 'point_count'], 14, 10, 18, 50, 24],
-                  'circle-stroke-color': colors.ring,
-                  'circle-stroke-width': 2,
-                }}
-              />
-              <Layer
-                id="photo-cluster-counts"
-                type="symbol"
-                filter={['has', 'point_count']}
-                layout={CLUSTER_TEXT}
-                paint={{ 'text-color': colors.ring }}
-              />
-              <Layer
-                id="photo-pins"
-                type="circle"
-                filter={['!', ['has', 'point_count']]}
-                paint={{
-                  'circle-color': colors.photo,
-                  'circle-radius': 6,
-                  'circle-stroke-color': colors.ring,
-                  'circle-stroke-width': 2,
-                }}
-              />
-            </GeoJSONSource>
-          )}
-        </MapView>
+            )}
+            {enabled.saved && <SavedPlacesLayer theme={theme} features={saved} />}
+            {enabled.contacts && (
+              <ContactsLayer theme={theme} features={contacts} sourceRef={contactSourceRef} onPress={onContactPress} />
+            )}
+            {enabled.events && (
+              <EventsLayer theme={theme} features={events} sourceRef={eventSourceRef} onPress={onEventPress} />
+            )}
+            {enabled.photos && (
+              <PhotosLayer theme={theme} features={photos} sourceRef={photoSourceRef} onPress={onPhotoPress} />
+            )}
+            {livePosition && <LivePuck theme={theme} position={livePosition} />}
+          </MapView>
+
+          <LayersFab onPress={() => setSheetOpen(true)} style={styles.layersFab} />
+          <LocateFab mode={follow} onPress={() => void onLocatePress()} style={styles.locateFab} />
+        </View>
       ) : (
         <View style={styles.loading}>
           <ActivityIndicator />
         </View>
       )}
+
+      {sheetOpen && (
+        <LayersSheet theme={theme} enabled={enabled} onToggle={toggle} onDismiss={() => setSheetOpen(false)} />
+      )}
+
       {openPhoto && (
         <Portal>
           <Pressable style={styles.sheetBackdrop} onPress={() => setOpenPhoto(null)}>
@@ -294,15 +270,33 @@ export function MapScreen() {
           </Pressable>
         </Portal>
       )}
+
+      {openVisit && (
+        <Portal>
+          <Pressable style={styles.sheetBackdrop} onPress={() => setOpenVisit(null)}>
+            <Pressable style={[styles.sheet, { backgroundColor: paper.colors.elevation.level2 }]}>
+              <Text style={[styles.sheetTitle, { color: paper.colors.onSurface }]}>
+                {openVisit.placeLabel ?? 'Stay'}
+              </Text>
+              <Text style={[styles.sheetDetail, { color: paper.colors.onSurfaceVariant }]}>
+                {new Date(openVisit.arriveTs).toLocaleTimeString()}–{new Date(openVisit.departTs).toLocaleTimeString()}
+                {' · '}{openVisit.durationMin} min
+              </Text>
+            </Pressable>
+          </Pressable>
+        </Portal>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  chips: { flexDirection: 'row', gap: 8, paddingHorizontal: 12, paddingVertical: 8 },
+  mapWrap: { flex: 1 },
   map: { flex: 1 },
   loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  layersFab: { position: 'absolute', right: 16, bottom: 88 },
+  locateFab: { position: 'absolute', right: 16, bottom: 24 },
   sheetBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: '#0006' },
   sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 16, gap: 4 },
   sheetImage: { width: '100%', height: 240, borderRadius: 12, marginBottom: 8 },

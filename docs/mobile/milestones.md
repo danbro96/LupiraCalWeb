@@ -268,3 +268,38 @@ the Lupira Photos program: the photos layer lands here once lupira-photo-api exi
 
 ### Non-goals
 - Movement/contacts layers (need `lupira-location-aud` scope + re-login — bundle with `lupira-photo-aud` when the photos phase adds scopes); time-range control; photos layer (needs lupira-photo-api)
+
+## M12 — Live location, movement layers, and the GPS uploader   [status: in-progress]
+
+The Map tab gains a sense of place: your live position, where you've been, your people. And the phone
+becomes the estate's **first GPS uploader** — LupiraLocationApi has been running with an empty database
+because nothing has ever written to `/ingest/location`. The movement layer renders nothing until this
+ships, which is why the recorder and the layer land together.
+
+### Scope
+- [x] `lupira-location-aud` on the mobile OIDC scopes; sixth orval target (`Me` + `Ingest` tags excluded — location's `/me` would shadow cal's, and ingest can't use the generated mutator)
+- [x] `domain/locationFix.ts` — wire shape, speed→activity ladder, cadence profiles + hysteresis, snake_case NDJSON, reject disposition, receipt coherence
+- [x] `location_fix_queue` migration + `data/locationQueue.ts` (seq monotonic across a full drain, defer, prune, cap)
+- [x] `sync/locationRecorder.ts` — TaskManager task + foreground service, adaptive cadence, admission gates (accuracy > 50 m and out-of-window timestamps never reach the queue)
+- [x] `sync/locationIngest.ts` — hand-written DeviceKey client posting **direct to location-api**, bypassing the BFF
+- [x] `sync/locationUploader.ts` — batch drain, receipt reconciliation, `highWaterSeq` pruning, cursor repair, revoked-device handling
+- [x] `state/location-tracking-store.ts` — two-step permission sequence, device registration, pause, erase, foreground reconcile
+- [x] Map: live puck via `LayerAnnotation` (our own fix stream, not a second GPS subscription), movement/contacts layers, layers sheet + locate FAB, visit sheet, contact pin → ContactDetail
+- [x] Settings: tracking toggle, pause, queue status, background-permission warning, erase history
+- [x] 29 unit tests (domain + `node:sqlite` queue); root typecheck/lint/test green
+
+### Exit criteria
+- [ ] Authentik: `lupira-location-aud` mapped onto the `lupira-cal-mobile` provider, then a forced sign-out/in
+- [ ] EAS dev-client build (expo-location + background permissions are native — OTA cannot deliver them)
+- [ ] Device: permission sequence runs foreground → notifications → background as SEPARATE prompts; a combined request is never issued
+- [ ] Device: foreground-service notification visible on Android 14; recording survives the app being swiped from Recents
+- [ ] Device: walk → drive → sit; `logDebug('location')` shows the cadence switching only after a sustained streak
+- [ ] Device: airplane mode grows the queue, reconnect drains it, `GET /location/track` shows no gaps and no duplicates
+- [ ] Device: force-stop mid-upload → next pass re-sends → receipt reports `duplicates`, queue empties, no double rows
+- [ ] Device: after a day, `/location/visits` returns home/work and the Movement layer draws dwell circles + an activity-coloured track
+- [ ] Device: a photo with no EXIF GPS geotags via the location-history fallback (that path has never had data to work with)
+- [ ] Battery: overnight stationary drain is acceptable — the one number that decides whether the still profile needs retuning
+
+### Non-goals
+Family/presence sharing (needs a consent model LocationApi doesn't have); geofence alerts; trip polylines as
+first-class features; a time-range control on the map; rollup backfill for days the app was down.

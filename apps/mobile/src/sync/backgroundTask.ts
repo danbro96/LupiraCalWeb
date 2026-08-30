@@ -1,6 +1,7 @@
 import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
 import { logDebug } from '../debug/log';
+import { runLocationUpload } from './locationUploader';
 import { runSync } from './sync';
 
 /** Best-effort while-backgrounded freshness: WorkManager's 15-minute floor, further throttled by Doze and
@@ -16,6 +17,9 @@ const TASK_NAME = 'lupira-calendar-sync';
 TaskManager.defineTask(TASK_NAME, async () => {
   try {
     await runSync();
+    // Recorded fixes shouldn't sit in the queue until the app is next opened — the location
+    // foreground service keeps writing them whether or not anyone is looking at the app.
+    await runLocationUpload();
     return BackgroundTask.BackgroundTaskResult.Success;
   } catch (e) {
     logDebug('sync', `background sync failed: ${String(e)}`);

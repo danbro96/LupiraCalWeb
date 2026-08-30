@@ -5,8 +5,12 @@ import { List, Switch, Text } from 'react-native-paper';
 import { APP_VERSION } from '../../config';
 import { useAuth } from '../../state/auth-store';
 import { useBridge } from '../../state/bridge-store';
+import { toast, toastError } from '../../feedback/toast';
+import { useLocationTracking } from '../../state/location-tracking-store';
 import { usePhotoBackup } from '../../state/photo-backup-store';
 import { usePhotoBackupStatus } from '../../sync/photoBackupStatus';
+import { useTrackingStatus } from '../../sync/locationTrackingStatus';
+import { runLocationUpload } from '../../sync/locationUploader';
 import { usePrefs } from '../../state/prefs-store';
 import { retryParkedPhotos, runPhotoBackup } from '../../sync/photoUploader';
 import { runSync } from '../../sync/sync';
@@ -28,6 +32,8 @@ export function SettingsScreen() {
   const prefs = usePrefs();
   const photos = usePhotoBackup();
   const photoStatus = usePhotoBackupStatus();
+  const tracking = useLocationTracking();
+  const trackStatus = useTrackingStatus();
   const { syncing, pending, parked, lastSyncAt } = useSyncStatus();
   const confirm = useConfirm();
 
@@ -43,6 +49,41 @@ export function SettingsScreen() {
         return;
       }
       if (value) void runPhotoBackup();
+    });
+  };
+
+  const toggleTracking = (value: boolean) => {
+    if (!value) {
+      void useLocationTracking.getState().disable();
+      return;
+    }
+    void useLocationTracking.getState().enable('This phone').then(async (outcome) => {
+      if (outcome === 'denied') {
+        const open = await confirm({
+          title: 'Location permission needed',
+          message: 'Recording your route needs access to this device\u2019s location. Grant it in the system settings and try again.',
+          confirmLabel: 'Open app settings',
+        });
+        if (open) void Linking.openSettings();
+        return;
+      }
+      if (outcome === 'foreground-only') {
+        toast('Recording only while the app is open — choose “Allow all the time” for a gap-free history.');
+      }
+    });
+  };
+
+  const confirmErase = () => {
+    void confirm({
+      title: 'Erase location history',
+      message: 'Deletes every recorded position on the server, plus the visits and trips derived from them. This cannot be undone.',
+      confirmLabel: 'Erase',
+      destructive: true,
+    }).then((ok) => {
+      if (!ok) return;
+      void useLocationTracking.getState().eraseHistory()
+        .then(() => toast('Location history erased.'))
+        .catch(() => toastError('Could not erase location history.'));
     });
   };
 
@@ -161,6 +202,55 @@ export function SettingsScreen() {
       )}
       <Text style={[styles.detail, { color: c.textMuted }]}>
         Originals upload straight to your own storage. Bulk backup runs while the app is open; in the background it catches up slowly.
+      </Text>
+
+      <List.Subheader>Location tracking</List.Subheader>
+      <List.Item
+        title="Record where I go"
+        right={() => (
+          <Switch value={tracking.settings.enabled} onValueChange={toggleTracking} disabled={!tracking.loaded} />
+        )}
+      />
+      {tracking.settings.enabled && (
+        <>
+          <List.Item
+            title="Pause recording"
+            right={() => (
+              <Switch
+                value={tracking.settings.paused}
+                onValueChange={(v) => void useLocationTracking.getState().setPaused(v)}
+              />
+            )}
+          />
+          <Text style={[styles.detail, { color: c.textMuted }]}>
+            {trackStatus.serverPaused
+              ? 'Paused on the server — nothing is being stored.'
+              : trackStatus.queued > 0
+                ? `${trackStatus.queued} fixes waiting to upload`
+                : trackStatus.lastUploadAt
+                  ? `Up to date · last upload ${new Date(trackStatus.lastUploadAt).toLocaleTimeString()}`
+                  : 'Up to date'}
+          </Text>
+          {!tracking.backgroundGranted && (
+            <Pressable onPress={() => void Linking.openSettings()}>
+              <Text style={[styles.warning, { color: c.warning }]}>
+                Recording stops when the app closes — tap to choose “Allow all the time”
+              </Text>
+            </Pressable>
+          )}
+          {trackStatus.lastError && (
+            <Pressable onPress={() => void runLocationUpload()}>
+              <Text style={[styles.warning, { color: c.warning }]}>{trackStatus.lastError} — tap to retry</Text>
+            </Pressable>
+          )}
+          <Pressable onPress={confirmErase}>
+            <Text style={[styles.warning, { color: c.danger }]}>Erase my location history</Text>
+          </Pressable>
+        </>
+      )}
+      <Text style={[styles.detail, { color: c.textMuted }]}>
+        Sampling follows how you’re moving — about every 5 minutes when still, every minute walking, every 30 seconds driving.
+        Android shows a permanent notification while recording; that’s required, not optional.
       </Text>
 
       <List.Subheader>Sync</List.Subheader>

@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { AppState, useColorScheme } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from './src/state/auth-store';
@@ -11,6 +11,7 @@ import { ConfirmDialogHost } from './src/ui/components/ConfirmDialog';
 import { ToastHost } from './src/ui/components/ToastHost';
 import { navDark, navLight, paperDark, paperLight } from './src/ui/theme/paperTheme';
 import { useBridge } from './src/state/bridge-store';
+import { useLocationTracking } from './src/state/location-tracking-store';
 import { usePhotoBackup } from './src/state/photo-backup-store';
 import { usePrefs } from './src/state/prefs-store';
 import { registerBackgroundSync } from './src/sync/backgroundTask';
@@ -34,7 +35,19 @@ export default function App() {
     void useBridge.getState().init();   // hydrate the integration flag + self-repair account/permissions
     void usePrefs.getState().init();
     void usePhotoBackup.getState().init();
-    return startSync();
+    void useLocationTracking.getState().init();
+
+    // Tracking self-repair has to live here, not in sync's AppState hook: it may need to RESTART the
+    // location foreground service, which Android only permits from the foreground, and the sync layer
+    // can't reach the tracking store anyway (boundaries are one-way).
+    const stopSync = startSync();
+    const appState = AppState.addEventListener('change', (next) => {
+      if (next === 'active') void useLocationTracking.getState().reconcile();
+    });
+    return () => {
+      stopSync();
+      appState.remove();
+    };
   }, [loaded, authed]);
 
   if (!loaded) return null;   // hydration gate — avoids a login flash over a persisted session
