@@ -1,4 +1,5 @@
 export type RootStackParamList = {
+  Settings: undefined;
   Login: undefined;
   Tabs: undefined;
   /** Reachable from Login too — switching to the LAN preset must not require signing in first. */
@@ -21,5 +22,5 @@ export type TabParamList = {
   Calendar: undefined;
   Contacts: undefined;
   Map: undefined;
-  Settings: undefined;
+  Photos: undefined;
 };

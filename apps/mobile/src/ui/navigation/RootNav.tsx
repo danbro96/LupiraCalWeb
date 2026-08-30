@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { ComponentProps } from 'react';
 import { useAuth } from '../../state/auth-store';
+import { SettingsButton } from '../components/SettingsButton';
 import { AvailabilityEditScreen } from '../screens/AvailabilityEditScreen';
 import { BridgeDiagnosticsScreen } from '../screens/BridgeDiagnosticsScreen';
 import { CalendarScreen } from '../screens/CalendarScreen';
@@ -16,6 +17,7 @@ import { TaskDetailScreen } from '../screens/TaskDetailScreen';
 import { ItemEditScreen } from '../screens/ItemEditScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { MapScreen } from '../screens/MapScreen';
+import { PhotosScreen } from '../screens/PhotosScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { SyncIssuesScreen } from '../screens/SyncIssuesScreen';
 import type { RootStackParamList, TabParamList } from './types';
@@ -30,12 +32,13 @@ const tabIcon = (name: ComponentProps<typeof MaterialCommunityIcons>['name']) =>
 
 function Tabs() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: true }}>
-      {/* Calendar + Contacts carry their own toolbars — the native header would just double them. */}
+    <Tab.Navigator screenOptions={{ headerShown: true, headerRight: () => <SettingsButton /> }}>
+      {/* Calendar + Contacts carry their own toolbars — the native header would just double them,
+          so they render SettingsButton themselves. */}
       <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon('calendar-month'), headerShown: false }} />
       <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon('account-group'), headerShown: false }} />
       <Tab.Screen name="Map" component={MapScreen} options={{ tabBarIcon: tabIcon('map') }} />
-      <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: tabIcon('cog') }} />
+      <Tab.Screen name="Photos" component={PhotosScreen} options={{ tabBarIcon: tabIcon('image-multiple') }} />
     </Tab.Navigator>
   );
 }
@@ -49,6 +52,7 @@ export function RootNav() {
       ) : (
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       )}
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
       <Stack.Screen name="SyncIssues" component={SyncIssuesScreen} options={{ title: 'Sync issues' }} />
       <Stack.Screen name="DebugLog" component={DebugLogScreen} options={{ title: 'Debug log' }} />
       <Stack.Screen name="ItemDetail" component={ItemDetailScreen} options={{ title: 'Event' }} />

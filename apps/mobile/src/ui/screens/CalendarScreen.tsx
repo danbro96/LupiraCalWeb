@@ -13,6 +13,7 @@ import { MonthView } from '../calendar/MonthView';
 import { WeekView } from '../calendar/WeekView';
 import { BridgePrompt } from '../components/BridgePrompt';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
+import { SettingsButton } from '../components/SettingsButton';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
@@ -111,6 +112,7 @@ export function CalendarScreen() {
         <Button mode="outlined" compact onPress={() => setMode(mode === 'month' ? 'week' : 'month')}>
           {mode === 'month' ? 'Week' : 'Month'}
         </Button>
+        <SettingsButton />
       </View>
 
       {mode === 'month' ? (

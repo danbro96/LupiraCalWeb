@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ContactListRow } from '../../data/mirror';
 import { useContactList } from '../../state/queries';
 import { hashColor } from '../components/palette';
+import { SettingsButton } from '../components/SettingsButton';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
@@ -37,6 +38,7 @@ export function ContactsScreen() {
           onChangeText={setQuery}
         />
         <FAB size="small" icon="plus" onPress={() => navigation.navigate('ContactEdit', {})} />
+        <SettingsButton />
       </View>
       <FlatList
         data={rows}
