@@ -18,7 +18,7 @@ import { usePrefs } from './src/state/prefs-store';
 import { registerBackgroundSync } from './src/sync/backgroundTask';
 import { queryClient } from './src/sync/reactivity';
 import { startSync } from './src/sync/sync';
-import { RootNav } from './src/ui/navigation/RootNav';
+import { RootStack } from './src/ui/navigation/RootStack';
 import type { RootStackParamList } from './src/ui/navigation/types';
 import { paperSettings } from './src/ui/theme/paperSettings';
 
@@ -62,7 +62,7 @@ export default function App() {
             <ConfirmDialogHost>
               <NavigationContainer linking={linking} theme={scheme === 'dark' ? navDark : navLight}>
                 <StatusBar style="auto" />
-                <RootNav />
+                <RootStack />
               </NavigationContainer>
             </ConfirmDialogHost>
             <ToastHost />

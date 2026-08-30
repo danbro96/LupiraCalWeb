@@ -45,7 +45,7 @@ function Tabs() {
   );
 }
 
-export function RootNav() {
+export function RootStack() {
   const authed = useAuth((s) => s.authMode === 'dev' || s.token !== null);
   return (
     <Stack.Navigator>

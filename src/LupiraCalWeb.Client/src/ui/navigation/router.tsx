@@ -6,7 +6,7 @@ import { AppShell } from '../components/AppShell';
 import { CalendarScreen } from '../screens/CalendarScreen';
 import { InboxScreen } from '../screens/InboxScreen';
 import { ItemsScreen } from '../screens/ItemsScreen';
-import { ContactsLayout } from '../screens/ContactsLayout';
+import { ContactsLayout } from './ContactsLayout';
 import { EmptyDetail } from '../components/contacts/EmptyDetail';
 import { ContactDetailPane } from '../components/contacts/ContactDetailPane';
 import { GroupDetailPane } from '../components/contacts/GroupDetailPane';
