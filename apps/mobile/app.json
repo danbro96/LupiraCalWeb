@@ -6,6 +6,8 @@
     "scheme": "lupiracalendar",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "primaryColor": "#E76F51",
     "runtimeVersion": {
       "policy": "fingerprint"
     },
@@ -21,7 +23,11 @@
       "versionCode": 1,
       "permissions": [
         "android.permission.POST_NOTIFICATIONS"
-      ]
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F172A"
+      }
     },
     "plugins": [
       "expo-secure-store",
@@ -46,6 +52,15 @@
           "locationAlwaysAndWhenInUsePermission": "Lupira Calendar records your route in the background so your movement history and photo places have no gaps.",
           "isAndroidBackgroundLocationEnabled": true,
           "isAndroidForegroundServiceEnabled": true
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#0F172A"
         }
       ]
     ],

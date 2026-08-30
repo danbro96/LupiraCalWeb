@@ -12,6 +12,9 @@ export type ColorScheme = {
   danger: string;
   warning: string;
   success: string;
+  /** Identity surfaces only — the mark, the splash, theme-color, primaryColor. Never the UI:
+   *  a second accent competing with `primary` is exactly what the palette work removed. */
+  brand: string;
 };
 
 export const LIGHT: ColorScheme = {
@@ -27,6 +30,7 @@ export const LIGHT: ColorScheme = {
   textDisabled: '#9aa0ac',
   danger: '#b3261e',
   warning: '#b45309',
+  brand: '#E76F51',
   success: '#1f7a4d',
 };
 
@@ -43,5 +47,6 @@ export const DARK: ColorScheme = {
   textDisabled: '#5b626e',
   danger: '#f2675e',
   warning: '#d8b24a',
+  brand: '#E76F51',
   success: '#5fd49b',
 };
