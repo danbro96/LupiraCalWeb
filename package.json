@@ -32,6 +32,7 @@
     "npm": ">=11.10.0"
   },
   "allowScripts": {
+    "@sentry/cli": false,
     "esbuild": false,
     "fsevents": false,
     "unrs-resolver": false

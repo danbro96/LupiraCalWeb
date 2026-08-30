@@ -12,6 +12,7 @@ vi.mock('expo-secure-store', () => ({
     return Promise.resolve();
   }),
 }));
+vi.mock('../debug/log', () => ({ logDebug: vi.fn() }));
 
 const refreshTokensMock = vi.fn();
 vi.mock('../data/auth/oidc', () => {

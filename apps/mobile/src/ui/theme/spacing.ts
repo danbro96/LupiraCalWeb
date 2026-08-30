@@ -1,1 +1,1 @@
-export { SPACING as spacing, RADII as radii } from '@lupira/cal-tokens/spacing';
+export { SPACING as spacing, RADII as radii, HIT_SLOP } from '@lupira/cal-tokens/spacing';

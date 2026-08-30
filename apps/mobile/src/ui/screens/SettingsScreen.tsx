@@ -30,6 +30,7 @@ export function SettingsScreen() {
   const { authMode, user, token } = useAuth();
   const bridge = useBridge();
   const prefs = usePrefs();
+  const debugEnabled = usePrefs((s) => s.debugEnabled);
   const photos = usePhotoBackup();
   const photoStatus = usePhotoBackupStatus();
   const tracking = useLocationTracking();
@@ -270,7 +271,20 @@ export function SettingsScreen() {
       <Text style={[styles.detail, { color: c.textMuted }]}>Lupira Calendar {APP_VERSION}</Text>
 
       <List.Subheader>Developer</List.Subheader>
-      <Button variant="text" title="Developer options" onPress={() => navigation.navigate('Developer')} />
+      <List.Item
+        title="Enable debug"
+        description="Show the developer tools and the on-device log"
+        right={() => (
+          <Switch
+            value={debugEnabled}
+            onValueChange={(v) => void usePrefs.getState().setDebugEnabled(v)}
+            accessibilityLabel="Enable debug"
+          />
+        )}
+      />
+      {debugEnabled ? (
+        <Button variant="text" title="Developer options" onPress={() => navigation.navigate('Developer')} />
+      ) : null}
     </ScrollView>
   );
 }
