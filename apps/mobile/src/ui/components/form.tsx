@@ -1,7 +1,7 @@
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import type { ComponentProps, ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button as PaperButton, Chip, IconButton, Text, TextInput } from 'react-native-paper';
+import { Button as PaperButton, IconButton, Text, TextInput } from 'react-native-paper';
 import { localDay, localTime } from '../../domain/editors';
 import { useColors } from '../theme';
 
@@ -15,32 +15,6 @@ export function Field({ label, children }: { label: string; children: ReactNode 
     <View style={styles.field}>
       <Text variant="labelMedium">{label}</Text>
       {children}
-    </View>
-  );
-}
-
-export type ChipOption = { value: string; label: string };
-
-/** Single-select chips; tapping the active chip clears it (value '') unless required. */
-export function ChoiceChips({ options, value, onChange, required = false }: {
-  options: ChipOption[]; value: string; onChange: (v: string) => void; required?: boolean;
-}) {
-  return (
-    <View style={styles.chips}>
-      {options.map((o) => {
-        const active = o.value === value;
-        return (
-          <Chip
-            key={o.value}
-            mode="outlined"
-            compact
-            selected={active}
-            onPress={() => onChange(active && !required ? '' : o.value)}
-          >
-            {o.label}
-          </Chip>
-        );
-      })}
     </View>
   );
 }
@@ -103,7 +77,6 @@ function PickerButton({ text, isSet, onPress, onClear }: {
 const styles = StyleSheet.create({
   input: { marginTop: 10 },
   field: { gap: 4, marginTop: 10 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   pickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   picker: { flexGrow: 1 },
 });

@@ -7,12 +7,13 @@ import { Text } from 'react-native-paper';
 import { createItem } from '../../state/actions';
 import { useCalendars } from '../../state/queries';
 import { Button } from '../components/Button';
-import { ChoiceChips, DateField, Field } from '../components/form';
+import { SegmentedPicker } from '../components/SegmentedPicker';
+import { DateField, Field } from '../components/form';
 import { AVAILABILITY_COLORS } from '../components/palette';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
 
-const STATUS_OPTIONS = Object.keys(AVAILABILITY_COLORS).map((s) => ({ value: s, label: s }));
+const STATUS_OPTIONS = Object.keys(AVAILABILITY_COLORS);
 
 /** Dedicated quick-add for availability: status + date range, nothing else. Entries are plain items in
  *  the Availability-kind calendar (title = status, all-day, presence status on the create); the grids
@@ -50,7 +51,7 @@ export function AvailabilityEditScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Field label="Status">
-        <ChoiceChips options={STATUS_OPTIONS} value={status} onChange={setStatus} required />
+        <SegmentedPicker options={STATUS_OPTIONS} selected={status} onSelect={setStatus} />
       </Field>
       <Field label="From">
         <DateField value={startDay} onChange={setStartDay} />
