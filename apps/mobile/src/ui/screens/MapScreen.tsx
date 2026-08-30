@@ -123,6 +123,16 @@ export function MapScreen() {
     return () => useLivePosition.getState().stop();
   }, []);
 
+  // Camera.trackUserLocation would start MapLibre's own location engine — a second GPS subscription.
+  useEffect(() => {
+    if (follow === 'off' || !livePosition) return;
+    cameraRef.current?.easeTo({
+      center: [livePosition.lon, livePosition.lat],
+      duration: 600,
+      ...(follow === 'heading' && livePosition.headingDeg != null ? { bearing: livePosition.headingDeg } : {}),
+    });
+  }, [follow, livePosition]);
+
   const onRegionDidChange = useCallback((e: NativeSyntheticEvent<ViewStateChangeEvent>) => {
     setBbox(bboxOf(e.nativeEvent.bounds));
     // A deliberate pan means the user took the wheel — drop follow-mode rather than fighting them.
@@ -213,11 +223,7 @@ export function MapScreen() {
             mapStyle={mapStyle as unknown as StyleSpecification}
             onRegionDidChange={onRegionDidChange}
           >
-            <Camera
-              ref={cameraRef}
-              initialViewState={{ center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM }}
-              trackUserLocation={follow === 'off' ? undefined : follow === 'follow' ? 'default' : 'heading'}
-            />
+            <Camera ref={cameraRef} initialViewState={{ center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM }} />
             {enabled.movement && (
               <MovementLayer
                 theme={theme}
