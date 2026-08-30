@@ -35,10 +35,8 @@ import type {
   DeleteSharedItemParams,
   DirectoryResponse,
   GetUserDirectoryParams,
-  ItemCollectionResponse,
   ItemDto,
   ItemTimestampRequest,
-  ListCollectionResponse,
   ListDto,
   ListItemsParams,
   ListListItemsParams,
@@ -53,7 +51,6 @@ import type {
   SetListOrderRequest,
   SetMetadataRequest,
   SetStatusRequest,
-  ShareCollectionResponse,
   ShareDto,
   SharedItemDto,
   SharedListResponse,
@@ -620,9 +617,9 @@ export const getListListsUrl = (params?: ListListsParams,) => {
  * `?archived=true` returns the caller's archived lists instead of the active ones.
  * @summary List the lists the caller is a member of.
  */
-export const listLists = async (params?: ListListsParams, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListCollectionResponse> => {
+export const listLists = async (params?: ListListsParams, options?: Parameters<typeof customFetchTasks>[1]): Promise<ListDto[]> => {
 
-  return customFetchTasks<ListCollectionResponse>(getListListsUrl(params),
+  return customFetchTasks<ListDto[]>(getListListsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1511,9 +1508,9 @@ export const getListItemsUrl = (params?: ListItemsParams,) => {
  * Case-insensitive `query` title substring, optional `completed`/`status`. `dueFrom`/`dueTo` bound `dueAt` half-open `[from, to)`; either bound implies `dueAt` is set. Spans every list the caller is a member of (archived included).
  * @summary Search items across the caller's lists (Viewer+).
  */
-export const listItems = async (params?: ListItemsParams, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemCollectionResponse> => {
+export const listItems = async (params?: ListItemsParams, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto[]> => {
 
-  return customFetchTasks<ItemCollectionResponse>(getListItemsUrl(params),
+  return customFetchTasks<ItemDto[]>(getListItemsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1780,9 +1777,9 @@ export const getListListItemsUrl = (listId: string,
  * @summary List a list's items (Viewer+).
  */
 export const listListItems = async (listId: string,
-    params?: ListListItemsParams, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemCollectionResponse> => {
+    params?: ListListItemsParams, options?: Parameters<typeof customFetchTasks>[1]): Promise<ItemDto[]> => {
 
-  return customFetchTasks<ItemCollectionResponse>(getListListItemsUrl(listId,params),
+  return customFetchTasks<ItemDto[]>(getListListItemsUrl(listId,params),
   {
     ...options,
     method: 'GET'
@@ -2994,9 +2991,9 @@ export const getListSharesUrl = (listId: string,) => {
 /**
  * @summary List a list's active share links (Owner).
  */
-export const listShares = async (listId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ShareCollectionResponse> => {
+export const listShares = async (listId: string, options?: Parameters<typeof customFetchTasks>[1]): Promise<ShareDto[]> => {
 
-  return customFetchTasks<ShareCollectionResponse>(getListSharesUrl(listId),
+  return customFetchTasks<ShareDto[]>(getListSharesUrl(listId),
   {
     ...options,
     method: 'GET'

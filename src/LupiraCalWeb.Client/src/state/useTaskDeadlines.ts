@@ -15,7 +15,7 @@ export function useTaskDeadlines(from: string, to: string, enabled: boolean): It
     queryFn: ({ signal }) => listItems(params, { signal }),
     enabled,
     placeholderData: keepPreviousData,
-    select: (r) => r.items.filter((i) => i.status !== ItemStatus.Cancelled),
+    select: (items) => items.filter((i) => i.status !== ItemStatus.Cancelled),
   });
   return (enabled ? data : undefined) ?? [];
 }

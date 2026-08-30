@@ -29,10 +29,12 @@ import type {
   DeclaredPhotoResponse,
   GetPhotoMapParams,
   ListPhotosParams,
+  LookupPhotosRequest,
   MeDto,
   PhotoAssetDto,
   PhotoListResponse,
   PhotoMapResponse,
+  PhotoStats,
   ProblemDetails
 } from './models';
 
@@ -255,7 +257,7 @@ export const getListPhotosUrl = (params?: ListPhotosParams,) => {
 }
 
 /**
- * @summary List assets (keyset-paged, newest first) with presigned thumbnail URLs.
+ * @summary List assets (keyset-paged, newest taken first by default) with presigned thumbnail URLs.
  */
 export const listPhotos = async (params?: ListPhotosParams, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoListResponse> => {
 
@@ -326,7 +328,7 @@ export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TE
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List assets (keyset-paged, newest first) with presigned thumbnail URLs.
+ * @summary List assets (keyset-paged, newest taken first by default) with presigned thumbnail URLs.
  */
 
 export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
@@ -488,6 +490,184 @@ export const useReprocessPhoto = <TError = ProblemDetails,
       > => {
       return useMutation(getReprocessPhotoMutationOptions(options), queryClient);
     }
+
+export const getLookupPhotosUrl = () => {
+
+
+
+
+  return `/photos/lookup`
+}
+
+/**
+ * @summary Hydrate up to 200 assets by id — turns relation references into renderable items.
+ */
+export const lookupPhotos = async (lookupPhotosRequest: LookupPhotosRequest, options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoListResponse> => {
+
+    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Array.isArray(h)) return Object.fromEntries(h);
+    return h;
+  };
+return customFetchPhoto<PhotoListResponse>(getLookupPhotosUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(lookupPhotosRequest)
+  }
+);}
+
+
+
+
+
+export const getLookupPhotosMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupPhotos>>, TError,{data: LookupPhotosRequest}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+): UseMutationOptions<Awaited<ReturnType<typeof lookupPhotos>>, TError,{data: LookupPhotosRequest}, TContext> => {
+
+const mutationKey = ['lookupPhotos'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof lookupPhotos>>, {data: LookupPhotosRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  lookupPhotos(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LookupPhotosMutationResult = NonNullable<Awaited<ReturnType<typeof lookupPhotos>>>
+    export type LookupPhotosMutationBody = LookupPhotosRequest
+    export type LookupPhotosMutationError = ProblemDetails
+
+    /**
+ * @summary Hydrate up to 200 assets by id — turns relation references into renderable items.
+ */
+export const useLookupPhotos = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupPhotos>>, TError,{data: LookupPhotosRequest}, TContext>, request?: SecondParameter<typeof customFetchPhoto>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof lookupPhotos>>,
+        TError,
+        {data: LookupPhotosRequest},
+        TContext
+      > => {
+      return useMutation(getLookupPhotosMutationOptions(options), queryClient);
+    }
+
+export const getGetPhotoStatsUrl = () => {
+
+
+
+
+  return `/photos/stats`
+}
+
+/**
+ * @summary Library totals and counts by kind, status, geotag source and month.
+ */
+export const getPhotoStats = async ( options?: Parameters<typeof customFetchPhoto>[1]): Promise<PhotoStats> => {
+
+  return customFetchPhoto<PhotoStats>(getGetPhotoStatsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPhotoStatsQueryKey = () => {
+    return [
+    `/photos/stats`
+    ] as const;
+    }
+
+
+export const getGetPhotoStatsQueryOptions = <TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPhotoStatsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPhotoStats>>> = ({ signal }) => getPhotoStats({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetPhotoStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getPhotoStats>>>
+export type GetPhotoStatsQueryError = ProblemDetails
+
+
+export function useGetPhotoStats<TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhotoStats>>,
+          TError,
+          Awaited<ReturnType<typeof getPhotoStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchPhoto>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhotoStats<TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhotoStats>>,
+          TError,
+          Awaited<ReturnType<typeof getPhotoStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchPhoto>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhotoStats<TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Library totals and counts by kind, status, geotag source and month.
+ */
+
+export function useGetPhotoStats<TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>>, request?: SecondParameter<typeof customFetchPhoto>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetPhotoStatsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getGetPhotoMapUrl = (params: GetPhotoMapParams,) => {
   const normalizedParams = new URLSearchParams();

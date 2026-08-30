@@ -26,6 +26,7 @@ const NAV = [
   { to: '/inbox', label: 'Inbox' },
   { to: '/contacts', label: 'Contacts' },
   { to: '/locations', label: 'Map' },
+  { to: '/photos', label: 'Photos' },
   { to: '/calendars', label: 'Manage' },
 ];
 
@@ -52,7 +53,7 @@ export function AppShell() {
   const [taskListId, taskItemId] = (searchParams.get('task') ?? '').split(':');
   // Contacts and the Map own their own layout, so the calendar sidebar is hidden there.
   const path = useLocation().pathname;
-  const showSidebar = !path.startsWith('/contacts') && !path.startsWith('/locations');
+  const showSidebar = !path.startsWith('/contacts') && !path.startsWith('/locations') && !path.startsWith('/photos');
 
   const dropParams = (...keys: string[]) =>
     setSearchParams((prev) => {

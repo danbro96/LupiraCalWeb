@@ -17,6 +17,7 @@ import { Page } from '../components/Page';
 // Lazy: MapScreen pulls in maplibre-gl (+ CSS), which stays out of the main bundle.
 const MapScreen = lazy(() => import('../screens/MapScreen'));
 const PlacesScreen = lazy(() => import('../screens/PlacesScreen'));
+const PhotosScreen = lazy(() => import('../screens/PhotosScreen'));
 
 // Everything requires the SSO session — LupiraCalApi has no anonymous surface. The drawer rides
 // the ?item= search param on any route, so occurrences deep-link from every screen.
@@ -47,6 +48,14 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<Page><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading map…</Typography></Page>}>
                     <MapScreen />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'photos',
+                element: (
+                  <Suspense fallback={<Page><Typography variant="caption">Loading photos…</Typography></Page>}>
+                    <PhotosScreen />
                   </Suspense>
                 ),
               },

@@ -7,6 +7,7 @@
  */
 import type { AssetKind } from './assetKind';
 import type { AssetStatus } from './assetStatus';
+import type { GeotagSource } from './geotagSource';
 
 export interface PhotoListItemDto {
   id: string;
@@ -25,6 +26,14 @@ export interface PhotoListItemDto {
   height?: number | null;
   /** @nullable */
   durationSeconds?: number | null;
+  geotagSource: GeotagSource;
+  contentType: string;
+  sizeBytes: number;
+  /**
+     * Only set on a Failed asset — lets the health view explain itself without a per-item fetch.
+     * @nullable
+     */
+  lastError?: string | null;
   /** @nullable */
   thumbUrl?: string | null;
 }

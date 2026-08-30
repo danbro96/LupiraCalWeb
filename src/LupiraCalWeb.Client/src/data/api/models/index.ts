@@ -46,6 +46,7 @@ export * from './itemPrompt';
 export * from './itemStatus';
 export * from './jsonNode';
 export * from './jsonObject';
+export * from './listRelationEdgesParams';
 export * from './meDto';
 export * from './mergeItemMetadataParams';
 export * from './modelTier';

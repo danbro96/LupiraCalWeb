@@ -20,6 +20,7 @@ export default [
       'src/data/api-contact/**', // orval-generated client (from backend-contact-openapi.json)
       'src/data/api-tasks/**', // orval-generated client (from backend-tasks-openapi.json)
       'src/data/api-location/**', // orval-generated client (from backend-location-openapi.json)
+      'src/data/api-photo/**', // orval-generated client (from backend-photo-openapi.json)
       '*.config.js',
       '*.config.mjs',
       '*.config.ts',
