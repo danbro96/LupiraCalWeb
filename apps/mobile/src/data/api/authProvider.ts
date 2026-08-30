@@ -4,7 +4,7 @@
 
 export interface AuthPort {
   getApiUrl(): string;
-  /** null = no Authorization header (authMode 'none' — the Development BFF auto-authenticates). */
+  /** null = no Authorization header (authMode 'dev' — the Development BFF auto-authenticates). */
   getToken(): string | null;
   /** Rotation-safe refresh: force re-mints even if unexpired; sentToken lets a 401'd caller prove which token
    *  failed so an already-rotated session isn't rotated twice. Returns the current token (or null = signed out). */

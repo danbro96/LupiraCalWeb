@@ -95,7 +95,7 @@ describe('refreshIfNeeded', () => {
   });
 
   it('sends nothing in dev auto-auth mode', async () => {
-    useAuth.setState({ loaded: true, authMode: 'none', token: null, refreshToken: null });
+    useAuth.setState({ loaded: true, authMode: 'dev', token: null, refreshToken: null });
     expect(await useAuth.getState().refreshIfNeeded({ force: true })).toBeNull();
     expect(refreshTokensMock).not.toHaveBeenCalled();
   });

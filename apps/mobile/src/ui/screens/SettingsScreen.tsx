@@ -114,7 +114,7 @@ export function SettingsScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <List.Subheader>Account</List.Subheader>
       <Text style={[styles.detail, { color: c.textMuted }]}>
-        {authMode === 'none' ? 'Dev auto-auth (no sign-in)' : user ? `Signed in as ${user.sub}` : 'Signed out'}
+        {authMode === 'dev' ? 'Dev auto-auth (no sign-in)' : user ? `Signed in as ${user.sub}` : 'Signed out'}
       </Text>
       {token !== null && (
         <Button title="Sign out" onPress={() => void useAuth.getState().clearSession()} />

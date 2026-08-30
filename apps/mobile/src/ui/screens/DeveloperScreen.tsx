@@ -3,7 +3,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, List, RadioButton, Text } from 'react-native-paper';
-import { API_PRESETS, type AuthMode } from '../../config';
+import { API_PRESETS, DIAGNOSTIC_ROUTES, type AuthMode } from '../../config';
 import { presetFor, useAuth } from '../../state/auth-store';
 import { useSyncStatus } from '../../sync/syncStatus';
 import { Input } from '../components/form';
@@ -30,13 +30,13 @@ export function DeveloperScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <List.Subheader>Backend</List.Subheader>
       {/* http presets need cleartext networking — dev-client-only (release builds block cleartext). */}
-      {API_PRESETS.filter((p) => __DEV__ || p.url.startsWith('https')).map((p) => (
+      {API_PRESETS.filter((p) => __DEV__ || p.urls.api.startsWith('https')).map((p) => (
         <List.Item
           key={p.key}
-          onPress={() => applyBackend(p.url, p.authMode)}
+          onPress={() => applyBackend(p.urls.api, p.authMode)}
           title={p.label}
-          description={`${p.url} · ${p.authMode === 'oidc' ? 'sign-in' : 'dev auto-auth'}`}
-          left={() => <RadioButton status={activeKey === p.key ? 'checked' : 'unchecked'} value={p.key} onPress={() => applyBackend(p.url, p.authMode)} />}
+          description={`${Object.values(p.urls).join(' · ')} · ${p.authMode === 'oidc' ? 'sign-in' : 'dev bypass'}`}
+          left={() => <RadioButton status={activeKey === p.key ? 'checked' : 'unchecked'} value={p.key} onPress={() => applyBackend(p.urls.api, p.authMode)} />}
         />
       ))}
       <View style={styles.custom}>
@@ -51,8 +51,8 @@ export function DeveloperScreen() {
           value={customUrl}
           onChangeText={setCustomUrl}
         />
-        <Button mode="text" compact onPress={() => setCustomMode(customMode === 'oidc' ? 'none' : 'oidc')}>
-          Auth: {customMode === 'oidc' ? 'sign-in' : 'dev auto-auth'} (tap to toggle)
+        <Button mode="text" compact onPress={() => setCustomMode(customMode === 'oidc' ? 'dev' : 'oidc')}>
+          Auth: {customMode === 'oidc' ? 'sign-in' : 'dev bypass'} (tap to toggle)
         </Button>
         <Button
           mode="outlined"
@@ -64,12 +64,11 @@ export function DeveloperScreen() {
       </View>
 
       <List.Subheader>Diagnostics</List.Subheader>
-      <Button mode="text" compact onPress={() => navigation.navigate('DebugLog')}>
-          Debug log
+      {DIAGNOSTIC_ROUTES.map((d) => (
+        <Button key={d.route} mode="text" compact onPress={() => navigation.navigate(d.route as never)}>
+          {d.label}
         </Button>
-      <Button mode="text" compact onPress={() => navigation.navigate('BridgeDiagnostics')}>
-          Bridge diagnostics
-        </Button>
+      ))}
 
       <List.Subheader>Sync state</List.Subheader>
       <Text style={[styles.mono, { color: c.textMuted }]}>{JSON.stringify(sync, null, 2)}</Text>

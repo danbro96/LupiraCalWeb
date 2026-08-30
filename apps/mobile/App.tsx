@@ -23,7 +23,7 @@ import type { RootStackParamList } from './src/ui/navigation/types';
 export default function App() {
   const scheme = useColorScheme();
   const loaded = useAuth((s) => s.loaded);
-  const authed = useAuth((s) => s.authMode === 'none' || s.token !== null);
+  const authed = useAuth((s) => s.authMode === 'dev' || s.token !== null);
 
   useEffect(() => {
     void useAuth.getState().load();

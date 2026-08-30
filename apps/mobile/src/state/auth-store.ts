@@ -67,7 +67,8 @@ export const useAuth = create<AuthState & AuthActions>((set, get) => ({
     set({
       loaded: true,
       apiUrl: apiUrl || DEFAULT_API_URL,
-      authMode: (authMode as AuthMode | null) ?? DEFAULT_AUTH_MODE,
+      // 'none' is the pre-rename value — without this it falls back to OIDC on a dev backend.
+      authMode: authMode === 'none' ? 'dev' : ((authMode as AuthMode | null) ?? DEFAULT_AUTH_MODE),
       token: token || null,
       refreshToken: refreshToken || null,
       expiresAt: expiresAt ? Number(expiresAt) : 0,
@@ -81,7 +82,7 @@ export const useAuth = create<AuthState & AuthActions>((set, get) => ({
     await SecureStore.setItemAsync(K.apiUrl, url);
     await SecureStore.setItemAsync(K.authMode, authMode);
     logDebug('auth', `backend → ${url} (${authMode})`);
-    if (authMode === 'none') for (const cb of signInListeners) cb();
+    if (authMode === 'dev') for (const cb of signInListeners) cb();
   },
 
   async setSession(t) {
@@ -112,7 +113,7 @@ export const useAuth = create<AuthState & AuthActions>((set, get) => ({
 
   async refreshIfNeeded(opts) {
     const { token, refreshToken, expiresAt, authMode } = get();
-    if (authMode === 'none' || !token) return token;
+    if (authMode === 'dev' || !token) return token;
 
     // Another caller already rotated past the token this 401 was about — don't rotate again.
     if (opts?.force && opts.sentToken && opts.sentToken !== token) return token;
@@ -152,7 +153,7 @@ export const useAuth = create<AuthState & AuthActions>((set, get) => ({
 
   isAuthenticated() {
     const s = get();
-    return s.authMode === 'none' || s.token !== null;
+    return s.authMode === 'dev' || s.token !== null;
   },
 }));
 
@@ -164,11 +165,11 @@ export function onSignIn(cb: () => void): () => void {
 // The data layer reaches the live session through this port (downward-only imports stay intact).
 setAuthPort({
   getApiUrl: () => useAuth.getState().apiUrl,
-  getToken: () => (useAuth.getState().authMode === 'none' ? null : useAuth.getState().token),
+  getToken: () => (useAuth.getState().authMode === 'dev' ? null : useAuth.getState().token),
   refresh: (force, sentToken) => useAuth.getState().refreshIfNeeded({ force, sentToken }),
   onSignIn,
 });
 
 export function presetFor(url: string, authMode: AuthMode): string {
-  return API_PRESETS.find((p) => p.url === url && p.authMode === authMode)?.key ?? 'custom';
+  return API_PRESETS.find((p) => p.urls.api === url && p.authMode === authMode)?.key ?? 'custom';
 }

@@ -7,7 +7,7 @@ import { authPort } from './authProvider';
 export type ApiEnvelope<T> = { status: number; data: T; headers: Headers };
 
 /** Orval custom mutator. Reads the backend + token through the AuthPort at call time, injects the bearer
- *  (none in authMode 'none'), bounds every attempt with a timeout, retries transient failures per
+ *  (none in authMode 'dev'), bounds every attempt with a timeout, retries transient failures per
  *  retryPolicy, and on a terminal 401 for a retriable request forces ONE coalesced refresh — if that actually
  *  rotated the token, the retry budget resets and the call replays with the fresh bearer. */
 export async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
