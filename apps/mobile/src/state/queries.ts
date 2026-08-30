@@ -59,7 +59,7 @@ export function useTaskDeadlines(dayKeys: string[]): TaskDeadlineRow[] {
       queryFn: async () => {
         const r = await listItems({ ...monthUtcRange(monthKey), completed: false });
         if (r.status !== 200) throw new Error(`tasks fetch ${r.status}`);
-        return taskDeadlineRows(r.data.items, new Date());
+        return taskDeadlineRows(r.data, new Date());
       },
     })),
   });

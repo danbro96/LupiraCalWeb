@@ -17,6 +17,8 @@ import { SettingsButton } from '../components/SettingsButton';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
+import { ICONS } from '../icons';
+import { Glyph } from '../components/Glyph';
 
 type Mode = 'month' | 'week';
 
@@ -103,9 +105,9 @@ export function CalendarScreen() {
       <SyncBanner />
       <BridgePrompt />
       <View style={styles.toolbar}>
-        <IconButton icon="chevron-left" iconColor={c.primary} style={styles.nav} onPress={() => step(-1)} hitSlop={8} />
+        <IconButton icon={ICONS.chevronLeft} iconColor={c.primary} style={styles.nav} onPress={() => step(-1)} hitSlop={8} />
         <Text style={styles.title}>{title}</Text>
-        <IconButton icon="chevron-right" iconColor={c.primary} style={styles.nav} onPress={() => step(1)} hitSlop={8} />
+        <IconButton icon={ICONS.chevronRight} iconColor={c.primary} style={styles.nav} onPress={() => step(1)} hitSlop={8} />
         <Button mode="outlined" compact onPress={goToday}>
           Today
         </Button>
@@ -137,7 +139,7 @@ export function CalendarScreen() {
                     <Pressable onPress={() => navigation.navigate('AvailabilityEdit', { day: selectedDay })} hitSlop={6}>
                       <Text style={[styles.sheetLink, { color: c.primary }]}>Availability</Text>
                     </Pressable>
-                    <FAB size="small" icon="plus" onPress={() => navigation.navigate('ItemEdit', { day: selectedDay })} />
+                    <FAB size="small" icon={ICONS.add} onPress={() => navigation.navigate('ItemEdit', { day: selectedDay })} />
                   </View>
                 </View>
               </View>
@@ -187,7 +189,7 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
             ]}
           />
           <Text style={[styles.agendaTime, { color: c.textMuted }]}>
-            {isTaskRow(r) ? '⏰' : r.source === 'birthday' ? '🎂' : r.all_day === 1 ? 'all day' : fmtTime(new Date(r.start_utc))}
+            {isTaskRow(r) ? <Glyph name={ICONS.schedule} /> : r.source === 'birthday' ? <Glyph name={ICONS.cake} /> : r.all_day === 1 ? 'all day' : fmtTime(new Date(r.start_utc))}
           </Text>
           <Text style={styles.agendaText} numberOfLines={1}>{r.title ?? '(untitled)'}</Text>
           {isTaskRow(r) && r.task.overdue && <Text style={[styles.cancelled, { color: c.danger }]}>overdue</Text>}

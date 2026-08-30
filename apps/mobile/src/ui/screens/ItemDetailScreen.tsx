@@ -13,8 +13,10 @@ import { useConfirm } from '../components/ConfirmDialog';
 import { Button } from '../components/Button';
 import { Input } from '../components/form';
 import { useCalendarColors } from '../components/palette';
+import { EventPhotosRow } from '../photos/EventPhotosRow';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
+import { ICONS } from '../icons';
 
 export function ItemDetailScreen() {
   const c = useColors();
@@ -65,6 +67,7 @@ export function ItemDetailScreen() {
       {doc.prompt != null && <Text style={[styles.note, { color: c.textMuted }]}>Has a prompt payload (view on web)</Text>}
       {doc.action != null && <Text style={[styles.note, { color: c.textMuted }]}>Has an action payload (view on web)</Text>}
 
+      <EventPhotosRow itemId={itemId} />
       <CalendarsPanel itemId={itemId} memberships={doc.calendars} />
       <MetadataPanel itemId={itemId} metadata={doc.metadata ?? null} />
 
@@ -99,7 +102,7 @@ function CalendarsPanel({ itemId, memberships }: {
             title={cal.displayName ?? cal.id}
             description={status === 'Proposed' ? 'proposed' : undefined}
             left={() => <View style={[styles.calDot, { backgroundColor: colorOf(cal.id) }]} />}
-            right={() => (member ? <List.Icon icon="check" color={c.primary} /> : null)}
+            right={() => (member ? <List.Icon icon={ICONS.check} color={c.primary} /> : null)}
           />
         );
       })}

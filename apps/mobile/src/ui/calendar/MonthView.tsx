@@ -6,6 +6,8 @@ import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 import { useColors } from '../theme';
+import { ICONS } from '../icons';
+import { Glyph } from '../components/Glyph';
 
 /** Month grid straight off the mirror: monthMatrix (domain) for the day layout, one occurrence query per
  *  touched month bucket, up to three title bars per cell. Day selection drives the agenda in CalendarScreen. */
@@ -91,7 +93,7 @@ export const MonthView = memo(function MonthView({ anchor, selectedDay, onSelect
                       style={[styles.bar, { backgroundColor: r.source === 'birthday' ? BIRTHDAY_COLOR : colorOf(r.calendar_id) }]}
                     >
                       <Text style={styles.barText} numberOfLines={1}>
-                        {r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)')}
+                        {r.source === 'birthday' ? <><Glyph name={ICONS.cake} size={11} /> {r.title ?? ''}</> : (r.title ?? '(untitled)')}
                       </Text>
                     </View>
                   ),

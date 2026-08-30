@@ -29,3 +29,8 @@ export function invalidateOutbox(): void {
 export function invalidateContainers(): void {
   void queryClient.invalidateQueries({ queryKey: ['containers'] });
 }
+
+/** Photos are network-only, so nothing in sync calls this — only the gallery's own writes do. */
+export function invalidatePhotos(): void {
+  void queryClient.invalidateQueries({ queryKey: ['photos'] });
+}

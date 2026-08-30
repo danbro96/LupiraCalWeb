@@ -7,6 +7,7 @@
  */
 import type { AssetKind } from './assetKind';
 import type { AssetStatus } from './assetStatus';
+import type { PhotoSort } from './photoSort';
 
 export type ListPhotosParams = {
 from?: string;
@@ -14,6 +15,9 @@ to?: string;
 bbox?: string;
 kind?: AssetKind;
 status?: AssetStatus;
+located?: boolean;
+place?: string;
+sort?: PhotoSort;
 limit?: number;
 cursor?: string;
 };

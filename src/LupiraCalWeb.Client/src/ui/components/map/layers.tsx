@@ -3,7 +3,7 @@ import type { GeoJSONSource, MapGeoJSONFeature } from 'maplibre-gl';
 import { useMemo } from 'react';
 import type { LocationTripDto } from '../../../data/api-location/models';
 import { useMap } from './MapCanvas';
-import { activityColorExpression, MAP_COLORS, type MapTheme } from './mapTokens';
+import { ACTIVITY_COLORS, activityColorExpression, MAP_COLORS, type MapTheme } from './mapTokens';
 import { featureProp, useGeoJsonLayer, type LayerSpecSansSource } from './useGeoJsonLayer';
 
 /** What a pin click surfaces — MapScreen renders the popover / navigates. */
@@ -215,13 +215,16 @@ export function MovementLayer({ theme, visits, track, current, onSelect }: Commo
     },
     {
       id: 'track-line', type: 'line',
+      filter: ['!=', ['get', 'activity'], 'Unknown'],
       layout: { 'line-cap': 'round', 'line-join': 'round' },
-      paint: {
-        'line-color': activityColorExpression(theme) as never,
-        'line-width': 3,
-        // The neutral non-category draws dashed, never as a fifth hue.
-        'line-dasharray': ['match', ['get', 'activity'], 'Unknown', ['literal', [2, 2]], ['literal', [1, 0]]] as never,
-      },
+      paint: { 'line-color': activityColorExpression(theme) as never, 'line-width': 3 },
+    },
+    {
+      // Dashed, never a fifth hue — its own layer because line-dasharray takes no data expression.
+      id: 'track-line-unknown', type: 'line',
+      filter: ['==', ['get', 'activity'], 'Unknown'],
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': ACTIVITY_COLORS[theme].Unknown, 'line-width': 3, 'line-dasharray': [2, 2] },
     },
   ], [theme, colors]);
   useGeoJsonLayer(map, 'track', track, trackLayers);

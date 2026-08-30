@@ -10,9 +10,11 @@ import type {
   DeclaredPhotoResponse,
   GetPhotoMapParams,
   ListPhotosParams,
+  LookupPhotosRequest,
   PhotoAssetDto,
   PhotoListResponse,
   PhotoMapResponse,
+  PhotoStats,
   ProblemDetails
 } from '../models';
 
@@ -111,7 +113,7 @@ export const getListPhotosUrl = (params?: ListPhotosParams,) => {
 }
 
 /**
- * @summary List assets (keyset-paged, newest first) with presigned thumbnail URLs.
+ * @summary List assets (keyset-paged, newest taken first by default) with presigned thumbnail URLs.
  */
 export const listPhotos = async (params?: ListPhotosParams, options?: Parameters<typeof apiFetch>[1]): Promise<listPhotosResponse> => {
 
@@ -223,6 +225,106 @@ export const reprocessPhoto = async (id: string, options?: Parameters<typeof api
   {
     ...options,
     method: 'POST'
+
+
+  }
+);}
+
+
+export type lookupPhotosResponse200 = {
+  data: PhotoListResponse
+  status: 200
+}
+
+export type lookupPhotosResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type lookupPhotosResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type lookupPhotosResponseSuccess = (lookupPhotosResponse200) & {
+  headers: Headers;
+};
+export type lookupPhotosResponseError = (lookupPhotosResponse401 | lookupPhotosResponse500) & {
+  headers: Headers;
+};
+
+export type lookupPhotosResponse = (lookupPhotosResponseSuccess | lookupPhotosResponseError)
+
+export const getLookupPhotosUrl = () => {
+
+
+
+
+  return `/photo-api/photos/lookup`
+}
+
+/**
+ * @summary Hydrate up to 200 assets by id — turns relation references into renderable items.
+ */
+export const lookupPhotos = async (lookupPhotosRequest: LookupPhotosRequest, options?: Parameters<typeof apiFetch>[1]): Promise<lookupPhotosResponse> => {
+
+    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Array.isArray(h)) return Object.fromEntries(h);
+    return h;
+  };
+return apiFetch<lookupPhotosResponse>(getLookupPhotosUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(lookupPhotosRequest)
+  }
+);}
+
+
+export type getPhotoStatsResponse200 = {
+  data: PhotoStats
+  status: 200
+}
+
+export type getPhotoStatsResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type getPhotoStatsResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type getPhotoStatsResponseSuccess = (getPhotoStatsResponse200) & {
+  headers: Headers;
+};
+export type getPhotoStatsResponseError = (getPhotoStatsResponse401 | getPhotoStatsResponse500) & {
+  headers: Headers;
+};
+
+export type getPhotoStatsResponse = (getPhotoStatsResponseSuccess | getPhotoStatsResponseError)
+
+export const getGetPhotoStatsUrl = () => {
+
+
+
+
+  return `/photo-api/photos/stats`
+}
+
+/**
+ * @summary Library totals and counts by kind, status, geotag source and month.
+ */
+export const getPhotoStats = async ( options?: Parameters<typeof apiFetch>[1]): Promise<getPhotoStatsResponse> => {
+
+  return apiFetch<getPhotoStatsResponse>(getGetPhotoStatsUrl(),
+  {
+    ...options,
+    method: 'GET'
 
 
   }

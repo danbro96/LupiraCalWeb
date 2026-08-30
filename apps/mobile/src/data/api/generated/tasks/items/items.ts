@@ -8,7 +8,6 @@
 import type {
   CreateItemRequest,
   DeleteListItemParams,
-  ItemCollectionResponse,
   ItemDto,
   ItemTimestampRequest,
   ListItemsParams,
@@ -23,7 +22,7 @@ import type {
 import { apiFetch } from '../../../mutator';
 
 export type listItemsResponse200 = {
-  data: ItemCollectionResponse
+  data: ItemDto[]
   status: 200
 }
 
@@ -208,7 +207,7 @@ return apiFetch<setItemMetadataResponse>(getSetItemMetadataUrl(itemId),
 
 
 export type listListItemsResponse200 = {
-  data: ItemCollectionResponse
+  data: ItemDto[]
   status: 200
 }
 

@@ -12,6 +12,8 @@ import { SettingsButton } from '../components/SettingsButton';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
+import { ICONS } from '../icons';
+import { Glyph } from '../components/Glyph';
 
 export function ContactsScreen() {
   const c = useColors();
@@ -37,7 +39,7 @@ export function ContactsScreen() {
           value={query}
           onChangeText={setQuery}
         />
-        <FAB size="small" icon="plus" onPress={() => navigation.navigate('ContactEdit', {})} />
+        <FAB size="small" icon={ICONS.add} onPress={() => navigation.navigate('ContactEdit', {})} />
         <SettingsButton />
       </View>
       <FlatList
@@ -70,7 +72,7 @@ function ContactRow({ row, onPress }: { row: ContactListRow; onPress: () => void
       )}
       right={() =>
         row.doc.birthday ? (
-          <Text style={[styles.bday, { color: c.warning }]}>🎂 {partialDateBadge(row.doc.birthday)}</Text>
+          <Text style={[styles.bday, { color: c.warning }]}><Glyph name={ICONS.cake} /> {partialDateBadge(row.doc.birthday)}</Text>
         ) : null
       }
     />

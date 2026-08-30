@@ -8,6 +8,8 @@ import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
 import { useColors } from '../theme';
+import { ICONS } from '../icons';
+import { Glyph } from '../components/Glyph';
 
 const HOUR_H = 44;
 
@@ -90,7 +92,7 @@ export const WeekView = memo(function WeekView({ weekStart, onPressOccurrence, o
                     style={[styles.chipText, isTaskRow(r) && { color: r.task.overdue ? c.danger : c.textMuted }]}
                     numberOfLines={1}
                   >
-                    {isTaskRow(r) ? `⏰ ${r.title ?? ''}` : r.source === 'birthday' ? `🎂 ${r.title ?? ''}` : (r.title ?? '(untitled)')}
+                    {isTaskRow(r) ? <><Glyph name={ICONS.schedule} /> {r.title ?? ''}</> : r.source === 'birthday' ? <><Glyph name={ICONS.cake} /> {r.title ?? ''}</> : (r.title ?? '(untitled)')}
                   </Text>
                 </Pressable>
               ))}

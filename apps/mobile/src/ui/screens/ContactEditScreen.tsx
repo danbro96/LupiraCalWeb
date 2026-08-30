@@ -16,6 +16,7 @@ import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
 import { useColors } from '../theme';
+import { ICONS } from '../icons';
 
 const KIND_OPTIONS = [{ value: 'Individual', label: 'Person' }, { value: 'Organization', label: 'Organization' }];
 const NAME_FORMAT_OPTIONS = [
@@ -236,7 +237,7 @@ export function ContactEditScreen() {
             hitSlop={6}
           />
           <IconButton
-            icon="close"
+            icon={ICONS.close}
             size={16}
             iconColor={c.textMuted}
             style={styles.remove}
@@ -257,7 +258,7 @@ export function ContactEditScreen() {
             onChangeText={(v) => setProfiles((d) => d.map((x, j) => (j === i ? { ...x, handle: v } : x)))}
           />
           <IconButton
-            icon="close"
+            icon={ICONS.close}
             size={16}
             iconColor={c.textMuted}
             style={styles.remove}

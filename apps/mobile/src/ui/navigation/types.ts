@@ -1,3 +1,5 @@
+import type { PhotoQueryFilters } from '../../state/photo-queries';
+
 export type RootStackParamList = {
   Settings: undefined;
   Login: undefined;
@@ -13,6 +15,8 @@ export type RootStackParamList = {
   ItemEdit: { itemId?: string; day?: string; time?: string } | undefined;
   ContactDetail: { contactId: string };
   ContactEdit: { contactId?: string } | undefined;
+  /** Filters ride the route so the viewer's paging query hits the grid's cache entry, not the network. */
+  PhotoViewer: { photoId: string; filters?: PhotoQueryFilters };
   BridgeDiagnostics: undefined;
   /** Availability quick-add: status + date range, prefilled from the tapped day. */
   AvailabilityEdit: { day?: string } | undefined;

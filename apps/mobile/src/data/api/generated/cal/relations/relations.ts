@@ -9,6 +9,7 @@ import type {
   CalendarItemDto,
   CreateRelationRequest,
   FindRelatedItemsParams,
+  ListRelationEdgesParams,
   ProblemDetails,
   RelationDto
 } from '../models';
@@ -117,6 +118,60 @@ export const getListItemRelationsUrl = (id: string,) => {
 export const listItemRelations = async (id: string, options?: Parameters<typeof apiFetch>[1]): Promise<listItemRelationsResponse> => {
 
   return apiFetch<listItemRelationsResponse>(getListItemRelationsUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+export type listRelationEdgesResponse200 = {
+  data: RelationDto[]
+  status: 200
+}
+
+export type listRelationEdgesResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type listRelationEdgesResponse500 = {
+  data: ProblemDetails
+  status: 500
+}
+
+export type listRelationEdgesResponseSuccess = (listRelationEdgesResponse200) & {
+  headers: Headers;
+};
+export type listRelationEdgesResponseError = (listRelationEdgesResponse401 | listRelationEdgesResponse500) & {
+  headers: Headers;
+};
+
+export type listRelationEdgesResponse = (listRelationEdgesResponseSuccess | listRelationEdgesResponseError)
+
+export const getListRelationEdgesUrl = (params: ListRelationEdgesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/relations/edges?${stringifiedParams}` : `/api/relations/edges`
+}
+
+/**
+ * @summary Every edge of one kind the caller can see, with its item and reference — e.g. all photo links.
+ */
+export const listRelationEdges = async (params: ListRelationEdgesParams, options?: Parameters<typeof apiFetch>[1]): Promise<listRelationEdgesResponse> => {
+
+  return apiFetch<listRelationEdgesResponse>(getListRelationEdgesUrl(params),
   {
     ...options,
     method: 'GET'

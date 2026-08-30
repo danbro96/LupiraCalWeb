@@ -303,3 +303,37 @@ ships, which is why the recorder and the layer land together.
 ### Non-goals
 Family/presence sharing (needs a consent model LocationApi doesn't have); geofence alerts; trip polylines as
 first-class features; a time-range control on the map; rollup backfill for days the app was down.
+
+## M13 — Photo backup and the gallery   [status: in-progress]
+
+The camera roll becomes part of the estate: the phone backs it up to the object store, geotagged photos
+appear on the Map tab, and a Photos tab browses the whole library — including the assets the map can
+never show (no EXIF GPS, no matching location history) and the failed uploads that were previously only
+findable with psql.
+
+### Scope
+- [x] `data/photoQueue.ts` + `photo_upload_queue` migration; MediaStore scan via expo-media-library, WiFi-only default, backup-from date, outbox-style backoff/park
+- [x] `sync/photoUploader.ts` — declare → presigned PUT straight to the object store → complete; settings in `data/photoSettings.ts` (mirror_meta) and counters in `sync/photoBackupStatus.ts` (sync must not import state)
+- [x] `ACCESS_MEDIA_LOCATION` so EXIF GPS survives the read; Settings shows progress + parked retry
+- [x] Photos layer on the Map tab (viewport-scoped, clustered, tap → thumbnail sheet)
+- [x] Photos tab: `state/photo-queries.ts` cursor `useInfiniteQuery`, day-grouped `SectionList` 3-up grid, filters/sort sheet, upload-health chip from `GET /photos/stats`
+- [x] `PhotoViewerScreen` — horizontally paged over the loaded page (route carries the grid's filters so the query hits the cache), pinch + double-tap zoom, metadata panel, delete, retry processing
+- [x] `react-native-gesture-handler` + `react-native-reanimated` (native — rides the pending dev-client build); `GestureHandlerRootView` wraps the app
+- [x] Photo↔event links: viewer lists linked events and offers candidates around `takenAt`; `ItemDetailScreen` gains a linked-photos strip
+- [x] Root `npm run typecheck` / `lint` / `test` green
+
+### Exit criteria
+- [ ] Garage stood up and lupira-photo-api deployed (the gallery has never seen real data)
+- [ ] Authentik: `lupira-photo-aud` mapped onto the `lupira-cal-mobile` provider, then a forced sign-out/in
+- [ ] EAS dev-client build (gesture-handler + reanimated are native)
+- [ ] Device: back up a photo, watch it reach the grid, open it full-screen, swipe and pinch
+- [ ] Device: a photo with no EXIF GPS — invisible on the map — is present and browsable in the gallery
+- [ ] Device: airplane mode shows the empty state, never an error; reconnect repopulates
+- [ ] Device: link a photo to an event, then find it from the event's Photos strip
+- [ ] Device: a Failed asset surfaces on the health chip and Retry processing clears it
+
+### Non-goals
+Duplicate detection (`sha256` is captured at declare and unused, so the same photo from two devices lands
+twice); HEIC transcode (originals are served untranscoded, so the viewer falls back to the thumbnail);
+favourites/albums; bulk select and download; map ↔ gallery cross-linking ("show on map", "all from this
+day"); "on this day" memories.

@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Button as PaperButton, IconButton, Text, TextInput } from 'react-native-paper';
 import { localDay, localTime } from '../../domain/editors';
 import { useColors } from '../theme';
+import { ICONS } from '../icons';
 
 export function Input({ style, ...props }: ComponentProps<typeof TextInput>) {
   return <TextInput mode="outlined" dense style={[styles.input, style]} {...props} />;
@@ -69,7 +70,7 @@ function PickerButton({ text, isSet, onPress, onClear }: {
       >
         {text}
       </PaperButton>
-      {isSet && <IconButton icon="close" size={16} onPress={onClear} />}
+      {isSet && <IconButton icon={ICONS.close} size={16} onPress={onClear} />}
     </View>
   );
 }

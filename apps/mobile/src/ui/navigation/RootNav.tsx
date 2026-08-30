@@ -1,4 +1,4 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { ComponentProps } from 'react';
@@ -18,16 +18,18 @@ import { ItemEditScreen } from '../screens/ItemEditScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { MapScreen } from '../screens/MapScreen';
 import { PhotosScreen } from '../screens/PhotosScreen';
+import { PhotoViewerScreen } from '../screens/PhotoViewerScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { SyncIssuesScreen } from '../screens/SyncIssuesScreen';
 import type { RootStackParamList, TabParamList } from './types';
+import { ICONS } from '../icons';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const tabIcon = (name: ComponentProps<typeof MaterialCommunityIcons>['name']) =>
+const tabIcon = (name: ComponentProps<typeof MaterialIcons>['name']) =>
   function TabIcon({ color }: { color: string }) {
-    return <MaterialCommunityIcons name={name} color={color} size={24} />;
+    return <MaterialIcons name={name} color={color} size={24} />;
   };
 
 function Tabs() {
@@ -35,10 +37,10 @@ function Tabs() {
     <Tab.Navigator screenOptions={{ headerShown: true, headerRight: () => <SettingsButton /> }}>
       {/* Calendar + Contacts carry their own toolbars — the native header would just double them,
           so they render SettingsButton themselves. */}
-      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon('calendar-month'), headerShown: false }} />
-      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon('account-group'), headerShown: false }} />
-      <Tab.Screen name="Map" component={MapScreen} options={{ tabBarIcon: tabIcon('map') }} />
-      <Tab.Screen name="Photos" component={PhotosScreen} options={{ tabBarIcon: tabIcon('image-multiple') }} />
+      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon(ICONS.calendar), headerShown: false }} />
+      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon(ICONS.group), headerShown: false }} />
+      <Tab.Screen name="Map" component={MapScreen} options={{ tabBarIcon: tabIcon(ICONS.map) }} />
+      <Tab.Screen name="Photos" component={PhotosScreen} options={{ tabBarIcon: tabIcon(ICONS.photos) }} />
     </Tab.Navigator>
   );
 }
@@ -60,6 +62,7 @@ export function RootNav() {
       <Stack.Screen name="ItemEdit" component={ItemEditScreen} options={{ title: 'Edit event' }} />
       <Stack.Screen name="ContactDetail" component={ContactDetailScreen} options={{ title: 'Contact' }} />
       <Stack.Screen name="ContactEdit" component={ContactEditScreen} options={{ title: 'Edit contact' }} />
+      <Stack.Screen name="PhotoViewer" component={PhotoViewerScreen} options={{ title: 'Photo' }} />
       <Stack.Screen name="Developer" component={DeveloperScreen} options={{ title: 'Developer' }} />
       <Stack.Screen name="BridgeDiagnostics" component={BridgeDiagnosticsScreen} options={{ title: 'Bridge diagnostics' }} />
       <Stack.Screen name="AvailabilityEdit" component={AvailabilityEditScreen} options={{ title: 'Set availability' }} />

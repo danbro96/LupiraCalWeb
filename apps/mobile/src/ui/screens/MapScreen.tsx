@@ -32,6 +32,7 @@ import {
   ContactsLayer, EventsLayer, LivePuck, MovementLayer, PhotosLayer, SavedPlacesLayer,
 } from '../map/layers';
 import type { RootStackParamList } from '../navigation/types';
+import { ICONS } from '../icons';
 
 // Matches the web MapScreen default (Nordics, the basemap extract's home).
 const DEFAULT_CENTER: [number, number] = [18.07, 59.33];
@@ -214,7 +215,7 @@ export function MapScreen() {
   return (
     <View style={[styles.root, { backgroundColor: paper.colors.background }]}>
       {degraded && (
-        <Banner visible icon="map-marker-off">Basemap unavailable — showing pins on a plain background.</Banner>
+        <Banner visible icon={ICONS.locationOff}>Basemap unavailable — showing pins on a plain background.</Banner>
       )}
       {mapStyle ? (
         <View style={styles.mapWrap}>

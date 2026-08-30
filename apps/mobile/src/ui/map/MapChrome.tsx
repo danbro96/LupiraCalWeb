@@ -3,6 +3,7 @@ import { FAB, List, Portal, Switch, Text } from 'react-native-paper';
 import type { MapTheme } from '../../data/mapStyle';
 import { useColors } from '../theme/useColors';
 import { ACTIVITY_COLORS } from './mapTokens';
+import { ICONS } from '../icons';
 
 /** Map chrome: the layer sheet and the locate button. Six layers don't fit a chip row on a phone, so
  *  toggles live in a sheet and the map itself stays unobstructed. */
@@ -36,7 +37,7 @@ export function LocateFab({ mode, onPress, style }: {
 }
 
 export function LayersFab({ onPress, style }: { onPress: () => void; style?: object }) {
-  return <FAB icon="layers" size="small" onPress={onPress} style={style} accessibilityLabel="Map layers" />;
+  return <FAB icon={ICONS.layers} size="small" onPress={onPress} style={style} accessibilityLabel="Map layers" />;
 }
 
 export function LayersSheet({ theme, enabled, onToggle, onDismiss }: {

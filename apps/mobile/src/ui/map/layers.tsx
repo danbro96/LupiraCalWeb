@@ -11,7 +11,7 @@ import type { Ref } from 'react';
 import type { NativeSyntheticEvent } from 'react-native';
 import type { MapTheme } from '../../data/mapStyle';
 import type { LivePosition } from '../../sync/livePosition';
-import { MAP_COLORS, activityColorExpression } from './mapTokens';
+import { ACTIVITY_COLORS, MAP_COLORS, activityColorExpression } from './mapTokens';
 
 /** One component per map layer, mirroring the web client's layers.tsx split. Each renders a source
  *  plus its paint layers and nothing else — the screen owns state, these own appearance. */
@@ -214,15 +214,17 @@ export function MovementLayer({ theme, visits, track, current, onVisitPress }: {
         <Layer
           id="track-line"
           type="line"
+          filter={['!=', ['get', 'activity'], 'Unknown']}
           layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-          paint={{
-            'line-color': activityColorExpression(theme) as never,
-            'line-width': 3,
-            // Unknown activity is the neutral non-category and draws dashed — never a fifth hue.
-            // The arrays MUST be ['literal', …]: bare arrays in expression position are parsed as
-            // expressions, so [2, 2] reads as an operator named "2.0" and the whole paint fails.
-            'line-dasharray': ['match', ['get', 'activity'], 'Unknown', ['literal', [2, 2]], ['literal', [1, 0]]] as never,
-          }}
+          paint={{ 'line-color': activityColorExpression(theme) as never, 'line-width': 3 }}
+        />
+        {/* Dashed, never a fifth hue — its own layer because line-dasharray takes no data expression. */}
+        <Layer
+          id="track-line-unknown"
+          type="line"
+          filter={['==', ['get', 'activity'], 'Unknown']}
+          layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+          paint={{ 'line-color': ACTIVITY_COLORS[theme].Unknown, 'line-width': 3, 'line-dasharray': [2, 2] }}
         />
       </GeoJSONSource>
 

@@ -22,6 +22,8 @@ import type { RootStackParamList } from '../navigation/types';
 import { initialsOf } from './ContactsScreen';
 import { useColors } from '../theme';
 import { toastError } from '../../feedback/toast';
+import { ICONS } from '../icons';
+import { Glyph } from '../components/Glyph';
 
 /** Read-only overview — ALL editing lives on the edit screen. Shows everything the mirror doc carries:
  *  names, kind, pronouns, birthday+age, deceased, unified reach (channels + profiles), tags, addresses
@@ -83,7 +85,7 @@ export function ContactDetailScreen() {
       <View style={styles.header}>
         <Avatar.Text size={52} label={initialsOf(displayName)} style={{ backgroundColor: hashColor(contactId) }} />
         <View style={styles.headerBody}>
-          <Text style={styles.h1}>{displayName}{deceased ? ' ✝' : ''}</Text>
+          <Text style={styles.h1}>{displayName}{deceased ? ' †' : ''}</Text>
           <Text style={[styles.sub, { color: c.textMuted }]}>
             {[doc.pronouns, doc.kind === 'Organization' ? 'Organization' : null, doc.nickname ? `“${doc.nickname}”` : null]
               .filter(Boolean).join(' · ')}
@@ -106,7 +108,7 @@ export function ContactDetailScreen() {
         <List.Item
           key={`ch-${i}`}
           onPress={() => openReach(ch.medium, ch.value)}
-          title={`${ch.value}${ch.preferred ? '  ★' : ''}`}
+          title={ch.preferred ? <>{ch.value} <Glyph name={ICONS.star} /></> : ch.value}
           description={`${ch.medium}${ch.type ? ` (${ch.type})` : ''}`}
           left={() => <ReachIcon kind={ch.medium} />}
         />
@@ -115,7 +117,7 @@ export function ContactDetailScreen() {
         <List.Item
           key={`pr-${i}`}
           onPress={() => openReach(p.service, p.handle)}
-          title={`${p.handle}${p.preferred ? '  ★' : ''}`}
+          title={p.preferred ? <>{p.handle} <Glyph name={ICONS.star} /></> : p.handle}
           description={p.service}
           left={() => <ReachIcon kind={p.service} />}
         />
@@ -204,7 +206,7 @@ function BirthdayRow({ birthday, deceased }: { birthday: PartialDateDto; decease
   const age = deceased ? null : turningAge(year, next);
   return (
     <Text style={[styles.birthday, { color: c.warning }]}>
-      🎂 {fmtPartialDate(birthday)}
+      <Glyph name={ICONS.cake} /> {fmtPartialDate(birthday)}
       {age != null ? ` — turns ${age} on ${next.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : ''}
     </Text>
   );

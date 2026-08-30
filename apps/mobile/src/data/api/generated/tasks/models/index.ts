@@ -8,7 +8,6 @@
 
 export * from './createItemRequest';
 export * from './deleteListItemParams';
-export * from './itemCollectionResponse';
 export * from './itemDto';
 export * from './itemStatus';
 export * from './itemTimestampRequest';
