@@ -23,7 +23,7 @@ type AuthActions = {
   load(): Promise<void>;
   /** Switch backend (settings screen). Clears the session — a token minted for one backend is meaningless
    *  against another, and the LAN mode sends none at all. */
-  setBackend(url: string, authMode: AuthMode): Promise<void>;
+  setBackend(urls: Record<string, string>, authMode: AuthMode): Promise<void>;
   setSession(tokens: TokenResponse): Promise<void>;
   clearSession(): Promise<void>;
   /** Coalesced, rotation-safe refresh — see the state walk-through inline. */
@@ -76,8 +76,9 @@ export const useAuth = create<AuthState & AuthActions>((set, get) => ({
     });
   },
 
-  async setBackend(url, authMode) {
+  async setBackend(urls, authMode) {
     await get().clearSession();
+    const url = urls.api;
     set({ apiUrl: url, authMode });
     await SecureStore.setItemAsync(K.apiUrl, url);
     await SecureStore.setItemAsync(K.authMode, authMode);
