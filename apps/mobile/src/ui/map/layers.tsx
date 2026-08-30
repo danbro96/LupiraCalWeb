@@ -219,7 +219,9 @@ export function MovementLayer({ theme, visits, track, current, onVisitPress }: {
             'line-color': activityColorExpression(theme) as never,
             'line-width': 3,
             // Unknown activity is the neutral non-category and draws dashed — never a fifth hue.
-            'line-dasharray': ['match', ['get', 'activity'], 'Unknown', [2, 2], [1, 0]] as never,
+            // The arrays MUST be ['literal', …]: bare arrays in expression position are parsed as
+            // expressions, so [2, 2] reads as an operator named "2.0" and the whole paint fails.
+            'line-dasharray': ['match', ['get', 'activity'], 'Unknown', ['literal', [2, 2]], ['literal', [1, 0]]] as never,
           }}
         />
       </GeoJSONSource>
