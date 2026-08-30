@@ -134,7 +134,7 @@ export default function MapScreen() {
       const p = f.properties!;
       return {
         key: `s:${p.savedPlaceId}`,
-        primary: `${p.icon ?? '⭐'} ${p.label}`,
+        primary: p.icon ? `${p.icon} ${p.label}` : p.label,
         onClick: flyTo(f, p.placeId),
       };
     });
@@ -285,7 +285,7 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
         <h4>Current position</h4>
         <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">
           {props.ts ? fmtTime(new Date(String(props.ts))) : ''}
-          {props.batteryPct != null ? ` · 🔋${String(props.batteryPct)}%` : ''}
+          {props.batteryPct != null ? ` · ${String(props.batteryPct)}%` : ''}
         </Typography>
       </>
     );
@@ -310,7 +310,7 @@ function PopoverBody({ selection }: { selection: PinSelection }) {
       </>
     );
   }
-  return <h4>{String(props.icon ?? '⭐')} {String(props.label ?? 'Saved place')}</h4>;
+  return <h4>{props.icon ? `${String(props.icon)} ` : ''}{String(props.label ?? 'Saved place')}</h4>;
 }
 
 function FlyTo({ target }: { target: [number, number] | undefined }) {

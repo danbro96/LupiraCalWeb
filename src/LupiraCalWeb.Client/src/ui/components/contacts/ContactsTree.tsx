@@ -28,6 +28,7 @@ import { useInvalidateAddressBooks, useInvalidateContacts } from '../../../state
 import { AddressBookManage } from './AddressBookManage';
 import { WrapRow } from '../WrapRow';
 import { SidePane } from './panes';
+import { BusinessIcon, ContactsIcon, GroupIcon, PersonIcon } from '../../icons';
 
 const COUNT_SX = { flex: 'none', fontSize: 12, color: 'text.subtle', fontVariantNumeric: 'tabular-nums' } as const;
 // Forms and the add buttons align with the group rows, one caret-width in.
@@ -56,7 +57,7 @@ export function ContactsTree() {
           onClick={() => navigate(`/contacts/${me.contactId}`)}
           sx={{ borderBottom: 1, borderColor: 'border', mb: 0.5, fontWeight: 600 }}
         >
-          <ListItemText primary={`👤 ${me.displayName || 'You'}`} slotProps={{ primary: { noWrap: true } }} />
+          <ListItemText primary={<><PersonIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.75 }} />{me.displayName || 'You'}</>} slotProps={{ primary: { noWrap: true } }} />
           {me.displayName && <Chip variant="outlined" label="You" />}
         </ListItemButton>
       ) : (
@@ -130,7 +131,7 @@ function BookNode({
           {expanded ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
         </IconButton>
         <ListItemButton selected={isActive} onClick={() => navigate(`/contacts?book=${book.id}`)}>
-          <ListItemText primary={`📇 ${addressBookLabel(book)}`} slotProps={{ primary: { noWrap: true } }} />
+          <ListItemText primary={<><ContactsIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.75 }} />{addressBookLabel(book)}</>} slotProps={{ primary: { noWrap: true } }} />
         </ListItemButton>
         {book.access === 'Owner' && (
           <IconButton onClick={() => setManaging((x) => !x)} title="Manage address book" aria-label="Manage address book">
@@ -160,7 +161,7 @@ function BookNode({
               sx={{ pl: '36px' }}
             >
               <ListItemText
-                primary={`${g.kind === 'Organization' ? '🏢' : '👥'} ${g.name}`}
+                primary={<>{g.kind === 'Organization' ? <BusinessIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.75 }} /> : <GroupIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.75 }} />}{g.name}</>}
                 slotProps={{ primary: { noWrap: true } }}
               />
               <Box component="span" sx={COUNT_SX}>{g.members.length}</Box>

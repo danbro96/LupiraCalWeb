@@ -20,6 +20,7 @@ import {
   type PickerState,
 } from './placePickerMachine';
 import { PlaceLabel } from './PlaceLabel';
+import { PlaceIcon } from '../../icons';
 
 const MapPinDialog = lazy(() => import('../map/MapPinDialog'));
 
@@ -87,7 +88,7 @@ export function PlacePicker({ placeId, onChange, placeholder, initialText, autoF
   if (placeId) {
     return (
       <Box component="span" sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 1, flex: 1, flexWrap: 'wrap' }}>
-        📍 <PlaceLabel placeId={placeId} />
+        <PlaceIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.5 }} /> <PlaceLabel placeId={placeId} />
         <Tooltip title="Clear place">
           <IconButton onClick={() => onChange(null)}>
             <CloseIcon fontSize="small" />

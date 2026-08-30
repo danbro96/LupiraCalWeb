@@ -21,12 +21,14 @@ import type { AddressBookDto } from '../../data/api-contact/models';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { addressBookLabel, useAddressBooks } from '../../state/useAddressBooks';
 import { useInvalidateAddressBooks, useInvalidateContainers } from '../../state/useInvalidate';
-import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
+import { calendarColor } from '../theme/kinds';
+import { KindIcon } from '../components/KindIcon';
 import { errText } from '../components/errText';
 import { useSnackbar } from '../components/SnackbarHost';
 import { WrapRow } from '../components/WrapRow';
 import { Page } from '../components/Page';
 import { PageHead } from '../components/Page';
+import { ContactsIcon } from '../icons';
 
 /** Container management: calendars (class/kind/color/tz, from cal-api) and address books (from
  *  contact-api), with creation and per-owner sharing. */
@@ -99,7 +101,7 @@ function CalendarRow({ c }: { c: ContainerDto }) {
           <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: calendarColor(c) }} />
         </TableCell>
         <TableCell>
-          {c.kind ? `${CALENDAR_KIND_ICONS[c.kind]} ` : ''}
+          {c.kind && <KindIcon kind={c.kind} sx={{ fontSize: 15, verticalAlign: -2, mr: 0.5 }} />}
           {calendarLabel(c)}
         </TableCell>
         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
@@ -136,7 +138,7 @@ function BookRow({ b }: { b: AddressBookDto }) {
         <TableCell>
           <Box component="span" sx={{ width: 13, height: 13, borderRadius: '999px', border: 1, borderColor: 'border', flex: 'none', display: 'inline-block' }} style={{ background: 'var(--mui-palette-border)' }} />
         </TableCell>
-        <TableCell>📇 {addressBookLabel(b)}</TableCell>
+        <TableCell><ContactsIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.75 }} />{addressBookLabel(b)}</TableCell>
         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
           <code>{b.slug}</code>
         </TableCell>

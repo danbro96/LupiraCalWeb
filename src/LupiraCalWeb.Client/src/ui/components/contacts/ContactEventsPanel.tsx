@@ -1,10 +1,9 @@
 import MuiLink from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useSearchItems } from '../../../data/api/lupiraCalApi';
 import { fmtWhen } from '@lupira/cal-domain/time';
-import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
+import { CategoryIcon } from '../KindIcon';
 import { DrawerSection } from '../DrawerSection';
 import { Row, RowName } from '../rows';
 
@@ -31,7 +30,7 @@ export function ContactEventsPanel({ contactId }: { contactId: string }) {
     <DrawerSection title="Events">
       {events.map((e) => (
         <Row component={Link} key={e.id} to={itemHref(e.id)}>
-          <Box component="span" sx={{ fontSize: 22 }}>{(e.category && ITEM_CATEGORY_ICONS[e.category]) || '📅'}</Box>
+          <CategoryIcon category={e.category} sx={{ fontSize: 22 }} />
           <RowName>{e.title || '(untitled)'}</RowName>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>{fmtWhen(e.start, e.isAllDay)}</Typography>
         </Row>

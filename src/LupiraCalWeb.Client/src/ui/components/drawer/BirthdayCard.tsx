@@ -9,6 +9,7 @@ import { fmtDate } from '@lupira/cal-domain/time';
 import { fmtPartialDate } from '@lupira/cal-domain/partialDate';
 import { DetailDrawer } from './DetailDrawer';
 import { DrawerSection } from '../DrawerSection';
+import { CakeIcon } from '../../icons';
 
 /** Read-only view for a birthday occurrence (a contact projection, not a stored item): the birthday date,
  *  the age the contact is turning when known, and a link to the contact. `year` is the clicked occurrence's year. */
@@ -42,7 +43,7 @@ function BirthdayBody({ contact, year }: { contact: ContactDto; year: string | n
     <Box sx={{ px: 2, pb: 'calc(24px + env(safe-area-inset-bottom))' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Box component="span" title="Birthday" sx={{ fontSize: 22 }}>
-          🎂
+          <CakeIcon />
         </Box>
         <Typography component="h2" sx={{ mb: 1, color: 'text.secondary' }}>{contact.displayName}</Typography>
       </Box>

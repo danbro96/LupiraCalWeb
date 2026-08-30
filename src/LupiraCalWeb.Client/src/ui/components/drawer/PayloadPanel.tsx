@@ -34,9 +34,10 @@ import { errText } from '../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
+import { BoltIcon } from '../../icons';
 
 /**
- * The event-bound payload (⚡): at most one of prompt/action per item (server-enforced XOR — a 409
+ * The event-bound payload: at most one of prompt/action per item (server-enforced XOR — a 409
  * from the API surfaces here). Server-side only, never projected to ICS.
  */
 export function PayloadPanel({ item }: { item: CalendarItemDto }) {
@@ -48,7 +49,7 @@ export function PayloadPanel({ item }: { item: CalendarItemDto }) {
   const clearAction = useClearItemAction({ mutation: { onSuccess: invalidate, onError } });
 
   return (
-    <DrawerSection title="⚡ Payload">
+    <DrawerSection title={<><BoltIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.5 }} />Payload</>}>
       {item.prompt && editing !== 'prompt' && (
         <Paper variant="outlined" sx={{ p: '8px 12px', mb: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>

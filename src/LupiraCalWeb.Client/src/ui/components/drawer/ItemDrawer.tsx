@@ -15,7 +15,7 @@ import {
 import { describeRrule, RRULE_PRESETS } from '@lupira/cal-domain/rrule';
 import { fmtDate, parseYmd } from '@lupira/cal-domain/time';
 import { useInvalidateItems } from '../../../state/useInvalidate';
-import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
+import { CategoryIcon } from '../KindIcon';
 import { AttendeesPanel } from './AttendeesPanel';
 import { CalendarsPanel } from './CalendarsPanel';
 import { DetailDrawer } from './DetailDrawer';
@@ -71,7 +71,7 @@ function DrawerBody({ item, onClose }: { item: CalendarItemDto; onClose: () => v
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {item.category && item.category !== 'General' && (
           <Box component="span" title={item.category} sx={{ fontSize: 22 }}>
-            {ITEM_CATEGORY_ICONS[item.category] ?? ''}
+            <CategoryIcon category={item.category} />
           </Box>
         )}
         <TextField

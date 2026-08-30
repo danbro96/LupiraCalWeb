@@ -8,12 +8,13 @@ import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
 import { formatCoords, osmUrl } from '@lupira/cal-domain/places';
 import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
 import { useGeoPlace, usePlaceItems } from '../../../state/usePlaces';
-import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
+import { CategoryIcon } from '../KindIcon';
 import { DrawerSection } from '../DrawerSection';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import { Row, RowName } from '../rows';
+import { PlaceIcon } from '../../icons';
 
 /** The ?place= detail pane (extracted from the former LocationsScreen): containment, items, contacts. */
 export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClose: () => void }) {
@@ -62,7 +63,7 @@ export function PlaceDetailPanel({ placeId, onClose }: { placeId: string; onClos
             {place.formattedAddress && <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>{place.formattedAddress}</Typography>}
             {formatCoords(place.latitude, place.longitude) && (
               <Typography component="p" sx={{ mb: 1, color: 'text.secondary' }}>
-                📍 {formatCoords(place.latitude, place.longitude)}
+                <PlaceIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.5 }} />{formatCoords(place.latitude, place.longitude)}
                 {osmUrl(place.latitude, place.longitude) && (
                   <>
                     {' '}
@@ -103,8 +104,8 @@ function ItemsPanel({ placeId }: { placeId: string }) {
       {!isLoading && (items ?? []).length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>No items reference this place.</Typography>}
       {(items ?? []).map((item) => (
         <Row component={Link} key={item.id} to={itemHref(item.id)}>
-          {item.category && ITEM_CATEGORY_ICONS[item.category] && (
-            <Box component="span" sx={{ fontSize: 22 }}>{ITEM_CATEGORY_ICONS[item.category]}</Box>
+          {item.category && (
+            <CategoryIcon category={item.category} sx={{ fontSize: 22 }} />
           )}
           <RowName>{item.title || '(untitled)'}</RowName>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>{whenOf(item)}</Typography>

@@ -22,11 +22,13 @@ import { RANGE_PRESETS } from '@lupira/cal-domain/searchRange';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { SEARCH_PAGE_SIZE, useItemSearch } from '../../state/useItemSearch';
 import { errText } from '../components/errText';
-import { calendarColor, ITEM_CATEGORY_ICONS } from '../theme/kinds';
+import { calendarColor } from '../theme/kinds';
+import { CategoryIcon } from '../components/KindIcon';
 import { useIsPhone } from '../hooks/useIsPhone';
 import { PageHead } from '../components/Page';
 import { Row, RowName } from '../components/rows';
 import { Page } from '../components/Page';
+import { PersonIcon } from '../icons';
 
 /** Global list/search over every readable calendar; rows deep-link into the ?item= drawer. */
 export function ItemsScreen() {
@@ -121,7 +123,7 @@ export function ItemsScreen() {
         <MenuItem value="">Any category</MenuItem>
         {Object.values(ItemCategory).map((c) => (
           <MenuItem key={c} value={c}>
-            {ITEM_CATEGORY_ICONS[c]} {c}
+            <CategoryIcon category={c} sx={{ verticalAlign: -5, mr: 0.5 }} />{c}
           </MenuItem>
         ))}
       </TextField>
@@ -204,7 +206,8 @@ export function ItemsScreen() {
             {filters.contact && (
               <Chip
                 variant="outlined"
-                label={`👤 with ${drillContact?.displayName ?? '…'}`}
+                icon={<PersonIcon />}
+                label={`with ${drillContact?.displayName ?? '…'}`}
                 onDelete={() => setParam('contact', null)}
               />
             )}
@@ -305,7 +308,7 @@ function ItemRow({
           {open ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
         </IconButton>
       )}
-      <Box component="span" sx={{ fontSize: 22 }}>{(o.category && ITEM_CATEGORY_ICONS[o.category]) || '📅'}</Box>
+      <CategoryIcon category={o.category} sx={{ fontSize: 22 }} />
       <RowName>{o.title || '(untitled)'}</RowName>
       {!indent && o.parentItemId && !drilled && (
         <Chip

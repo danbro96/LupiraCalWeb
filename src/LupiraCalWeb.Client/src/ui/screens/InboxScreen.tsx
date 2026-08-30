@@ -38,7 +38,7 @@ export function InboxScreen() {
     <Page>
       <h2>Inbox</h2>
       <Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Items proposed into your calendars, awaiting curation.</Typography>
-      {groups.length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Nothing to curate. 🎉</Typography>}
+      {groups.length === 0 && <Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Nothing to curate.</Typography>}
       {groups.map(({ calendar, items }) => (
         <Box key={calendar.id} sx={{ mb: 1.5 }}>
           <Typography variant="overline" component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 2, pb: 1, color: 'text.subtle' }}>

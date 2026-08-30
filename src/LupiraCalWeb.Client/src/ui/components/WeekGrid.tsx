@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { NamedIcon } from './KindIcon';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import type { AvailabilitySegment } from '../../state/useAvailability';
@@ -129,7 +130,7 @@ export function WeekGrid({ days, entries, segments, onOpenItem, selectedFamilyKe
                     }}
                     style={{ background: e.task ? undefined : e.color }}
                   >
-                    {e.icon ? `${e.icon} ` : ''}
+                    {e.icon && <NamedIcon name={e.icon} sx={{ verticalAlign: -2, mr: 0.25 }} />}
                     {e.title}
                     {e.childCount > 0 ? ` · ${e.childCount}` : ''}
                   </ButtonBase>
@@ -398,7 +399,7 @@ function DayColumn({
               component="span"
               sx={{ fontSize: 12, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}
             >
-              {p.item.icon ? `${p.item.icon} ` : ''}
+              {p.item.icon && <NamedIcon name={p.item.icon} sx={{ verticalAlign: -2, mr: 0.25 }} />}
               {p.item.title}
             </Box>
             <Box component="span" sx={{ fontSize: 11, opacity: 0.85 }}>

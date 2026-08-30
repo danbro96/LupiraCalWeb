@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NamedIcon } from './KindIcon';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import IconButton from '@mui/material/IconButton';
@@ -180,7 +181,7 @@ export function MonthGrid({ date, weeks, entries, segments, compact, onOpenItem,
                       ...(e.task?.overdue && { color: 'error.main' }),
                     }}
                   >
-                    {e.icon ? `${e.icon} ` : ''}
+                    {e.icon && <NamedIcon name={e.icon} sx={{ verticalAlign: -2, mr: 0.25 }} />}
                     {e.title}
                     {e.ghost ? ' (proposed)' : ''}
                   </Box>

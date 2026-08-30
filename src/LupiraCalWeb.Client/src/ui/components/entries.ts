@@ -1,6 +1,7 @@
 import type { CalendarItemDto, CalendarItemOccurrenceDto, ContainerDto, OccurrenceOrigin } from '../../data/api/models';
 import type { ItemDto as TaskDto } from '../../data/api-tasks/models';
 import { parseYmd } from '@lupira/cal-domain/time';
+import type { IconName } from '@lupira/cal-tokens/icons';
 import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
 
 /** One renderable occurrence on a grid — accepted occurrences, ghosted proposed items, task deadlines. */
@@ -12,7 +13,7 @@ export interface GridEntry {
   end: Date | null;
   isAllDay: boolean;
   color: string;
-  icon?: string;
+  icon?: IconName;
   ghost?: boolean;
   completeness?: number | null;
   parentItemId: string | null;
@@ -56,7 +57,7 @@ export function fromTask(t: TaskDto, now: Date): GridEntry | null {
     end: null,
     isAllDay: true,
     color: overdue ? 'var(--mui-palette-error-main)' : 'var(--mui-palette-text-secondary)',
-    icon: '⏰',
+    icon: 'schedule',
     parentItemId: null,
     childCount: 0,
     task: { listId: t.listId, itemId: t.id, dueAt: due, overdue },

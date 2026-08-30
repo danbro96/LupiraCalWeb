@@ -1,11 +1,10 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import { useGetItem, useSearchItems } from '../../../data/api/lupiraCalApi';
 import type { CalendarItemDto } from '../../../data/api/models';
 import { fmtWhen } from '@lupira/cal-domain/time';
-import { ITEM_CATEGORY_ICONS } from '../../theme/kinds';
+import { CategoryIcon } from '../KindIcon';
 import { DrawerSection } from '../DrawerSection';
 import { Row, RowName } from '../rows';
 
@@ -35,7 +34,7 @@ export function HierarchyPanel({ item }: { item: CalendarItemDto }) {
       )}
       {children.map((c) => (
         <Row component={Link} key={c.id} to={itemHref(c.id)}>
-          <Box component="span" sx={{ fontSize: 22 }}>{(c.category && ITEM_CATEGORY_ICONS[c.category]) || '📅'}</Box>
+          <CategoryIcon category={c.category} sx={{ fontSize: 22 }} />
           <RowName>{c.title || '(untitled)'}</RowName>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>{fmtWhen(c.start, c.isAllDay)}</Typography>
         </Row>

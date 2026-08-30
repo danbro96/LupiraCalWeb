@@ -24,6 +24,7 @@ import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 import { PageHead } from '../Page';
 import { DetailPane } from './panes';
+import { BusinessIcon, GroupIcon } from '../../icons';
 
 /** Right pane for a group/org: members with add/remove, inline rename, delete. */
 export function GroupDetailPane() {
@@ -59,7 +60,7 @@ export function GroupDetailPane() {
     <DetailPane>
       <PageHead>
         <h2>
-          <Chip variant="outlined" label={group.kind === 'Organization' ? '🏢 org' : '👥 group'} />{' '}
+          <Chip variant="outlined" icon={group.kind === 'Organization' ? <BusinessIcon /> : <GroupIcon />} label={group.kind === 'Organization' ? 'org' : 'group'} />{' '}
           <TextField
             variant="standard"
             defaultValue={group.name}

@@ -42,6 +42,7 @@ import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';
 import { PageHead } from '../Page';
 import { DetailPane } from './panes';
+import { BusinessIcon, CakeIcon, GroupIcon, PlaceIcon, StarIcon } from '../../icons';
 
 const linkSx: SxProps<Theme> = { fontSize: 13, fontWeight: 600, p: '2px', whiteSpace: 'nowrap', '@media (pointer: coarse)': { p: '6px 2px' } };
 
@@ -113,14 +114,14 @@ export function ContactDetailPane() {
             {contact.birthday && (
               <div>
                 <dt>Birthday</dt>
-                <dd>🎂 {fmtPartialDate(contact.birthday)}</dd>
+                <dd><CakeIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.5 }} />{fmtPartialDate(contact.birthday)}</dd>
               </div>
             )}
             {contact.channels.map((c, i) => (
               <div key={i}>
                 <dt>
                   {c.type || c.medium}
-                  {c.preferred && ' ★'}
+                  {c.preferred && <StarIcon fontSize="small" sx={{ verticalAlign: -4, ml: 0.5 }} />}
                 </dt>
                 <dd>
                   <MuiLink underline="hover" sx={linkSx} href={`${c.medium === 'Phone' ? 'tel' : 'mailto'}:${c.value}`}>
@@ -133,7 +134,7 @@ export function ContactDetailPane() {
               <div key={i}>
                 <dt>{a.type} address</dt>
                 <dd>
-                  📍 <PlaceLabel placeId={a.placeId} link />
+                  <PlaceIcon fontSize="small" sx={{ verticalAlign: -5, mr: 0.5 }} /> <PlaceLabel placeId={a.placeId} link />
                   {(a.movedIn || a.movedOut) && (
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}> · {fmtResidencyPeriod(a.movedIn, a.movedOut)}{residencySuffix(a.movedIn, a.movedOut)}</Typography>
                   )}
@@ -144,7 +145,7 @@ export function ContactDetailPane() {
               <div key={i}>
                 <dt>
                   {p.service}
-                  {p.preferred && ' ★'}
+                  {p.preferred && <StarIcon fontSize="small" sx={{ verticalAlign: -4, ml: 0.5 }} />}
                 </dt>
                 <dd>
                   {p.url ? (
@@ -185,7 +186,7 @@ export function ContactDetailPane() {
       <DrawerSection title="Groups">
         {memberOf.map((g) => (
           <Box key={g.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: '6px', borderBottom: 1, borderColor: 'divider' }}>
-            <Chip variant="outlined" label={g.kind === 'Organization' ? '🏢' : '👥'} />
+            <Chip variant="outlined" icon={g.kind === 'Organization' ? <BusinessIcon /> : <GroupIcon />} label={g.kind === 'Organization' ? 'org' : 'group'} />
             <MuiLink component={Link} sx={{ flex: 1 }} to={{ pathname: `/contacts/groups/${g.id}`, search: groupSearch }}>
               {g.name}
             </MuiLink>

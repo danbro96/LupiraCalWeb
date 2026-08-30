@@ -24,6 +24,7 @@ import { inputToPartialDate, partialDateBadge } from '@lupira/cal-domain/partial
 import { useGroup } from './useGroup';
 import { WrapRow } from '../WrapRow';
 import { SidePane } from './panes';
+import { CakeIcon, StarIcon } from '../../icons';
 
 /** Split a comma-separated input into reach channels of one medium (create-form convenience). */
 function toChannels(raw: string, medium: ReachMedium): ContactReachChannel[] {
@@ -130,7 +131,7 @@ export function ContactList() {
   );
 }
 
-/** One contact row + a pin toggle (⭐ = a reserved tag that keeps the contact in the Active tier). */
+/** One contact row + a pin toggle (a reserved tag that keeps the contact in the Active tier). */
 function ContactRow({ contact: c, search }: { contact: ContactDto; search: string }) {
   const invalidate = useInvalidateContacts();
   const showSnack = useSnackbar();
@@ -181,7 +182,7 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
           '@media (hover: none)': { opacity: pinned ? 1 : 0.7 },
         }}
       >
-        ★
+        <StarIcon fontSize="small" />
       </ButtonBase>
       <Avatar sx={{ width: 30, height: 30, fontSize: 12, fontWeight: 700, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
         {(c.displayName[0] ?? '?').toUpperCase()}
@@ -190,7 +191,7 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
         {c.displayName}
         {c.nickname && c.nickname !== c.displayName ? <Typography variant="caption" sx={{ color: 'text.secondary' }}> “{c.nickname}”</Typography> : null}
       </Box>
-      {c.birthday && <Chip variant="outlined" label={`🎂 ${partialDateBadge(c.birthday)}`} />}
+      {c.birthday && <Chip variant="outlined" icon={<CakeIcon />} label={partialDateBadge(c.birthday)} />}
       {c.completeness && (
         <LinearProgress
           variant="determinate"
