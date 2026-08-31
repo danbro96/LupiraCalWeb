@@ -8,7 +8,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
 import ButtonBase from '@mui/material/ButtonBase';
 import { NavLink, useLocation, useMatch, useSearchParams } from 'react-router-dom';
 import { useCreateContact, useSetContactTags } from '../../../data/api-contact/lupiraContactApi';
@@ -192,14 +191,6 @@ function ContactRow({ contact: c, search }: { contact: ContactDto; search: strin
         {c.nickname && c.nickname !== c.displayName ? <Typography variant="caption" sx={{ color: 'text.secondary' }}> “{c.nickname}”</Typography> : null}
       </Box>
       {c.birthday && <Chip variant="outlined" icon={<CakeIcon />} label={partialDateBadge(c.birthday)} />}
-      {c.completeness && (
-        <LinearProgress
-          variant="determinate"
-          value={Math.round(c.completeness.score * 100)}
-          title={`Completeness ${Math.round(c.completeness.score * 100)}%`}
-          sx={{ width: 60, height: 6, borderRadius: '999px', flex: 'none' }}
-        />
-      )}
     </Box>
   );
 }
