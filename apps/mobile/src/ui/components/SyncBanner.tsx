@@ -1,49 +1,25 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
 import { Banner, Text, useTheme } from 'react-native-paper';
-import { getMe } from '../../data/api/generated/cal/me/me';
-import { PHASE_LABELS, useSyncStatus } from '../../sync/syncStatus';
+import { bannerState } from '../../domain/bannerState';
+import { PHASE_LABELS } from '../../domain/syncPhase';
+import { useSyncStatus } from '../../sync/syncStatus';
 import type { RootStackParamList } from '../navigation/types';
 
-/** One-line connection/queue status above the grids; doubles as the M3 exit-criterion probe
- *  ("Connected as …" proves token → BFF → cal-api). Tapping it opens the sync issues screen. */
+/** Connection/queue state above the grids, and nothing at all when there is none to report.
+ *  Tapping it opens the sync issues screen. */
 export function SyncBanner() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   // useTheme, not useColors: the alert tint is MD3's errorContainer pair, which the estate
   // palette has no equivalent for.
   const theme = useTheme();
   const { syncing, serverReachable, pending, parked, lastError, progress } = useSyncStatus();
-  const [who, setWho] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!serverReachable || who !== null) return;
-    let cancelled = false;
-    getMe()
-      .then((r) => {
-        if (!cancelled && r.status === 200) setWho(r.data.email ?? null);
-      })
-      .catch(() => undefined);
-    return () => {
-      cancelled = true;
-    };
-  }, [serverReachable, who]);
+  const state = bannerState({ syncing, serverReachable, pending, parked, lastError, progress }, PHASE_LABELS);
+  if (!state) return null;
 
-  const text = syncing
-    ? progress && progress.count > 0
-      ? `Syncing — ${progress.count} ${PHASE_LABELS[progress.phase]}…`
-      : 'Syncing…'
-    : !serverReachable
-      ? `Offline${pending > 0 ? ` — ${pending} change${pending === 1 ? '' : 's'} queued` : ''}`
-      : parked > 0
-        ? `${parked} change${parked === 1 ? '' : 's'} need attention`
-        : lastError
-          ? 'Sync problem — tap for details'
-          : who
-            ? `Connected as ${who}`
-            : 'Connected';
-  const alert = parked > 0 || (!syncing && !serverReachable) || (!syncing && !!lastError);
+  const alert = state.kind === 'offline' || state.kind === 'parked' || state.kind === 'error';
 
   return (
     <Pressable onPress={() => navigation.navigate('SyncIssues')}>
@@ -52,7 +28,7 @@ export function SyncBanner() {
           variant="bodySmall"
           style={{ color: alert ? theme.colors.onErrorContainer : theme.colors.onSurfaceVariant }}
         >
-          {text}
+          {state.text}
         </Text>
       </Banner>
     </Pressable>

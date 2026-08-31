@@ -35,12 +35,10 @@ const tabIcon = (name: ComponentProps<typeof MaterialIcons>['name']) =>
 function Tabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: true, headerRight: () => <SettingsButton /> }}>
-      {/* Calendar + Contacts carry their own toolbars — the native header would just double them,
-          so they render SettingsButton themselves. */}
-      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarIcon: tabIcon(ICONS.calendar), headerShown: false }} />
-      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ tabBarIcon: tabIcon(ICONS.group), headerShown: false }} />
-      <Tab.Screen name="Map" component={MapScreen} options={{ tabBarIcon: tabIcon(ICONS.map) }} />
-      <Tab.Screen name="Photos" component={PhotosScreen} options={{ tabBarIcon: tabIcon(ICONS.photos) }} />
+      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ title: 'Calendar', tabBarIcon: tabIcon(ICONS.calendar) }} />
+      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ title: 'Contacts', tabBarIcon: tabIcon(ICONS.group) }} />
+      <Tab.Screen name="Map" component={MapScreen} options={{ title: 'Map', tabBarIcon: tabIcon(ICONS.map) }} />
+      <Tab.Screen name="Photos" component={PhotosScreen} options={{ title: 'Photos', tabBarIcon: tabIcon(ICONS.photos) }} />
     </Tab.Navigator>
   );
 }

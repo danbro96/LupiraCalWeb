@@ -4,7 +4,6 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Chip, FAB, IconButton, Text } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
 import { SwipeHint } from '../calendar/SwipeHint';
@@ -13,7 +12,7 @@ import { MonthView } from '../calendar/MonthView';
 import { WeekView } from '../calendar/WeekView';
 import { BridgePrompt } from '../components/BridgePrompt';
 import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../hooks/palette';
-import { SettingsButton } from '../components/SettingsButton';
+import { ScreenToolbar } from '../components/ScreenToolbar';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
@@ -101,12 +100,12 @@ export function CalendarScreen() {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: c.bg }]} edges={['top']}>
+    <View style={[styles.root, { backgroundColor: c.bg }]}>
       <SyncBanner />
       <BridgePrompt />
-      <View style={styles.toolbar}>
+      <ScreenToolbar>
         <IconButton icon={ICONS.chevronLeft} iconColor={c.primary} style={styles.nav} onPress={() => step(-1)} hitSlop={8} />
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.period}>{title}</Text>
         <IconButton icon={ICONS.chevronRight} iconColor={c.primary} style={styles.nav} onPress={() => step(1)} hitSlop={8} />
         <Button mode="outlined" compact onPress={goToday}>
           Today
@@ -114,8 +113,7 @@ export function CalendarScreen() {
         <Button mode="outlined" compact onPress={() => setMode(mode === 'month' ? 'week' : 'month')}>
           {mode === 'month' ? 'Week' : 'Month'}
         </Button>
-        <SettingsButton />
-      </View>
+      </ScreenToolbar>
 
       {mode === 'month' ? (
         <View
@@ -155,7 +153,7 @@ export function CalendarScreen() {
           <SwipeHint hint={swipe.hint} prevLabel={periodLabel(-1)} nextLabel={periodLabel(1)} />
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -203,9 +201,8 @@ function DayAgendaList({ day, onPress }: { day: string; onPress: (row: CalRow) =
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  toolbar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, gap: 8 },
   nav: { margin: 0 },
-  title: { flexGrow: 1, fontSize: 16, fontWeight: '600', textAlign: 'center' },
+  period: { flexGrow: 1, fontSize: 16, fontWeight: '600', textAlign: 'center' },
   monthArea: { flex: 1 },
   sheet: {
     position: 'absolute', left: 0, right: 0, bottom: 0,

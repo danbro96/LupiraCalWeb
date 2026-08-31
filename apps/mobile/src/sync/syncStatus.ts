@@ -4,7 +4,9 @@ import { create } from 'zustand';
  *  write it without import cycles. Mirror reactivity is NOT here — that's per-monthKey query invalidation
  *  (see reactivity.ts), not a global revision counter. */
 
-export type SyncPhase = 'containers' | 'items' | 'contacts' | 'push' | 'bridge';
+export type { SyncPhase } from '../domain/syncPhase';
+export { PHASE_LABELS } from '../domain/syncPhase';
+import type { SyncPhase } from '../domain/syncPhase';
 
 type SyncStatus = {
   syncing: boolean;
@@ -39,10 +41,3 @@ export const useSyncStatus = create<SyncStatus & SyncStatusActions>((set, get) =
   },
 }));
 
-export const PHASE_LABELS: Record<SyncPhase, string> = {
-  containers: 'calendars',
-  items: 'events',
-  contacts: 'contacts',
-  push: 'changes sent',
-  bridge: 'device sync',
-};

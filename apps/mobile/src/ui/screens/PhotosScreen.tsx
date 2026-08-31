@@ -4,7 +4,6 @@ import { Image } from 'expo-image';
 import { useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { fmtDuration } from '@lupira/cal-domain/photoFormat';
 import type { PhotoListItemDto } from '../../data/api/generated/photo/models';
 import {
@@ -51,7 +50,7 @@ export function PhotosScreen() {
   if (isLoading) return <Centered text="Loading…" />;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: c.bg }]} edges={['top']}>
+    <View style={[styles.root, { backgroundColor: c.bg }]}>
       <SyncBanner />
       <View style={styles.toolbar}>
         <Chip compact icon={ICONS.tune} onPress={() => setSheetOpen(true)}>
@@ -112,7 +111,7 @@ export function PhotosScreen() {
           onDismiss={() => setSheetOpen(false)}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

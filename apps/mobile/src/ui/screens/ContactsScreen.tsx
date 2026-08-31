@@ -4,11 +4,10 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Avatar, FAB, List, Searchbar, Text } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ContactListRow } from '../../data/mirror';
 import { useContactList } from '../../state/queries';
 import { hashColor } from '../hooks/palette';
-import { SettingsButton } from '../components/SettingsButton';
+import { ScreenToolbar } from '../components/ScreenToolbar';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
@@ -29,9 +28,9 @@ export function ContactsScreen() {
     || (r.doc.tags ?? []).some((t) => t.toLowerCase().includes(q)));
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: c.bg }]} edges={['top']}>
+    <View style={[styles.root, { backgroundColor: c.bg }]}>
       <SyncBanner />
-      <View style={styles.toolbar}>
+      <ScreenToolbar>
         <Searchbar
           style={styles.search}
           placeholder="Search contacts"
@@ -40,8 +39,7 @@ export function ContactsScreen() {
           onChangeText={setQuery}
         />
         <FAB size="small" icon={ICONS.add} onPress={() => navigation.navigate('ContactEdit', {})} />
-        <SettingsButton />
-      </View>
+      </ScreenToolbar>
       <FlatList
         data={rows}
         keyExtractor={(r) => r.id}
@@ -54,7 +52,7 @@ export function ContactsScreen() {
           <ContactRow row={item} onPress={() => navigation.navigate('ContactDetail', { contactId: item.id })} />
         )}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -87,7 +85,6 @@ export function initialsOf(name: string): string {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  toolbar: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10 },
   search: { flex: 1 },
   empty: { textAlign: 'center', marginTop: 32 },
   bday: { fontSize: 12 },

@@ -1,12 +1,17 @@
 import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { IconButton } from 'react-native-paper';
-import type { RootStackParamList } from '../navigation/types';
+import type { NavigationProp } from '@react-navigation/native';
+import { IconButton } from './IconButton';
 import { ICONS } from '../icons';
 
-/** Settings lives off the tab bar. Calendar and Contacts hide the native header for their own
- *  toolbars, so this goes in those toolbars and in the navigator's headerRight for the rest. */
+/** The one settings affordance. Settings lives off the tab bar on a parent stack; `navigate` bubbles
+ *  to it, so this works identically from a tab screen and from the root stack. */
 export function SettingsButton() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  return <IconButton icon={ICONS.settings} accessibilityLabel="Settings" onPress={() => navigation.navigate('Settings')} />;
+  const navigation = useNavigation<NavigationProp<Record<string, undefined>>>();
+  return (
+    <IconButton
+      name={ICONS.settings}
+      accessibilityLabel="Settings"
+      onPress={() => navigation.navigate('Settings')}
+    />
+  );
 }
