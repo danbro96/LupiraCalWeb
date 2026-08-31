@@ -18,6 +18,8 @@ import { Page } from '../components/Page';
 const MapScreen = lazy(() => import('../screens/MapScreen'));
 const PlacesScreen = lazy(() => import('../screens/PlacesScreen'));
 const PhotosScreen = lazy(() => import('../screens/PhotosScreen'));
+// Lazy: keeps the comms client out of the main chunk — a rarely-visited corner of a contact.
+const ContactTopicsPane = lazy(() => import('../components/contacts/ContactTopicsPane'));
 
 // Everything requires the SSO session — LupiraCalApi has no anonymous surface. The drawer rides
 // the ?item= search param on any route, so occurrences deep-link from every screen.
@@ -41,6 +43,14 @@ export const router = createBrowserRouter([
                   { index: true, element: <EmptyDetail /> },
                   { path: 'groups/:groupId', element: <GroupDetailPane /> },
                   { path: ':contactId', element: <ContactDetailPane /> },
+                  {
+                    path: ':contactId/topics/:topicId?',
+                    element: (
+                      <Suspense fallback={<Page><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></Page>}>
+                        <ContactTopicsPane />
+                      </Suspense>
+                    ),
+                  },
                 ],
               },
               {

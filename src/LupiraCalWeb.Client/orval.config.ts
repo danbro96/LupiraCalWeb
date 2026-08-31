@@ -86,6 +86,26 @@ export default defineConfig({
       },
     },
   },
+  // LupiraCommsApi (the message corpus segmented into topics). Proxied same-origin by the BFF at
+  // /comms-api; requests go through customFetchComms (COMMS_API_BASE_URL). Only the Topics surface is
+  // consumed — ingest, participant binding and the raw archive stay out of the SPA bundle.
+  lupiraCommsApi: {
+    input: {
+      target: './backend-comms-openapi.json',
+      filters: { mode: 'include', tags: ['Topics'] },
+    },
+    output: {
+      target: './src/data/api-comms/lupiraCommsApi.ts',
+      schemas: './src/data/api-comms/models',
+      client: 'react-query',
+      httpClient: 'fetch',
+      clean: true,
+      override: {
+        mutator: { path: './src/data/fetcher.ts', name: 'customFetchComms' },
+        fetch: { includeHttpResponseReturnType: false },
+      },
+    },
+  },
   // LupiraTasksApi (task deadlines on the calendar). Proxied same-origin by the BFF at /tasks-api;
   // requests go through customFetchTasks (TASKS_API_BASE_URL).
   lupiraTasksApi: {

@@ -13,8 +13,8 @@ import { PaneFrame } from '../components/contacts/panes';
 export function ContactsLayout() {
   const isPhone = useIsPhone();
   const [params] = useSearchParams();
-  const contactMatch = useMatch('/contacts/:contactId');
-  const groupMatch = useMatch('/contacts/groups/:groupId');
+  // Splat so the nested topic routes stack like any other detail; `/contacts` itself never matches.
+  const detailMatch = useMatch('/contacts/:contactId/*');
 
   if (!isPhone)
     return (
@@ -25,7 +25,7 @@ export function ContactsLayout() {
       </PaneFrame>
     );
 
-  if (contactMatch || groupMatch) {
+  if (detailMatch) {
     const back = new URLSearchParams({ pane: 'list' });
     const book = params.get('book');
     const q = params.get('q');

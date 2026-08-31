@@ -223,6 +223,12 @@ export function ContactDetailPane() {
 
       <ContactEventsPanel contactId={contact.id} />
 
+      <DrawerSection title="Comms">
+        <MuiLink component={Link} sx={linkSx} to={{ pathname: `/contacts/${contact.id}/topics`, search: groupSearch }}>
+          Topics with {contact.displayName}
+        </MuiLink>
+      </DrawerSection>
+
       <ContactRelationsPanel contact={contact} />
 
       <DrawerSection

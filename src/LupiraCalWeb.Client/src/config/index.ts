@@ -26,3 +26,7 @@ export const LOCATION_API_BASE_URL = (rawLocation ?? '/location-api').replace(/\
  *  Only asset metadata crosses this prefix — the bytes come from presigned object-store URLs. */
 const rawPhoto = import.meta.env.VITE_PHOTO_API_BASE_URL as string | undefined;
 export const PHOTO_API_BASE_URL = (rawPhoto ?? '/photo-api').replace(/\/$/, '');
+
+/** LupiraCommsApi (the message corpus segmented into topics), proxied same-origin at `/comms-api/*`. */
+const rawComms = import.meta.env.VITE_COMMS_API_BASE_URL as string | undefined;
+export const COMMS_API_BASE_URL = (rawComms ?? '/comms-api').replace(/\/$/, '');
