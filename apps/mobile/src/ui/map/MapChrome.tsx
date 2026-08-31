@@ -32,7 +32,7 @@ export type FollowMode = 'off' | 'follow' | 'heading';
 export function LocateFab({ mode, onPress, style }: {
   mode: FollowMode; onPress: () => void; style?: object;
 }) {
-  const icon = mode === 'off' ? 'crosshairs-gps' : mode === 'follow' ? 'crosshairs' : 'compass';
+  const icon = mode === 'off' ? ICONS.locate : mode === 'follow' ? ICONS.locateFixed : ICONS.heading;
   return <FAB icon={icon} size="small" onPress={onPress} style={style} accessibilityLabel="Show my location" />;
 }
 
