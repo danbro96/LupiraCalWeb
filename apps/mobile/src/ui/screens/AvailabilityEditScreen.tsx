@@ -8,8 +8,9 @@ import { createItem } from '../../state/actions';
 import { useCalendars } from '../../state/queries';
 import { Button } from '../components/Button';
 import { SegmentedPicker } from '../components/SegmentedPicker';
-import { DateField, Field } from '../components/form';
-import { AVAILABILITY_COLORS } from '../components/palette';
+import { DateField } from '../components/DateField';
+import { Field } from '../components/Field';
+import { AVAILABILITY_COLORS } from '../hooks/palette';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
 

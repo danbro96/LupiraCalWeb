@@ -18,7 +18,7 @@ import { PINNED_TAG, isPinned } from '@lupira/cal-domain/contactTiers';
 import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useTieredContacts } from '../../../state/useTieredContacts';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { inputToPartialDate, partialDateBadge } from '@lupira/cal-domain/partialDate';
 import { useGroup } from './useGroup';

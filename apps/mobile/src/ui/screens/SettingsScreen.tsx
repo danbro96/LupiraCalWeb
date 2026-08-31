@@ -17,7 +17,7 @@ import { runSync } from '../../sync/sync';
 import { useSyncStatus } from '../../sync/syncStatus';
 import { useConfirm } from '../components/ConfirmDialog';
 import { Button } from '../components/Button';
-import { DateField } from '../components/form';
+import { DateField } from '../components/DateField';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
 

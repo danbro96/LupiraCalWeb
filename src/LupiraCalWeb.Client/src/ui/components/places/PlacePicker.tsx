@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { forwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
 import { useCreatePlaceAtPin, useCreatePlaceFromHit } from '../../../state/usePlaces';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { GeocodePreview } from './GeocodePreview';
 import {
   initialPickerState,

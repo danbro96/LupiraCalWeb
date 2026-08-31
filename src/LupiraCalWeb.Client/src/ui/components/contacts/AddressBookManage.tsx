@@ -17,7 +17,7 @@ import {
 } from '../../../data/api-contact/lupiraContactApi';
 import type { AddressBookDto } from '../../../data/api-contact/models';
 import { useInvalidateAddressBooks } from '../../../state/useInvalidate';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';
 
 const ACCESS_OPTIONS = [

@@ -8,7 +8,7 @@ import type { AvailabilitySegment } from '../../state/useAvailability';
 import { familyKey } from '@lupira/cal-domain/family';
 import { fmtTime, isToday, sameDay } from '@lupira/cal-domain/time';
 import { AVAILABILITY_COLORS, familyAccent } from '../theme/kinds';
-import type { GridEntry } from './entries';
+import type { GridEntry } from '../entries';
 
 const MAX_PER_CELL = 4;
 

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import { useForwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
 import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
 import Box from '@mui/material/Box';
-import { RowName } from '../rows';
+import { RowName } from '../Rows';
 
 export interface SearchTarget {
   lat: number;

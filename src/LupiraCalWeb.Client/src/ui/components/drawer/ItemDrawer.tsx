@@ -27,7 +27,7 @@ import { MetadataPanel } from './MetadataPanel';
 import { PayloadPanel } from './PayloadPanel';
 import { PlacePicker } from '../places/PlacePicker';
 import { RelationsPanel } from './RelationsPanel';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';

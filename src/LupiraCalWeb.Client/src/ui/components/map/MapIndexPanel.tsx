@@ -2,7 +2,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import CloseIcon from '@mui/icons-material/Close';
-import { Row, RowName } from '../rows';
+import { Row, RowName } from '../Rows';
 export interface IndexRow {
   key: string;
   primary: string;

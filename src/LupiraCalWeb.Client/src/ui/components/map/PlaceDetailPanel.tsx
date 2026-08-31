@@ -13,7 +13,7 @@ import { DrawerSection } from '../DrawerSection';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
-import { Row, RowName } from '../rows';
+import { Row, RowName } from '../Rows';
 import { PlaceIcon } from '../../icons';
 
 /** The ?place= detail pane (extracted from the former LocationsScreen): containment, items, contacts. */

@@ -16,7 +16,7 @@ import { useContactState } from '../../state/queries';
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';
 
-import { hashColor } from '../components/palette';
+import { hashColor } from '../hooks/palette';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { initialsOf } from './ContactsScreen';

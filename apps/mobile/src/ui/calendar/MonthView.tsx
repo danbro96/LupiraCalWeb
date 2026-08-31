@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
-import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
+import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../hooks/palette';
 import { useColors } from '../theme';
 import { ICONS } from '../icons';
 import { Glyph } from '../components/Glyph';

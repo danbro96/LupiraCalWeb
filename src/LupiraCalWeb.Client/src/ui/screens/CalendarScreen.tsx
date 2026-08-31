@@ -21,7 +21,7 @@ import { useAvailabilitySegments } from '../../state/useAvailability';
 import { useTaskDeadlines } from '../../state/useTaskDeadlines';
 import { useCalendarVisibility } from '../components/CalendarVisibility';
 import { OriginKind } from '../../data/api/models';
-import { fromOccurrence, fromProposed, fromTask, type GridEntry } from '../components/entries';
+import { fromOccurrence, fromProposed, fromTask, type GridEntry } from '../entries';
 import { MiniMonthPicker } from '../components/MiniMonthPicker';
 import { MonthGrid } from '../components/MonthGrid';
 import { WeekGrid } from '../components/WeekGrid';

@@ -11,7 +11,9 @@ import { contactCoreFromForm, contactFormFromDoc, emptyContactForm, parseCsv } f
 import { createContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../../state/actions';
 import { useAddressBooks, useContactState } from '../../state/queries';
 import { ChoiceChips } from '../components/ChoiceChips';
-import { DateField, Field, Input } from '../components/form';
+import { DateField } from '../components/DateField';
+import { Field } from '../components/Field';
+import { Input } from '../components/Input';
 import { ReachIcon } from '../components/ReachIcon';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';

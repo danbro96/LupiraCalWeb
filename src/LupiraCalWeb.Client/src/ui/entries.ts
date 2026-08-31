@@ -1,8 +1,8 @@
-import type { CalendarItemDto, CalendarItemOccurrenceDto, ContainerDto, OccurrenceOrigin } from '../../data/api/models';
-import type { ItemDto as TaskDto } from '../../data/api-tasks/models';
+import type { CalendarItemDto, CalendarItemOccurrenceDto, ContainerDto, OccurrenceOrigin } from '../data/api/models';
+import type { ItemDto as TaskDto } from '../data/api-tasks/models';
 import { parseYmd } from '@lupira/cal-domain/time';
 import type { IconName } from '@lupira/cal-tokens/icons';
-import { CALENDAR_KIND_ICONS, calendarColor } from '../theme/kinds';
+import { CALENDAR_KIND_ICONS, calendarColor } from './theme/kinds';
 
 /** One renderable occurrence on a grid — accepted occurrences, ghosted proposed items, task deadlines. */
 export interface GridEntry {

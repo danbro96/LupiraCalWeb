@@ -28,7 +28,7 @@ import { FitToData, FlyToPlace, ViewportReporter } from '../components/map/mapEf
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import { Row, RowName } from '../components/rows';
+import { Row, RowName } from '../components/Rows';
 
 /** The map over everything located: events, GPS movement, contacts, saved places. Route stays
  * /locations so ?place=/?q= deep links keep working; state rides the URL (?from ?to ?layers). */

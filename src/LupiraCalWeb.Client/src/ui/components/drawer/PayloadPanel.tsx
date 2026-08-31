@@ -30,7 +30,7 @@ import {
 } from '../../../data/api/models';
 import { describeFire } from '@lupira/cal-domain/fire';
 import { useInvalidateItems } from '../../../state/useInvalidate';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';

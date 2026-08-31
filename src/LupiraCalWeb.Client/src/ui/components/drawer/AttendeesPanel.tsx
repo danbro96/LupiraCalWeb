@@ -23,7 +23,7 @@ import type { CalendarItemDto } from '../../../data/api/models';
 import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
 import { rankByInteraction } from '@lupira/cal-domain/contactRank';
 import { useInvalidateItems } from '../../../state/useInvalidate';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';

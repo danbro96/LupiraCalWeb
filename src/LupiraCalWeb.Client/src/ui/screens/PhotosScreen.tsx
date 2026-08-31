@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { fmtDuration } from '@lupira/cal-domain/photoFormat';
 import type { PhotoListItemDto } from '../../data/api-photo/models';
-import { errText } from '../components/errText';
+import { errText } from '../errText';
 import { WrapRow } from '../components/WrapRow';
 import { PhotoViewer } from '../components/photos/PhotoViewer';
 import {

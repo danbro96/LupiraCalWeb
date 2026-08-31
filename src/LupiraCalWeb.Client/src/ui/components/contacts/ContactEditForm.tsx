@@ -31,7 +31,7 @@ import { ContactAddressType, DisplayNameFormat, ReachMedium } from '../../../dat
 import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { PlacePicker } from '../places/PlacePicker';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { fuzzyToInput, parseFuzzyInput, residencyStatus } from '@lupira/cal-domain/fuzzyDate';
 import { inputToPartialDate, partialDateKey, partialDateToInput } from '@lupira/cal-domain/partialDate';

@@ -21,12 +21,12 @@ import { fmtWhen } from '@lupira/cal-domain/time';
 import { RANGE_PRESETS } from '@lupira/cal-domain/searchRange';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { SEARCH_PAGE_SIZE, useItemSearch } from '../../state/useItemSearch';
-import { errText } from '../components/errText';
+import { errText } from '../errText';
 import { calendarColor } from '../theme/kinds';
 import { CategoryIcon } from '../components/KindIcon';
 import { useIsPhone } from '../hooks/useIsPhone';
 import { PageHead } from '../components/Page';
-import { Row, RowName } from '../components/rows';
+import { Row, RowName } from '../components/Rows';
 import { Page } from '../components/Page';
 import { PersonIcon } from '../icons';
 

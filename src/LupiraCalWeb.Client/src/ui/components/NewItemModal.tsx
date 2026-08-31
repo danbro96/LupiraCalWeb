@@ -19,7 +19,7 @@ import { ymd } from '@lupira/cal-domain/time';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { useInvalidateItems } from '../../state/useInvalidate';
 import { localInputToIso } from './drawer/inputs';
-import { errText } from './errText';
+import { errText } from '../errText';
 import { useSnackbar } from './SnackbarHost';
 import { useIsPhone } from '../hooks/useIsPhone';
 import { WrapRow } from './WrapRow';

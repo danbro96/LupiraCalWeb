@@ -7,7 +7,7 @@ import { Avatar, FAB, List, Searchbar, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ContactListRow } from '../../data/mirror';
 import { useContactList } from '../../state/queries';
-import { hashColor } from '../components/palette';
+import { hashColor } from '../hooks/palette';
 import { SettingsButton } from '../components/SettingsButton';
 import { SyncBanner } from '../components/SyncBanner';
 import type { RootStackParamList } from '../navigation/types';

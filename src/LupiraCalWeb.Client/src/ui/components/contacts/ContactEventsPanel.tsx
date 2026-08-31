@@ -5,7 +5,7 @@ import { useSearchItems } from '../../../data/api/lupiraCalApi';
 import { fmtWhen } from '@lupira/cal-domain/time';
 import { CategoryIcon } from '../KindIcon';
 import { DrawerSection } from '../DrawerSection';
-import { Row, RowName } from '../rows';
+import { Row, RowName } from '../Rows';
 
 const FETCH_SIZE = 50;
 const SHOWN = 10;

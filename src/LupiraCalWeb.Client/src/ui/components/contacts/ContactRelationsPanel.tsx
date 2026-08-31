@@ -25,7 +25,7 @@ import type { ContactDto, ContactRelationEntryDto, ContactRelationKind } from '.
 import { groupRelationEntries, RELATION_KINDS } from '@lupira/cal-domain/contactRelations';
 import type { RelationCategory, RelationKind } from '@lupira/cal-domain/contactRelations';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { ContactRelationGraph } from './ContactRelationGraph';
 import { WrapRow } from '../WrapRow';

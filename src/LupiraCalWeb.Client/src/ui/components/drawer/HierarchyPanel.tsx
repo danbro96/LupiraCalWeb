@@ -6,7 +6,7 @@ import type { CalendarItemDto } from '../../../data/api/models';
 import { fmtWhen } from '@lupira/cal-domain/time';
 import { CategoryIcon } from '../KindIcon';
 import { DrawerSection } from '../DrawerSection';
-import { Row, RowName } from '../rows';
+import { Row, RowName } from '../Rows';
 
 /** Parent link + direct children (ParentItemId nesting — distinct from cross-API Relations). */
 export function HierarchyPanel({ item }: { item: CalendarItemDto }) {

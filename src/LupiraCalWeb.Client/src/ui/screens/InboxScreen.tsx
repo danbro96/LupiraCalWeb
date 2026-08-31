@@ -9,7 +9,7 @@ import { fmtDate, fmtDateTime, parseYmd } from '@lupira/cal-domain/time';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { useInvalidateItems } from '../../state/useInvalidate';
 import { useProposedByCalendar } from '../../state/useProposed';
-import { errText } from '../components/errText';
+import { errText } from '../errText';
 import { useSnackbar } from '../components/SnackbarHost';
 import { calendarColor } from '../theme/kinds';
 import { Page } from '../components/Page';

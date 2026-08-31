@@ -11,8 +11,8 @@ import { selectableCalendars, useCalendars, useItemState } from '../../state/que
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';
 import { Button } from '../components/Button';
-import { Input } from '../components/form';
-import { useCalendarColors } from '../components/palette';
+import { Input } from '../components/Input';
+import { useCalendarColors } from '../hooks/palette';
 import { EventPhotosRow } from '../photos/EventPhotosRow';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';

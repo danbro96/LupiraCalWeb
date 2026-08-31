@@ -30,7 +30,7 @@ function residencySuffix(movedIn: FuzzyDate | null | undefined, movedOut: FuzzyD
 import { fmtDate } from '@lupira/cal-domain/time';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { CompletenessBadge } from '../drawer/CompletenessBadge';
-import { errText } from '../errText';
+import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';
 import { PlaceLabel } from '../places/PlaceLabel';
 import { ContactCircles } from './ContactCircles';

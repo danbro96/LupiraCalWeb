@@ -10,7 +10,10 @@ import { categoryAllDayDefault, emptyItemForm, itemCoreFromForm, itemFormFromDoc
 import { createItem, reviseItem } from '../../state/actions';
 import { selectableCalendars, useCalendars, useItemState } from '../../state/queries';
 import { ChoiceChips } from '../components/ChoiceChips';
-import { DateField, Field, Input, TimeField } from '../components/form';
+import { DateField } from '../components/DateField';
+import { Field } from '../components/Field';
+import { Input } from '../components/Input';
+import { TimeField } from '../components/TimeField';
 import type { RootStackParamList } from '../navigation/types';
 import { useUnsavedGuard } from '../navigation/useUnsavedGuard';
 import { useColors } from '../theme';

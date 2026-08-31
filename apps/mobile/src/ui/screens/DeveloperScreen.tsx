@@ -6,7 +6,7 @@ import { Button, List, RadioButton, Text } from 'react-native-paper';
 import { API_PRESETS, DIAGNOSTIC_ROUTES, type AuthMode } from '../../config';
 import { presetFor, useAuth } from '../../state/auth-store';
 import { useSyncStatus } from '../../sync/syncStatus';
-import { Input } from '../components/form';
+import { Input } from '../components/Input';
 import type { RootStackParamList } from '../navigation/types';
 import { useColors } from '../theme';
 

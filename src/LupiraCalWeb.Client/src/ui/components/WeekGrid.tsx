@@ -7,7 +7,7 @@ import { clampToDay, layoutColumns } from '@lupira/cal-domain/occurrences';
 import { type DayRail, familyKey, railsForDay } from '@lupira/cal-domain/family';
 import { fmtDayShort, fmtTime, isToday, minutesOfDay, sameDay, ymd } from '@lupira/cal-domain/time';
 import { AVAILABILITY_COLORS, familyAccent } from '../theme/kinds';
-import type { GridEntry } from './entries';
+import type { GridEntry } from '../entries';
 
 const HOUR_PX = 48;
 const RAIL_SLOT_PX = 5; // 3px rail + 2px gap

@@ -29,7 +29,7 @@ import {
   useRegeocode,
   useUnlocatedPlaces,
 } from '../../state/usePlaceCuration';
-import { errText } from '../components/errText';
+import { errText } from '../errText';
 import { useSnackbar } from '../components/SnackbarHost';
 import { WrapRow } from '../components/WrapRow';
 import { DrawerSection } from '../components/DrawerSection';

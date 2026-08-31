@@ -6,7 +6,7 @@ import { Text } from 'react-native-paper';
 import type { GridRow } from '../../data/mirror';
 import { isTaskRow } from '../../domain/taskRows';
 import { useDaysOccurrences, useTaskDeadlines, type CalRow } from '../../state/queries';
-import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../components/palette';
+import { BIRTHDAY_COLOR, availabilityColor, useCalendarColors } from '../hooks/palette';
 import { useColors } from '../theme';
 import { ICONS } from '../icons';
 import { Glyph } from '../components/Glyph';

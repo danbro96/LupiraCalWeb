@@ -23,7 +23,7 @@ import { addressBookLabel, useAddressBooks } from '../../state/useAddressBooks';
 import { useInvalidateAddressBooks, useInvalidateContainers } from '../../state/useInvalidate';
 import { calendarColor } from '../theme/kinds';
 import { KindIcon } from '../components/KindIcon';
-import { errText } from '../components/errText';
+import { errText } from '../errText';
 import { useSnackbar } from '../components/SnackbarHost';
 import { WrapRow } from '../components/WrapRow';
 import { Page } from '../components/Page';
