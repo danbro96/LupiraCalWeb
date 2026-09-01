@@ -1,9 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 /**
- * Invalidation helpers over the orval-generated query keys (which are URL-path based). Item
- * mutations touch searches, the item itself, and curation lists; contact mutations touch
- * contact searches and groups.
+ * Invalidation helpers over the orval-generated query keys, which are the BFF's own paths — every
+ * one carries its route prefix, so `/api/items` (cal) and `/tasks-api/items` (tasks) no longer
+ * collide and a prefix match can no longer sweep the wrong API's queries.
+ *
+ * Match on the prefixed path. A bare `/items` matches nothing.
  */
 export function useInvalidateItems() {
   const queryClient = useQueryClient();
@@ -11,7 +13,9 @@ export function useInvalidateItems() {
     queryClient.invalidateQueries({
       predicate: (q) => {
         const key = String(q.queryKey[0] ?? '');
-        return key.startsWith('/items') || key.includes('/proposed');
+        // Deliberately cal-only: task deadlines live under /tasks-api/items and are not touched by
+        // a cal item mutation. Before the prefixes existed this needed a hand-written key to dodge.
+        return key.startsWith('/api/items') || key.includes('/proposed');
       },
     });
 }
@@ -22,30 +26,29 @@ export function useInvalidateContacts() {
     queryClient.invalidateQueries({
       predicate: (q) => {
         const key = String(q.queryKey[0] ?? '');
-        return key.startsWith('/contacts') || key.includes('/groups') || key.startsWith('/groups');
+        return key.startsWith('/contact-api/contacts') || key.includes('/groups');
       },
     });
 }
 
 export function useInvalidateContainers() {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ predicate: (q) => String(q.queryKey[0] ?? '').startsWith('/calendars') });
+  return () => queryClient.invalidateQueries({ predicate: (q) => String(q.queryKey[0] ?? '').startsWith('/api/calendars') });
 }
 
 export function useInvalidateAddressBooks() {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ predicate: (q) => String(q.queryKey[0] ?? '').startsWith('/address-books') });
+  return () => queryClient.invalidateQueries({ predicate: (q) => String(q.queryKey[0] ?? '').startsWith('/contact-api/address-books') });
 }
 
-/** Geo place mutations: generated '/places' keys, the hand-prefixed '/geo-api/places' batch-lookup
- *  key (usePlaceCoords), and the '/curation' lists that mirror place state. */
+/** Geo place mutations: the place queries themselves plus the `/curation` lists that mirror place state. */
 export function useInvalidatePlaces() {
   const queryClient = useQueryClient();
   return () =>
     queryClient.invalidateQueries({
       predicate: (q) => {
         const key = String(q.queryKey[0] ?? '');
-        return key.startsWith('/places') || key.startsWith('/geo-api/places') || key.startsWith('/curation');
+        return key.startsWith('/geo-api/places') || key.startsWith('/geo-api/me/places') || key.startsWith('/geo-api/curation');
       },
     });
 }
