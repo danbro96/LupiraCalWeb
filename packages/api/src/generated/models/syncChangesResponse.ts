@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { SyncChangeDto } from './syncChangeDto.ts';
+import type { SyncChangeDto } from './syncChangeDto';
 
 /**
  * One page of the changes feed. `Cursor` is opaque — hand it back as `?since=`; loop while

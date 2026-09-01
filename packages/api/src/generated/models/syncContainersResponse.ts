@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AddressBookDto } from './addressBookDto.ts';
-import type { ContactGroupDto } from './contactGroupDto.ts';
+import type { AddressBookDto } from './addressBookDto';
+import type { ContactGroupDto } from './contactGroupDto';
 
 /**
  * Snapshot of the caller's containers. Address books are plain documents (no cursor); groups are

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AdminLevel } from './adminLevel.ts';
+import type { AdminLevel } from './adminLevel';
 
 /**
  * A node in the administrative containment tree (Country/Region/Locality).

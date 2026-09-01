@@ -1,8 +1,8 @@
-import { createItem, deleteItem, mergeItemMetadata, updateItem } from '../data/api/generated/cal/calendar-items/calendar-items';
-import { fileItemToCalendar, removeItemFromCalendar } from '../data/api/generated/cal/curation/curation';
-import type { UpdateCalendarItemRequest } from '../data/api/generated/cal/models';
-import { createContact, deleteContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '../data/api/generated/contact/contacts/contacts';
-import type { ContactReachChannel } from '../data/api/generated/contact/models';
+import { createItem, deleteItem, mergeItemMetadata, updateItem } from '@lupira/cal-api/fetch/cal';
+import { fileItemToCalendar, removeItemFromCalendar } from '@lupira/cal-api/fetch/cal';
+import type { UpdateCalendarItemRequest } from '@lupira/cal-api/models';
+import { createContact, deleteContact, reviseContact, setContactChannels, setContactProfiles, setContactTags } from '@lupira/cal-api/fetch/contact';
+import type { ContactReachChannel } from '@lupira/cal-api/models';
 import type { ClientOp, ItemCore } from '../domain/ops';
 
 /** Op → REST. Every call carries `Idempotency-Key: commandId` (the server ledger makes redelivery a no-op —

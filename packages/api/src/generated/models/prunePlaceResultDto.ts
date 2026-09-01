@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PruneStatus } from './pruneStatus.ts';
+import type { PruneStatus } from './pruneStatus';
 
 export interface PrunePlaceResultDto {
   placeId: string;

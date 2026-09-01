@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { MessageSource } from './messageSource.ts';
+import type { MessageSource } from './messageSource';
 
 /**
  * What the owner can see about one capture source: is it granted, and is it still arriving. Read-only

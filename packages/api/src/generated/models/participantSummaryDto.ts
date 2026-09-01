@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { MessageSource } from './messageSource.ts';
+import type { MessageSource } from './messageSource';
 
 /**
  * One platform sender with its traffic weight — the working set for contact binding.

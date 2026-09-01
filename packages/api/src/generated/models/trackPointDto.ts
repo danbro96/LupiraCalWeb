@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { LocationProvider } from './locationProvider.ts';
-import type { MotionActivity } from './motionActivity.ts';
+import type { LocationProvider } from './locationProvider';
+import type { MotionActivity } from './motionActivity';
 
 /**
  * A point on a (raw or thinned) track.

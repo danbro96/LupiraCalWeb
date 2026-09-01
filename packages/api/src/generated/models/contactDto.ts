@@ -4,15 +4,15 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CompletenessScore } from './completenessScore.ts';
-import type { ContactKind } from './contactKind.ts';
-import type { ContactPostalAddress } from './contactPostalAddress.ts';
-import type { ContactReachChannel } from './contactReachChannel.ts';
-import type { ContactRelationDto } from './contactRelationDto.ts';
-import type { ContactSocialProfileDto } from './contactSocialProfileDto.ts';
-import type { DisplayNameFormat } from './displayNameFormat.ts';
-import type { JsonNode } from './jsonNode.ts';
-import type { PartialDate } from './partialDate.ts';
+import type { CompletenessScore } from './completenessScore';
+import type { ContactKind } from './contactKind';
+import type { ContactPostalAddress } from './contactPostalAddress';
+import type { ContactReachChannel } from './contactReachChannel';
+import type { ContactRelationDto } from './contactRelationDto';
+import type { ContactSocialProfileDto } from './contactSocialProfileDto';
+import type { DisplayNameFormat } from './displayNameFormat';
+import type { JsonNode } from './jsonNode';
+import type { PartialDate } from './partialDate';
 
 export interface ContactDto {
   id: string;

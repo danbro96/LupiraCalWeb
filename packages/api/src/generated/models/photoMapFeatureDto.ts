@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PhotoMapPointDto } from './photoMapPointDto.ts';
-import type { PhotoMapPropertiesDto } from './photoMapPropertiesDto.ts';
+import type { PhotoMapPointDto } from './photoMapPointDto';
+import type { PhotoMapPropertiesDto } from './photoMapPropertiesDto';
 
 export interface PhotoMapFeatureDto {
   /** @nullable */

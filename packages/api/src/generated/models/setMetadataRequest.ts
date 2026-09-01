@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { JsonNode } from './jsonNode.ts';
+import type { JsonNode } from './jsonNode';
 
 /**
  * Sets an item's free-form JSON metadata (whole-field). Send `null` to clear it.

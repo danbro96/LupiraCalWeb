@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AvailabilityStatus } from './availabilityStatus.ts';
+import type { AvailabilityStatus } from './availabilityStatus';
 
 /**
  * A presence/availability segment's status; the span is the item itself (whole-day or timed). Replaces the old

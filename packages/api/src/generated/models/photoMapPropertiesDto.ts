@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AssetKind } from './assetKind.ts';
+import type { AssetKind } from './assetKind';
 
 export interface PhotoMapPropertiesDto {
   id: string;

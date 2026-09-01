@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { TransportMode } from './transportMode.ts';
+import type { TransportMode } from './transportMode';
 
 /**
  * One leg of a `Trip`. Mode-agnostic: `DeparturePoint`/`ArrivalPoint` generalize gate/platform/stop,

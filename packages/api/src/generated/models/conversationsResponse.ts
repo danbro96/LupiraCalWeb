@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ConversationSummaryDto } from './conversationSummaryDto.ts';
+import type { ConversationSummaryDto } from './conversationSummaryDto';
 
 export interface ConversationsResponse {
   items: ConversationSummaryDto[];

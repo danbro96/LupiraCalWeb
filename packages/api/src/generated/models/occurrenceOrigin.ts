@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { OriginKind } from './originKind.ts';
+import type { OriginKind } from './originKind';
 
 /**
  * Ties a projected occurrence back to the entity it was derived from — the birthday occurrence's

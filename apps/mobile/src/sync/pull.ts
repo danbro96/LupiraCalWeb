@@ -1,6 +1,6 @@
-import { getChanges as calGetChanges } from '../data/api/generated/cal/sync/sync';
-import { getSyncContainers as calGetContainers } from '../data/api/generated/cal/sync/sync';
-import { getChanges as contactGetChanges, getSyncContainers as contactGetContainers } from '../data/api/generated/contact/sync/sync';
+import { getChanges as calGetChanges } from '@lupira/cal-api/fetch/cal';
+import { getSyncContainers as calGetContainers } from '@lupira/cal-api/fetch/cal';
+import { contactGetChanges, contactGetSyncContainers as contactGetContainers } from '@lupira/cal-api/fetch/contact';
 import type { Db, Tx } from '../data/db/types';
 import * as mirror from '../data/mirror';
 import type { ContactDoc, ContactGuards, ItemDoc, ItemGuards } from '../domain/docTypes';

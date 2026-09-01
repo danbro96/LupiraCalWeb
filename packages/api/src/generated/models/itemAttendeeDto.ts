@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ParticipationRole } from './participationRole.ts';
-import type { ParticipationStatus } from './participationStatus.ts';
+import type { ParticipationRole } from './participationRole';
+import type { ParticipationStatus } from './participationStatus';
 
 /**
  * One attendee's participation, composed from the participation events.

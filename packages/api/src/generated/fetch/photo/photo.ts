@@ -17,7 +17,7 @@ import type {
   ProblemDetails
 } from '../../models';
 
-import { apiRequest } from '../../../transport.ts';
+import { apiRequest } from '../../../transport';
 
 export type declarePhotoResponse200 = {
   data: DeclaredPhotoResponse

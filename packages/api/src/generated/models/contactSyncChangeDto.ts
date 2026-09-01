@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactDto } from './contactDto.ts';
-import type { ContactSectionGuardsDto } from './contactSectionGuardsDto.ts';
+import type { ContactDto } from './contactDto';
+import type { ContactSectionGuardsDto } from './contactSectionGuardsDto';
 
 /**
  * A changed contact: the full DTO plus its section guards.

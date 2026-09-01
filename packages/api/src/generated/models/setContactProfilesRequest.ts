@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactSocialProfileInput } from './contactSocialProfileInput.ts';
+import type { ContactSocialProfileInput } from './contactSocialProfileInput';
 
 /**
  * Wholesale replacement of a contact's social/IM handles. For well-known services (telegram, messenger,

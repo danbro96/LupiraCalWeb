@@ -123,7 +123,7 @@ export async function discardParkedAndRestore(seq: number, dbOverride?: Db): Pro
   const horizon = currentHorizon();
   const monthKeys = new Set<string>();
   if (target.domain === 'cal') {
-    const { getItem } = await import('../data/api/generated/cal/calendar-items/calendar-items');
+    const { getItem } = await import('@lupira/cal-api/fetch/cal');
     let fetched: import('../domain/docTypes').ItemDoc | null = null;
     try {
       const r = await getItem(target.aggregateId);
@@ -143,7 +143,7 @@ export async function discardParkedAndRestore(seq: number, dbOverride?: Db): Pro
     });
     invalidateItems();
   } else {
-    const { getContact } = await import('../data/api/generated/contact/contacts/contacts');
+    const { getContact } = await import('@lupira/cal-api/fetch/contact');
     let fetched: import('../domain/docTypes').ContactDoc | null = null;
     try {
       const r = await getContact(target.aggregateId);

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { DeviceKind } from './deviceKind.ts';
+import type { DeviceKind } from './deviceKind';
 
 /**
  * Register a device that will feed location telemetry.

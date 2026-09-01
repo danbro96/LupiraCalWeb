@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { BookingDetail } from './bookingDetail.ts';
-import type { TravelLegRequest } from './travelLegRequest.ts';
+import type { BookingDetail } from './bookingDetail';
+import type { TravelLegRequest } from './travelLegRequest';
 
 /**
  * Composable detail input for create/update. BookingDetail? ItemDetailsRequest.Booking (reservation/confirmation) attaches to any category;

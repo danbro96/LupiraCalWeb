@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PhotoMapFeatureDto } from './photoMapFeatureDto.ts';
+import type { PhotoMapFeatureDto } from './photoMapFeatureDto';
 
 /**
  * GeoJSON-shaped map payload — feeds a MapLibre GeoJSON source directly.

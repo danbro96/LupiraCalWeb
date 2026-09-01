@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { SectionGuardDto } from './sectionGuardDto.ts';
-import type { SectionGuardsDtoFiling } from './sectionGuardsDtoFiling.ts';
+import type { SectionGuardDto } from './sectionGuardDto';
+import type { SectionGuardsDtoFiling } from './sectionGuardsDtoFiling';
 
 /**
  * Per-section guards for an item: core fields, metadata, the XOR payload, and per-calendar filing.

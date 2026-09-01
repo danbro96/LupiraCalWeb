@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { MessageSource } from './messageSource.ts';
+import type { MessageSource } from './messageSource';
 
 export type ListConversationsParams = {
 q?: string;

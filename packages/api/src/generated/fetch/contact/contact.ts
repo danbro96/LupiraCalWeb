@@ -49,7 +49,7 @@ import type {
   UpdateAddressBookRequest
 } from '../../models';
 
-import { apiRequest } from '../../../transport.ts';
+import { apiRequest } from '../../../transport';
 
 export type contactPingResponse200 = {
   data: PingDto

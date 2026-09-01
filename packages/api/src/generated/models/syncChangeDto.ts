@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CalendarItemDto } from './calendarItemDto.ts';
-import type { SectionGuardsDto } from './sectionGuardsDto.ts';
+import type { CalendarItemDto } from './calendarItemDto';
+import type { SectionGuardsDto } from './sectionGuardsDto';
 
 /**
  * A changed item: the full DTO plus its section guards.

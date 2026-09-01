@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ListRole } from './listRole.ts';
+import type { ListRole } from './listRole';
 
 /**
  * Add a member to a list by email. Any member may add someone; the role defaults to

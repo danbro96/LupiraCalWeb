@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PlaceCategory } from './placeCategory.ts';
-import type { PlaceKind } from './placeKind.ts';
-import type { PlaceSource } from './placeSource.ts';
+import type { PlaceCategory } from './placeCategory';
+import type { PlaceKind } from './placeKind';
+import type { PlaceSource } from './placeSource';
 
 /**
  * A live place nothing references: zero contact addresses, zero live calendar items, zero saved places.

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { TasksItemStatus } from './tasksItemStatus.ts';
+import type { TasksItemStatus } from './tasksItemStatus';
 
 /**
  * Sets an item's lifecycle status, with an optional reason (e.g. why it's Blocked/Waiting).

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PhotoListItemDto } from './photoListItemDto.ts';
+import type { PhotoListItemDto } from './photoListItemDto';
 
 export interface PhotoListResponse {
   items: PhotoListItemDto[];

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactCircleDto } from './contactCircleDto.ts';
+import type { ContactCircleDto } from './contactCircleDto';
 
 /**
  * Computed social circles around a focus contact. Always contains every CircleKind, possibly empty;

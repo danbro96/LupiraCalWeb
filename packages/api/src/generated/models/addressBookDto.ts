@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { Access } from './access.ts';
+import type { Access } from './access';
 
 /**
  * An address book the caller can access, with their access level.

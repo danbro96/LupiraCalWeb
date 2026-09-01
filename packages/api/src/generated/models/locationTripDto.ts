@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { MotionActivity } from './motionActivity.ts';
+import type { MotionActivity } from './motionActivity';
 
 /**
  * A materialized trip between stays.

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactReachChannel } from './contactReachChannel.ts';
+import type { ContactReachChannel } from './contactReachChannel';
 
 /**
  * Wholesale replacement of a contact's reach channels — emails and phones (empty clears). Unlike

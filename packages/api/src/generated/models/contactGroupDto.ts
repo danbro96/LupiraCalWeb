@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactGroupKind } from './contactGroupKind.ts';
-import type { GroupMemberDto } from './groupMemberDto.ts';
+import type { ContactGroupKind } from './contactGroupKind';
+import type { GroupMemberDto } from './groupMemberDto';
 
 /**
  * A contact group (personal grouping or organization) and its current members.

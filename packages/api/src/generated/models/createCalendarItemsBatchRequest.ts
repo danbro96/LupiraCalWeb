@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CreateCalendarItemRequest } from './createCalendarItemRequest.ts';
+import type { CreateCalendarItemRequest } from './createCalendarItemRequest';
 
 /**
  * Create many items in one call. Items may reference their parent by `ParentSourceKey` (the parent's

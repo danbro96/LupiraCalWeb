@@ -7,8 +7,8 @@ import { FlatList, ScrollView, StyleSheet, useWindowDimensions, View } from 'rea
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Button, List, Text } from 'react-native-paper';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import type { PhotoListItemDto } from '../../data/api/generated/photo/models';
-import { deletePhoto, reprocessPhoto } from '../../data/api/generated/photo/photos/photos';
+import type { PhotoListItemDto } from '@lupira/cal-api/models';
+import { deletePhoto, reprocessPhoto } from '@lupira/cal-api/fetch/photo';
 import { toast, toastError } from '../../feedback/toast';
 import { DEFAULT_PHOTO_FILTERS, usePhoto, usePhotoLibrary } from '../../state/photo-queries';
 import { invalidatePhotos } from '../../sync/reactivity';

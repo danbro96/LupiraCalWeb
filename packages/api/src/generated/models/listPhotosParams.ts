@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AssetKind } from './assetKind.ts';
-import type { AssetStatus } from './assetStatus.ts';
-import type { PhotoSort } from './photoSort.ts';
+import type { AssetKind } from './assetKind';
+import type { AssetStatus } from './assetStatus';
+import type { PhotoSort } from './photoSort';
 
 export type ListPhotosParams = {
 from?: string;

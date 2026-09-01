@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CalendarClass } from './calendarClass.ts';
-import type { CalendarKind } from './calendarKind.ts';
+import type { CalendarClass } from './calendarClass';
+import type { CalendarKind } from './calendarKind';
 
 export interface CreateCalendarRequest {
   slug: string;

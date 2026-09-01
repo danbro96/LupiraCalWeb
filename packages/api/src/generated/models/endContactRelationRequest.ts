@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactRelationKind } from './contactRelationKind.ts';
+import type { ContactRelationKind } from './contactRelationKind';
 
 /**
  * Ends a relation (relationship ran its course — the edge stays, flagged). Removal is for edges entered by mistake.

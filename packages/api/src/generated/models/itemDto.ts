@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { JsonNode } from './jsonNode.ts';
-import type { PersonRef } from './personRef.ts';
-import type { TasksItemStatus } from './tasksItemStatus.ts';
+import type { JsonNode } from './jsonNode';
+import type { PersonRef } from './personRef';
+import type { TasksItemStatus } from './tasksItemStatus';
 
 /**
  * An item's current snapshot. Clients nest by Guid? ItemDto.ParentItemId.

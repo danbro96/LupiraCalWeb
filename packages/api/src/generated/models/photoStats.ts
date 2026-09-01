@@ -4,10 +4,10 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PhotoStatsByGeotagSource } from './photoStatsByGeotagSource.ts';
-import type { PhotoStatsByKind } from './photoStatsByKind.ts';
-import type { PhotoStatsByMonth } from './photoStatsByMonth.ts';
-import type { PhotoStatsByStatus } from './photoStatsByStatus.ts';
+import type { PhotoStatsByGeotagSource } from './photoStatsByGeotagSource';
+import type { PhotoStatsByKind } from './photoStatsByKind';
+import type { PhotoStatsByMonth } from './photoStatsByMonth';
+import type { PhotoStatsByStatus } from './photoStatsByStatus';
 
 export interface PhotoStats {
   totalAssets: number;

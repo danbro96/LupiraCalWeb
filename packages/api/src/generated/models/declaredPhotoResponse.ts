@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AssetStatus } from './assetStatus.ts';
-import type { DeclaredPhotoResponseRequiredHeaders } from './declaredPhotoResponseRequiredHeaders.ts';
+import type { AssetStatus } from './assetStatus';
+import type { DeclaredPhotoResponseRequiredHeaders } from './declaredPhotoResponseRequiredHeaders';
 
 /**
  * Declare outcome. UploadUrl is present only while the asset still needs bytes (status

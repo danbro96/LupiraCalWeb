@@ -4,10 +4,10 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AvailabilityStatus } from './availabilityStatus.ts';
-import type { DatePrecision } from './datePrecision.ts';
-import type { ItemDetailsRequest } from './itemDetailsRequest.ts';
-import type { JsonObject } from './jsonObject.ts';
+import type { AvailabilityStatus } from './availabilityStatus';
+import type { DatePrecision } from './datePrecision';
+import type { ItemDetailsRequest } from './itemDetailsRequest';
+import type { JsonObject } from './jsonObject';
 
 /**
  * Create an item via REST/MCP. `CalendarId` optional — when set, the item is accepted into that calendar;

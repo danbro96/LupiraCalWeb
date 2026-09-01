@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactRelationKind } from './contactRelationKind.ts';
+import type { ContactRelationKind } from './contactRelationKind';
 
 export type RemoveContactRelationParams = {
 kind: ContactRelationKind;

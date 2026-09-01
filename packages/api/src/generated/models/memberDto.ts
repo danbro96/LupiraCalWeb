@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ListRole } from './listRole.ts';
-import type { PersonRef } from './personRef.ts';
+import type { ListRole } from './listRole';
+import type { PersonRef } from './personRef';
 
 /**
  * A member of a list: the stable `PrincipalId` plus resolved `Email`/`DisplayName`.

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ReachMedium } from './reachMedium.ts';
+import type { ReachMedium } from './reachMedium';
 
 /**
  * A way to reach a contact — an email address or phone number — with an open string? ContactReachChannel.Type token

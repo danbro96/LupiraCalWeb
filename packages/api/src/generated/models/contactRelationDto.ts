@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactRelationKind } from './contactRelationKind.ts';
+import type { ContactRelationKind } from './contactRelationKind';
 
 /**
  * One outgoing relation edge as published: "the `ToContactId` contact is my `Kind`".

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ShareAccess } from './shareAccess.ts';
+import type { ShareAccess } from './shareAccess';
 
 /**
  * Mint a share link for a list. ShareAccess CreateShareRequest.Access picks read vs read/write; an optional

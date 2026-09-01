@@ -1,6 +1,6 @@
 import NetInfo from '@react-native-community/netinfo';
 import { v7 as uuidv7 } from 'uuid';
-import { declarePhoto, completePhotoUpload } from '../data/api/generated/photo/photos/photos';
+import { declarePhoto, completePhotoUpload } from '@lupira/cal-api/fetch/photo';
 import { getDb } from '../data/db/expoDb';
 import type { Db } from '../data/db/types';
 import * as mirror from '../data/mirror';

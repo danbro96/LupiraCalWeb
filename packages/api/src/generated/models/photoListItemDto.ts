@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AssetKind } from './assetKind.ts';
-import type { AssetStatus } from './assetStatus.ts';
-import type { GeotagSource } from './geotagSource.ts';
+import type { AssetKind } from './assetKind';
+import type { AssetStatus } from './assetStatus';
+import type { GeotagSource } from './geotagSource';
 
 export interface PhotoListItemDto {
   id: string;

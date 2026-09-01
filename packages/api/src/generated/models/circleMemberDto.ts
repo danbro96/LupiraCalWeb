@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactRelationKind } from './contactRelationKind.ts';
-import type { RelationProvenance } from './relationProvenance.ts';
+import type { ContactRelationKind } from './contactRelationKind';
+import type { RelationProvenance } from './relationProvenance';
 
 /**
  * `Degree` is a pragmatic closeness bucket (1 = immediate, 2 = two-generation kin, 3 = cousin), not

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PlaceResolution } from './placeResolution.ts';
+import type { PlaceResolution } from './placeResolution';
 
 export interface ResolvePlaceResponse {
   resolution: PlaceResolution;

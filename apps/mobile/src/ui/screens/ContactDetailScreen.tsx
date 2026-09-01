@@ -6,7 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Avatar, Button, Chip, List, Text } from 'react-native-paper';
-import { getPlace } from '../../data/api/generated/geo/places/places';
+import { getPlace } from '@lupira/cal-api/fetch/geo';
 import { getDb } from '../../data/db/expoDb';
 import { composeDisplayName, loadContact } from '../../data/mirror';
 import type { PartialDateDto } from '../../domain/docTypes';

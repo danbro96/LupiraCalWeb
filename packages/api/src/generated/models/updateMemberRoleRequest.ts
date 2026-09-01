@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ListRole } from './listRole.ts';
+import type { ListRole } from './listRole';
 
 /**
  * Change a member's role on a list (Owner only).

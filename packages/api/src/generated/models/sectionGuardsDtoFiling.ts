@@ -4,6 +4,6 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { SectionGuardDto } from './sectionGuardDto.ts';
+import type { SectionGuardDto } from './sectionGuardDto';
 
 export type SectionGuardsDtoFiling = {[key: string]: SectionGuardDto};

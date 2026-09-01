@@ -11,10 +11,11 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "gen:api": "orval --config ./orval.config.ts"
+    "gen:api": "npm run gen -w packages/api"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
+    "@lupira/cal-api": "*",
     "@lupira/cal-tokens": "*",
     "@maplibre/maplibre-react-native": "^11.3.6",
     "@react-native-community/datetimepicker": "9.1.0",

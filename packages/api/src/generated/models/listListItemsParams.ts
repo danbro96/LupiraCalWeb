@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { TasksItemStatus } from './tasksItemStatus.ts';
+import type { TasksItemStatus } from './tasksItemStatus';
 
 export type ListListItemsParams = {
 completed?: boolean;

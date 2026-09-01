@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PlaceCategory } from './placeCategory.ts';
+import type { PlaceCategory } from './placeCategory';
 
 /**
  * A geocoding hit — a coordinate + display label + best-effort structured address and category. Coarse by

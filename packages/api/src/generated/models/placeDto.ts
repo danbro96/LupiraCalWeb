@@ -4,12 +4,12 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AdminAreaDto } from './adminAreaDto.ts';
-import type { PlaceAliasDto } from './placeAliasDto.ts';
-import type { PlaceCategory } from './placeCategory.ts';
-import type { PlaceExternalIdDto } from './placeExternalIdDto.ts';
-import type { PlaceKind } from './placeKind.ts';
-import type { PlaceSource } from './placeSource.ts';
+import type { AdminAreaDto } from './adminAreaDto';
+import type { PlaceAliasDto } from './placeAliasDto';
+import type { PlaceCategory } from './placeCategory';
+import type { PlaceExternalIdDto } from './placeExternalIdDto';
+import type { PlaceKind } from './placeKind';
+import type { PlaceSource } from './placeSource';
 
 /**
  * A gazetteer place. Coordinates are plain lat/lon on the wire; `Containment` is the AdminArea chain

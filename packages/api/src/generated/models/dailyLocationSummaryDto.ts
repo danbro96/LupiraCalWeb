@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { VisitedPlaceDto } from './visitedPlaceDto.ts';
+import type { VisitedPlaceDto } from './visitedPlaceDto';
 
 /**
  * Per-day location rollup.

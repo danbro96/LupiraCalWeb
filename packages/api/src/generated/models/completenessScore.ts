@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CompletenessGap } from './completenessGap.ts';
+import type { CompletenessGap } from './completenessGap';
 
 /**
  * How well-documented a record is: `Score` 0..1 (Σ weight·presence / Σ weight), the unmet

@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Chip, Portal, Text } from 'react-native-paper';
-import type { AssetKind, AssetStatus } from '../../data/api/generated/photo/models';
+import type { AssetKind, AssetStatus } from '@lupira/cal-api/models';
 import type { PhotoQueryFilters } from '../../state/photo-queries';
 import { Input } from '../components/Input';
 import { useColors } from '../theme';

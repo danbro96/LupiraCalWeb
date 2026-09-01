@@ -4,11 +4,11 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ListKind } from './listKind.ts';
-import type { ListRole } from './listRole.ts';
-import type { MemberDto } from './memberDto.ts';
-import type { PersonRef } from './personRef.ts';
-import type { TagDto } from './tagDto.ts';
+import type { ListKind } from './listKind';
+import type { ListRole } from './listRole';
+import type { MemberDto } from './memberDto';
+import type { PersonRef } from './personRef';
+import type { TagDto } from './tagDto';
 
 /**
  * Full list metadata including members and tag definitions.

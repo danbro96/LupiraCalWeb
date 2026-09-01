@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CreateContactRequest } from './createContactRequest.ts';
+import type { CreateContactRequest } from './createContactRequest';
 
 /**
  * Create many contacts in one transaction (each carries its own `AddressBookId`). Returned contacts

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactPostalAddress } from './contactPostalAddress.ts';
+import type { ContactPostalAddress } from './contactPostalAddress';
 
 /**
  * Wholesale replacement of a contact's postal addresses; each entry needs a geo place id.

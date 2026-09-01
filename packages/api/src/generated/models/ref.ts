@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { RefKind } from './refKind.ts';
+import type { RefKind } from './refKind';
 
 /**
  * A reference the fired payload acts on. `Id` for Event/Contact/Task; `Url` for External.

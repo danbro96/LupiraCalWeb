@@ -4,12 +4,12 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { FallbackMode } from './fallbackMode.ts';
-import type { ModelTier } from './modelTier.ts';
-import type { OutputKind } from './outputKind.ts';
-import type { PromptFire } from './promptFire.ts';
-import type { PromptIntent } from './promptIntent.ts';
-import type { Ref } from './ref.ts';
+import type { FallbackMode } from './fallbackMode';
+import type { ModelTier } from './modelTier';
+import type { OutputKind } from './outputKind';
+import type { PromptFire } from './promptFire';
+import type { PromptIntent } from './promptIntent';
+import type { Ref } from './ref';
 
 /**
  * Set the LLM-interpreted payload on an item. Replaces any existing prompt; rejected (409) if the item carries an action.

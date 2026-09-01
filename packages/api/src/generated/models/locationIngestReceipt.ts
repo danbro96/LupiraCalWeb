@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { IngestReject } from './ingestReject.ts';
+import type { IngestReject } from './ingestReject';
 
 /**
  * The outcome of a location ingest batch. Idempotent re-uploads show up as int LocationIngestReceipt.Duplicates; the

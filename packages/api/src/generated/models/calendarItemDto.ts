@@ -4,16 +4,16 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CalendarMembershipDto } from './calendarMembershipDto.ts';
-import type { CompletenessScore } from './completenessScore.ts';
-import type { DatePrecision } from './datePrecision.ts';
-import type { ItemAction } from './itemAction.ts';
-import type { ItemAttendeeDto } from './itemAttendeeDto.ts';
-import type { ItemCategory } from './itemCategory.ts';
-import type { ItemDetails } from './itemDetails.ts';
-import type { ItemPrompt } from './itemPrompt.ts';
-import type { ItemStatus } from './itemStatus.ts';
-import type { JsonNode } from './jsonNode.ts';
+import type { CalendarMembershipDto } from './calendarMembershipDto';
+import type { CompletenessScore } from './completenessScore';
+import type { DatePrecision } from './datePrecision';
+import type { ItemAction } from './itemAction';
+import type { ItemAttendeeDto } from './itemAttendeeDto';
+import type { ItemCategory } from './itemCategory';
+import type { ItemDetails } from './itemDetails';
+import type { ItemPrompt } from './itemPrompt';
+import type { ItemStatus } from './itemStatus';
+import type { JsonNode } from './jsonNode';
 
 export interface CalendarItemDto {
   id: string;

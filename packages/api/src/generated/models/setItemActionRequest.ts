@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ActionKind } from './actionKind.ts';
-import type { PromptFire } from './promptFire.ts';
-import type { Ref } from './ref.ts';
+import type { ActionKind } from './actionKind';
+import type { PromptFire } from './promptFire';
+import type { Ref } from './ref';
 
 /**
  * Set the deterministic payload on an item. Replaces any existing action; rejected (409) if the item carries a prompt.

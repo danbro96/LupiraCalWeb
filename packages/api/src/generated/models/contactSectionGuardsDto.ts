@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { SectionGuardDto } from './sectionGuardDto.ts';
+import type { SectionGuardDto } from './sectionGuardDto';
 
 /**
  * Per-section guards for a contact. `Core` covers the whole ContactFields (name/channels/tags/

@@ -6,7 +6,7 @@ import { migrate } from '../data/db/schema';
 import { ensureDevice, forgetDevice, loadDevice } from '../data/locationDevice';
 import { clearQueue } from '../data/locationQueue';
 import { defaultTrackingSettings, loadTrackingSettings, saveTrackingSettings, type TrackingSettings } from '../data/locationSettings';
-import { purgeLocationHistory } from '../data/api/generated/location/location/location';
+import { purgeLocationHistory } from '@lupira/cal-api/fetch/location';
 import { isRecording, startRecording, stopRecording } from '../sync/locationRecorder';
 import { reconcileCursor, runLocationUpload } from '../sync/locationUploader';
 import { useTrackingStatus } from '../sync/locationTrackingStatus';

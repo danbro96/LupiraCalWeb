@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { DirectoryPerson } from './directoryPerson.ts';
+import type { DirectoryPerson } from './directoryPerson';
 
 /**
  * The distinct people across the caller's lists, for member-add autocomplete.

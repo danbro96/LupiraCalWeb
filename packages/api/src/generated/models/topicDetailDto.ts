@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { TopicMessageDto } from './topicMessageDto.ts';
-import type { TopicStatus } from './topicStatus.ts';
+import type { TopicMessageDto } from './topicMessageDto';
+import type { TopicStatus } from './topicStatus';
 
 /**
  * A topic with its message window — the open-topic tail (`GET /topics/{id}`).

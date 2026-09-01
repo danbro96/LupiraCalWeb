@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CurationAction } from './curationAction.ts';
+import type { CurationAction } from './curationAction';
 
 /**
  * One curation-log entry for a place. Readable for tombstoned/merged places too — that is the audit's point.

@@ -1,5 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
-import { registerDevice, retireDevice } from './api/generated/location/devices/devices';
+import { registerDevice, retireDevice } from '@lupira/cal-api/fetch/location';
 
 /** This phone's identity to LupiraLocationApi. The ingest key is a bearer-equivalent secret shown
  *  exactly once at registration, so it lives in SecureStore — never in SQLite, never in mirror_meta. */

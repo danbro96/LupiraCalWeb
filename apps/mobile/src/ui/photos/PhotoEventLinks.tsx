@@ -3,7 +3,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Chip, Text } from 'react-native-paper';
-import { createItemRelation } from '../../data/api/generated/cal/relations/relations';
+import { createItemRelation } from '@lupira/cal-api/fetch/cal';
 import { toast, toastError } from '../../feedback/toast';
 import { useLinkCandidates, useLinkedEvents, usePhotoEventLinks } from '../../state/photo-queries';
 import { invalidatePhotos } from '../../sync/reactivity';

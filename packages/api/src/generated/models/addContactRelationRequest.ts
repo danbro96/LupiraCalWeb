@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactRelationKind } from './contactRelationKind.ts';
+import type { ContactRelationKind } from './contactRelationKind';
 
 /**
  * Upserts a directed relation edge on a contact: "Guid AddContactRelationRequest.ToContactId is this contact's ContactRelationKind AddContactRelationRequest.Kind".

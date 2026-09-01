@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ExternalScheme } from './externalScheme.ts';
+import type { ExternalScheme } from './externalScheme';
 
 /**
  * Attach an external gazetteer id to a place. Multiple ids per scheme are allowed (e.g. an OSM `way/`

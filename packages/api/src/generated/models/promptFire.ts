@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PromptFireKind } from './promptFireKind.ts';
+import type { PromptFireKind } from './promptFireKind';
 
 /**
  * Fire timing (flattened union): OnStart/OnEnd carry nothing; Offset uses `OffsetMinutes` (negative = lead time);

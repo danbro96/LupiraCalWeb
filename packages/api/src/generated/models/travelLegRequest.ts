@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { TransportMode } from './transportMode.ts';
+import type { TransportMode } from './transportMode';
 
 /**
  * `ToPlace`/`FromPlace` are free-text labels resolved to a LupiraGeoApi place id + label; `DriverContactId` is a <see cref="!:Contact" /> id.

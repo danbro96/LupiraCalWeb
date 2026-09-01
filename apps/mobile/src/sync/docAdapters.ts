@@ -1,5 +1,5 @@
-import type { CalendarItemDto, SyncChangesResponse as CalChangesDto } from '../data/api/generated/cal/models';
-import type { ContactDto, SyncChangesResponse as ContactChangesDto } from '../data/api/generated/contact/models';
+import type { CalendarItemDto, SyncChangesResponse as CalChangesDto } from '@lupira/cal-api/models';
+import type { ContactDto, ContactSyncChangesResponse as ContactChangesDto } from '@lupira/cal-api/models';
 import type { ContactDoc, ItemDoc } from '../domain/docTypes';
 import type { ChangesPage, ContactChange, ItemChange } from './pull';
 

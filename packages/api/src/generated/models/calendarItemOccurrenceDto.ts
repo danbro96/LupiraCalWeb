@@ -4,10 +4,10 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CompletenessScore } from './completenessScore.ts';
-import type { ItemCategory } from './itemCategory.ts';
-import type { ItemStatus } from './itemStatus.ts';
-import type { OccurrenceOrigin } from './occurrenceOrigin.ts';
+import type { CompletenessScore } from './completenessScore';
+import type { ItemCategory } from './itemCategory';
+import type { ItemStatus } from './itemStatus';
+import type { OccurrenceOrigin } from './occurrenceOrigin';
 
 /**
  * A single concrete occurrence of an item within a search window (recurrences expanded).

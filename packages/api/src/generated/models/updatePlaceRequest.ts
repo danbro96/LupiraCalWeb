@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PlaceCategory } from './placeCategory.ts';
+import type { PlaceCategory } from './placeCategory';
 
 /**
  * Curate a place: rename, recategorize, verify, or correct its location. Omitted members are left unchanged.

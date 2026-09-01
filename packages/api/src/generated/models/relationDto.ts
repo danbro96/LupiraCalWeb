@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { JsonNode } from './jsonNode.ts';
+import type { JsonNode } from './jsonNode';
 
 export interface RelationDto {
   id: string;

@@ -4,10 +4,10 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactKind } from './contactKind.ts';
-import type { ContactReachChannel } from './contactReachChannel.ts';
-import type { DisplayNameFormat } from './displayNameFormat.ts';
-import type { PartialDate } from './partialDate.ts';
+import type { ContactKind } from './contactKind';
+import type { ContactReachChannel } from './contactReachChannel';
+import type { DisplayNameFormat } from './displayNameFormat';
+import type { PartialDate } from './partialDate';
 
 /**
  * Create a contact via REST/MCP. No `FullName` — the display name is composed from the structured parts.

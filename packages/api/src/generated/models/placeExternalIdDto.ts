@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ExternalScheme } from './externalScheme.ts';
+import type { ExternalScheme } from './externalScheme';
 
 export interface PlaceExternalIdDto {
   scheme: ExternalScheme;

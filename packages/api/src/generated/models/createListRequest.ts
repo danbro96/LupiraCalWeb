@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ListKind } from './listKind.ts';
+import type { ListKind } from './listKind';
 
 /**
  * Create a list. The client supplies a GUIDv7 Guid CreateListRequest.Id so the create is

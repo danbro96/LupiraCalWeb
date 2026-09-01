@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
 import { fmtDuration } from '@lupira/cal-domain/photoFormat';
-import type { PhotoListItemDto } from '../../data/api/generated/photo/models';
+import type { PhotoListItemDto } from '@lupira/cal-api/models';
 import {
   DEFAULT_PHOTO_FILTERS, groupByDay, usePhotoEventLinks, usePhotoLibrary, usePhotoStats,
   type PhotoQueryFilters,

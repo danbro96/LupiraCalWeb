@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { GapSeverity } from './gapSeverity.ts';
+import type { GapSeverity } from './gapSeverity';
 
 /**
  * A field the record is missing or thin on, with its rubric weight (heavier = ask first).

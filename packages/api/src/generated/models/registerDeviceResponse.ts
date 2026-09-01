@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { DeviceDto } from './deviceDto.ts';
+import type { DeviceDto } from './deviceDto';
 
 /**
  * Result of registering a device. string RegisterDeviceResponse.ApiKey is the one-time plaintext ingest credential

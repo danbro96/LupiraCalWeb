@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ConversationMessageDto } from './conversationMessageDto.ts';
+import type { ConversationMessageDto } from './conversationMessageDto';
 
 /**
  * A thread page. Page onwards using the first/last item ids as `before`/`after`.

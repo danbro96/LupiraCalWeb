@@ -43,7 +43,7 @@ import type {
   UpdateCalendarItemRequest
 } from '../../models';
 
-import { apiRequest } from '../../../transport.ts';
+import { apiRequest } from '../../../transport';
 
 export type pingResponse200 = {
   data: PingDto

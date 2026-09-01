@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { TopicSummaryDto } from './topicSummaryDto.ts';
+import type { TopicSummaryDto } from './topicSummaryDto';
 
 /**
  * An arc with its member topics (`GET /arcs/{id}`).

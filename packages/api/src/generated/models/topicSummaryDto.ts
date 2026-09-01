@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { TopicStatus } from './topicStatus.ts';
+import type { TopicStatus } from './topicStatus';
 
 /**
  * A topic in a list response (the poll alternative — `GET /topics`).

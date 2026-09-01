@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CircleKind } from './circleKind.ts';
-import type { CircleMemberDto } from './circleMemberDto.ts';
+import type { CircleKind } from './circleKind';
+import type { CircleMemberDto } from './circleMemberDto';
 
 export interface ContactCircleDto {
   kind: CircleKind;

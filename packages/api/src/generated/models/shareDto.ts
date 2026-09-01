@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ShareAccess } from './shareAccess.ts';
+import type { ShareAccess } from './shareAccess';
 
 /**
  * A share link as the owner sees it, including the opaque string ShareDto.Token and ready-to-copy string ShareDto.Url.

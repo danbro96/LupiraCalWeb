@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactRelationDirection } from './contactRelationDirection.ts';
-import type { ContactRelationKind } from './contactRelationKind.ts';
-import type { RelationProvenance } from './relationProvenance.ts';
+import type { ContactRelationDirection } from './contactRelationDirection';
+import type { ContactRelationKind } from './contactRelationKind';
+import type { RelationProvenance } from './relationProvenance';
 
 /**
  * One resolved relation as seen from the viewed contact: ContactRelationKind ContactRelationEntryDto.Kind is always the OTHER contact's role

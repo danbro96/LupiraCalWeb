@@ -3,7 +3,7 @@ import { getDb } from '../data/db/expoDb';
 import { usePrefs } from './prefs-store';
 import type { ContactListRow, GridRow, OutboxRow } from '../data/mirror';
 import { gridRowsBetween, listContacts, listContainerDocs, listParked, listPendingOps, loadContact, loadItem } from '../data/mirror';
-import { listItems } from '../data/api/generated/tasks/items/items';
+import { listItems } from '@lupira/cal-api/fetch/tasks';
 import { monthUtcRange, taskDeadlineRows, type TaskDeadlineRow } from '../domain/taskRows';
 import { useSyncStatus } from '../sync/syncStatus';
 

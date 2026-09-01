@@ -38,7 +38,7 @@ import type {
   UpdateSavedPlaceRequest
 } from '../../models';
 
-import { apiRequest } from '../../../transport.ts';
+import { apiRequest } from '../../../transport';
 
 export type geoPingResponse200 = {
   data: PingDto

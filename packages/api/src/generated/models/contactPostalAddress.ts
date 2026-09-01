@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ContactAddressType } from './contactAddressType.ts';
-import type { FuzzyDate } from './fuzzyDate.ts';
+import type { ContactAddressType } from './contactAddressType';
+import type { FuzzyDate } from './fuzzyDate';
 
 /**
  * A contact's postal address: a LupiraGeoApi place id (the sole source of truth — no free-text) with a home/work

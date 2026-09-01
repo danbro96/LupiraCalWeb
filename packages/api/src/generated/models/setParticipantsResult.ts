@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ParticipationRef } from './participationRef.ts';
+import type { ParticipationRef } from './participationRef';
 
 /**
  * Slim result of `set_participants` — the additions and how many were already present. Deliberately not the

@@ -40,7 +40,7 @@ import type {
   UpdateMemberRoleRequest
 } from '../../models';
 
-import { apiRequest } from '../../../transport.ts';
+import { apiRequest } from '../../../transport';
 
 export type tasksPingResponse200 = {
   data: PingDto

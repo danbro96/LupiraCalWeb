@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { AvailabilityStatus } from './availabilityStatus.ts';
-import type { DatePrecision } from './datePrecision.ts';
-import type { ItemDetailsRequest } from './itemDetailsRequest.ts';
+import type { AvailabilityStatus } from './availabilityStatus';
+import type { DatePrecision } from './datePrecision';
+import type { ItemDetailsRequest } from './itemDetailsRequest';
 
 /**
  * Core-field update. Two merge conventions coexist: a plain nullable field means "omitted ⇒ kept" (the original

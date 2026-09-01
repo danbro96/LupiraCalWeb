@@ -31,7 +31,7 @@ import type {
   TopicSummaryDto
 } from '../../models';
 
-import { apiRequest } from '../../../transport.ts';
+import { apiRequest } from '../../../transport';
 
 export type commsPingResponse200 = {
   data: PingDto

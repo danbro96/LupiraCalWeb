@@ -1,11 +1,11 @@
 import { useInfiniteQuery, useQueries, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { searchItems } from '../data/api/generated/cal/calendar-items/calendar-items';
-import { listRelationEdges } from '../data/api/generated/cal/relations/relations';
+import { searchItems } from '@lupira/cal-api/fetch/cal';
+import { listRelationEdges } from '@lupira/cal-api/fetch/cal';
 import { getDb } from '../data/db/expoDb';
 import { loadItem } from '../data/mirror';
-import { getPhoto, getPhotoStats, listPhotos, lookupPhotos } from '../data/api/generated/photo/photos/photos';
-import type { AssetKind, AssetStatus, PhotoListItemDto, PhotoSort } from '../data/api/generated/photo/models';
+import { getPhoto, getPhotoStats, listPhotos, lookupPhotos } from '@lupira/cal-api/fetch/photo';
+import type { AssetKind, AssetStatus, PhotoListItemDto, PhotoSort } from '@lupira/cal-api/models';
 import { useSyncStatus } from '../sync/syncStatus';
 
 /** The gallery's read model. Photos are network-only — the SQLite mirror covers cal and contacts only —

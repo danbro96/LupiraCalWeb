@@ -52,7 +52,7 @@ import type {
   TrackingStateDto
 } from '../../models';
 
-import { apiRequest } from '../../../transport.ts';
+import { apiRequest } from '../../../transport';
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 

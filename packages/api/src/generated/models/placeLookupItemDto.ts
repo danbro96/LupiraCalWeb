@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { PlaceDto } from './placeDto.ts';
+import type { PlaceDto } from './placeDto';
 
 /**
  * `Place` is null when the id is unknown or soft-deleted; on a merge redirect it is the survivor

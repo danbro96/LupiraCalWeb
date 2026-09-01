@@ -4,8 +4,8 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ItemDto } from './itemDto.ts';
-import type { ListDto } from './listDto.ts';
+import type { ItemDto } from './itemDto';
+import type { ListDto } from './listDto';
 
 /**
  * A full re-derive of a list and its live items, for the offline delta-pull. v1 is

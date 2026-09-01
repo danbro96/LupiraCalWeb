@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ActionKind } from './actionKind.ts';
-import type { PromptFire } from './promptFire.ts';
-import type { Ref } from './ref.ts';
+import type { ActionKind } from './actionKind';
+import type { PromptFire } from './promptFire';
+import type { Ref } from './ref';
 
 /**
  * A deterministic payload executed directly (no LLM). `ParamsJson` carries the frozen params (e.g. a SendCheckIn message).

@@ -4,7 +4,7 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { CalendarEntryStatus } from './calendarEntryStatus.ts';
+import type { CalendarEntryStatus } from './calendarEntryStatus';
 
 export interface CalendarMembershipDto {
   calendarId: string;

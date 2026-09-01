@@ -4,10 +4,10 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { ListKind } from './listKind.ts';
-import type { ShareAccess } from './shareAccess.ts';
-import type { SharedItemDto } from './sharedItemDto.ts';
-import type { SharedTagDto } from './sharedTagDto.ts';
+import type { ListKind } from './listKind';
+import type { ShareAccess } from './shareAccess';
+import type { SharedItemDto } from './sharedItemDto';
+import type { SharedTagDto } from './sharedTagDto';
 
 /**
  * The public, account-less view of a shared list. Deliberately TRIMMED: it carries no member

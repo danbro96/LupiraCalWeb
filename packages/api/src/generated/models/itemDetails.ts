@@ -4,9 +4,9 @@
  * LupiraCalWeb BFF
  * OpenAPI spec version: v1
  */
-import type { BookingDetail } from './bookingDetail.ts';
-import type { PresenceDetail } from './presenceDetail.ts';
-import type { TravelLeg } from './travelLeg.ts';
+import type { BookingDetail } from './bookingDetail';
+import type { PresenceDetail } from './presenceDetail';
+import type { TravelLeg } from './travelLeg';
 
 /**
  * Composable, category-independent detail for a CalendarItem: any of a reservation (BookingDetail? ItemDetails.Booking),
