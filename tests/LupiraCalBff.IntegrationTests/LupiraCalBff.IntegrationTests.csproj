@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <!-- Not in the .slnx (unit-only there): run by path — `dotnet test tests/LupiraCalWeb.IntegrationTests`. -->
+    <!-- Not in the .slnx (unit-only there): run by path — `dotnet test tests/LupiraCalBff.IntegrationTests`. -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\LupiraCalWeb\LupiraCalWeb.csproj" />
+    <ProjectReference Include="..\..\src\LupiraCalBff\LupiraCalBff.csproj" />
   </ItemGroup>
 
 </Project>

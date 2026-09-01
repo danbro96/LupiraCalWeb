@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace LupiraCalWeb.IntegrationTests;
+namespace LupiraCalBff.IntegrationTests;
 
 /// <summary>The two front doors of the member proxy: a caller-presented bearer authenticates and is forwarded
 /// verbatim to every upstream; anonymous API calls get status codes (never Authentik redirects) on every

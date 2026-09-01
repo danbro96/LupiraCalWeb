@@ -1,6 +1,6 @@
 import type { MapTheme } from '../../data/mapStyle';
 
-/** Web-canonical map layer palette (`src/LupiraCalWeb.Client/src/ui/components/map/mapTokens.ts`) —
+/** Web-canonical map layer palette (`apps/web/src/ui/components/map/mapTokens.ts`) —
  *  dataviz-validated; don't tweak hues casually. The activity set is the one true categorical scale
  *  (all segments co-visible); Unknown is the neutral non-category and renders DASHED grey, never as a
  *  fifth hue. Cross-layer hue reuse (saved≈Cycle) is disambiguated by mark shape, rings and toggles. */

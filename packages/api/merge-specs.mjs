@@ -47,7 +47,7 @@ const DROP_TAGS = { 'cal-api': ['LupiraCalApi'] };
 
 /** Reads the BFF's route table for the prefix each cluster is mounted under. */
 function prefixesFromBff() {
-  const cfg = JSON.parse(readFileSync(join(repo, 'src/LupiraCalWeb/appsettings.json'), 'utf8'));
+  const cfg = JSON.parse(readFileSync(join(repo, 'src/LupiraCalBff/appsettings.json'), 'utf8'));
   const out = {};
   for (const route of Object.values(cfg.ReverseProxy.Routes)) {
     const prefix = (route.Transforms ?? []).map((t) => t.PathRemovePrefix).find(Boolean);

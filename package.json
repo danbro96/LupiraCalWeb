@@ -3,14 +3,13 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "src/LupiraCalWeb.Client",
     "apps/*"
   ],
   "scripts": {
-    "dev": "npm run dev -w src/LupiraCalWeb.Client",
-    "build": "npm run build -w src/LupiraCalWeb.Client",
-    "preview": "npm run preview -w src/LupiraCalWeb.Client",
-    "gen:api": "npm run gen:api -w src/LupiraCalWeb.Client",
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/web",
+    "preview": "npm run preview -w apps/web",
+    "gen:api": "npm run gen:api -w apps/web",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"

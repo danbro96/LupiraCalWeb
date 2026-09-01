@@ -13,7 +13,7 @@ using System.Security.Claims;
 using System.Text;
 using Xunit;
 
-namespace LupiraCalWeb.IntegrationTests;
+namespace LupiraCalBff.IntegrationTests;
 
 /// <summary>
 /// Hosts the BFF in the Production wiring (cookie + OIDC + bearer, the shipped policy) with the YARP clusters

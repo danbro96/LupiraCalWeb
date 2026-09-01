@@ -5,6 +5,6 @@
     <File Path="Dockerfile" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/LupiraCalWeb/LupiraCalWeb.csproj" />
+    <Project Path="src/LupiraCalBff/LupiraCalBff.csproj" />
   </Folder>
 </Solution>

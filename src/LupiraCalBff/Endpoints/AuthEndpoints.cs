@@ -1,11 +1,11 @@
 using System.Security.Claims;
-using LupiraCalWeb.Auth;
+using LupiraCalBff.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace LupiraCalWeb.Endpoints;
+namespace LupiraCalBff.Endpoints;
 
 /// <summary>The auth surface the SPA drives: sign-in challenge, sign-out, and the current-user probe.</summary>
 public static class AuthEndpoints
