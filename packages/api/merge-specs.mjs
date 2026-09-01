@@ -93,10 +93,23 @@ function reachableSchemas(paths, schemas) {
   return seen;
 }
 
+/** Every upstream must agree on the OpenAPI version — a mixed merge would need down-levelling. */
+function versionOfSources() {
+  const seen = new Set(
+    Object.values(SPEC_BY_CLUSTER).map((f) => JSON.parse(readFileSync(join(specsDir, f), 'utf8')).openapi),
+  );
+  if (seen.size !== 1) throw new Error(`Upstream specs disagree on OpenAPI version: ${[...seen].join(', ')}`);
+  return [...seen][0];
+}
+
 function main() {
   const prefixes = prefixesFromBff();
-  const merged = { openapi: '3.0.4', info: { title: 'LupiraCalWeb BFF', version: 'v1' }, paths: {}, components: { schemas: {} } };
-  const claimed = new Map();   // final name -> { sig, cluster }
+  // Version comes from the sources, not a literal: they are 3.1.x, and declaring 3.0 makes every
+  // nullable `type: [x, 'null']` fail validation.
+  const version = versionOfSources();
+  const merged = { openapi: version, info: { title: 'LupiraCalWeb BFF', version: 'v1' }, paths: {}, components: { schemas: {} } };
+  const claimed = new Map();   // final schema name -> { sig, cluster }
+  const claimedOps = new Map(); // operationId -> cluster
   const report = [];
   const conflicts = [];
 
@@ -131,6 +144,21 @@ function main() {
     }
     const local = JSON.parse(scoped);
 
+    // Operation ids name the generated functions and their inline param types, and they collide too
+    // — cal and tasks both declare GetItem/UpdateItem for genuinely different operations. Same rule as
+    // schemas: first claimant keeps the bare name, later ones get their cluster prefix.
+    for (const item of Object.values(local.paths)) {
+      for (const op of Object.values(item)) {
+        if (!op || typeof op !== 'object' || !op.operationId) continue;
+        const prior = claimedOps.get(op.operationId);
+        if (prior === undefined) { claimedOps.set(op.operationId, cluster); continue; }
+        const alias = `${pascal(cluster)}${op.operationId}`;
+        conflicts.push(`  ${op.operationId}() (${prior} vs ${cluster}) -> ${alias}()`);
+        claimedOps.set(alias, cluster);
+        op.operationId = alias;
+      }
+    }
+
     for (const [path, item] of Object.entries(local.paths)) merged.paths[`${prefix}${path}`] = item;
     for (const [name, schema] of Object.entries(local.schemas)) {
       merged.components.schemas[rename[name] ?? name] = schema;
@@ -140,7 +168,7 @@ function main() {
 
   writeFileSync(join(here, 'bff-openapi.json'), `${JSON.stringify(merged, null, 2)}\n`);
   console.log(report.join('\n'));
-  if (conflicts.length) console.log(`\nnamespaced ${conflicts.length} conflicting schema(s):\n${conflicts.join('\n')}`);
+  if (conflicts.length) console.log(`\nnamespaced ${conflicts.length} conflict(s):\n${conflicts.join('\n')}`);
   console.log(`\nmerged: ${Object.keys(merged.paths).length} paths, ${Object.keys(merged.components.schemas).length} schemas`);
 }
 

@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.4",
+  "openapi": "3.1.1",
   "info": {
     "title": "LupiraCalWeb BFF",
     "version": "v1"
@@ -2827,7 +2827,7 @@
           "contact"
         ],
         "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "Ping",
+        "operationId": "ContactPing",
         "responses": {
           "200": {
             "description": "OK",
@@ -2919,7 +2919,7 @@
           "contact"
         ],
         "summary": "Idempotently ensure the caller has a personal address book; returns all accessible books.",
-        "operationId": "BootstrapMe",
+        "operationId": "ContactBootstrapMe",
         "responses": {
           "200": {
             "description": "OK",
@@ -5998,7 +5998,7 @@
           "contact"
         ],
         "summary": "Delta feed for offline mirrors: every contact the caller can read that changed past the cursor, plus tombstone ids for contacts deleted or no longer visible (incl. moved to an unreadable address book). Omit since for a full sync; loop while hasMore, persisting cursor between calls.",
-        "operationId": "GetChanges",
+        "operationId": "ContactGetChanges",
         "parameters": [
           {
             "name": "since",
@@ -6071,7 +6071,7 @@
           "contact"
         ],
         "summary": "Snapshot of the caller's address books + contact groups for mirror reconciliation (no cursor — fetch once per sync cycle and diff locally).",
-        "operationId": "GetSyncContainers",
+        "operationId": "ContactGetSyncContainers",
         "responses": {
           "200": {
             "description": "OK",
@@ -6117,7 +6117,7 @@
           "geo"
         ],
         "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "Ping",
+        "operationId": "GeoPing",
         "responses": {
           "200": {
             "description": "OK",
@@ -8309,7 +8309,7 @@
           "tasks"
         ],
         "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "Ping",
+        "operationId": "TasksPing",
         "responses": {
           "200": {
             "description": "OK",
@@ -9586,7 +9586,7 @@
         ],
         "summary": "Edit item fields addressed by id (Editor+); the list is resolved server-side.",
         "description": "Same body as the list-scoped PATCH (`*Provided` flags). 404 if no such item or the caller can't edit its list.",
-        "operationId": "UpdateItem",
+        "operationId": "TasksUpdateItem",
         "parameters": [
           {
             "name": "itemId",
@@ -9982,7 +9982,7 @@
           "tasks"
         ],
         "summary": "Get a single item (Viewer+).",
-        "operationId": "GetItem",
+        "operationId": "TasksGetItem",
         "parameters": [
           {
             "name": "listId",
@@ -13926,7 +13926,7 @@
           "comms"
         ],
         "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "Ping",
+        "operationId": "CommsPing",
         "responses": {
           "200": {
             "description": "OK",

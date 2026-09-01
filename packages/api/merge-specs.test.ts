@@ -56,6 +56,14 @@ describe('merged BFF spec', () => {
     expect(schemas.MeDto).toEqual(contact.components.schemas.MeDto);
   });
 
+  // Operation ids name the generated functions and their inline param types. cal and tasks both
+  // declared GetItem/UpdateItem for different operations, which produced a duplicate TS identifier.
+  it('has no duplicate operationIds', () => {
+    const ids = Object.values(merged.paths as Record<string, Record<string, { operationId?: string }>>)
+      .flatMap((item) => Object.values(item).map((op) => op?.operationId).filter(Boolean));
+    expect(ids.filter((id, i) => ids.indexOf(id) !== i)).toEqual([]);
+  });
+
   it('leaves no schema unreachable from a path', () => {
     const refs = new Set<string>();
     JSON.stringify(merged).replace(/"#\/components\/schemas\/([^"]+)"/g, (_m, n: string) => (refs.add(n), _m));
