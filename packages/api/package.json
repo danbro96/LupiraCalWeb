@@ -1,0 +1,12 @@
+{
+  "name": "@lupira/cal-api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync:specs": "node -e \"const fs=require('fs');for(const n of ['LupiraCalApi','LupiraGeoApi','LupiraContactApi','LupiraTasksApi','LupiraLocationApi','LupiraPhotoApi','LupiraCommsApi'])fs.copyFileSync('../../../'+n+'/openapi/'+n+'.json','specs/'+n+'.json')\"",
+    "merge": "node merge-specs.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  }
+}
