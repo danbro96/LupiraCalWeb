@@ -2,10 +2,10 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   getListAddressBooksQueryKey,
-  useBootstrapMe,
+  useContactBootstrapMe,
   useListAddressBooks,
-} from '../data/api-contact/lupiraContactApi';
-import type { AddressBookDto } from '../data/api-contact/models';
+} from '@lupira/cal-api/query/contact';
+import type { AddressBookDto } from '@lupira/cal-api/models';
 
 export function useAddressBooks() {
   const query = useListAddressBooks();
@@ -21,7 +21,7 @@ export function addressBookLabel(b: AddressBookDto): string {
 export function useEnsureContactBootstrap() {
   const queryClient = useQueryClient();
   const { isSuccess, addressBooks } = useAddressBooks();
-  const bootstrap = useBootstrapMe({
+  const bootstrap = useContactBootstrapMe({
     mutation: {
       onSuccess: () => queryClient.invalidateQueries({ queryKey: getListAddressBooksQueryKey() }),
     },

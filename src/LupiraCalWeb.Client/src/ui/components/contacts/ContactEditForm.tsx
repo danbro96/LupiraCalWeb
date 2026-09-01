@@ -19,15 +19,15 @@ import {
   useSetContactProfiles,
   useSetContactTags,
   useSetEmergencyContacts,
-} from '../../../data/api-contact/lupiraContactApi';
+} from '@lupira/cal-api/query/contact';
 import type {
   ContactDto,
   ContactPostalAddress,
   ContactReachChannel,
   ContactSocialProfileInput,
   ReviseContactRequest,
-} from '../../../data/api-contact/models';
-import { ContactAddressType, DisplayNameFormat, ReachMedium } from '../../../data/api-contact/models';
+} from '@lupira/cal-api/models';
+import { ContactAddressType, DisplayNameFormat, ReachMedium } from '@lupira/cal-api/models';
 import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { PlacePicker } from '../places/PlacePicker';

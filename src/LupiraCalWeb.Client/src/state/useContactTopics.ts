@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getListTopicsQueryKey, listTopics } from '../data/api-comms/lupiraCommsApi';
-import type { TopicSummaryDto } from '../data/api-comms/models';
+import { getListTopicsQueryKey, listTopics } from '@lupira/cal-api/query/comms';
+import type { TopicSummaryDto } from '@lupira/cal-api/models';
 import { SETTLED_TOPIC_STATUSES } from '@lupira/cal-domain/topics';
 
 export const TOPIC_PAGE_SIZE = 50;

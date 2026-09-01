@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { listItems } from '../data/api-tasks/lupiraTasksApi';
-import { ItemStatus, type ItemDto } from '../data/api-tasks/models';
+import { listItems } from '@lupira/cal-api/query/tasks';
+import { ItemStatus, type ItemDto } from '@lupira/cal-api/models';
 
 /**
  * Open tasks due inside [from, to) — the calendar's third entry source. Hand-rolled rather than the

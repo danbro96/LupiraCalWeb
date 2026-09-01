@@ -1,4 +1,4 @@
-import type { AvailabilityStatus, CalendarKind, ContainerDto, ItemCategory, ParticipationStatus } from '../../data/api/models';
+import type { AvailabilityStatus, CalendarKind, ContainerDto, ItemCategory, ParticipationStatus } from '@lupira/cal-api/models';
 import {
   AVAILABILITY_COLORS as TOKEN_AVAILABILITY_COLORS,
   FAMILY_ACCENTS,

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { lookupPlaces } from '../data/api-geo/lupiraGeoApi';
-import type { PlaceDto } from '../data/api-geo/models';
+import { lookupPlaces } from '@lupira/cal-api/query/geo';
+import type { PlaceDto } from '@lupira/cal-api/models';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const LOOKUP_MAX = 200; // server cap per POST /places/lookup call

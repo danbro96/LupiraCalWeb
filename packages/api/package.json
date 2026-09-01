@@ -17,5 +17,11 @@
     "./models": "./src/generated/models/index.ts",
     "./query/*": "./src/generated/query/*/*.ts",
     "./fetch/*": "./src/generated/fetch/*/*.ts"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.101.4"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^5.101.4"
   }
 }

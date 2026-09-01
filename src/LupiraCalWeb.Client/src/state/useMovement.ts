@@ -4,7 +4,7 @@ import {
   useGetThinnedTrack,
   useListTrips,
   useListVisits,
-} from '../data/api-location/lupiraLocationApi';
+} from '@lupira/cal-api/query/location';
 
 /**
  * GPS read models for the map, online-only. Query keys are collision-free with the other APIs

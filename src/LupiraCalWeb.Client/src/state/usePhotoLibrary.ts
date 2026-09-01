@@ -1,9 +1,9 @@
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getListPhotosQueryKey, listPhotos } from '../data/api-photo/lupiraPhotoApi';
-import type { ListPhotosParams, PhotoListItemDto } from '../data/api-photo/models';
-import { listRelationEdges } from '../data/api/lupiraCalApi';
+import { getListPhotosQueryKey, listPhotos } from '@lupira/cal-api/query/photo';
+import type { ListPhotosParams, PhotoListItemDto } from '@lupira/cal-api/models';
+import { listRelationEdges } from '@lupira/cal-api/query/cal';
 
 /** The gallery's read model. Filters live in URL params so a view is linkable and survives a reload,
  *  exactly as useItemSearch does it. */

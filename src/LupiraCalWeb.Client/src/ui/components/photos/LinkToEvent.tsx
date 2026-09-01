@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import { useCreateItemRelation, useSearchItems } from '../../../data/api/lupiraCalApi';
+import { useCreateItemRelation, useSearchItems } from '@lupira/cal-api/query/cal';
 import { usePhotoEventLinks } from '../../../state/usePhotoLibrary';
 import { DrawerSection } from '../DrawerSection';
 import { useSnackbar } from '../SnackbarHost';

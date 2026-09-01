@@ -9,9 +9,14 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
+  QueryClient,
   QueryFunction,
   QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -111,7 +116,7 @@ export const getGeoPingQueryKey = () => {
     }
 
 
-export const getGeoPingQueryOptions = <TData = Awaited<ReturnType<typeof geoPing>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGeoPingQueryOptions = <TData = Awaited<ReturnType<typeof geoPing>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -126,25 +131,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GeoPingQueryResult = NonNullable<Awaited<ReturnType<typeof geoPing>>>
 export type GeoPingQueryError = ProblemDetails
 
 
+export function useGeoPing<TData = Awaited<ReturnType<typeof geoPing>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof geoPing>>,
+          TError,
+          Awaited<ReturnType<typeof geoPing>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGeoPing<TData = Awaited<ReturnType<typeof geoPing>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof geoPing>>,
+          TError,
+          Awaited<ReturnType<typeof geoPing>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGeoPing<TData = Awaited<ReturnType<typeof geoPing>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
  */
 
 export function useGeoPing<TData = Awaited<ReturnType<typeof geoPing>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof geoPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGeoPingQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -202,7 +231,7 @@ export const getSearchPlacesQueryKey = (params?: SearchPlacesParams,) => {
     }
 
 
-export const getSearchPlacesQueryOptions = <TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(params?: SearchPlacesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getSearchPlacesQueryOptions = <TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -217,25 +246,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type SearchPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof searchPlaces>>>
 export type SearchPlacesQueryError = ProblemDetails
 
 
+export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(
+ params: undefined |  SearchPlacesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof searchPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(
+ params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof searchPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(
+ params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Search the gazetteer: text (q, trigram), category/kind, containment (withinAreaId), curation state (hasCoordinates/source/verified — hasCoordinates=false lists unlocated stubs), and spatial — proximity (nearLat+nearLon[+radiusM], returns distanceM) or viewport (bbox=minLon&bbox=minLat&bbox=maxLon&bbox=maxLat).
  */
 
 export function useSearchPlaces<TData = Awaited<ReturnType<typeof searchPlaces>>, TError = ProblemDetails>(
- params?: SearchPlacesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: SearchPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getSearchPlacesQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -313,13 +366,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useCreatePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlace>>, TError,{data: CreatePlaceRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createPlace>>,
         TError,
         {data: CreatePlaceRequest},
         TContext
       > => {
-      return useMutation(getCreatePlaceMutationOptions(options));
+      return useMutation(getCreatePlaceMutationOptions(options), queryClient);
     }
     export const getSuggestPlacesUrl = (params: SuggestPlacesParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -361,7 +414,7 @@ export const getSuggestPlacesQueryKey = (params?: SuggestPlacesParams,) => {
     }
 
 
-export const getSuggestPlacesQueryOptions = <TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(params: SuggestPlacesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getSuggestPlacesQueryOptions = <TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -376,25 +429,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type SuggestPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof suggestPlaces>>>
 export type SuggestPlacesQueryError = ProblemDetails
 
 
+export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(
+ params: SuggestPlacesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof suggestPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof suggestPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(
+ params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof suggestPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof suggestPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(
+ params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Typeahead: trigram-ranked suggestions over places (names + aliases) and AdminArea localities, discriminated by type.
  */
 
 export function useSuggestPlaces<TData = Awaited<ReturnType<typeof suggestPlaces>>, TError = ProblemDetails>(
- params: SuggestPlacesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params: SuggestPlacesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suggestPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getSuggestPlacesQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -441,7 +518,7 @@ export const getGetPlaceByExternalIdQueryKey = (scheme: ExternalScheme,
 
 
 export const getGetPlaceByExternalIdQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(scheme: ExternalScheme,
-    value: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+    value: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -456,26 +533,53 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: scheme !== null && scheme !== undefined && value !== null && value !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: scheme !== null && scheme !== undefined && value !== null && value !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetPlaceByExternalIdQueryResult = NonNullable<Awaited<ReturnType<typeof getPlaceByExternalId>>>
 export type GetPlaceByExternalIdQueryError = ProblemDetails
 
 
+export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(
+ scheme: ExternalScheme,
+    value: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPlaceByExternalId>>,
+          TError,
+          Awaited<ReturnType<typeof getPlaceByExternalId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(
+ scheme: ExternalScheme,
+    value: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPlaceByExternalId>>,
+          TError,
+          Awaited<ReturnType<typeof getPlaceByExternalId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(
+ scheme: ExternalScheme,
+    value: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Look a place up by an external gazetteer key, e.g. /places/by-external/Osm/node/123.
  */
 
 export function useGetPlaceByExternalId<TData = Awaited<ReturnType<typeof getPlaceByExternalId>>, TError = ProblemDetails>(
  scheme: ExternalScheme,
-    value: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    value: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceByExternalId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetPlaceByExternalIdQueryOptions(scheme,value,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -518,7 +622,7 @@ export const getGetPlaceHistoryQueryKey = (id: string,) => {
     }
 
 
-export const getGetPlaceHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetPlaceHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -533,25 +637,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetPlaceHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getPlaceHistory>>>
 export type GetPlaceHistoryQueryError = ProblemDetails
 
 
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPlaceHistory>>,
+          TError,
+          Awaited<ReturnType<typeof getPlaceHistory>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPlaceHistory>>,
+          TError,
+          Awaited<ReturnType<typeof getPlaceHistory>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary The append-only curation log for a place, oldest first. Readable for tombstoned/merged places; 404 only for unknown ids.
  */
 
 export function useGetPlaceHistory<TData = Awaited<ReturnType<typeof getPlaceHistory>>, TError = ProblemDetails>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlaceHistory>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetPlaceHistoryQueryOptions(id,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -594,7 +722,7 @@ export const getGetPlaceQueryKey = (id: string,) => {
     }
 
 
-export const getGetPlaceQueryOptions = <TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetPlaceQueryOptions = <TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -609,25 +737,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetPlaceQueryResult = NonNullable<Awaited<ReturnType<typeof getPlace>>>
 export type GetPlaceQueryError = ProblemDetails
 
 
+export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPlace>>,
+          TError,
+          Awaited<ReturnType<typeof getPlace>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPlace>>,
+          TError,
+          Awaited<ReturnType<typeof getPlace>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary A single place with its aliases, external ids, and containment chain (outermost→innermost). Follows merge redirects.
  */
 
 export function useGetPlace<TData = Awaited<ReturnType<typeof getPlace>>, TError = ProblemDetails>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlace>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetPlaceQueryOptions(id,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -706,13 +858,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useUpdatePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePlace>>, TError,{id: string;data: UpdatePlaceRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updatePlace>>,
         TError,
         {id: string;data: UpdatePlaceRequest},
         TContext
       > => {
-      return useMutation(getUpdatePlaceMutationOptions(options));
+      return useMutation(getUpdatePlaceMutationOptions(options), queryClient);
     }
     export const getDeletePlaceUrl = (id: string,) => {
 
@@ -776,13 +928,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useDeletePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deletePlace>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getDeletePlaceMutationOptions(options));
+      return useMutation(getDeletePlaceMutationOptions(options), queryClient);
     }
     export const getAddPlaceAliasUrl = (id: string,) => {
 
@@ -853,13 +1005,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useAddPlaceAlias = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addPlaceAlias>>, TError,{id: string;data: AddAliasRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addPlaceAlias>>,
         TError,
         {id: string;data: AddAliasRequest},
         TContext
       > => {
-      return useMutation(getAddPlaceAliasMutationOptions(options));
+      return useMutation(getAddPlaceAliasMutationOptions(options), queryClient);
     }
     export const getRemovePlaceAliasUrl = (id: string,
     aliasId: string,) => {
@@ -925,13 +1077,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRemovePlaceAlias = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePlaceAlias>>, TError,{id: string;aliasId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removePlaceAlias>>,
         TError,
         {id: string;aliasId: string},
         TContext
       > => {
-      return useMutation(getRemovePlaceAliasMutationOptions(options));
+      return useMutation(getRemovePlaceAliasMutationOptions(options), queryClient);
     }
     export const getAddPlaceExternalIdUrl = (id: string,) => {
 
@@ -1002,13 +1154,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useAddPlaceExternalId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addPlaceExternalId>>, TError,{id: string;data: AddExternalIdRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addPlaceExternalId>>,
         TError,
         {id: string;data: AddExternalIdRequest},
         TContext
       > => {
-      return useMutation(getAddPlaceExternalIdMutationOptions(options));
+      return useMutation(getAddPlaceExternalIdMutationOptions(options), queryClient);
     }
     export const getRemovePlaceExternalIdUrl = (id: string,
     scheme: ExternalScheme,
@@ -1076,13 +1228,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRemovePlaceExternalId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePlaceExternalId>>, TError,{id: string;scheme: ExternalScheme;value: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removePlaceExternalId>>,
         TError,
         {id: string;scheme: ExternalScheme;value: string},
         TContext
       > => {
-      return useMutation(getRemovePlaceExternalIdMutationOptions(options));
+      return useMutation(getRemovePlaceExternalIdMutationOptions(options), queryClient);
     }
     export const getMergePlaceUrl = (id: string,) => {
 
@@ -1153,13 +1305,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useMergePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergePlace>>, TError,{id: string;data: MergePlaceRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof mergePlace>>,
         TError,
         {id: string;data: MergePlaceRequest},
         TContext
       > => {
-      return useMutation(getMergePlaceMutationOptions(options));
+      return useMutation(getMergePlaceMutationOptions(options), queryClient);
     }
     export const getRegeocodePlaceUrl = (id: string,
     params?: RegeocodePlaceParams,) => {
@@ -1232,13 +1384,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRegeocodePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof regeocodePlace>>, TError,{id: string;params?: RegeocodePlaceParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof regeocodePlace>>,
         TError,
         {id: string;params?: RegeocodePlaceParams},
         TContext
       > => {
-      return useMutation(getRegeocodePlaceMutationOptions(options));
+      return useMutation(getRegeocodePlaceMutationOptions(options), queryClient);
     }
     export const getLookupPlacesUrl = () => {
 
@@ -1308,13 +1460,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useLookupPlaces = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupPlaces>>, TError,{data: LookupPlacesRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof lookupPlaces>>,
         TError,
         {data: LookupPlacesRequest},
         TContext
       > => {
-      return useMutation(getLookupPlacesMutationOptions(options));
+      return useMutation(getLookupPlacesMutationOptions(options), queryClient);
     }
     export const getResolvePlaceUrl = () => {
 
@@ -1384,13 +1536,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useResolvePlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolvePlace>>, TError,{data: ResolvePlaceRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resolvePlace>>,
         TError,
         {data: ResolvePlaceRequest},
         TContext
       > => {
-      return useMutation(getResolvePlaceMutationOptions(options));
+      return useMutation(getResolvePlaceMutationOptions(options), queryClient);
     }
     export const getResolvePlacesBatchUrl = () => {
 
@@ -1460,13 +1612,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useResolvePlacesBatch = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolvePlacesBatch>>, TError,{data: ResolvePlacesBatchRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resolvePlacesBatch>>,
         TError,
         {data: ResolvePlacesBatchRequest},
         TContext
       > => {
-      return useMutation(getResolvePlacesBatchMutationOptions(options));
+      return useMutation(getResolvePlacesBatchMutationOptions(options), queryClient);
     }
     export const getCreatePlaceFromGeocodeUrl = () => {
 
@@ -1536,13 +1688,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useCreatePlaceFromGeocode = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlaceFromGeocode>>, TError,{data: CreatePlaceFromGeocodeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createPlaceFromGeocode>>,
         TError,
         {data: CreatePlaceFromGeocodeRequest},
         TContext
       > => {
-      return useMutation(getCreatePlaceFromGeocodeMutationOptions(options));
+      return useMutation(getCreatePlaceFromGeocodeMutationOptions(options), queryClient);
     }
     export const getFindOrphanPlacesUrl = () => {
 
@@ -1577,7 +1729,7 @@ export const getFindOrphanPlacesQueryKey = () => {
     }
 
 
-export const getFindOrphanPlacesQueryOptions = <TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getFindOrphanPlacesQueryOptions = <TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1592,25 +1744,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type FindOrphanPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof findOrphanPlaces>>>
 export type FindOrphanPlacesQueryError = ProblemDetails
 
 
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof findOrphanPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof findOrphanPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof findOrphanPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof findOrphanPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Live places nothing references — cross-checked against contact addresses, calendar items (live + deleted counted separately), and saved places. Fails 400 when a reference source is unreachable (never declares orphans on partial data).
  */
 
 export function useFindOrphanPlaces<TData = Awaited<ReturnType<typeof findOrphanPlaces>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findOrphanPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getFindOrphanPlacesQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1688,13 +1864,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const usePrunePlaces = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof prunePlaces>>, TError,{data: PrunePlacesRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof prunePlaces>>,
         TError,
         {data: PrunePlacesRequest},
         TContext
       > => {
-      return useMutation(getPrunePlacesMutationOptions(options));
+      return useMutation(getPrunePlacesMutationOptions(options), queryClient);
     }
     export const getReverseGeocodeUrl = (params: ReverseGeocodeParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -1736,7 +1912,7 @@ export const getReverseGeocodeQueryKey = (params?: ReverseGeocodeParams,) => {
     }
 
 
-export const getReverseGeocodeQueryOptions = <TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(params: ReverseGeocodeParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getReverseGeocodeQueryOptions = <TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1751,25 +1927,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ReverseGeocodeQueryResult = NonNullable<Awaited<ReturnType<typeof reverseGeocode>>>
 export type ReverseGeocodeQueryError = ProblemDetails
 
 
+export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(
+ params: ReverseGeocodeParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof reverseGeocode>>,
+          TError,
+          Awaited<ReturnType<typeof reverseGeocode>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(
+ params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof reverseGeocode>>,
+          TError,
+          Awaited<ReturnType<typeof reverseGeocode>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(
+ params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Coordinate → coarse label + structured address (cached; coordinates quantized to a ~100 m grid).
  */
 
 export function useReverseGeocode<TData = Awaited<ReturnType<typeof reverseGeocode>>, TError = ProblemDetails>(
- params: ReverseGeocodeParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params: ReverseGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reverseGeocode>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getReverseGeocodeQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1819,7 +2019,7 @@ export const getForwardGeocodeQueryKey = (params?: ForwardGeocodeParams,) => {
     }
 
 
-export const getForwardGeocodeQueryOptions = <TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(params: ForwardGeocodeParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getForwardGeocodeQueryOptions = <TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1834,25 +2034,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ForwardGeocodeQueryResult = NonNullable<Awaited<ReturnType<typeof forwardGeocode>>>
 export type ForwardGeocodeQueryError = ProblemDetails
 
 
+export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(
+ params: ForwardGeocodeParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof forwardGeocode>>,
+          TError,
+          Awaited<ReturnType<typeof forwardGeocode>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(
+ params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof forwardGeocode>>,
+          TError,
+          Awaited<ReturnType<typeof forwardGeocode>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(
+ params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Text → candidate coordinates + structured address (cached).
  */
 
 export function useForwardGeocode<TData = Awaited<ReturnType<typeof forwardGeocode>>, TError = ProblemDetails>(
- params: ForwardGeocodeParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params: ForwardGeocodeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof forwardGeocode>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getForwardGeocodeQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1902,7 +2126,7 @@ export const getListAdminAreasQueryKey = (params?: ListAdminAreasParams,) => {
     }
 
 
-export const getListAdminAreasQueryOptions = <TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(params?: ListAdminAreasParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListAdminAreasQueryOptions = <TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1917,25 +2141,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListAdminAreasQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminAreas>>>
 export type ListAdminAreasQueryError = ProblemDetails
 
 
+export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(
+ params: undefined |  ListAdminAreasParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAdminAreas>>,
+          TError,
+          Awaited<ReturnType<typeof listAdminAreas>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(
+ params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAdminAreas>>,
+          TError,
+          Awaited<ReturnType<typeof listAdminAreas>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(
+ params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Browse the administrative containment tree: filter by level (Country/Region/Locality), parent (withinAreaId), or name (q).
  */
 
 export function useListAdminAreas<TData = Awaited<ReturnType<typeof listAdminAreas>>, TError = ProblemDetails>(
- params?: ListAdminAreasParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListAdminAreasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminAreas>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListAdminAreasQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1978,7 +2226,7 @@ export const getGetAdminAreaQueryKey = (id: string,) => {
     }
 
 
-export const getGetAdminAreaQueryOptions = <TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetAdminAreaQueryOptions = <TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1993,25 +2241,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetAdminAreaQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminArea>>>
 export type GetAdminAreaQueryError = ProblemDetails
 
 
+export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminArea>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminArea>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminArea>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminArea>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary A single administrative area.
  */
 
 export function useGetAdminArea<TData = Awaited<ReturnType<typeof getAdminArea>>, TError = ProblemDetails>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminArea>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetAdminAreaQueryOptions(id,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -2054,7 +2326,7 @@ export const getListSavedPlacesQueryKey = () => {
     }
 
 
-export const getListSavedPlacesQueryOptions = <TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListSavedPlacesQueryOptions = <TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2069,25 +2341,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListSavedPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof listSavedPlaces>>>
 export type ListSavedPlacesQueryError = ProblemDetails
 
 
+export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listSavedPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof listSavedPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listSavedPlaces>>,
+          TError,
+          Awaited<ReturnType<typeof listSavedPlaces>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary The caller's saved places / personal labels (favorites first).
  */
 
 export function useListSavedPlaces<TData = Awaited<ReturnType<typeof listSavedPlaces>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedPlaces>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListSavedPlacesQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -2165,13 +2461,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useCreateSavedPlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createSavedPlace>>, TError,{data: CreateSavedPlaceRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createSavedPlace>>,
         TError,
         {data: CreateSavedPlaceRequest},
         TContext
       > => {
-      return useMutation(getCreateSavedPlaceMutationOptions(options));
+      return useMutation(getCreateSavedPlaceMutationOptions(options), queryClient);
     }
     export const getUpdateSavedPlaceUrl = (id: string,) => {
 
@@ -2242,13 +2538,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useUpdateSavedPlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateSavedPlace>>, TError,{id: string;data: UpdateSavedPlaceRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateSavedPlace>>,
         TError,
         {id: string;data: UpdateSavedPlaceRequest},
         TContext
       > => {
-      return useMutation(getUpdateSavedPlaceMutationOptions(options));
+      return useMutation(getUpdateSavedPlaceMutationOptions(options), queryClient);
     }
     export const getDeleteSavedPlaceUrl = (id: string,) => {
 
@@ -2312,11 +2608,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useDeleteSavedPlace = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteSavedPlace>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteSavedPlace>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getDeleteSavedPlaceMutationOptions(options));
+      return useMutation(getDeleteSavedPlaceMutationOptions(options), queryClient);
     }

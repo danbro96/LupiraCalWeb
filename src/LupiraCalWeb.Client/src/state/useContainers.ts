@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { getListContainersQueryKey, useBootstrapMe, useListContainers } from '../data/api/lupiraCalApi';
-import type { ContainerDto } from '../data/api/models';
+import { getListContainersQueryKey, useBootstrapMe, useListContainers } from '@lupira/cal-api/query/cal';
+import type { ContainerDto } from '@lupira/cal-api/models';
 
 export function useContainers() {
   const query = useListContainers();

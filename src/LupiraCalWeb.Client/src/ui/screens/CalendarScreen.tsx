@@ -20,7 +20,7 @@ import { useProposedByCalendar } from '../../state/useProposed';
 import { useAvailabilitySegments } from '../../state/useAvailability';
 import { useTaskDeadlines } from '../../state/useTaskDeadlines';
 import { useCalendarVisibility } from '../components/CalendarVisibility';
-import { OriginKind } from '../../data/api/models';
+import { OriginKind } from '@lupira/cal-api/models';
 import { fromOccurrence, fromProposed, fromTask, type GridEntry } from '../entries';
 import { MiniMonthPicker } from '../components/MiniMonthPicker';
 import { MonthGrid } from '../components/MonthGrid';

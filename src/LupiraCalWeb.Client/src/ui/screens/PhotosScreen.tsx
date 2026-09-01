@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { fmtDuration } from '@lupira/cal-domain/photoFormat';
-import type { PhotoListItemDto } from '../../data/api-photo/models';
+import type { PhotoListItemDto } from '@lupira/cal-api/models';
 import { errText } from '../errText';
 import { WrapRow } from '../components/WrapRow';
 import { PhotoViewer } from '../components/photos/PhotoViewer';

@@ -21,8 +21,8 @@ import {
   useGetMe,
   useListContactGroups,
   useSearchContacts,
-} from '../../../data/api-contact/lupiraContactApi';
-import type { AddressBookDto } from '../../../data/api-contact/models';
+} from '@lupira/cal-api/query/contact';
+import type { AddressBookDto } from '@lupira/cal-api/models';
 import { addressBookLabel, useAddressBooks } from '../../../state/useAddressBooks';
 import { useInvalidateAddressBooks, useInvalidateContacts } from '../../../state/useInvalidate';
 import { AddressBookManage } from './AddressBookManage';

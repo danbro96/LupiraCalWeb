@@ -9,9 +9,14 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
+  QueryClient,
   QueryFunction,
   QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -106,7 +111,7 @@ export const getListDevicesQueryKey = () => {
     }
 
 
-export const getListDevicesQueryOptions = <TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListDevicesQueryOptions = <TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -121,25 +126,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListDevicesQueryResult = NonNullable<Awaited<ReturnType<typeof listDevices>>>
 export type ListDevicesQueryError = ProblemDetails
 
 
+export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listDevices>>,
+          TError,
+          Awaited<ReturnType<typeof listDevices>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listDevices>>,
+          TError,
+          Awaited<ReturnType<typeof listDevices>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List the caller's registered location-tracking devices.
  */
 
 export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListDevicesQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -217,13 +246,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRegisterDevice = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof registerDevice>>, TError,{data: RegisterDeviceRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof registerDevice>>,
         TError,
         {data: RegisterDeviceRequest},
         TContext
       > => {
-      return useMutation(getRegisterDeviceMutationOptions(options));
+      return useMutation(getRegisterDeviceMutationOptions(options), queryClient);
     }
     export const getRenameDeviceUrl = (id: string,) => {
 
@@ -294,13 +323,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRenameDevice = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof renameDevice>>, TError,{id: string;data: RenameDeviceRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof renameDevice>>,
         TError,
         {id: string;data: RenameDeviceRequest},
         TContext
       > => {
-      return useMutation(getRenameDeviceMutationOptions(options));
+      return useMutation(getRenameDeviceMutationOptions(options), queryClient);
     }
     export const getRetireDeviceUrl = (id: string,) => {
 
@@ -364,13 +393,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRetireDevice = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retireDevice>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof retireDevice>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getRetireDeviceMutationOptions(options));
+      return useMutation(getRetireDeviceMutationOptions(options), queryClient);
     }
     export const getIngestLocationUrl = () => {
 
@@ -440,13 +469,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useIngestLocation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof ingestLocation>>, TError,{data: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof ingestLocation>>,
         TError,
         {data: string},
         TContext
       > => {
-      return useMutation(getIngestLocationMutationOptions(options));
+      return useMutation(getIngestLocationMutationOptions(options), queryClient);
     }
     export const getGetIngestCursorUrl = () => {
 
@@ -481,7 +510,7 @@ export const getGetIngestCursorQueryKey = () => {
     }
 
 
-export const getGetIngestCursorQueryOptions = <TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetIngestCursorQueryOptions = <TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -496,25 +525,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetIngestCursorQueryResult = NonNullable<Awaited<ReturnType<typeof getIngestCursor>>>
 export type GetIngestCursorQueryError = ProblemDetails
 
 
+export function useGetIngestCursor<TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getIngestCursor>>,
+          TError,
+          Awaited<ReturnType<typeof getIngestCursor>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetIngestCursor<TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getIngestCursor>>,
+          TError,
+          Awaited<ReturnType<typeof getIngestCursor>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetIngestCursor<TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary The device's resume cursor (last accepted seq + ts).
  */
 
 export function useGetIngestCursor<TData = Awaited<ReturnType<typeof getIngestCursor>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestCursor>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetIngestCursorQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -557,7 +610,7 @@ export const getGetIngestStateQueryKey = () => {
     }
 
 
-export const getGetIngestStateQueryOptions = <TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetIngestStateQueryOptions = <TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -572,25 +625,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetIngestStateQueryResult = NonNullable<Awaited<ReturnType<typeof getIngestState>>>
 export type GetIngestStateQueryError = ProblemDetails
 
 
+export function useGetIngestState<TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getIngestState>>,
+          TError,
+          Awaited<ReturnType<typeof getIngestState>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetIngestState<TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getIngestState>>,
+          TError,
+          Awaited<ReturnType<typeof getIngestState>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetIngestState<TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Whether tracking is paused for this device (the uploader should stop collecting if so).
  */
 
 export function useGetIngestState<TData = Awaited<ReturnType<typeof getIngestState>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIngestState>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetIngestStateQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -640,7 +717,7 @@ export const getGetCurrentLocationQueryKey = (params?: GetCurrentLocationParams,
     }
 
 
-export const getGetCurrentLocationQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(params?: GetCurrentLocationParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetCurrentLocationQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(params?: GetCurrentLocationParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -655,25 +732,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetCurrentLocationQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentLocation>>>
 export type GetCurrentLocationQueryError = ProblemDetails
 
 
+export function useGetCurrentLocation<TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(
+ params: undefined |  GetCurrentLocationParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCurrentLocation>>,
+          TError,
+          Awaited<ReturnType<typeof getCurrentLocation>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetCurrentLocation<TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(
+ params?: GetCurrentLocationParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCurrentLocation>>,
+          TError,
+          Awaited<ReturnType<typeof getCurrentLocation>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetCurrentLocation<TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(
+ params?: GetCurrentLocationParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Latest known location per device.
  */
 
 export function useGetCurrentLocation<TData = Awaited<ReturnType<typeof getCurrentLocation>>, TError = ProblemDetails>(
- params?: GetCurrentLocationParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: GetCurrentLocationParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentLocation>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetCurrentLocationQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -723,7 +824,7 @@ export const getGetTrackQueryKey = (params?: GetTrackParams,) => {
     }
 
 
-export const getGetTrackQueryOptions = <TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(params?: GetTrackParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetTrackQueryOptions = <TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(params?: GetTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -738,25 +839,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetTrackQueryResult = NonNullable<Awaited<ReturnType<typeof getTrack>>>
 export type GetTrackQueryError = ProblemDetails
 
 
+export function useGetTrack<TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(
+ params: undefined |  GetTrackParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTrack>>,
+          TError,
+          Awaited<ReturnType<typeof getTrack>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTrack<TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(
+ params?: GetTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTrack>>,
+          TError,
+          Awaited<ReturnType<typeof getTrack>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTrack<TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(
+ params?: GetTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Raw track over a time range (capped).
  */
 
 export function useGetTrack<TData = Awaited<ReturnType<typeof getTrack>>, TError = ProblemDetails>(
- params?: GetTrackParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: GetTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrack>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetTrackQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -806,7 +931,7 @@ export const getGetThinnedTrackQueryKey = (params?: GetThinnedTrackParams,) => {
     }
 
 
-export const getGetThinnedTrackQueryOptions = <TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(params?: GetThinnedTrackParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetThinnedTrackQueryOptions = <TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(params?: GetThinnedTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -821,25 +946,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetThinnedTrackQueryResult = NonNullable<Awaited<ReturnType<typeof getThinnedTrack>>>
 export type GetThinnedTrackQueryError = ProblemDetails
 
 
+export function useGetThinnedTrack<TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(
+ params: undefined |  GetThinnedTrackParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getThinnedTrack>>,
+          TError,
+          Awaited<ReturnType<typeof getThinnedTrack>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetThinnedTrack<TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(
+ params?: GetThinnedTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getThinnedTrack>>,
+          TError,
+          Awaited<ReturnType<typeof getThinnedTrack>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetThinnedTrack<TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(
+ params?: GetThinnedTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Server-downsampled track (one best-accuracy fix per time bucket).
  */
 
 export function useGetThinnedTrack<TData = Awaited<ReturnType<typeof getThinnedTrack>>, TError = ProblemDetails>(
- params?: GetThinnedTrackParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: GetThinnedTrackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinnedTrack>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetThinnedTrackQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -889,7 +1038,7 @@ export const getGetMovementStatsQueryKey = (params?: GetMovementStatsParams,) =>
     }
 
 
-export const getGetMovementStatsQueryOptions = <TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(params?: GetMovementStatsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMovementStatsQueryOptions = <TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(params?: GetMovementStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -904,25 +1053,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetMovementStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getMovementStats>>>
 export type GetMovementStatsQueryError = ProblemDetails
 
 
+export function useGetMovementStats<TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(
+ params: undefined |  GetMovementStatsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMovementStats>>,
+          TError,
+          Awaited<ReturnType<typeof getMovementStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMovementStats<TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(
+ params?: GetMovementStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMovementStats>>,
+          TError,
+          Awaited<ReturnType<typeof getMovementStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMovementStats<TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(
+ params?: GetMovementStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Distance + speed stats over a time range.
  */
 
 export function useGetMovementStats<TData = Awaited<ReturnType<typeof getMovementStats>>, TError = ProblemDetails>(
- params?: GetMovementStatsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: GetMovementStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMovementStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetMovementStatsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -972,7 +1145,7 @@ export const getGetBoundingBoxQueryKey = (params?: GetBoundingBoxParams,) => {
     }
 
 
-export const getGetBoundingBoxQueryOptions = <TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(params: GetBoundingBoxParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetBoundingBoxQueryOptions = <TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(params: GetBoundingBoxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -987,25 +1160,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetBoundingBoxQueryResult = NonNullable<Awaited<ReturnType<typeof getBoundingBox>>>
 export type GetBoundingBoxQueryError = ProblemDetails
 
 
+export function useGetBoundingBox<TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(
+ params: GetBoundingBoxParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBoundingBox>>,
+          TError,
+          Awaited<ReturnType<typeof getBoundingBox>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBoundingBox<TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(
+ params: GetBoundingBoxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBoundingBox>>,
+          TError,
+          Awaited<ReturnType<typeof getBoundingBox>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBoundingBox<TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(
+ params: GetBoundingBoxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Fixes within a lat/lon rectangle over a time range.
  */
 
 export function useGetBoundingBox<TData = Awaited<ReturnType<typeof getBoundingBox>>, TError = ProblemDetails>(
- params: GetBoundingBoxParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params: GetBoundingBoxParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBoundingBox>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetBoundingBoxQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1055,7 +1252,7 @@ export const getGetLocationAtQueryKey = (params?: GetLocationAtParams,) => {
     }
 
 
-export const getGetLocationAtQueryOptions = <TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(params: GetLocationAtParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetLocationAtQueryOptions = <TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1070,25 +1267,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetLocationAtQueryResult = NonNullable<Awaited<ReturnType<typeof getLocationAt>>>
 export type GetLocationAtQueryError = ProblemDetails
 
 
+export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(
+ params: GetLocationAtParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getLocationAt>>,
+          TError,
+          Awaited<ReturnType<typeof getLocationAt>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(
+ params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getLocationAt>>,
+          TError,
+          Awaited<ReturnType<typeof getLocationAt>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(
+ params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Coarse place label at a time (synergy-safe — never the raw fix).
  */
 
 export function useGetLocationAt<TData = Awaited<ReturnType<typeof getLocationAt>>, TError = ProblemDetails>(
- params: GetLocationAtParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params: GetLocationAtParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLocationAt>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetLocationAtQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1138,7 +1359,7 @@ export const getListVisitsQueryKey = (params?: ListVisitsParams,) => {
     }
 
 
-export const getListVisitsQueryOptions = <TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(params?: ListVisitsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListVisitsQueryOptions = <TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(params?: ListVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1153,25 +1374,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListVisitsQueryResult = NonNullable<Awaited<ReturnType<typeof listVisits>>>
 export type ListVisitsQueryError = ProblemDetails
 
 
+export function useListVisits<TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(
+ params: undefined |  ListVisitsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listVisits>>,
+          TError,
+          Awaited<ReturnType<typeof listVisits>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListVisits<TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(
+ params?: ListVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listVisits>>,
+          TError,
+          Awaited<ReturnType<typeof listVisits>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListVisits<TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(
+ params?: ListVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Materialized stay-points over a time range.
  */
 
 export function useListVisits<TData = Awaited<ReturnType<typeof listVisits>>, TError = ProblemDetails>(
- params?: ListVisitsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListVisitsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listVisits>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListVisitsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1221,7 +1466,7 @@ export const getListTripsQueryKey = (params?: ListTripsParams,) => {
     }
 
 
-export const getListTripsQueryOptions = <TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(params?: ListTripsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListTripsQueryOptions = <TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(params?: ListTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1236,25 +1481,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListTripsQueryResult = NonNullable<Awaited<ReturnType<typeof listTrips>>>
 export type ListTripsQueryError = ProblemDetails
 
 
+export function useListTrips<TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(
+ params: undefined |  ListTripsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listTrips>>,
+          TError,
+          Awaited<ReturnType<typeof listTrips>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListTrips<TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(
+ params?: ListTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listTrips>>,
+          TError,
+          Awaited<ReturnType<typeof listTrips>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListTrips<TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(
+ params?: ListTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Materialized trips over a time range.
  */
 
 export function useListTrips<TData = Awaited<ReturnType<typeof listTrips>>, TError = ProblemDetails>(
- params?: ListTripsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrips>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListTripsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1304,7 +1573,7 @@ export const getGetDailySummaryQueryKey = (params?: GetDailySummaryParams,) => {
     }
 
 
-export const getGetDailySummaryQueryOptions = <TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(params: GetDailySummaryParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetDailySummaryQueryOptions = <TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(params: GetDailySummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1319,25 +1588,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetDailySummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getDailySummary>>>
 export type GetDailySummaryQueryError = ProblemDetails
 
 
+export function useGetDailySummary<TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(
+ params: GetDailySummaryParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDailySummary>>,
+          TError,
+          Awaited<ReturnType<typeof getDailySummary>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetDailySummary<TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(
+ params: GetDailySummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDailySummary>>,
+          TError,
+          Awaited<ReturnType<typeof getDailySummary>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetDailySummary<TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(
+ params: GetDailySummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Per-day location rollup.
  */
 
 export function useGetDailySummary<TData = Awaited<ReturnType<typeof getDailySummary>>, TError = ProblemDetails>(
- params: GetDailySummaryParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params: GetDailySummaryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDailySummary>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetDailySummaryQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1416,13 +1709,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const usePurgeLocationHistory = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof purgeLocationHistory>>, TError,{params?: PurgeLocationHistoryParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof purgeLocationHistory>>,
         TError,
         {params?: PurgeLocationHistoryParams},
         TContext
       > => {
-      return useMutation(getPurgeLocationHistoryMutationOptions(options));
+      return useMutation(getPurgeLocationHistoryMutationOptions(options), queryClient);
     }
     export const getPauseTrackingUrl = (deviceId: string,) => {
 
@@ -1493,13 +1786,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const usePauseTracking = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pauseTracking>>, TError,{deviceId: string;data?: null | PauseTrackingRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof pauseTracking>>,
         TError,
         {deviceId: string;data?: null | PauseTrackingRequest},
         TContext
       > => {
-      return useMutation(getPauseTrackingMutationOptions(options));
+      return useMutation(getPauseTrackingMutationOptions(options), queryClient);
     }
     export const getResumeTrackingUrl = (deviceId: string,) => {
 
@@ -1563,13 +1856,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useResumeTracking = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeTracking>>, TError,{deviceId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resumeTracking>>,
         TError,
         {deviceId: string},
         TContext
       > => {
-      return useMutation(getResumeTrackingMutationOptions(options));
+      return useMutation(getResumeTrackingMutationOptions(options), queryClient);
     }
     export const getGetTrackingStateUrl = (deviceId: string,) => {
 
@@ -1604,7 +1897,7 @@ export const getGetTrackingStateQueryKey = (deviceId: string,) => {
     }
 
 
-export const getGetTrackingStateQueryOptions = <TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(deviceId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetTrackingStateQueryOptions = <TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1619,25 +1912,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: deviceId !== null && deviceId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: deviceId !== null && deviceId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetTrackingStateQueryResult = NonNullable<Awaited<ReturnType<typeof getTrackingState>>>
 export type GetTrackingStateQueryError = ProblemDetails
 
 
+export function useGetTrackingState<TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(
+ deviceId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTrackingState>>,
+          TError,
+          Awaited<ReturnType<typeof getTrackingState>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTrackingState<TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(
+ deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTrackingState>>,
+          TError,
+          Awaited<ReturnType<typeof getTrackingState>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTrackingState<TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(
+ deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Tracking state for a device.
  */
 
 export function useGetTrackingState<TData = Awaited<ReturnType<typeof getTrackingState>>, TError = ProblemDetails>(
- deviceId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ deviceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrackingState>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetTrackingStateQueryOptions(deviceId,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }

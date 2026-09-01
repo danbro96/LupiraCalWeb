@@ -7,7 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { router } from './ui/navigation/router';
 import { SnackbarHost } from './ui/components/SnackbarHost';
 import { theme } from './ui/theme/muiTheme';
-import { ApiError } from './data/fetcher';
+import { ApiError, installApiTransport } from './data/fetcher';
 import './index.css';
 
 const queryClient = new QueryClient({
@@ -20,6 +20,9 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Before anything can issue a request: the generated clients call through this.
+installApiTransport();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

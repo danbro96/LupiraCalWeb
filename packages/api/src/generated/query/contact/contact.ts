@@ -9,9 +9,14 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
+  QueryClient,
   QueryFunction,
   QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -122,7 +127,7 @@ export const getContactPingQueryKey = () => {
     }
 
 
-export const getContactPingQueryOptions = <TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getContactPingQueryOptions = <TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -137,25 +142,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ContactPingQueryResult = NonNullable<Awaited<ReturnType<typeof contactPing>>>
 export type ContactPingQueryError = ProblemDetails
 
 
+export function useContactPing<TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof contactPing>>,
+          TError,
+          Awaited<ReturnType<typeof contactPing>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useContactPing<TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof contactPing>>,
+          TError,
+          Awaited<ReturnType<typeof contactPing>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useContactPing<TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
  */
 
 export function useContactPing<TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getContactPingQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -198,7 +227,7 @@ export const getGetMeQueryKey = () => {
     }
 
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -213,25 +242,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
 export type GetMeQueryError = ProblemDetails
 
 
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMe>>,
+          TError,
+          Awaited<ReturnType<typeof getMe>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMe>>,
+          TError,
+          Awaited<ReturnType<typeof getMe>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary The caller's resolved local identity (JIT-provisioned on first login).
  */
 
 export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetMeQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -303,13 +356,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useContactBootstrapMe = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof contactBootstrapMe>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof contactBootstrapMe>>,
         TError,
         void,
         TContext
       > => {
-      return useMutation(getContactBootstrapMeMutationOptions(options));
+      return useMutation(getContactBootstrapMeMutationOptions(options), queryClient);
     }
     export const getSetMyContactUrl = () => {
 
@@ -379,13 +432,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useSetMyContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setMyContact>>, TError,{data: SetMyContactRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setMyContact>>,
         TError,
         {data: SetMyContactRequest},
         TContext
       > => {
-      return useMutation(getSetMyContactMutationOptions(options));
+      return useMutation(getSetMyContactMutationOptions(options), queryClient);
     }
     export const getListAddressBooksUrl = () => {
 
@@ -420,7 +473,7 @@ export const getListAddressBooksQueryKey = () => {
     }
 
 
-export const getListAddressBooksQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListAddressBooksQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -435,25 +488,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListAddressBooksQueryResult = NonNullable<Awaited<ReturnType<typeof listAddressBooks>>>
 export type ListAddressBooksQueryError = ProblemDetails
 
 
+export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAddressBooks>>,
+          TError,
+          Awaited<ReturnType<typeof listAddressBooks>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAddressBooks>>,
+          TError,
+          Awaited<ReturnType<typeof listAddressBooks>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List the address books the caller can access.
  */
 
 export function useListAddressBooks<TData = Awaited<ReturnType<typeof listAddressBooks>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBooks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListAddressBooksQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -531,13 +608,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useCreateAddressBook = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAddressBook>>, TError,{data: CreateAddressBookRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createAddressBook>>,
         TError,
         {data: CreateAddressBookRequest},
         TContext
       > => {
-      return useMutation(getCreateAddressBookMutationOptions(options));
+      return useMutation(getCreateAddressBookMutationOptions(options), queryClient);
     }
     export const getUpdateAddressBookUrl = (addressBookId: string,) => {
 
@@ -608,13 +685,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useUpdateAddressBook = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAddressBook>>, TError,{addressBookId: string;data: UpdateAddressBookRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateAddressBook>>,
         TError,
         {addressBookId: string;data: UpdateAddressBookRequest},
         TContext
       > => {
-      return useMutation(getUpdateAddressBookMutationOptions(options));
+      return useMutation(getUpdateAddressBookMutationOptions(options), queryClient);
     }
     export const getDeleteAddressBookUrl = (addressBookId: string,) => {
 
@@ -678,13 +755,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useDeleteAddressBook = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAddressBook>>, TError,{addressBookId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteAddressBook>>,
         TError,
         {addressBookId: string},
         TContext
       > => {
-      return useMutation(getDeleteAddressBookMutationOptions(options));
+      return useMutation(getDeleteAddressBookMutationOptions(options), queryClient);
     }
     export const getListAddressBookOwnersUrl = (addressBookId: string,) => {
 
@@ -719,7 +796,7 @@ export const getListAddressBookOwnersQueryKey = (addressBookId: string,) => {
     }
 
 
-export const getListAddressBookOwnersQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(addressBookId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListAddressBookOwnersQueryOptions = <TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -734,25 +811,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: addressBookId !== null && addressBookId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: addressBookId !== null && addressBookId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListAddressBookOwnersQueryResult = NonNullable<Awaited<ReturnType<typeof listAddressBookOwners>>>
 export type ListAddressBookOwnersQueryError = ProblemDetails
 
 
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(
+ addressBookId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAddressBookOwners>>,
+          TError,
+          Awaited<ReturnType<typeof listAddressBookOwners>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAddressBookOwners>>,
+          TError,
+          Awaited<ReturnType<typeof listAddressBookOwners>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List who has access to an address book and at what level (owner only).
  */
 
 export function useListAddressBookOwners<TData = Awaited<ReturnType<typeof listAddressBookOwners>>, TError = ProblemDetails>(
- addressBookId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAddressBookOwners>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListAddressBookOwnersQueryOptions(addressBookId,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -831,13 +932,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useGrantAddressBookOwner = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof grantAddressBookOwner>>, TError,{addressBookId: string;data: GrantOwnerRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof grantAddressBookOwner>>,
         TError,
         {addressBookId: string;data: GrantOwnerRequest},
         TContext
       > => {
-      return useMutation(getGrantAddressBookOwnerMutationOptions(options));
+      return useMutation(getGrantAddressBookOwnerMutationOptions(options), queryClient);
     }
     export const getRevokeAddressBookOwnerUrl = (addressBookId: string,
     params: RevokeAddressBookOwnerParams,) => {
@@ -910,13 +1011,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRevokeAddressBookOwner = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeAddressBookOwner>>, TError,{addressBookId: string;params: RevokeAddressBookOwnerParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof revokeAddressBookOwner>>,
         TError,
         {addressBookId: string;params: RevokeAddressBookOwnerParams},
         TContext
       > => {
-      return useMutation(getRevokeAddressBookOwnerMutationOptions(options));
+      return useMutation(getRevokeAddressBookOwnerMutationOptions(options), queryClient);
     }
     export const getSearchContactsUrl = (params?: SearchContactsParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -958,7 +1059,7 @@ export const getSearchContactsQueryKey = (params?: SearchContactsParams,) => {
     }
 
 
-export const getSearchContactsQueryOptions = <TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(params?: SearchContactsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getSearchContactsQueryOptions = <TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -973,25 +1074,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type SearchContactsQueryResult = NonNullable<Awaited<ReturnType<typeof searchContacts>>>
 export type SearchContactsQueryError = ProblemDetails
 
 
+export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(
+ params: undefined |  SearchContactsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchContacts>>,
+          TError,
+          Awaited<ReturnType<typeof searchContacts>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(
+ params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchContacts>>,
+          TError,
+          Awaited<ReturnType<typeof searchContacts>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(
+ params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Search contacts (full-text + fuzzy name match).
  */
 
 export function useSearchContacts<TData = Awaited<ReturnType<typeof searchContacts>>, TError = ProblemDetails>(
- params?: SearchContactsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: SearchContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchContacts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getSearchContactsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1069,13 +1194,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useCreateContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContact>>, TError,{data: CreateContactRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createContact>>,
         TError,
         {data: CreateContactRequest},
         TContext
       > => {
-      return useMutation(getCreateContactMutationOptions(options));
+      return useMutation(getCreateContactMutationOptions(options), queryClient);
     }
     export const getGetThinContactsUrl = (params?: GetThinContactsParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -1117,7 +1242,7 @@ export const getGetThinContactsQueryKey = (params?: GetThinContactsParams,) => {
     }
 
 
-export const getGetThinContactsQueryOptions = <TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(params?: GetThinContactsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetThinContactsQueryOptions = <TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1132,25 +1257,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetThinContactsQueryResult = NonNullable<Awaited<ReturnType<typeof getThinContacts>>>
 export type GetThinContactsQueryError = ProblemDetails
 
 
+export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(
+ params: undefined |  GetThinContactsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getThinContacts>>,
+          TError,
+          Awaited<ReturnType<typeof getThinContacts>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(
+ params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getThinContacts>>,
+          TError,
+          Awaited<ReturnType<typeof getThinContacts>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(
+ params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Check-in worklist: contacts ranked thinnest-first by completeness score (< maxScore, default 1 = any contact with gaps). Kind-aware (person vs organisation card). Acknowledge an inapplicable gap field by merging metadata {"completeness":{"na":["organisation"]}} so it stops counting.
  */
 
 export function useGetThinContacts<TData = Awaited<ReturnType<typeof getThinContacts>>, TError = ProblemDetails>(
- params?: GetThinContactsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: GetThinContactsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinContacts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetThinContactsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1228,13 +1377,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useCreateContactsBatch = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContactsBatch>>, TError,{data: CreateContactsBatchRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createContactsBatch>>,
         TError,
         {data: CreateContactsBatchRequest},
         TContext
       > => {
-      return useMutation(getCreateContactsBatchMutationOptions(options));
+      return useMutation(getCreateContactsBatchMutationOptions(options), queryClient);
     }
     export const getResolveContactsByNameUrl = () => {
 
@@ -1304,13 +1453,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useResolveContactsByName = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resolveContactsByName>>, TError,{data: ResolveContactsByNameRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resolveContactsByName>>,
         TError,
         {data: ResolveContactsByNameRequest},
         TContext
       > => {
-      return useMutation(getResolveContactsByNameMutationOptions(options));
+      return useMutation(getResolveContactsByNameMutationOptions(options), queryClient);
     }
     export const getGetContactUrl = (id: string,) => {
 
@@ -1345,7 +1494,7 @@ export const getGetContactQueryKey = (id: string,) => {
     }
 
 
-export const getGetContactQueryOptions = <TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetContactQueryOptions = <TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1360,25 +1509,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetContactQueryResult = NonNullable<Awaited<ReturnType<typeof getContact>>>
 export type GetContactQueryError = ProblemDetails
 
 
+export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getContact>>,
+          TError,
+          Awaited<ReturnType<typeof getContact>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getContact>>,
+          TError,
+          Awaited<ReturnType<typeof getContact>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get a single contact.
  */
 
 export function useGetContact<TData = Awaited<ReturnType<typeof getContact>>, TError = ProblemDetails>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetContactQueryOptions(id,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1457,13 +1630,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useReviseContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviseContact>>, TError,{id: string;data: ReviseContactRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof reviseContact>>,
         TError,
         {id: string;data: ReviseContactRequest},
         TContext
       > => {
-      return useMutation(getReviseContactMutationOptions(options));
+      return useMutation(getReviseContactMutationOptions(options), queryClient);
     }
     export const getDeleteContactUrl = (id: string,) => {
 
@@ -1527,13 +1700,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useDeleteContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContact>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteContact>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getDeleteContactMutationOptions(options));
+      return useMutation(getDeleteContactMutationOptions(options), queryClient);
     }
     export const getMergeContactMetadataUrl = (id: string,
     params?: MergeContactMetadataParams,) => {
@@ -1613,13 +1786,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useMergeContactMetadata = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeContactMetadata>>, TError,{id: string;data: JsonNode;params?: MergeContactMetadataParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof mergeContactMetadata>>,
         TError,
         {id: string;data: JsonNode;params?: MergeContactMetadataParams},
         TContext
       > => {
-      return useMutation(getMergeContactMetadataMutationOptions(options));
+      return useMutation(getMergeContactMetadataMutationOptions(options), queryClient);
     }
     export const getGetContactCirclesUrl = (params?: GetContactCirclesParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -1661,7 +1834,7 @@ export const getGetContactCirclesQueryKey = (params?: GetContactCirclesParams,) 
     }
 
 
-export const getGetContactCirclesQueryOptions = <TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(params?: GetContactCirclesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetContactCirclesQueryOptions = <TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1676,25 +1849,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetContactCirclesQueryResult = NonNullable<Awaited<ReturnType<typeof getContactCircles>>>
 export type GetContactCirclesQueryError = ProblemDetails
 
 
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(
+ params: undefined |  GetContactCirclesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getContactCircles>>,
+          TError,
+          Awaited<ReturnType<typeof getContactCircles>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(
+ params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getContactCircles>>,
+          TError,
+          Awaited<ReturnType<typeof getContactCircles>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(
+ params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Computed social circles (close family, extended family, friends, colleagues, household) around a focus contact — the caller's own linked contact unless focusId overrides. Degree is a closeness bucket (1 immediate, 2 two-generation kin, 3 cousin). Ended relations are excluded.
  */
 
 export function useGetContactCircles<TData = Awaited<ReturnType<typeof getContactCircles>>, TError = ProblemDetails>(
- params?: GetContactCirclesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: GetContactCirclesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContactCircles>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetContactCirclesQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1773,13 +1970,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useMarkContactDeceased = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markContactDeceased>>, TError,{id: string;data: SetDeceasedRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof markContactDeceased>>,
         TError,
         {id: string;data: SetDeceasedRequest},
         TContext
       > => {
-      return useMutation(getMarkContactDeceasedMutationOptions(options));
+      return useMutation(getMarkContactDeceasedMutationOptions(options), queryClient);
     }
     export const getClearContactDeceasedUrl = (id: string,
     params?: ClearContactDeceasedParams,) => {
@@ -1852,13 +2049,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useClearContactDeceased = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearContactDeceased>>, TError,{id: string;params?: ClearContactDeceasedParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof clearContactDeceased>>,
         TError,
         {id: string;params?: ClearContactDeceasedParams},
         TContext
       > => {
-      return useMutation(getClearContactDeceasedMutationOptions(options));
+      return useMutation(getClearContactDeceasedMutationOptions(options), queryClient);
     }
     export const getSetContactProfilesUrl = (id: string,) => {
 
@@ -1929,13 +2126,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useSetContactProfiles = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactProfiles>>, TError,{id: string;data: SetContactProfilesRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactProfiles>>,
         TError,
         {id: string;data: SetContactProfilesRequest},
         TContext
       > => {
-      return useMutation(getSetContactProfilesMutationOptions(options));
+      return useMutation(getSetContactProfilesMutationOptions(options), queryClient);
     }
     export const getSetContactAvatarUrl = (id: string,) => {
 
@@ -2006,13 +2203,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useSetContactAvatar = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAvatar>>, TError,{id: string;data: SetContactAvatarRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactAvatar>>,
         TError,
         {id: string;data: SetContactAvatarRequest},
         TContext
       > => {
-      return useMutation(getSetContactAvatarMutationOptions(options));
+      return useMutation(getSetContactAvatarMutationOptions(options), queryClient);
     }
     export const getSetContactAddressesUrl = (id: string,) => {
 
@@ -2083,13 +2280,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useSetContactAddresses = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactAddresses>>, TError,{id: string;data: SetContactAddressesRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactAddresses>>,
         TError,
         {id: string;data: SetContactAddressesRequest},
         TContext
       > => {
-      return useMutation(getSetContactAddressesMutationOptions(options));
+      return useMutation(getSetContactAddressesMutationOptions(options), queryClient);
     }
     export const getSetEmergencyContactsUrl = (id: string,) => {
 
@@ -2160,13 +2357,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useSetEmergencyContacts = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setEmergencyContacts>>, TError,{id: string;data: SetEmergencyContactsRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setEmergencyContacts>>,
         TError,
         {id: string;data: SetEmergencyContactsRequest},
         TContext
       > => {
-      return useMutation(getSetEmergencyContactsMutationOptions(options));
+      return useMutation(getSetEmergencyContactsMutationOptions(options), queryClient);
     }
     export const getSetContactChannelsUrl = (id: string,) => {
 
@@ -2237,13 +2434,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useSetContactChannels = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactChannels>>, TError,{id: string;data: SetContactChannelsRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactChannels>>,
         TError,
         {id: string;data: SetContactChannelsRequest},
         TContext
       > => {
-      return useMutation(getSetContactChannelsMutationOptions(options));
+      return useMutation(getSetContactChannelsMutationOptions(options), queryClient);
     }
     export const getSetContactTagsUrl = (id: string,) => {
 
@@ -2314,13 +2511,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useSetContactTags = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setContactTags>>, TError,{id: string;data: SetContactTagsRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof setContactTags>>,
         TError,
         {id: string;data: SetContactTagsRequest},
         TContext
       > => {
-      return useMutation(getSetContactTagsMutationOptions(options));
+      return useMutation(getSetContactTagsMutationOptions(options), queryClient);
     }
     export const getListContactRelationsUrl = (id: string,
     params?: ListContactRelationsParams,) => {
@@ -2366,7 +2563,7 @@ export const getListContactRelationsQueryKey = (id: string,
 
 
 export const getListContactRelationsQueryOptions = <TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(id: string,
-    params?: ListContactRelationsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+    params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2381,26 +2578,53 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListContactRelationsQueryResult = NonNullable<Awaited<ReturnType<typeof listContactRelations>>>
 export type ListContactRelationsQueryError = ProblemDetails
 
 
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(
+ id: string,
+    params: undefined |  ListContactRelationsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listContactRelations>>,
+          TError,
+          Awaited<ReturnType<typeof listContactRelations>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(
+ id: string,
+    params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listContactRelations>>,
+          TError,
+          Awaited<ReturnType<typeof listContactRelations>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(
+ id: string,
+    params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Resolved relations, both directions: each entry's kind is the other contact's role relative to this one (incoming = derived inverse). Set includeInferred=true to also return kin derived from the parent/child graph (siblings, grandparents/-children, aunts/uncles, cousins, nieces/nephews), tagged Provenance=Inferred.
  */
 
 export function useListContactRelations<TData = Awaited<ReturnType<typeof listContactRelations>>, TError = ProblemDetails>(
  id: string,
-    params?: ListContactRelationsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    params?: ListContactRelationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactRelations>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListContactRelationsQueryOptions(id,params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -2479,13 +2703,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useAddContactRelation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactRelation>>, TError,{id: string;data: AddContactRelationRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addContactRelation>>,
         TError,
         {id: string;data: AddContactRelationRequest},
         TContext
       > => {
-      return useMutation(getAddContactRelationMutationOptions(options));
+      return useMutation(getAddContactRelationMutationOptions(options), queryClient);
     }
     export const getRemoveContactRelationUrl = (id: string,
     toContactId: string,
@@ -2560,13 +2784,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRemoveContactRelation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactRelation>>, TError,{id: string;toContactId: string;params: RemoveContactRelationParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeContactRelation>>,
         TError,
         {id: string;toContactId: string;params: RemoveContactRelationParams},
         TContext
       > => {
-      return useMutation(getRemoveContactRelationMutationOptions(options));
+      return useMutation(getRemoveContactRelationMutationOptions(options), queryClient);
     }
     export const getEndContactRelationUrl = (id: string,
     toContactId: string,) => {
@@ -2639,13 +2863,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useEndContactRelation = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endContactRelation>>, TError,{id: string;toContactId: string;data: EndContactRelationRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof endContactRelation>>,
         TError,
         {id: string;toContactId: string;data: EndContactRelationRequest},
         TContext
       > => {
-      return useMutation(getEndContactRelationMutationOptions(options));
+      return useMutation(getEndContactRelationMutationOptions(options), queryClient);
     }
     export const getListContactGroupsUrl = (addressBookId: string,) => {
 
@@ -2680,7 +2904,7 @@ export const getListContactGroupsQueryKey = (addressBookId: string,) => {
     }
 
 
-export const getListContactGroupsQueryOptions = <TData = Awaited<ReturnType<typeof listContactGroups>>, TError = ProblemDetails>(addressBookId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListContactGroupsQueryOptions = <TData = Awaited<ReturnType<typeof listContactGroups>>, TError = ProblemDetails>(addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2695,25 +2919,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: addressBookId !== null && addressBookId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: addressBookId !== null && addressBookId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListContactGroupsQueryResult = NonNullable<Awaited<ReturnType<typeof listContactGroups>>>
 export type ListContactGroupsQueryError = ProblemDetails
 
 
+export function useListContactGroups<TData = Awaited<ReturnType<typeof listContactGroups>>, TError = ProblemDetails>(
+ addressBookId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listContactGroups>>,
+          TError,
+          Awaited<ReturnType<typeof listContactGroups>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListContactGroups<TData = Awaited<ReturnType<typeof listContactGroups>>, TError = ProblemDetails>(
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listContactGroups>>,
+          TError,
+          Awaited<ReturnType<typeof listContactGroups>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListContactGroups<TData = Awaited<ReturnType<typeof listContactGroups>>, TError = ProblemDetails>(
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List groups (personal groupings + organizations) in an address book.
  */
 
 export function useListContactGroups<TData = Awaited<ReturnType<typeof listContactGroups>>, TError = ProblemDetails>(
- addressBookId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ addressBookId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listContactGroups>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListContactGroupsQueryOptions(addressBookId,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -2794,13 +3042,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useCreateContactGroup = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createContactGroup>>, TError,{addressBookId: string;params: CreateContactGroupParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createContactGroup>>,
         TError,
         {addressBookId: string;params: CreateContactGroupParams},
         TContext
       > => {
-      return useMutation(getCreateContactGroupMutationOptions(options));
+      return useMutation(getCreateContactGroupMutationOptions(options), queryClient);
     }
     export const getRenameContactGroupUrl = (groupId: string,
     params: RenameContactGroupParams,) => {
@@ -2873,13 +3121,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRenameContactGroup = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof renameContactGroup>>, TError,{groupId: string;params: RenameContactGroupParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof renameContactGroup>>,
         TError,
         {groupId: string;params: RenameContactGroupParams},
         TContext
       > => {
-      return useMutation(getRenameContactGroupMutationOptions(options));
+      return useMutation(getRenameContactGroupMutationOptions(options), queryClient);
     }
     export const getDeleteContactGroupUrl = (groupId: string,) => {
 
@@ -2943,13 +3191,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useDeleteContactGroup = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContactGroup>>, TError,{groupId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteContactGroup>>,
         TError,
         {groupId: string},
         TContext
       > => {
-      return useMutation(getDeleteContactGroupMutationOptions(options));
+      return useMutation(getDeleteContactGroupMutationOptions(options), queryClient);
     }
     export const getAddContactGroupMemberUrl = (groupId: string,
     params: AddContactGroupMemberParams,) => {
@@ -3022,13 +3270,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useAddContactGroupMember = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addContactGroupMember>>, TError,{groupId: string;params: AddContactGroupMemberParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addContactGroupMember>>,
         TError,
         {groupId: string;params: AddContactGroupMemberParams},
         TContext
       > => {
-      return useMutation(getAddContactGroupMemberMutationOptions(options));
+      return useMutation(getAddContactGroupMemberMutationOptions(options), queryClient);
     }
     export const getRemoveContactGroupMemberUrl = (groupId: string,
     contactId: string,) => {
@@ -3094,13 +3342,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useRemoveContactGroupMember = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeContactGroupMember>>, TError,{groupId: string;contactId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeContactGroupMember>>,
         TError,
         {groupId: string;contactId: string},
         TContext
       > => {
-      return useMutation(getRemoveContactGroupMemberMutationOptions(options));
+      return useMutation(getRemoveContactGroupMemberMutationOptions(options), queryClient);
     }
     export const getContactGetChangesUrl = (params?: ContactGetChangesParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -3142,7 +3390,7 @@ export const getContactGetChangesQueryKey = (params?: ContactGetChangesParams,) 
     }
 
 
-export const getContactGetChangesQueryOptions = <TData = Awaited<ReturnType<typeof contactGetChanges>>, TError = ProblemDetails>(params?: ContactGetChangesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getContactGetChangesQueryOptions = <TData = Awaited<ReturnType<typeof contactGetChanges>>, TError = ProblemDetails>(params?: ContactGetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3157,25 +3405,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ContactGetChangesQueryResult = NonNullable<Awaited<ReturnType<typeof contactGetChanges>>>
 export type ContactGetChangesQueryError = ProblemDetails
 
 
+export function useContactGetChanges<TData = Awaited<ReturnType<typeof contactGetChanges>>, TError = ProblemDetails>(
+ params: undefined |  ContactGetChangesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof contactGetChanges>>,
+          TError,
+          Awaited<ReturnType<typeof contactGetChanges>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useContactGetChanges<TData = Awaited<ReturnType<typeof contactGetChanges>>, TError = ProblemDetails>(
+ params?: ContactGetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof contactGetChanges>>,
+          TError,
+          Awaited<ReturnType<typeof contactGetChanges>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useContactGetChanges<TData = Awaited<ReturnType<typeof contactGetChanges>>, TError = ProblemDetails>(
+ params?: ContactGetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Delta feed for offline mirrors: every contact the caller can read that changed past the cursor, plus tombstone ids for contacts deleted or no longer visible (incl. moved to an unreadable address book). Omit since for a full sync; loop while hasMore, persisting cursor between calls.
  */
 
 export function useContactGetChanges<TData = Awaited<ReturnType<typeof contactGetChanges>>, TError = ProblemDetails>(
- params?: ContactGetChangesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ContactGetChangesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetChanges>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getContactGetChangesQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -3218,7 +3490,7 @@ export const getContactGetSyncContainersQueryKey = () => {
     }
 
 
-export const getContactGetSyncContainersQueryOptions = <TData = Awaited<ReturnType<typeof contactGetSyncContainers>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getContactGetSyncContainersQueryOptions = <TData = Awaited<ReturnType<typeof contactGetSyncContainers>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3233,25 +3505,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ContactGetSyncContainersQueryResult = NonNullable<Awaited<ReturnType<typeof contactGetSyncContainers>>>
 export type ContactGetSyncContainersQueryError = ProblemDetails
 
 
+export function useContactGetSyncContainers<TData = Awaited<ReturnType<typeof contactGetSyncContainers>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof contactGetSyncContainers>>,
+          TError,
+          Awaited<ReturnType<typeof contactGetSyncContainers>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useContactGetSyncContainers<TData = Awaited<ReturnType<typeof contactGetSyncContainers>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof contactGetSyncContainers>>,
+          TError,
+          Awaited<ReturnType<typeof contactGetSyncContainers>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useContactGetSyncContainers<TData = Awaited<ReturnType<typeof contactGetSyncContainers>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Snapshot of the caller's address books + contact groups for mirror reconciliation (no cursor — fetch once per sync cycle and diff locally).
  */
 
 export function useContactGetSyncContainers<TData = Awaited<ReturnType<typeof contactGetSyncContainers>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactGetSyncContainers>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getContactGetSyncContainersQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }

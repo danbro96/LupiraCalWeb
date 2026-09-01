@@ -18,8 +18,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { classifyOrphan, defaultPruneSelection, type OrphanClass } from '@lupira/cal-domain/placeCuration';
-import { useUpdatePlace } from '../../data/api-geo/lupiraGeoApi';
-import { PlaceSource, type OrphanCandidateDto, type PlaceDto } from '../../data/api-geo/models';
+import { useUpdatePlace } from '@lupira/cal-api/query/geo';
+import { PlaceSource, type OrphanCandidateDto, type PlaceDto } from '@lupira/cal-api/models';
 import { useInvalidatePlaces } from '../../state/useInvalidate';
 import {
   isLanOnly404,

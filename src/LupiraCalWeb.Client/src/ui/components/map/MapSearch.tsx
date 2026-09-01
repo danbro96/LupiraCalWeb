@@ -3,8 +3,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useForwardGeocode, useSuggestPlaces } from '../../../data/api-geo/lupiraGeoApi';
-import { SuggestionType, type PlaceSuggestionDto } from '../../../data/api-geo/models';
+import { useForwardGeocode, useSuggestPlaces } from '@lupira/cal-api/query/geo';
+import { SuggestionType, type PlaceSuggestionDto } from '@lupira/cal-api/models';
 import Box from '@mui/material/Box';
 import { RowName } from '../Rows';
 

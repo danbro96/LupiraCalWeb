@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useSearchContacts } from '../data/api-contact/lupiraContactApi';
-import type { SearchContactsParams } from '../data/api-contact/models';
-import { useGetParticipationSummary } from '../data/api/lupiraCalApi';
+import { useSearchContacts } from '@lupira/cal-api/query/contact';
+import type { SearchContactsParams } from '@lupira/cal-api/models';
+import { useGetParticipationSummary } from '@lupira/cal-api/query/cal';
 import { partitionByActivity } from '@lupira/cal-domain/contactTiers';
 
 /**

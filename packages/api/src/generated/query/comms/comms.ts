@@ -9,9 +9,14 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
+  QueryClient,
   QueryFunction,
   QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -104,7 +109,7 @@ export const getCommsPingQueryKey = () => {
     }
 
 
-export const getCommsPingQueryOptions = <TData = Awaited<ReturnType<typeof commsPing>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getCommsPingQueryOptions = <TData = Awaited<ReturnType<typeof commsPing>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -119,25 +124,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type CommsPingQueryResult = NonNullable<Awaited<ReturnType<typeof commsPing>>>
 export type CommsPingQueryError = ProblemDetails
 
 
+export function useCommsPing<TData = Awaited<ReturnType<typeof commsPing>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof commsPing>>,
+          TError,
+          Awaited<ReturnType<typeof commsPing>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCommsPing<TData = Awaited<ReturnType<typeof commsPing>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof commsPing>>,
+          TError,
+          Awaited<ReturnType<typeof commsPing>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCommsPing<TData = Awaited<ReturnType<typeof commsPing>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
  */
 
 export function useCommsPing<TData = Awaited<ReturnType<typeof commsPing>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof commsPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getCommsPingQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -215,13 +244,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useIngestMessages = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof ingestMessages>>, TError,{data: IngestMessageRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof ingestMessages>>,
         TError,
         {data: IngestMessageRequest},
         TContext
       > => {
-      return useMutation(getIngestMessagesMutationOptions(options));
+      return useMutation(getIngestMessagesMutationOptions(options), queryClient);
     }
     export const getSearchUrl = (params?: SearchParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -263,7 +292,7 @@ export const getSearchQueryKey = (params?: SearchParams,) => {
     }
 
 
-export const getSearchQueryOptions = <TData = Awaited<ReturnType<typeof search>>, TError = ProblemDetails>(params?: SearchParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getSearchQueryOptions = <TData = Awaited<ReturnType<typeof search>>, TError = ProblemDetails>(params?: SearchParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -278,25 +307,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type SearchQueryResult = NonNullable<Awaited<ReturnType<typeof search>>>
 export type SearchQueryError = ProblemDetails
 
 
+export function useSearch<TData = Awaited<ReturnType<typeof search>>, TError = ProblemDetails>(
+ params: undefined |  SearchParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof search>>,
+          TError,
+          Awaited<ReturnType<typeof search>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSearch<TData = Awaited<ReturnType<typeof search>>, TError = ProblemDetails>(
+ params?: SearchParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof search>>,
+          TError,
+          Awaited<ReturnType<typeof search>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSearch<TData = Awaited<ReturnType<typeof search>>, TError = ProblemDetails>(
+ params?: SearchParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Hybrid research search over the corpus (semantic + full-text, reranked).
  */
 
 export function useSearch<TData = Awaited<ReturnType<typeof search>>, TError = ProblemDetails>(
- params?: SearchParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: SearchParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getSearchQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -346,7 +399,7 @@ export const getListConnectorsQueryKey = (params?: ListConnectorsParams,) => {
     }
 
 
-export const getListConnectorsQueryOptions = <TData = Awaited<ReturnType<typeof listConnectors>>, TError = ProblemDetails>(params?: ListConnectorsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListConnectorsQueryOptions = <TData = Awaited<ReturnType<typeof listConnectors>>, TError = ProblemDetails>(params?: ListConnectorsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -361,25 +414,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListConnectorsQueryResult = NonNullable<Awaited<ReturnType<typeof listConnectors>>>
 export type ListConnectorsQueryError = ProblemDetails
 
 
+export function useListConnectors<TData = Awaited<ReturnType<typeof listConnectors>>, TError = ProblemDetails>(
+ params: undefined |  ListConnectorsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listConnectors>>,
+          TError,
+          Awaited<ReturnType<typeof listConnectors>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListConnectors<TData = Awaited<ReturnType<typeof listConnectors>>, TError = ProblemDetails>(
+ params?: ListConnectorsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listConnectors>>,
+          TError,
+          Awaited<ReturnType<typeof listConnectors>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListConnectors<TData = Awaited<ReturnType<typeof listConnectors>>, TError = ProblemDetails>(
+ params?: ListConnectorsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Capture status per source: granted connectors, message count, last arrival.
  */
 
 export function useListConnectors<TData = Awaited<ReturnType<typeof listConnectors>>, TError = ProblemDetails>(
- params?: ListConnectorsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListConnectorsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListConnectorsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -437,7 +514,7 @@ export const getListTopicsQueryKey = (params?: ListTopicsParams,) => {
     }
 
 
-export const getListTopicsQueryOptions = <TData = Awaited<ReturnType<typeof listTopics>>, TError = ProblemDetails>(params?: ListTopicsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListTopicsQueryOptions = <TData = Awaited<ReturnType<typeof listTopics>>, TError = ProblemDetails>(params?: ListTopicsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -452,25 +529,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListTopicsQueryResult = NonNullable<Awaited<ReturnType<typeof listTopics>>>
 export type ListTopicsQueryError = ProblemDetails
 
 
+export function useListTopics<TData = Awaited<ReturnType<typeof listTopics>>, TError = ProblemDetails>(
+ params: undefined |  ListTopicsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listTopics>>,
+          TError,
+          Awaited<ReturnType<typeof listTopics>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListTopics<TData = Awaited<ReturnType<typeof listTopics>>, TError = ProblemDetails>(
+ params?: ListTopicsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listTopics>>,
+          TError,
+          Awaited<ReturnType<typeof listTopics>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListTopics<TData = Awaited<ReturnType<typeof listTopics>>, TError = ProblemDetails>(
+ params?: ListTopicsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List topics by status and/or contact (poll alternative to closed-topic push).
  */
 
 export function useListTopics<TData = Awaited<ReturnType<typeof listTopics>>, TError = ProblemDetails>(
- params?: ListTopicsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListTopicsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTopics>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListTopicsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -524,7 +625,7 @@ export const getGetTopicQueryKey = (id: string,
 
 
 export const getGetTopicQueryOptions = <TData = Awaited<ReturnType<typeof getTopic>>, TError = ProblemDetails>(id: string,
-    params?: GetTopicParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+    params?: GetTopicParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -539,26 +640,53 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetTopicQueryResult = NonNullable<Awaited<ReturnType<typeof getTopic>>>
 export type GetTopicQueryError = ProblemDetails
 
 
+export function useGetTopic<TData = Awaited<ReturnType<typeof getTopic>>, TError = ProblemDetails>(
+ id: string,
+    params: undefined |  GetTopicParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTopic>>,
+          TError,
+          Awaited<ReturnType<typeof getTopic>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTopic<TData = Awaited<ReturnType<typeof getTopic>>, TError = ProblemDetails>(
+ id: string,
+    params?: GetTopicParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTopic>>,
+          TError,
+          Awaited<ReturnType<typeof getTopic>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTopic<TData = Awaited<ReturnType<typeof getTopic>>, TError = ProblemDetails>(
+ id: string,
+    params?: GetTopicParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get a topic with its ordered message window (open-topic tail).
  */
 
 export function useGetTopic<TData = Awaited<ReturnType<typeof getTopic>>, TError = ProblemDetails>(
  id: string,
-    params?: GetTopicParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    params?: GetTopicParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTopic>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetTopicQueryOptions(id,params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -608,7 +736,7 @@ export const getListArcsQueryKey = (params?: ListArcsParams,) => {
     }
 
 
-export const getListArcsQueryOptions = <TData = Awaited<ReturnType<typeof listArcs>>, TError = ProblemDetails>(params?: ListArcsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListArcsQueryOptions = <TData = Awaited<ReturnType<typeof listArcs>>, TError = ProblemDetails>(params?: ListArcsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -623,25 +751,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListArcsQueryResult = NonNullable<Awaited<ReturnType<typeof listArcs>>>
 export type ListArcsQueryError = ProblemDetails
 
 
+export function useListArcs<TData = Awaited<ReturnType<typeof listArcs>>, TError = ProblemDetails>(
+ params: undefined |  ListArcsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listArcs>>,
+          TError,
+          Awaited<ReturnType<typeof listArcs>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListArcs<TData = Awaited<ReturnType<typeof listArcs>>, TError = ProblemDetails>(
+ params?: ListArcsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listArcs>>,
+          TError,
+          Awaited<ReturnType<typeof listArcs>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListArcs<TData = Awaited<ReturnType<typeof listArcs>>, TError = ProblemDetails>(
+ params?: ListArcsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List arcs — cross-conversation groupings of topics — newest link first.
  */
 
 export function useListArcs<TData = Awaited<ReturnType<typeof listArcs>>, TError = ProblemDetails>(
- params?: ListArcsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListArcsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listArcs>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListArcsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -695,7 +847,7 @@ export const getGetArcQueryKey = (id: string,
 
 
 export const getGetArcQueryOptions = <TData = Awaited<ReturnType<typeof getArc>>, TError = ProblemDetails>(id: string,
-    params?: GetArcParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+    params?: GetArcParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -710,26 +862,53 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetArcQueryResult = NonNullable<Awaited<ReturnType<typeof getArc>>>
 export type GetArcQueryError = ProblemDetails
 
 
+export function useGetArc<TData = Awaited<ReturnType<typeof getArc>>, TError = ProblemDetails>(
+ id: string,
+    params: undefined |  GetArcParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getArc>>,
+          TError,
+          Awaited<ReturnType<typeof getArc>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetArc<TData = Awaited<ReturnType<typeof getArc>>, TError = ProblemDetails>(
+ id: string,
+    params?: GetArcParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getArc>>,
+          TError,
+          Awaited<ReturnType<typeof getArc>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetArc<TData = Awaited<ReturnType<typeof getArc>>, TError = ProblemDetails>(
+ id: string,
+    params?: GetArcParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get an arc with its member topics.
  */
 
 export function useGetArc<TData = Awaited<ReturnType<typeof getArc>>, TError = ProblemDetails>(
  id: string,
-    params?: GetArcParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    params?: GetArcParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getArc>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetArcQueryOptions(id,params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -779,7 +958,7 @@ export const getListParticipantsQueryKey = (params?: ListParticipantsParams,) =>
     }
 
 
-export const getListParticipantsQueryOptions = <TData = Awaited<ReturnType<typeof listParticipants>>, TError = ProblemDetails>(params?: ListParticipantsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListParticipantsQueryOptions = <TData = Awaited<ReturnType<typeof listParticipants>>, TError = ProblemDetails>(params?: ListParticipantsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -794,25 +973,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListParticipantsQueryResult = NonNullable<Awaited<ReturnType<typeof listParticipants>>>
 export type ListParticipantsQueryError = ProblemDetails
 
 
+export function useListParticipants<TData = Awaited<ReturnType<typeof listParticipants>>, TError = ProblemDetails>(
+ params: undefined |  ListParticipantsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listParticipants>>,
+          TError,
+          Awaited<ReturnType<typeof listParticipants>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListParticipants<TData = Awaited<ReturnType<typeof listParticipants>>, TError = ProblemDetails>(
+ params?: ListParticipantsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listParticipants>>,
+          TError,
+          Awaited<ReturnType<typeof listParticipants>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListParticipants<TData = Awaited<ReturnType<typeof listParticipants>>, TError = ProblemDetails>(
+ params?: ListParticipantsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List participants by message volume, optionally only unbound ones.
  */
 
 export function useListParticipants<TData = Awaited<ReturnType<typeof listParticipants>>, TError = ProblemDetails>(
- params?: ListParticipantsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListParticipantsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listParticipants>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListParticipantsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -900,13 +1103,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useBindParticipantContact = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bindParticipantContact>>, TError,{id: string;data: BindParticipantRequest;params?: BindParticipantContactParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof bindParticipantContact>>,
         TError,
         {id: string;data: BindParticipantRequest;params?: BindParticipantContactParams},
         TContext
       > => {
-      return useMutation(getBindParticipantContactMutationOptions(options));
+      return useMutation(getBindParticipantContactMutationOptions(options), queryClient);
     }
     export const getListConversationsUrl = (params?: ListConversationsParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -948,7 +1151,7 @@ export const getListConversationsQueryKey = (params?: ListConversationsParams,) 
     }
 
 
-export const getListConversationsQueryOptions = <TData = Awaited<ReturnType<typeof listConversations>>, TError = ProblemDetails>(params?: ListConversationsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListConversationsQueryOptions = <TData = Awaited<ReturnType<typeof listConversations>>, TError = ProblemDetails>(params?: ListConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -963,25 +1166,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListConversationsQueryResult = NonNullable<Awaited<ReturnType<typeof listConversations>>>
 export type ListConversationsQueryError = ProblemDetails
 
 
+export function useListConversations<TData = Awaited<ReturnType<typeof listConversations>>, TError = ProblemDetails>(
+ params: undefined |  ListConversationsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listConversations>>,
+          TError,
+          Awaited<ReturnType<typeof listConversations>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListConversations<TData = Awaited<ReturnType<typeof listConversations>>, TError = ProblemDetails>(
+ params?: ListConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listConversations>>,
+          TError,
+          Awaited<ReturnType<typeof listConversations>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListConversations<TData = Awaited<ReturnType<typeof listConversations>>, TError = ProblemDetails>(
+ params?: ListConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List conversations, newest activity first (title filter, cursor-paged).
  */
 
 export function useListConversations<TData = Awaited<ReturnType<typeof listConversations>>, TError = ProblemDetails>(
- params?: ListConversationsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listConversations>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListConversationsQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -1035,7 +1262,7 @@ export const getListMessagesQueryKey = (id: string,
 
 
 export const getListMessagesQueryOptions = <TData = Awaited<ReturnType<typeof listMessages>>, TError = ProblemDetails>(id: string,
-    params?: ListMessagesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+    params?: ListMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1050,26 +1277,53 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListMessagesQueryResult = NonNullable<Awaited<ReturnType<typeof listMessages>>>
 export type ListMessagesQueryError = ProblemDetails
 
 
+export function useListMessages<TData = Awaited<ReturnType<typeof listMessages>>, TError = ProblemDetails>(
+ id: string,
+    params: undefined |  ListMessagesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listMessages>>,
+          TError,
+          Awaited<ReturnType<typeof listMessages>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListMessages<TData = Awaited<ReturnType<typeof listMessages>>, TError = ProblemDetails>(
+ id: string,
+    params?: ListMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listMessages>>,
+          TError,
+          Awaited<ReturnType<typeof listMessages>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListMessages<TData = Awaited<ReturnType<typeof listMessages>>, TError = ProblemDetails>(
+ id: string,
+    params?: ListMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary A chat-style thread page: latest, before/after an anchor, or around one (search-hit jump).
  */
 
 export function useListMessages<TData = Awaited<ReturnType<typeof listMessages>>, TError = ProblemDetails>(
  id: string,
-    params?: ListMessagesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    params?: ListMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listMessages>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListMessagesQueryOptions(id,params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }

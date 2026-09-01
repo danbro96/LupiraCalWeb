@@ -1,8 +1,8 @@
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { useGetItem } from '../../../data/api-tasks/lupiraTasksApi';
-import type { ItemDto } from '../../../data/api-tasks/models';
+import { useTasksGetItem } from '@lupira/cal-api/query/tasks';
+import type { ItemDto } from '@lupira/cal-api/models';
 import { fmtDate, fmtTime } from '@lupira/cal-domain/time';
 import { DetailDrawer } from './DetailDrawer';
 import { DrawerSection } from '../DrawerSection';
@@ -10,7 +10,7 @@ import { DrawerSection } from '../DrawerSection';
 /** Read-only view for a task deadline (lives in LupiraTasks, not cal): status, due, notes, and the
  *  deep link into the tasks app. The web fallback lands on the list — tasks-web has no per-task route. */
 export function TaskCard({ listId, itemId, onClose }: { listId: string; itemId: string; onClose: () => void }) {
-  const { data: task, isLoading } = useGetItem(listId, itemId);
+  const { data: task, isLoading } = useTasksGetItem(listId, itemId);
 
   return (
     <DetailDrawer onClose={onClose}>

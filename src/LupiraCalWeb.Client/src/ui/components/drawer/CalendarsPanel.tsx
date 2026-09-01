@@ -11,8 +11,8 @@ import {
   useAcceptItemIntoCalendar,
   useFileItemToCalendar,
   useRemoveItemFromCalendar,
-} from '../../../data/api/lupiraCalApi';
-import type { CalendarItemDto } from '../../../data/api/models';
+} from '@lupira/cal-api/query/cal';
+import type { CalendarItemDto } from '@lupira/cal-api/models';
 import { calendarLabel, useContainers } from '../../../state/useContainers';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { calendarColor } from '../../theme/kinds';

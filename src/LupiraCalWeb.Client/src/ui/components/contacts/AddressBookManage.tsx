@@ -14,8 +14,8 @@ import {
   useListAddressBookOwners,
   useRevokeAddressBookOwner,
   useUpdateAddressBook,
-} from '../../../data/api-contact/lupiraContactApi';
-import type { AddressBookDto } from '../../../data/api-contact/models';
+} from '@lupira/cal-api/query/contact';
+import type { AddressBookDto } from '@lupira/cal-api/models';
 import { useInvalidateAddressBooks } from '../../../state/useInvalidate';
 import { errText } from '../../errText';
 import { useSnackbar } from '../SnackbarHost';

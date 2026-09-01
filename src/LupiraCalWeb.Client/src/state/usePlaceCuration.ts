@@ -7,8 +7,8 @@ import {
   useFindOrphanPlaces,
   useGetPlaceHistory,
   useSearchPlaces,
-} from '../data/api-geo/lupiraGeoApi';
-import type { PlaceSource } from '../data/api-geo/models';
+} from '@lupira/cal-api/query/geo';
+import type { PlaceSource } from '@lupira/cal-api/models';
 import { useInvalidatePlaces } from './useInvalidate';
 
 export function useUnlocatedPlaces(filters: { source?: PlaceSource; verified?: boolean }) {

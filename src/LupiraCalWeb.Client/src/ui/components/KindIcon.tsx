@@ -1,6 +1,6 @@
 import type { SvgIconProps } from '@mui/material/SvgIcon';
 import type { IconName } from '@lupira/cal-tokens/icons';
-import type { CalendarKind, ItemCategory } from '../../data/api/models';
+import type { CalendarKind, ItemCategory } from '@lupira/cal-api/models';
 import { CALENDAR_KIND_ICONS, ICON_BY_NAME, ITEM_CATEGORY_ICONS } from '../theme/kinds';
 
 /** For an already-resolved concept name — grid entries carry one rather than a category. */

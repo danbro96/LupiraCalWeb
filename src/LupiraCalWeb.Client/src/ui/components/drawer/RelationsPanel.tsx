@@ -4,7 +4,7 @@ import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { useCreateItemRelation, useListItemRelations } from '../../../data/api/lupiraCalApi';
+import { useCreateItemRelation, useListItemRelations } from '@lupira/cal-api/query/cal';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { WrapRow } from '../WrapRow';
 import { DrawerSection } from '../DrawerSection';

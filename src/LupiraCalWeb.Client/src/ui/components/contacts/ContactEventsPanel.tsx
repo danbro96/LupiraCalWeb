@@ -1,7 +1,7 @@
 import MuiLink from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useSearchItems } from '../../../data/api/lupiraCalApi';
+import { useSearchItems } from '@lupira/cal-api/query/cal';
 import { fmtWhen } from '@lupira/cal-domain/time';
 import { CategoryIcon } from '../KindIcon';
 import { DrawerSection } from '../DrawerSection';

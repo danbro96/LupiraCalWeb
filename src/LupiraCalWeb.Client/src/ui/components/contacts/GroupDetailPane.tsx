@@ -17,7 +17,7 @@ import {
   useRemoveContactGroupMember,
   useRenameContactGroup,
   useSearchContacts,
-} from '../../../data/api-contact/lupiraContactApi';
+} from '@lupira/cal-api/query/contact';
 import { useInvalidateContacts } from '../../../state/useInvalidate';
 import { useGroup } from './useGroup';
 import { WrapRow } from '../WrapRow';

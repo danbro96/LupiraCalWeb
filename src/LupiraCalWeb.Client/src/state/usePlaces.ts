@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useGetItemsByPlace } from '../data/api/lupiraCalApi';
+import { useGetItemsByPlace } from '@lupira/cal-api/query/cal';
 import {
   createPlace,
   createPlaceFromGeocode,
@@ -7,8 +7,8 @@ import {
   getPlace,
   useGetPlace,
   useSearchPlaces as useSearchGeoPlaces,
-} from '../data/api-geo/lupiraGeoApi';
-import { PlaceCategory, type PlaceDto, type SearchPlacesParams } from '../data/api-geo/models';
+} from '@lupira/cal-api/query/geo';
+import { PlaceCategory, type PlaceDto, type SearchPlacesParams } from '@lupira/cal-api/models';
 
 /** Browse/search the LupiraGeoApi gazetteer (text `q`, category, spatial `near`/`bbox`). */
 export function useSearchPlaces(params: SearchPlacesParams) {

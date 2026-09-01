@@ -4,7 +4,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import type { CompletenessScore } from '../../../data/api/models';
+import type { CompletenessScore } from '@lupira/cal-api/models';
 
 /** Score ring + expandable gap list (field, weight, severity). Exempt items pass null and render nothing. */
 export function CompletenessBadge({ score }: { score?: CompletenessScore | null }) {

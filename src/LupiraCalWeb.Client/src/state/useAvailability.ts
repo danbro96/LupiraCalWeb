@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
-import { getGetItemQueryOptions, useSearchItems } from '../data/api/lupiraCalApi';
-import type { AvailabilityStatus, ContainerDto } from '../data/api/models';
+import { getGetItemQueryOptions, useSearchItems } from '@lupira/cal-api/query/cal';
+import type { AvailabilityStatus, ContainerDto } from '@lupira/cal-api/models';
 
 export interface AvailabilitySegment {
   start: string;

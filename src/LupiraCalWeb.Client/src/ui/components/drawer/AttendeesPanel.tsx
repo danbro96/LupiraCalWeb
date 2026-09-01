@@ -18,9 +18,9 @@ import {
   useLeaveItem,
   useRemoveParticipant,
   useRespondToInvitation,
-} from '../../../data/api/lupiraCalApi';
-import type { CalendarItemDto } from '../../../data/api/models';
-import { useSearchContacts } from '../../../data/api-contact/lupiraContactApi';
+} from '@lupira/cal-api/query/cal';
+import type { CalendarItemDto } from '@lupira/cal-api/models';
+import { useSearchContacts } from '@lupira/cal-api/query/contact';
 import { rankByInteraction } from '@lupira/cal-domain/contactRank';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../../errText';

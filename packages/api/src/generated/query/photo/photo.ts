@@ -9,9 +9,14 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
+  QueryClient,
   QueryFunction,
   QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -125,13 +130,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useDeclarePhoto = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof declarePhoto>>, TError,{data: DeclarePhotoRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof declarePhoto>>,
         TError,
         {data: DeclarePhotoRequest},
         TContext
       > => {
-      return useMutation(getDeclarePhotoMutationOptions(options));
+      return useMutation(getDeclarePhotoMutationOptions(options), queryClient);
     }
     export const getListPhotosUrl = (params?: ListPhotosParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -173,7 +178,7 @@ export const getListPhotosQueryKey = (params?: ListPhotosParams,) => {
     }
 
 
-export const getListPhotosQueryOptions = <TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(params?: ListPhotosParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getListPhotosQueryOptions = <TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -188,25 +193,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type ListPhotosQueryResult = NonNullable<Awaited<ReturnType<typeof listPhotos>>>
 export type ListPhotosQueryError = ProblemDetails
 
 
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
+ params: undefined |  ListPhotosParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listPhotos>>,
+          TError,
+          Awaited<ReturnType<typeof listPhotos>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listPhotos>>,
+          TError,
+          Awaited<ReturnType<typeof listPhotos>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary List assets (keyset-paged, newest taken first by default) with presigned thumbnail URLs.
  */
 
 export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = ProblemDetails>(
- params?: ListPhotosParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListPhotosQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -278,13 +307,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useCompletePhotoUpload = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completePhotoUpload>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof completePhotoUpload>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getCompletePhotoUploadMutationOptions(options));
+      return useMutation(getCompletePhotoUploadMutationOptions(options), queryClient);
     }
     export const getReprocessPhotoUrl = (id: string,) => {
 
@@ -348,13 +377,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useReprocessPhoto = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reprocessPhoto>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof reprocessPhoto>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getReprocessPhotoMutationOptions(options));
+      return useMutation(getReprocessPhotoMutationOptions(options), queryClient);
     }
     export const getLookupPhotosUrl = () => {
 
@@ -424,13 +453,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useLookupPhotos = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupPhotos>>, TError,{data: LookupPhotosRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof lookupPhotos>>,
         TError,
         {data: LookupPhotosRequest},
         TContext
       > => {
-      return useMutation(getLookupPhotosMutationOptions(options));
+      return useMutation(getLookupPhotosMutationOptions(options), queryClient);
     }
     export const getGetPhotoStatsUrl = () => {
 
@@ -465,7 +494,7 @@ export const getGetPhotoStatsQueryKey = () => {
     }
 
 
-export const getGetPhotoStatsQueryOptions = <TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetPhotoStatsQueryOptions = <TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -480,25 +509,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetPhotoStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getPhotoStats>>>
 export type GetPhotoStatsQueryError = ProblemDetails
 
 
+export function useGetPhotoStats<TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhotoStats>>,
+          TError,
+          Awaited<ReturnType<typeof getPhotoStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhotoStats<TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhotoStats>>,
+          TError,
+          Awaited<ReturnType<typeof getPhotoStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhotoStats<TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Library totals and counts by kind, status, geotag source and month.
  */
 
 export function useGetPhotoStats<TData = Awaited<ReturnType<typeof getPhotoStats>>, TError = ProblemDetails>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetPhotoStatsQueryOptions(options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -548,7 +601,7 @@ export const getGetPhotoMapQueryKey = (params?: GetPhotoMapParams,) => {
     }
 
 
-export const getGetPhotoMapQueryOptions = <TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(params: GetPhotoMapParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetPhotoMapQueryOptions = <TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(params: GetPhotoMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -563,25 +616,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetPhotoMapQueryResult = NonNullable<Awaited<ReturnType<typeof getPhotoMap>>>
 export type GetPhotoMapQueryError = ProblemDetails
 
 
+export function useGetPhotoMap<TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(
+ params: GetPhotoMapParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhotoMap>>,
+          TError,
+          Awaited<ReturnType<typeof getPhotoMap>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhotoMap<TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(
+ params: GetPhotoMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhotoMap>>,
+          TError,
+          Awaited<ReturnType<typeof getPhotoMap>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhotoMap<TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(
+ params: GetPhotoMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Geotagged Ready assets in a viewport as a GeoJSON FeatureCollection.
  */
 
 export function useGetPhotoMap<TData = Awaited<ReturnType<typeof getPhotoMap>>, TError = ProblemDetails>(
- params: GetPhotoMapParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ params: GetPhotoMapParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhotoMap>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetPhotoMapQueryOptions(params,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -624,7 +701,7 @@ export const getGetPhotoQueryKey = (id: string,) => {
     }
 
 
-export const getGetPhotoQueryOptions = <TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
+export const getGetPhotoQueryOptions = <TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -639,25 +716,49 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetPhotoQueryResult = NonNullable<Awaited<ReturnType<typeof getPhoto>>>
 export type GetPhotoQueryError = ProblemDetails
 
 
+export function useGetPhoto<TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhoto>>,
+          TError,
+          Awaited<ReturnType<typeof getPhoto>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhoto<TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhoto>>,
+          TError,
+          Awaited<ReturnType<typeof getPhoto>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhoto<TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary One asset with presigned original + thumbnail URLs.
  */
 
 export function useGetPhoto<TData = Awaited<ReturnType<typeof getPhoto>>, TError = ProblemDetails>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>, request?: SecondParameter<typeof apiRequest>}
-
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoto>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetPhotoQueryOptions(id,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
@@ -729,11 +830,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  */
 export const useDeletePhoto = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePhoto>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- ): UseMutationResult<
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deletePhoto>>,
         TError,
         {id: string},
         TContext
       > => {
-      return useMutation(getDeletePhotoMutationOptions(options));
+      return useMutation(getDeletePhotoMutationOptions(options), queryClient);
     }

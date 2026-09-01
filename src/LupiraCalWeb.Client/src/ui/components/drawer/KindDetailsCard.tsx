@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import type { ItemDetails } from '../../../data/api/models';
+import type { ItemDetails } from '@lupira/cal-api/models';
 import { fmtDateTime } from '@lupira/cal-domain/time';
 import { DrawerSection } from '../DrawerSection';
 

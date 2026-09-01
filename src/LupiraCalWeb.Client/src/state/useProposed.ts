@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
-import { getListProposedItemsQueryOptions } from '../data/api/lupiraCalApi';
-import type { CalendarItemDto, ContainerDto } from '../data/api/models';
+import { getListProposedItemsQueryOptions } from '@lupira/cal-api/query/cal';
+import type { CalendarItemDto, ContainerDto } from '@lupira/cal-api/models';
 
 export interface ProposedByCalendar {
   calendar: ContainerDto;

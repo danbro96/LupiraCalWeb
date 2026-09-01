@@ -1,7 +1,7 @@
 import type { FeatureCollection } from 'geojson';
 import type { GeoJSONSource, MapGeoJSONFeature } from 'maplibre-gl';
 import { useMemo } from 'react';
-import type { LocationTripDto } from '../../../data/api-location/models';
+import type { LocationTripDto } from '@lupira/cal-api/models';
 import { useMap } from './MapCanvas';
 import { ACTIVITY_COLORS, activityColorExpression, MAP_COLORS, type MapTheme } from './mapTokens';
 import { featureProp, useGeoJsonLayer, type LayerSpecSansSource } from './useGeoJsonLayer';

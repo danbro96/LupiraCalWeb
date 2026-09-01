@@ -19,7 +19,7 @@ import {
   useRemoveContactGroupMember,
   useSearchContacts,
   useSetMyContact,
-} from '../../../data/api-contact/lupiraContactApi';
+} from '@lupira/cal-api/query/contact';
 import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
 import { fmtResidencyPeriod, residencyStatus, type FuzzyDate } from '@lupira/cal-domain/fuzzyDate';
 

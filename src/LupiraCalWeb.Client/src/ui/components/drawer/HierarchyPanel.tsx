@@ -1,8 +1,8 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { useGetItem, useSearchItems } from '../../../data/api/lupiraCalApi';
-import type { CalendarItemDto } from '../../../data/api/models';
+import { useGetItem, useSearchItems } from '@lupira/cal-api/query/cal';
+import type { CalendarItemDto } from '@lupira/cal-api/models';
 import { fmtWhen } from '@lupira/cal-domain/time';
 import { CategoryIcon } from '../KindIcon';
 import { DrawerSection } from '../DrawerSection';

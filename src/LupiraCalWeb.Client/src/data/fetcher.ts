@@ -1,12 +1,12 @@
-import { API_BASE_URL, COMMS_API_BASE_URL, CONTACT_API_BASE_URL, GEO_API_BASE_URL, LOCATION_API_BASE_URL, PHOTO_API_BASE_URL, TASKS_API_BASE_URL } from '../config';
+import { setApiTransport } from '@lupira/cal-api/transport';
 
 /**
- * Mutator for every orval-generated request. Auth rides the BFF's HttpOnly cookie session
+ * The SPA's transport for every generated request. Auth rides the BFF's HttpOnly cookie session
  * (same-origin), so we send credentials and never a bearer. A 401 means the session expired →
- * bounce to the BFF sign-in, returning here afterwards. `customFetch` targets LupiraCalApi (`/api`),
- * `customFetchGeo` targets LupiraGeoApi (`/geo-api`), `customFetchContact` targets LupiraContactApi
- * (`/contact-api`), `customFetchTasks` targets LupiraTasksApi (`/tasks-api`), `customFetchComms`
- * targets LupiraCommsApi (`/comms-api`) — all proxied same-origin by the BFF.
+ * bounce to the BFF sign-in, returning here afterwards.
+ *
+ * There is one of these now rather than one per upstream: the merged spec carries each BFF route
+ * prefix in the path, so nothing is left for a mutator to prepend.
  */
 export class ApiError extends Error {
   status: number;
@@ -18,10 +18,10 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(base: string, url: string, init?: RequestInit): Promise<T> {
+async function request<T>(url: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${base}${url}`, { credentials: 'include', ...init });
+    res = await fetch(url, { credentials: 'include', ...init });
   } catch {
     throw new ApiError(0, 'Network error — check your connection and try again.');
   }
@@ -46,32 +46,7 @@ async function request<T>(base: string, url: string, init?: RequestInit): Promis
   return (await res.json()) as T;
 }
 
-export function customFetch<T>(url: string, init?: RequestInit): Promise<T> {
-  return request<T>(API_BASE_URL, url, init);
+/** Installed once from main.tsx, before anything can issue a request. */
+export function installApiTransport(): void {
+  setApiTransport(request);
 }
-
-export function customFetchGeo<T>(url: string, init?: RequestInit): Promise<T> {
-  return request<T>(GEO_API_BASE_URL, url, init);
-}
-
-export function customFetchContact<T>(url: string, init?: RequestInit): Promise<T> {
-  return request<T>(CONTACT_API_BASE_URL, url, init);
-}
-
-export function customFetchTasks<T>(url: string, init?: RequestInit): Promise<T> {
-  return request<T>(TASKS_API_BASE_URL, url, init);
-}
-
-export function customFetchLocation<T>(url: string, init?: RequestInit): Promise<T> {
-  return request<T>(LOCATION_API_BASE_URL, url, init);
-}
-
-export function customFetchPhoto<T>(url: string, init?: RequestInit): Promise<T> {
-  return request<T>(PHOTO_API_BASE_URL, url, init);
-}
-
-export function customFetchComms<T>(url: string, init?: RequestInit): Promise<T> {
-  return request<T>(COMMS_API_BASE_URL, url, init);
-}
-
-export default customFetch;

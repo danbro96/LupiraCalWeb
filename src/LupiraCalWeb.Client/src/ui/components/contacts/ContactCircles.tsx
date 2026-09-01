@@ -3,8 +3,8 @@ import Typography from '@mui/material/Typography';
 import MuiLink from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { Link, useLocation } from 'react-router-dom';
-import { useGetContactCircles } from '../../../data/api-contact/lupiraContactApi';
-import type { CircleKind } from '../../../data/api-contact/models';
+import { useGetContactCircles } from '@lupira/cal-api/query/contact';
+import type { CircleKind } from '@lupira/cal-api/models';
 
 const CIRCLE_LABEL: Record<CircleKind, string> = {
   CloseFamily: 'Close family',

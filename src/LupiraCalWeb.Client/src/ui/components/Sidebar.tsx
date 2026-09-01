@@ -3,7 +3,7 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import type { ContainerDto } from '../../data/api/models';
+import type { ContainerDto } from '@lupira/cal-api/models';
 import { calendarLabel, useContainers } from '../../state/useContainers';
 import { calendarColor } from '../theme/kinds';
 import { KindIcon } from './KindIcon';

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
-import type { ContainerDto } from '../../data/api/models';
+import type { ContainerDto } from '@lupira/cal-api/models';
 
 interface Visibility {
   isVisible: (c: ContainerDto) => boolean;

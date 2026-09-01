@@ -1,4 +1,4 @@
-import { useListContactGroups } from '../../../data/api-contact/lupiraContactApi';
+import { useListContactGroups } from '@lupira/cal-api/query/contact';
 
 /** Resolve a group by id within its address book. No get-by-id endpoint exists, so group
  *  navigation carries ?book= and we pick from the book's group list (cached, shared with the tree). */

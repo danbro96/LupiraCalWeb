@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
-import { getSearchItemsQueryOptions } from '../data/api/lupiraCalApi';
-import type { CalendarItemOccurrenceDto, ContainerDto } from '../data/api/models';
+import { getSearchItemsQueryOptions } from '@lupira/cal-api/query/cal';
+import type { CalendarItemOccurrenceDto, ContainerDto } from '@lupira/cal-api/models';
 
 export interface CalendarOccurrences {
   calendar: ContainerDto;

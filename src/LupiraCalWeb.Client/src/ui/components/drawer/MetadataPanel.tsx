@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useMergeItemMetadata } from '../../../data/api/lupiraCalApi';
+import { useMergeItemMetadata } from '@lupira/cal-api/query/cal';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { DrawerSection } from '../DrawerSection';
 

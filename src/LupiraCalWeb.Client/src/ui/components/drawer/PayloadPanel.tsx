@@ -15,7 +15,7 @@ import {
   useClearItemPrompt,
   useSetItemAction,
   useSetItemPrompt,
-} from '../../../data/api/lupiraCalApi';
+} from '@lupira/cal-api/query/cal';
 import {
   ActionKind,
   FallbackMode,
@@ -27,7 +27,7 @@ import {
   type PromptFire,
   type SetItemActionRequest,
   type SetItemPromptRequest,
-} from '../../../data/api/models';
+} from '@lupira/cal-api/models';
 import { describeFire } from '@lupira/cal-domain/fire';
 import { useInvalidateItems } from '../../../state/useInvalidate';
 import { errText } from '../../errText';

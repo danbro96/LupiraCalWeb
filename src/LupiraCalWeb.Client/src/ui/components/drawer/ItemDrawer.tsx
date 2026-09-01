@@ -5,13 +5,13 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { useDeleteItem, useGetItem, useUpdateItem } from '../../../data/api/lupiraCalApi';
+import { useDeleteItem, useGetItem, useUpdateItem } from '@lupira/cal-api/query/cal';
 import {
   AvailabilityStatus,
   ItemStatus,
   type CalendarItemDto,
   type UpdateCalendarItemRequest,
-} from '../../../data/api/models';
+} from '@lupira/cal-api/models';
 import { describeRrule, RRULE_PRESETS } from '@lupira/cal-domain/rrule';
 import { fmtDate, parseYmd } from '@lupira/cal-domain/time';
 import { useInvalidateItems } from '../../../state/useInvalidate';
