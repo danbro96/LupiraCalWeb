@@ -24,7 +24,12 @@ export default [
           { from: { element: { type: 'domain' } }, allow: [{ to: { element: { type: 'domain' } } }] },
         ],
       }],
-      'boundaries/external': ['error', { default: 'disallow', policies: [] }],
+      // geojson ships types only, so `import type` from it erases entirely — the package still has
+      // no runtime dependency. Anything with a runtime half stays disallowed.
+      'boundaries/external': ['error', {
+        default: 'disallow',
+        policies: [{ from: { element: { type: 'domain' } }, allow: ['geojson'] }],
+      }],
     },
   },
   {

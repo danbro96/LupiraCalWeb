@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { Feature, FeatureCollection, Point } from 'geojson';
+import type { FeatureCollection } from 'geojson';
 import { getDb } from '../data/db/expoDb';
 import { lookupPlaces } from '@lupira/cal-api/fetch/geo';
 import { listSavedPlaces } from '@lupira/cal-api/fetch/geo';
@@ -9,8 +9,17 @@ import { getCurrentLocation, getThinnedTrack, listVisits } from '@lupira/cal-api
 import type { PlaceDto } from '@lupira/cal-api/models';
 import { loadMapStyle, type BasemapStyle, type MapTheme } from '../data/mapStyle';
 import { mapContactAddresses, mapEventRowsBetween } from '../data/mirror';
-import { residencyStatus } from '@lupira/cal-domain/fuzzyDate';
-import { splitTrack } from '@lupira/cal-domain/geo';
+import type { FuzzyDate } from '@lupira/cal-domain/fuzzyDate';
+import {
+  EMPTY_FEATURES,
+  contactFeatures,
+  currentFixFeatures,
+  eventFeatures,
+  photoFeatures,
+  savedPlaceFeatures,
+  trackFeatures,
+  visitFeatures,
+} from '@lupira/cal-domain/mapFeatures';
 import { useCalendars } from './queries';
 import { useSyncStatus } from '../sync/syncStatus';
 
@@ -19,12 +28,6 @@ import { useSyncStatus } from '../sync/syncStatus';
  *  useTaskDeadlines — offline the map simply lacks those layers, never an error surface. */
 
 const LOOKUP_MAX = 200; // server cap per POST /places/lookup call
-
-const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] };
-
-function point(lon: number, lat: number, properties: Record<string, unknown>): Feature<Point> {
-  return { type: 'Feature', geometry: { type: 'Point', coordinates: [lon, lat] }, properties };
-}
 
 export function useMapStyle(theme: MapTheme): { style: BasemapStyle | undefined; degraded: boolean } {
   const reachable = useSyncStatus((s) => s.serverReachable);
@@ -76,22 +79,19 @@ export function useEventFeatures(fromDay: string, toDay: string, enabled: boolea
   const places = usePlaceCoords(useMemo(() => rows.map((r) => r.place_id), [rows]));
 
   return useMemo(() => {
-    if (!enabled) return EMPTY;
+    if (!enabled) return EMPTY_FEATURES;
     const colorByCalendar = new Map((calendarsQ.data ?? []).map((c) => [c.id, c.color ?? null]));
-    const features: Feature<Point>[] = [];
-    for (const row of rows) {
-      const place = places.get(row.place_id);
-      if (!place) continue;
-      features.push(point(place.longitude!, place.latitude!, {
-        layer: 'event',
+    return eventFeatures(
+      rows.map((row) => ({
         itemId: row.source_id,
-        title: row.title ?? place.name,
+        title: row.title,
         start: row.start_utc,
+        calendarId: row.calendar_id,
         color: (row.calendar_id ? colorByCalendar.get(row.calendar_id) : null) ?? null,
-        placeName: place.name,
-      }));
-    }
-    return { type: 'FeatureCollection', features } satisfies FeatureCollection;
+        placeId: row.place_id,
+      })),
+      places,
+    ).features;
   }, [enabled, rows, places, calendarsQ.data]);
 }
 
@@ -111,18 +111,10 @@ export function usePhotoFeatures(bbox: string | null, enabled: boolean): Feature
     },
   });
 
-  return useMemo(() => {
-    if (!enabled) return EMPTY;
-    const features = (q.data?.features ?? []).map((f) => point(f.geometry.coordinates[0], f.geometry.coordinates[1], {
-      layer: 'photo',
-      photoId: f.properties.id,
-      kind: f.properties.kind,
-      takenAt: f.properties.takenAt,
-      placeLabel: f.properties.placeLabel ?? null,
-      thumbUrl: f.properties.thumbUrl ?? null,
-    }));
-    return { type: 'FeatureCollection', features } satisfies FeatureCollection;
-  }, [enabled, q.data]);
+  return useMemo(
+    () => (enabled ? photoFeatures(q.data?.features ?? []) : EMPTY_FEATURES),
+    [enabled, q.data],
+  );
 }
 
 /** A recording hole longer than this breaks the drawn track (tracker off, retention edge). */
@@ -139,7 +131,7 @@ function staleTimeFor(toIso: string): number {
 
 export type MovementFeatures = { visits: FeatureCollection; track: FeatureCollection; current: FeatureCollection };
 
-const EMPTY_MOVEMENT: MovementFeatures = { visits: EMPTY, track: EMPTY, current: EMPTY };
+const EMPTY_MOVEMENT: MovementFeatures = { visits: EMPTY_FEATURES, track: EMPTY_FEATURES, current: EMPTY_FEATURES };
 
 /** Where you've been: dwell circles, an activity-coloured track, and the last fix each device reported.
  *  Empty until something uploads — this app's own recorder is the only producer. */
@@ -188,43 +180,14 @@ export function useMovementFeatures(fromIso: string, toIso: string, enabled: boo
 
   return useMemo(() => {
     if (!enabled) return EMPTY_MOVEMENT;
-
-    const visits: FeatureCollection = {
-      type: 'FeatureCollection',
-      features: (visitsQ.data ?? []).map((v) => point(v.lon, v.lat, {
-        layer: 'visit',
-        visitId: v.id,
-        placeLabel: v.placeLabel ?? null,
-        arriveTs: v.arriveTs,
-        departTs: v.departTs,
-        durationMin: Math.max(1, Math.round((Date.parse(v.departTs) - Date.parse(v.arriveTs)) / 60_000)),
-      })),
+    return {
+      visits: visitFeatures(visitsQ.data ?? []),
+      track: trackFeatures(
+        (trackQ.data ?? []).map((p) => ({ lat: p.lat, lon: p.lon, ts: p.ts, activity: p.activity ?? null })),
+        TRACK_MAX_GAP_S,
+      ),
+      current: currentFixFeatures(currentQ.data ?? []),
     };
-
-    const segments = splitTrack(
-      (trackQ.data ?? []).map((p) => ({ lat: p.lat, lon: p.lon, ts: p.ts, activity: p.activity ?? null })),
-      TRACK_MAX_GAP_S,
-    ).filter((segment) => segment.length >= 2);
-    const track: FeatureCollection = {
-      type: 'FeatureCollection',
-      features: segments.map((segment) => ({
-        type: 'Feature' as const,
-        geometry: { type: 'LineString' as const, coordinates: segment.map((p) => [p.lon, p.lat]) },
-        properties: { layer: 'track', activity: segment[0].activity ?? 'Unknown' },
-      })),
-    };
-
-    const current: FeatureCollection = {
-      type: 'FeatureCollection',
-      features: (currentQ.data ?? []).map((f) => point(f.lon, f.lat, {
-        layer: 'current',
-        deviceId: f.deviceId,
-        ts: f.ts,
-        batteryPct: f.batteryPct ?? null,
-      })),
-    };
-
-    return { visits, track, current };
   }, [enabled, visitsQ.data, trackQ.data, currentQ.data]);
 }
 
@@ -240,32 +203,19 @@ export function useContactFeatures(enabled: boolean): FeatureCollection {
   const places = usePlaceCoords(useMemo(() => rows.map((r) => r.place_id), [rows]));
 
   return useMemo(() => {
-    if (!enabled) return EMPTY;
-    const parse = (raw: string | null) => (raw ? (JSON.parse(raw) as { year: number; month?: number; day?: number }) : null);
-
-    const byPlace = new Map<string, { names: string[]; contactIds: string[]; types: string[] }>();
-    for (const row of rows) {
-      if (residencyStatus(parse(row.moved_in), parse(row.moved_out)) !== 'active') continue;
-      if (!places.has(row.place_id)) continue;
-      const entry = byPlace.get(row.place_id) ?? { names: [], contactIds: [], types: [] };
-      entry.names.push(row.display_name);
-      entry.contactIds.push(row.contact_id);
-      if (row.address_type) entry.types.push(row.address_type);
-      byPlace.set(row.place_id, entry);
-    }
-
-    const features = [...byPlace.entries()].map(([placeId, entry]) => {
-      const place = places.get(placeId)!;
-      const shown = entry.names.length > 3 ? [...entry.names.slice(0, 2), `+${entry.names.length - 2}`] : entry.names;
-      return point(place.longitude!, place.latitude!, {
-        layer: 'contact',
-        placeId,
-        placeName: place.name,
-        contactIds: entry.contactIds,
-        label: shown.join(', '),
-      });
-    });
-    return { type: 'FeatureCollection', features } satisfies FeatureCollection;
+    if (!enabled) return EMPTY_FEATURES;
+    const parse = (raw: string | null): FuzzyDate | null => (raw ? (JSON.parse(raw) as FuzzyDate) : null);
+    return contactFeatures(
+      rows.map((row) => ({
+        contactId: row.contact_id,
+        displayName: row.display_name,
+        placeId: row.place_id,
+        addressType: row.address_type,
+        movedIn: parse(row.moved_in),
+        movedOut: parse(row.moved_out),
+      })),
+      places,
+    ).features;
   }, [enabled, rows, places]);
 }
 
@@ -284,16 +234,8 @@ export function useSavedPlaceFeatures(enabled: boolean): FeatureCollection {
     },
   });
 
-  return useMemo(() => {
-    if (!enabled) return EMPTY;
-    const features = (q.data ?? [])
-      .filter((s) => s.latitude != null && s.longitude != null)
-      .map((s) => point(s.longitude!, s.latitude!, {
-        layer: 'saved',
-        savedPlaceId: s.id,
-        label: s.label,
-        isFavorite: s.isFavorite,
-      }));
-    return { type: 'FeatureCollection', features } satisfies FeatureCollection;
-  }, [enabled, q.data]);
+  return useMemo(
+    () => (enabled ? savedPlaceFeatures(q.data ?? []) : EMPTY_FEATURES),
+    [enabled, q.data],
+  );
 }
