@@ -19,7 +19,7 @@ namespace LupiraCalBff.OpenApi;
 /// oneOf-null fix (merged 2026-08-19, unreleased as of 1.34.1). The specs are correct — OpenAPI 3.1
 /// has no other way to express a nullable reference.
 /// https://github.com/microsoft/kiota/issues/6776 · https://github.com/microsoft/kiota/pull/8064
-public static class NullableRefNormalizer
+internal static class NullableRefNormalizer
 {
     /// <summary>Returns the rewritten document and how many sites were collapsed.</summary>
     public static (JsonObject Document, int Collapsed) Normalize(JsonObject document)

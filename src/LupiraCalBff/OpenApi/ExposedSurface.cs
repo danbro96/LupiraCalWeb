@@ -7,7 +7,7 @@ namespace LupiraCalBff.OpenApi;
 /// Every <c>VERB /path</c> the BFF forwards. A positive list, so an endpoint an upstream grows later
 /// stays invisible until someone adds a line.
 /// </summary>
-public sealed class ExposedSurface
+internal sealed class ExposedSurface
 {
     /// <summary>Where each upstream is mounted on the BFF.</summary>
     public static readonly IReadOnlyDictionary<string, string> ClusterPrefixes = new Dictionary<string, string>

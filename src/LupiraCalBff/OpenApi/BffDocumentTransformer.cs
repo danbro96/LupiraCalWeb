@@ -9,7 +9,7 @@ namespace LupiraCalBff.OpenApi;
 /// Fills the BFF's OpenAPI document from the upstreams it proxies — YARP routes carry no schemas of
 /// their own, so nothing would describe the surface.
 /// </summary>
-public sealed class BffDocumentTransformer(ILogger<BffDocumentTransformer> logger) : IOpenApiDocumentTransformer
+internal sealed class BffDocumentTransformer(ILogger<BffDocumentTransformer> logger) : IOpenApiDocumentTransformer
 {
     public async Task TransformAsync(
         OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)

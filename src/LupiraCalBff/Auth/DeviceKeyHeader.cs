@@ -6,7 +6,7 @@ namespace LupiraCalBff.Auth;
 /// The device-ingest credential. Only location-api holds the device keys, so the BFF cannot verify one —
 /// it checks the header is well formed, forwards it untouched, and lets the upstream authenticate.
 /// </summary>
-public static partial class DeviceKeyHeader
+internal static partial class DeviceKeyHeader
 {
     public const string Scheme = "DeviceKey ";
 

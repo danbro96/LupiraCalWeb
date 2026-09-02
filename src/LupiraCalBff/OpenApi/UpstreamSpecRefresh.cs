@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 namespace LupiraCalBff.OpenApi;
 
 /// <summary>Writes the normalized copies of the upstream specs that the C# client generator reads.</summary>
-public static class UpstreamSpecRefresh
+internal static class UpstreamSpecRefresh
 {
     /// <summary>Where the generator reads from, relative to the project directory.</summary>
     public const string NormalizedDirectory = "upstream-normalized";

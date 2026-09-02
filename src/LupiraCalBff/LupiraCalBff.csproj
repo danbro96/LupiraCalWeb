@@ -14,6 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="LupiraCalBff.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Embedded so the transformer reads them identically at build-time generation, at runtime and
          under test — no dependency on the working directory. -->
     <EmbeddedResource Include="upstream\*.json" />
@@ -22,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" Version="4.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
     <PackageReference Include="Microsoft.Kiota.Bundle" Version="2.0.0" />

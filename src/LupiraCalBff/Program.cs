@@ -5,6 +5,7 @@ using Duende.AccessTokenManagement.OpenIdConnect;
 using LupiraCalBff.Auth;
 using LupiraCalBff.Endpoints;
 using LupiraCalBff.OpenApi;
+using LupiraCalBff.Proxy;
 using LupiraCalBff.Upstream;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -25,6 +26,18 @@ if (args is ["--normalize-specs", ..])
 }
 
 var builder = WebApplication.CreateBuilder(args);
+
+// `--routes` prints what the proxy will serve.
+if (args is ["--routes", ..])
+{
+    foreach (var (key, value) in ProxyRoutes.Build(ExposedSurface.Load()).OrderBy(r => r.Key, StringComparer.Ordinal))
+        Console.WriteLine($"{key} = {value}");
+    return;
+}
+
+// One exact template per allowlisted path, as a config source: YARP's LoadFromConfig and the
+// ApiPrefixes fence then read it exactly as they read appsettings, and clusters stay hand-maintained.
+builder.Configuration.AddInMemoryCollection(ProxyRoutes.Build(ExposedSurface.Load()));
 
 builder.Services.ConfigureHttpJsonOptions(o =>
     o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));

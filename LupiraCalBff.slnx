@@ -7,4 +7,7 @@
   <Folder Name="/src/">
     <Project Path="src/LupiraCalBff/LupiraCalBff.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LupiraCalBff.UnitTests/LupiraCalBff.UnitTests.csproj" />
+  </Folder>
 </Solution>

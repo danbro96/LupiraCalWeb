@@ -11,7 +11,7 @@ namespace LupiraCalBff.OpenApi;
 /// On the JSON DOM, not <c>OpenApiDocument</c>: renaming a colliding schema means retargeting every
 /// <c>$ref</c> to it, and the typed model exposes referenced nodes read-only.
 /// </remarks>
-public static class UpstreamSpecMerger
+internal static class UpstreamSpecMerger
 {
     /// <summary>Cluster to spec. The order decides which upstream keeps an unprefixed schema name.</summary>
     private static readonly (string Cluster, string Resource)[] Sources =
