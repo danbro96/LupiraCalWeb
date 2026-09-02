@@ -24,8 +24,7 @@ builder.AddCalAuth();
 var keyPath = builder.Configuration["DataProtection:KeyPath"];
 if (!string.IsNullOrWhiteSpace(keyPath))
     builder.Services.AddDataProtection()
-        // Defaults to the assembly name, so a rename voids every session cookie — pinned to the original.
-        .SetApplicationName("LupiraCalWeb")
+        .SetApplicationName("LupiraCalBff")
         .PersistKeysToFileSystem(new DirectoryInfo(keyPath));
 
 builder.Services.AddAppHealthChecks();
