@@ -10,6 +10,7 @@ import type { PlaceDto } from '@lupira/cal-api/models';
 import { loadMapStyle, type BasemapStyle, type MapTheme } from '../data/mapStyle';
 import { mapContactAddresses, mapEventRowsBetween } from '../data/mirror';
 import type { FuzzyDate } from '@lupira/cal-domain/fuzzyDate';
+import { trackWindowFrozen } from '@lupira/cal-domain/geo';
 import {
   EMPTY_FEATURES,
   contactFeatures,
@@ -120,14 +121,7 @@ export function usePhotoFeatures(bbox: string | null, enabled: boolean): Feature
 /** A recording hole longer than this breaks the drawn track (tracker off, retention edge). */
 const TRACK_MAX_GAP_S = 10 * 60;
 
-/** Raw GPS is append-only and the server's rollup only reworks yesterday and today, so a window that
- *  ended before yesterday can never change — cache it forever instead of re-fetching on every pan. */
-function staleTimeFor(toIso: string): number {
-  const yesterdayMidnight = new Date();
-  yesterdayMidnight.setHours(0, 0, 0, 0);
-  yesterdayMidnight.setDate(yesterdayMidnight.getDate() - 1);
-  return Date.parse(toIso) < yesterdayMidnight.getTime() ? Infinity : 5 * 60_000;
-}
+const staleTimeFor = (toIso: string): number => (trackWindowFrozen(toIso) ? Infinity : 5 * 60_000);
 
 export type MovementFeatures = { visits: FeatureCollection; track: FeatureCollection; current: FeatureCollection };
 

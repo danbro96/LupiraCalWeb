@@ -81,3 +81,18 @@ export function splitTrack<T extends TrackPointLike>(points: readonly T[], maxGa
 export function durationMin(fromIso: string, toIso: string): number {
   return Math.max(0, Math.floor((Date.parse(toIso) - Date.parse(fromIso)) / 60_000));
 }
+
+/**
+ * Whether a GPS window can no longer change: raw fixes are append-only and the visit/trip rollup
+ * only reworks yesterday and today, so anything ending before yesterday is frozen and cacheable
+ * forever. Callers turn this into their own cache policy.
+ *
+ * Start-of-yesterday must come from the calendar, not `midnight - 24h` — a DST transition makes the
+ * day 23 or 25 hours long and the arithmetic lands in the wrong day.
+ */
+export function trackWindowFrozen(toIso: string, now: Date = new Date()): boolean {
+  const startOfYesterday = new Date(now);
+  startOfYesterday.setHours(0, 0, 0, 0);
+  startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+  return Date.parse(toIso) < startOfYesterday.getTime();
+}

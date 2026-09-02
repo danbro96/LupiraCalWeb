@@ -2,8 +2,13 @@ import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-qu
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getListPhotosQueryKey, listPhotos } from '@lupira/cal-api/query/photo';
+import {
+  type DayGroup,
+  groupByDay as groupDays,
+  photoEventLinks,
+} from '@lupira/cal-domain/photoFormat';
 import type { ListPhotosParams, PhotoListItemDto } from '@lupira/cal-api/models';
-import { listRelationEdges } from '@lupira/cal-api/query/cal';
+import { getListRelationEdgesQueryKey, listRelationEdges } from '@lupira/cal-api/query/cal';
 
 /** The gallery's read model. Filters live in URL params so a view is linkable and survives a reload,
  *  exactly as useItemSearch does it. */
@@ -71,31 +76,16 @@ export function usePhotoLibrary(filters: PhotoFilters) {
  *  filter, and the viewer's event list without a request per tile. */
 export function usePhotoEventLinks() {
   const query = useQuery({
-    queryKey: ['/relations/edges', 'photo'],
+    queryKey: getListRelationEdgesQueryKey({ toKind: 'photo' }),
     queryFn: ({ signal }) => listRelationEdges({ toKind: 'photo' }, { signal }),
     staleTime: 5 * 60_000,
   });
 
-  return useMemo(() => {
-    const byPhoto = new Map<string, string[]>();
-    for (const edge of query.data ?? []) {
-      byPhoto.set(edge.toRef, [...(byPhoto.get(edge.toRef) ?? []), edge.fromId]);
-    }
-    return byPhoto;
-  }, [query.data]);
+  return useMemo(() => photoEventLinks(query.data ?? []), [query.data]);
 }
 
-/** Groups a page-flattened list into calendar days, preserving the incoming order. */
-export type PhotoDay = { key: string; label: string; items: PhotoListItemDto[] };
+export type PhotoDay = DayGroup<PhotoListItemDto>;
 
 export function groupByDay(items: PhotoListItemDto[]): PhotoDay[] {
-  const days: PhotoDay[] = [];
-  for (const item of items) {
-    const date = new Date(item.takenAt);
-    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    const last = days.at(-1);
-    if (last?.key === key) last.items.push(item);
-    else days.push({ key, label: date.toLocaleDateString(undefined, { dateStyle: 'full' }), items: [item] });
-  }
-  return days;
+  return groupDays(items, (date) => date.toLocaleDateString(undefined, { dateStyle: 'full' }));
 }

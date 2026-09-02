@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fmtBytes, fmtDimensions, fmtDuration } from './photoFormat';
+import { fmtBytes, fmtDimensions, fmtDuration, groupByDay, photoEventLinks } from './photoFormat';
 
 describe('fmtBytes', () => {
   it('scales through the binary units', () => {
@@ -46,5 +46,43 @@ describe('fmtDimensions', () => {
     // An unprocessed asset has no dimensions yet — the caller renders nothing rather than "null × null".
     expect(fmtDimensions(null, 3024)).toBeNull();
     expect(fmtDimensions(undefined, undefined)).toBeNull();
+  });
+});
+
+describe('groupByDay', () => {
+  const at = (iso: string) => ({ takenAt: iso, id: iso });
+
+  it('groups consecutive same-day items and preserves the incoming order', () => {
+    const days = groupByDay(
+      [at('2026-03-02T18:00:00'), at('2026-03-02T09:00:00'), at('2026-03-01T23:00:00')],
+      () => 'label',
+    );
+    expect(days.map((d) => d.key)).toEqual(['2026-03-02', '2026-03-01']);
+    expect(days[0].items.map((i) => i.id)).toEqual(['2026-03-02T18:00:00', '2026-03-02T09:00:00']);
+  });
+
+  // The server sorts, so grouping only watches for a change of date — a day that recurs later in
+  // the list is a separate group rather than merging backwards.
+  it('does not merge a day that reappears after another', () => {
+    const days = groupByDay([at('2026-03-02T10:00:00'), at('2026-03-01T10:00:00'), at('2026-03-02T08:00:00')], () => 'l');
+    expect(days.map((d) => d.key)).toEqual(['2026-03-02', '2026-03-01', '2026-03-02']);
+  });
+
+  it('takes its label from the caller', () => {
+    const days = groupByDay([at('2026-03-02T10:00:00')], (d) => `day ${d.getDate()}`);
+    expect(days[0].label).toBe('day 2');
+  });
+});
+
+describe('photoEventLinks', () => {
+  it('collects every calendar item linked to a photo', () => {
+    const links = photoEventLinks([
+      { toRef: 'p1', fromId: 'i1' },
+      { toRef: 'p2', fromId: 'i2' },
+      { toRef: 'p1', fromId: 'i3' },
+    ]);
+    expect(links.get('p1')).toEqual(['i1', 'i3']);
+    expect(links.get('p2')).toEqual(['i2']);
+    expect(links.has('p3')).toBe(false);
   });
 });

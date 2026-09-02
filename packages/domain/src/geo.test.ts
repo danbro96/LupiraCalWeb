@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bboxOf, bboxToParam, durationMin, haversineM, padBbox, splitTrack } from './geo';
+import { bboxOf, bboxToParam, durationMin, haversineM, padBbox, splitTrack, trackWindowFrozen } from './geo';
 
 describe('haversineM', () => {
   it('is zero for identical points', () => {
@@ -80,5 +80,32 @@ describe('durationMin', () => {
   it('floors to whole minutes and never goes negative', () => {
     expect(durationMin('2026-01-01T12:00:00Z', '2026-01-01T12:59:59Z')).toBe(59);
     expect(durationMin('2026-01-01T13:00:00Z', '2026-01-01T12:00:00Z')).toBe(0);
+  });
+});
+
+describe('trackWindowFrozen', () => {
+  const noon = (y: number, m: number, d: number) => new Date(y, m, d, 12);
+
+  it('freezes a window that ended before yesterday', () => {
+    expect(trackWindowFrozen('2026-03-01T10:00:00Z', noon(2026, 2, 10))).toBe(true);
+  });
+
+  it('leaves yesterday and today open — the rollup still reworks them', () => {
+    const now = noon(2026, 2, 10);
+    expect(trackWindowFrozen(new Date(2026, 2, 9, 12).toISOString(), now)).toBe(false);
+    expect(trackWindowFrozen(new Date(2026, 2, 10, 11).toISOString(), now)).toBe(false);
+  });
+
+  // `midnight - 24h` lands an hour off on the day after a DST shift; the boundary has to come from
+  // the calendar. Only meaningful under a DST timezone, which is why the assertion is on the
+  // calendar day rather than a fixed offset.
+  it('takes start-of-yesterday from the calendar, not a fixed 24 hours', () => {
+    const dayAfterSpringForward = noon(2026, 2, 30);
+    const startOfYesterday = new Date(dayAfterSpringForward);
+    startOfYesterday.setHours(0, 0, 0, 0);
+    startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+
+    expect(trackWindowFrozen(new Date(startOfYesterday.getTime() - 1).toISOString(), dayAfterSpringForward)).toBe(true);
+    expect(trackWindowFrozen(startOfYesterday.toISOString(), dayAfterSpringForward)).toBe(false);
   });
 });

@@ -5,6 +5,7 @@ import {
   useListTrips,
   useListVisits,
 } from '@lupira/cal-api/query/location';
+import { trackWindowFrozen } from '@lupira/cal-domain/geo';
 
 /**
  * GPS read models for the map, online-only. Query keys are collision-free with the other APIs
@@ -14,13 +15,7 @@ import {
  */
 const FIVE_MIN_MS = 5 * 60 * 1000;
 
-function staleTimeFor(to: string): number {
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-  // The hourly rollup still touches yesterday — only windows ending before then are frozen.
-  const frozenBefore = startOfToday.getTime() - 24 * 60 * 60 * 1000;
-  return Date.parse(to) < frozenBefore ? Infinity : FIVE_MIN_MS;
-}
+const staleTimeFor = (to: string): number => (trackWindowFrozen(to) ? Infinity : FIVE_MIN_MS);
 
 export function useVisits(from: string, to: string, enabled: boolean) {
   return useListVisits(

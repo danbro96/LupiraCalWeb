@@ -6,6 +6,7 @@ import { getDb } from '../data/db/expoDb';
 import { loadItem } from '../data/mirror';
 import { getPhoto, getPhotoStats, listPhotos, lookupPhotos } from '@lupira/cal-api/fetch/photo';
 import type { AssetKind, AssetStatus, PhotoListItemDto, PhotoSort } from '@lupira/cal-api/models';
+import { groupByDay as groupDays, photoEventLinks } from '@lupira/cal-domain/photoFormat';
 import { useSyncStatus } from '../sync/syncStatus';
 
 /** The gallery's read model. Photos are network-only — the SQLite mirror covers cal and contacts only —
@@ -108,14 +109,7 @@ function usePhotoEventEdges() {
 /** photoId → linked calendar item ids. */
 export function usePhotoEventLinks(): Map<string, string[]> {
   const query = usePhotoEventEdges();
-
-  return useMemo(() => {
-    const byPhoto = new Map<string, string[]>();
-    for (const edge of query.data ?? []) {
-      byPhoto.set(edge.toRef, [...(byPhoto.get(edge.toRef) ?? []), edge.fromId]);
-    }
-    return byPhoto;
-  }, [query.data]);
+  return useMemo(() => photoEventLinks(query.data ?? []), [query.data]);
 }
 
 /** The photos linked to one calendar item, hydrated in a single batch lookup. */
@@ -181,15 +175,8 @@ export function useLinkCandidates(takenAt: string, enabled: boolean) {
 
 export type PhotoDay = { key: string; label: string; data: PhotoListItemDto[] };
 
-/** Groups the flattened pages into calendar days, preserving order — SectionList's shape. */
+/** SectionList wants the rows under `data`, so the shared groups are re-keyed on the way out. */
 export function groupByDay(items: PhotoListItemDto[]): PhotoDay[] {
-  const days: PhotoDay[] = [];
-  for (const item of items) {
-    const date = new Date(item.takenAt);
-    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    const last = days.at(-1);
-    if (last?.key === key) last.data.push(item);
-    else days.push({ key, label: date.toLocaleDateString(undefined, { dateStyle: 'medium' }), data: [item] });
-  }
-  return days;
+  return groupDays(items, (date) => date.toLocaleDateString(undefined, { dateStyle: 'medium' }))
+    .map(({ key, label, items: rows }) => ({ key, label, data: rows }));
 }

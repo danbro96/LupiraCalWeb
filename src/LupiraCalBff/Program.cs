@@ -23,7 +23,10 @@ builder.AddCalAuth();
 // Persist data-protection keys so the auth cookie survives container restarts (mount DataProtection:KeyPath).
 var keyPath = builder.Configuration["DataProtection:KeyPath"];
 if (!string.IsNullOrWhiteSpace(keyPath))
-    builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keyPath));
+    builder.Services.AddDataProtection()
+        // Defaults to the assembly name, so a rename voids every session cookie — pinned to the original.
+        .SetApplicationName("LupiraCalWeb")
+        .PersistKeysToFileSystem(new DirectoryInfo(keyPath));
 
 builder.Services.AddAppHealthChecks();
 

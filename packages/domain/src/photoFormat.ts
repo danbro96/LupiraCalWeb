@@ -32,3 +32,40 @@ export function fmtDuration(seconds: number): string {
 export function fmtDimensions(width: number | null | undefined, height: number | null | undefined): string | null {
   return width && height ? `${width} × ${height}` : null;
 }
+
+export interface DayGroup<T> {
+  key: string;
+  label: string;
+  items: T[];
+}
+
+/**
+ * Groups a page-flattened list into calendar days, preserving the incoming order — the server
+ * already sorts, so a day boundary is just where the local date changes. The label is formatted by
+ * the caller because the two galleries have very different widths to spend.
+ */
+export function groupByDay<T extends { takenAt: string }>(
+  items: readonly T[],
+  formatLabel: (date: Date) => string,
+): DayGroup<T>[] {
+  const days: DayGroup<T>[] = [];
+  for (const item of items) {
+    const date = new Date(item.takenAt);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const last = days.at(-1);
+    if (last?.key === key) last.items.push(item);
+    else days.push({ key, label: formatLabel(date), items: [item] });
+  }
+  return days;
+}
+
+/** photoId → the calendar items linked to it, from one edge list rather than a call per tile. */
+export function photoEventLinks(
+  edges: readonly { toRef: string; fromId: string }[],
+): Map<string, string[]> {
+  const byPhoto = new Map<string, string[]>();
+  for (const edge of edges) {
+    byPhoto.set(edge.toRef, [...(byPhoto.get(edge.toRef) ?? []), edge.fromId]);
+  }
+  return byPhoto;
+}
