@@ -12,7 +12,7 @@ import { composeDisplayName, loadContact } from '../../data/mirror';
 import type { PartialDateDto } from '../../domain/docTypes';
 import { reachLink } from '../../domain/reach';
 import { deleteContact } from '../../state/actions';
-import { useContactState } from '../../state/queries';
+import { useContactState } from '../../state/useContactList';
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';
 

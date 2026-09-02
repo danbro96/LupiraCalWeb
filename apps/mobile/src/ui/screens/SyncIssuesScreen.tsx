@@ -8,7 +8,7 @@ import { OP_LABELS, type OpKind } from '../../domain/ops';
 import { retryOne } from '../../sync/outbox';
 import { discardParkedAndRestore, runSync } from '../../sync/sync';
 import { PHASE_LABELS, useSyncStatus } from '../../sync/syncStatus';
-import { useOutboxRows } from '../../state/queries';
+import { useOutboxRows } from '../../state/useOutboxRows';
 import { useConfirm } from '../components/ConfirmDialog';
 import { Button } from '../components/Button';
 import { IndeterminateBar } from '../components/IndeterminateBar';

@@ -1,5 +1,5 @@
 import { AVAILABILITY_COLORS, BIRTHDAY_COLOR, hashColor, isAvailabilityStatus } from '@lupira/cal-tokens/kinds';
-import { useCalendars } from '../../state/queries';
+import { useCalendars } from '../../state/useContainers';
 
 export { AVAILABILITY_COLORS, BIRTHDAY_COLOR, hashColor };
 

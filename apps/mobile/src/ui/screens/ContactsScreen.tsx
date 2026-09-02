@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Avatar, FAB, List, Searchbar, Text } from 'react-native-paper';
 import type { ContactListRow } from '../../data/mirror';
-import { useContactList } from '../../state/queries';
+import { useContactList } from '../../state/useContactList';
 import { hashColor } from '../hooks/palette';
 import { ScreenToolbar } from '../components/ScreenToolbar';
 import { SyncBanner } from '../components/SyncBanner';

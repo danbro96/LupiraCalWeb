@@ -21,9 +21,8 @@ import { fallbackStyle } from '../../data/mapStyle';
 import { toastError } from '../../feedback/toast';
 import { useAuth } from '../../state/auth-store';
 import { useLocationTracking } from '../../state/location-tracking-store';
-import {
-  useContactFeatures, useEventFeatures, useMapStyle, useMovementFeatures, usePhotoFeatures, useSavedPlaceFeatures,
-} from '../../state/map-queries';
+import { useContactFeatures, useEventFeatures, useMovementFeatures, usePhotoFeatures, useSavedPlaceFeatures } from '../../state/useMapData';
+import { useMapStyle } from '../../state/useMapStyle';
 import { useLivePosition } from '../../sync/livePosition';
 import {
   DEFAULT_LAYERS, LayersFab, LayersSheet, LocateFab, type FollowMode, type LayerKey,

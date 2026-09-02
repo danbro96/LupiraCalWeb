@@ -1,4 +1,4 @@
-import type { PhotoQueryFilters } from '../../state/photo-queries';
+import type { PhotoQueryFilters } from '../../state/usePhotoLibrary';
 
 export type RootStackParamList = {
   Settings: undefined;

@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { Button, Chip, Text } from 'react-native-paper';
 import { createItemRelation } from '@lupira/cal-api/fetch/cal';
 import { toast, toastError } from '../../feedback/toast';
-import { useLinkCandidates, useLinkedEvents, usePhotoEventLinks } from '../../state/photo-queries';
+import { useLinkCandidates, useLinkedEvents, usePhotoEventLinks } from '../../state/usePhotoEventLinks';
 import { invalidatePhotos } from '../../sync/reactivity';
 import { useColors } from '../theme';
 import type { RootStackParamList } from '../navigation/types';

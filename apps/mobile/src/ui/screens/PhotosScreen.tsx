@@ -6,10 +6,8 @@ import { Pressable, SectionList, StyleSheet, useWindowDimensions, View } from 'r
 import { Chip, Text } from 'react-native-paper';
 import { fmtDuration } from '@lupira/cal-domain/photoFormat';
 import type { PhotoListItemDto } from '@lupira/cal-api/models';
-import {
-  DEFAULT_PHOTO_FILTERS, groupByDay, usePhotoEventLinks, usePhotoLibrary, usePhotoStats,
-  type PhotoQueryFilters,
-} from '../../state/photo-queries';
+import { usePhotoEventLinks } from '../../state/usePhotoEventLinks';
+import { DEFAULT_PHOTO_FILTERS, groupByDay, usePhotoLibrary, usePhotoStats, type PhotoQueryFilters } from '../../state/usePhotoLibrary';
 import { Centered } from '../components/Centered';
 import { IndeterminateBar } from '../components/IndeterminateBar';
 import { SyncBanner } from '../components/SyncBanner';

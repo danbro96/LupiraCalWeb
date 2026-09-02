@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { createItem } from '../../state/actions';
-import { useCalendars } from '../../state/queries';
+import { useCalendars } from '../../state/useContainers';
 import { Button } from '../components/Button';
 import { SegmentedPicker } from '../components/SegmentedPicker';
 import { DateField } from '../components/DateField';

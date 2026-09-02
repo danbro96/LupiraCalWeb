@@ -1,16 +1,9 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { FeatureCollection } from 'geojson';
-import { getDb } from '../data/db/expoDb';
-import { lookupPlaces } from '@lupira/cal-api/fetch/geo';
 import { listSavedPlaces } from '@lupira/cal-api/fetch/geo';
 import { getPhotoMap } from '@lupira/cal-api/fetch/photo';
-import { getCurrentLocation, getThinnedTrack, listVisits } from '@lupira/cal-api/fetch/location';
-import type { PlaceDto } from '@lupira/cal-api/models';
-import { loadMapStyle, type BasemapStyle, type MapTheme } from '../data/mapStyle';
-import { mapContactAddresses, mapEventRowsBetween } from '../data/mirror';
 import type { FuzzyDate } from '@lupira/cal-domain/fuzzyDate';
-import { trackWindowFrozen } from '@lupira/cal-domain/geo';
 import {
   EMPTY_FEATURES,
   contactFeatures,
@@ -21,54 +14,20 @@ import {
   trackFeatures,
   visitFeatures,
 } from '@lupira/cal-domain/mapFeatures';
-import { useCalendars } from './queries';
+import { getDb } from '../data/db/expoDb';
+import { mapContactAddresses, mapEventRowsBetween } from '../data/mirror';
 import { useSyncStatus } from '../sync/syncStatus';
+import { useCalendars } from './useContainers';
+import { useCurrentFixes, useThinnedTrack, useVisits } from './useMovement';
+import { usePlaceCoords } from './usePlaceLookup';
 
-/** Map read hooks. Mirror-backed queries key under ['occurrences', ...] so sync pulls invalidate them;
- *  network-backed ones override the mirror-tuned defaults (staleTime Infinity / retry false) exactly like
- *  useTaskDeadlines — offline the map simply lacks those layers, never an error surface. */
+/** GeoJSON layers for the map. Mirror-backed reads key under ['occurrences'/'contacts'] so sync pulls
+ *  invalidate them; network-backed ones override the mirror-tuned defaults (staleTime Infinity /
+ *  retry false) — offline the map simply lacks those layers, never an error surface. */
 
-const LOOKUP_MAX = 200; // server cap per POST /places/lookup call
+/** A recording hole longer than this breaks the drawn track (tracker off, retention edge). */
+const TRACK_MAX_GAP_S = 10 * 60;
 
-export function useMapStyle(theme: MapTheme): { style: BasemapStyle | undefined; degraded: boolean } {
-  const reachable = useSyncStatus((s) => s.serverReachable);
-  const q = useQuery<BasemapStyle>({
-    queryKey: ['map', 'style', theme],
-    enabled: reachable,
-    staleTime: 60 * 60_000,
-    retry: 1,
-    queryFn: () => loadMapStyle(theme),
-  });
-  return { style: q.data, degraded: q.isError };
-}
-
-function usePlaceCoords(placeIds: (string | null | undefined)[]): Map<string, PlaceDto> {
-  const reachable = useSyncStatus((s) => s.serverReachable);
-  const distinct = useMemo(() => [...new Set(placeIds.filter((id): id is string => !!id))].sort(), [placeIds]);
-  const q = useQuery({
-    queryKey: ['map', 'places', distinct],
-    enabled: reachable && distinct.length > 0,
-    staleTime: 10 * 60_000,
-    retry: 1,
-    queryFn: async () => {
-      const chunks: string[][] = [];
-      for (let i = 0; i < distinct.length; i += LOOKUP_MAX) chunks.push(distinct.slice(i, i + LOOKUP_MAX));
-      const results = await Promise.all(chunks.map((ids) => lookupPlaces({ ids })));
-      const map = new Map<string, PlaceDto>();
-      for (const r of results) {
-        if (r.status !== 200) throw new Error(`places lookup ${r.status}`);
-        for (const item of r.data) {
-          if (item.place && item.place.latitude != null && item.place.longitude != null)
-            map.set(item.requestedId, item.place);
-        }
-      }
-      return map;
-    },
-  });
-  return q.data ?? new Map<string, PlaceDto>();
-}
-
-/** Event pins: placed items with an occurrence in [fromDay, toDay], hydrated placeId → coords. */
 export function useEventFeatures(fromDay: string, toDay: string, enabled: boolean): FeatureCollection {
   const rowsQ = useQuery({
     queryKey: ['occurrences', 'map', fromDay, toDay],
@@ -118,59 +77,14 @@ export function usePhotoFeatures(bbox: string | null, enabled: boolean): Feature
   );
 }
 
-/** A recording hole longer than this breaks the drawn track (tracker off, retention edge). */
-const TRACK_MAX_GAP_S = 10 * 60;
-
-const staleTimeFor = (toIso: string): number => (trackWindowFrozen(toIso) ? Infinity : 5 * 60_000);
-
 export type MovementFeatures = { visits: FeatureCollection; track: FeatureCollection; current: FeatureCollection };
 
 const EMPTY_MOVEMENT: MovementFeatures = { visits: EMPTY_FEATURES, track: EMPTY_FEATURES, current: EMPTY_FEATURES };
-
-/** Where you've been: dwell circles, an activity-coloured track, and the last fix each device reported.
- *  Empty until something uploads — this app's own recorder is the only producer. */
+/** Where you've been: dwell circles, an activity-coloured track, and the last fix each device reported. */
 export function useMovementFeatures(fromIso: string, toIso: string, enabled: boolean): MovementFeatures {
-  const reachable = useSyncStatus((s) => s.serverReachable);
-  const on = enabled && reachable;
-  const staleTime = staleTimeFor(toIso);
-
-  const visitsQ = useQuery({
-    queryKey: ['map', 'visits', fromIso, toIso],
-    enabled: on,
-    staleTime,
-    retry: 1,
-    queryFn: async () => {
-      const r = await listVisits({ from: fromIso, to: toIso });
-      if (r.status !== 200) throw new Error(`visits ${r.status}`);
-      return r.data;
-    },
-  });
-
-  const trackQ = useQuery({
-    queryKey: ['map', 'track', fromIso, toIso],
-    enabled: on,
-    staleTime,
-    retry: 1,
-    queryFn: async () => {
-      // Raw /location/track caps at 50k points; the thinned form is one best fix per bucket.
-      const r = await getThinnedTrack({ from: fromIso, to: toIso, bucketSeconds: 30 });
-      if (r.status !== 200) throw new Error(`track ${r.status}`);
-      return r.data;
-    },
-  });
-
-  const currentQ = useQuery({
-    queryKey: ['map', 'current'],
-    enabled: on,
-    staleTime: 15_000,
-    refetchInterval: 30_000,
-    retry: 1,
-    queryFn: async () => {
-      const r = await getCurrentLocation();
-      if (r.status !== 200) throw new Error(`current ${r.status}`);
-      return r.data;
-    },
-  });
+  const visitsQ = useVisits(fromIso, toIso, enabled);
+  const trackQ = useThinnedTrack(fromIso, toIso, enabled);
+  const currentQ = useCurrentFixes(enabled);
 
   return useMemo(() => {
     if (!enabled) return EMPTY_MOVEMENT;

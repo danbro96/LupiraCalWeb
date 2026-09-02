@@ -3,7 +3,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Image } from 'expo-image';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { List } from 'react-native-paper';
-import { useEventPhotos } from '../../state/photo-queries';
+import { useEventPhotos } from '../../state/usePhotoEventLinks';
 import { useColors } from '../theme';
 import type { RootStackParamList } from '../navigation/types';
 

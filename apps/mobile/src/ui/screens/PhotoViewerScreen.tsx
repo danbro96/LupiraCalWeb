@@ -10,7 +10,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import type { PhotoListItemDto } from '@lupira/cal-api/models';
 import { deletePhoto, reprocessPhoto } from '@lupira/cal-api/fetch/photo';
 import { toast, toastError } from '../../feedback/toast';
-import { DEFAULT_PHOTO_FILTERS, usePhoto, usePhotoLibrary } from '../../state/photo-queries';
+import { DEFAULT_PHOTO_FILTERS, usePhoto, usePhotoLibrary } from '../../state/usePhotoLibrary';
 import { invalidatePhotos } from '../../sync/reactivity';
 import { Centered } from '../components/Centered';
 import { useConfirm } from '../components/ConfirmDialog';

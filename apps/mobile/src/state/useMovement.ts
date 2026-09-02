@@ -1,0 +1,56 @@
+import { useQuery } from '@tanstack/react-query';
+import { getCurrentLocation, getThinnedTrack, listVisits } from '@lupira/cal-api/fetch/location';
+import { trackWindowFrozen } from '@lupira/cal-domain/geo';
+import { useSyncStatus } from '../sync/syncStatus';
+
+/** GPS reads for the map, online-only. Empty until something uploads — this app's own recorder is the
+ *  only producer. */
+
+const staleTimeFor = (toIso: string): number => (trackWindowFrozen(toIso) ? Infinity : 5 * 60_000);
+
+export function useVisits(fromIso: string, toIso: string, enabled: boolean) {
+  const reachable = useSyncStatus((s) => s.serverReachable);
+  return useQuery({
+    queryKey: ['map', 'visits', fromIso, toIso],
+    enabled: enabled && reachable,
+    staleTime: staleTimeFor(toIso),
+    retry: 1,
+    queryFn: async () => {
+      const r = await listVisits({ from: fromIso, to: toIso });
+      if (r.status !== 200) throw new Error(`visits ${r.status}`);
+      return r.data;
+    },
+  });
+}
+
+export function useThinnedTrack(fromIso: string, toIso: string, enabled: boolean) {
+  const reachable = useSyncStatus((s) => s.serverReachable);
+  return useQuery({
+    queryKey: ['map', 'track', fromIso, toIso],
+    enabled: enabled && reachable,
+    staleTime: staleTimeFor(toIso),
+    retry: 1,
+    queryFn: async () => {
+      // Raw /location/track caps at 50k points; the thinned form is one best fix per bucket.
+      const r = await getThinnedTrack({ from: fromIso, to: toIso, bucketSeconds: 30 });
+      if (r.status !== 200) throw new Error(`track ${r.status}`);
+      return r.data;
+    },
+  });
+}
+
+export function useCurrentFixes(enabled: boolean) {
+  const reachable = useSyncStatus((s) => s.serverReachable);
+  return useQuery({
+    queryKey: ['map', 'current'],
+    enabled: enabled && reachable,
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+    retry: 1,
+    queryFn: async () => {
+      const r = await getCurrentLocation();
+      if (r.status !== 200) throw new Error(`current ${r.status}`);
+      return r.data;
+    },
+  });
+}
