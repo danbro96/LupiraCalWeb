@@ -190,6 +190,22 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
 
   const save = handleSubmit(async (v) => {
     clearErrors('root');
+
+    // Parse before the first write. This used to sit between the name write and the address write,
+    // so an unparseable residency date returned with the rename already committed — the user saw a
+    // validation error and no sign that half the form had saved.
+    const cleanAddresses: ContactPostalAddress[] = [];
+    for (const a of v.addresses) {
+      if (!a.placeId) continue;
+      const movedIn = a.movedInText.trim() ? parseFuzzyInput(a.movedInText) : null;
+      const movedOut = a.movedOutText.trim() ? parseFuzzyInput(a.movedOutText) : null;
+      if ((a.movedInText.trim() && !movedIn) || (a.movedOutText.trim() && !movedOut)) {
+        setError('root', { message: 'Residency dates must be YYYY, YYYY-MM, or YYYY-MM-DD.' });
+        return;
+      }
+      cleanAddresses.push({ placeId: a.placeId, type: a.type, movedIn, movedOut });
+    }
+
     try {
       const rev: ReviseContactRequest = {};
       if (norm(v.givenName) !== norm(contact.givenName)) rev.givenName = v.givenName;
@@ -209,17 +225,6 @@ export function ContactEditForm({ contact, onDone }: { contact: ContactDto; onDo
       const nextTags = (contact.tags ?? []).includes(PINNED_TAG) ? [...v.tags, PINNED_TAG] : v.tags;
       if (!sameList(nextTags, contact.tags ?? [])) await setTags.mutateAsync({ id, data: { tags: nextTags } });
 
-      const cleanAddresses: ContactPostalAddress[] = [];
-      for (const a of v.addresses) {
-        if (!a.placeId) continue;
-        const movedIn = a.movedInText.trim() ? parseFuzzyInput(a.movedInText) : null;
-        const movedOut = a.movedOutText.trim() ? parseFuzzyInput(a.movedOutText) : null;
-        if ((a.movedInText.trim() && !movedIn) || (a.movedOutText.trim() && !movedOut)) {
-          setError('root', { message: 'Residency dates must be YYYY, YYYY-MM, or YYYY-MM-DD.' });
-          return;
-        }
-        cleanAddresses.push({ placeId: a.placeId, type: a.type, movedIn, movedOut });
-      }
       if (JSON.stringify(cleanAddresses.map(normAddr)) !== JSON.stringify(contact.addresses.map(normAddr)))
         await setAddresses.mutateAsync({ id, data: { addresses: cleanAddresses } });
 
