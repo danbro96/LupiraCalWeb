@@ -12,16 +12,13 @@ import type {
   ClearItemPromptParams,
   ContainerDto,
   CreateCalendarItemRequest,
-  CreateCalendarItemsBatchRequest,
   CreateCalendarRequest,
   CreateRelationRequest,
   FileItemToCalendarParams,
   GetChangesParams,
   GetParticipationSummaryParams,
-  GetThinItemsParams,
   GrantOwnerRequest,
   InviteParticipantParams,
-  ItemBatchResult,
   JsonNode,
   ListRelationEdgesParams,
   MergeItemMetadataParams,
@@ -35,8 +32,6 @@ import type {
   SearchItemsParams,
   SetItemActionRequest,
   SetItemPromptRequest,
-  SetParticipantsRequest,
-  SetParticipantsResult,
   SyncChangesResponse,
   UpdateCalendarItemRequest
 } from '../../models';
@@ -506,69 +501,6 @@ return apiRequest<createItemResponse>(getCreateItemUrl(),
 );}
 
 
-export type createItemsBatchResponse200 = {
-  data: ItemBatchResult[]
-  status: 200
-}
-
-export type createItemsBatchResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type createItemsBatchResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type createItemsBatchResponse403 = {
-  data: ProblemDetails
-  status: 403
-}
-
-export type createItemsBatchResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type createItemsBatchResponseSuccess = (createItemsBatchResponse200) & {
-  headers: Headers;
-};
-export type createItemsBatchResponseError = (createItemsBatchResponse400 | createItemsBatchResponse401 | createItemsBatchResponse403 | createItemsBatchResponse500) & {
-  headers: Headers;
-};
-
-export type createItemsBatchResponse = (createItemsBatchResponseSuccess | createItemsBatchResponseError)
-
-export const getCreateItemsBatchUrl = () => {
-
-
-
-
-  return `/api/items/batch`
-}
-
-/**
- * @summary Create many items in one call (idempotent per item on SourceKey; children reference parents by ParentSourceKey in any order). Returns a per-item result (created|existed|invalid) in input order.
- */
-export const createItemsBatch = async (createCalendarItemsBatchRequest: CreateCalendarItemsBatchRequest, options?: Parameters<typeof apiRequest>[1]): Promise<createItemsBatchResponse> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<createItemsBatchResponse>(getCreateItemsBatchUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(createCalendarItemsBatchRequest)
-  }
-);}
-
-
 export type getItemResponse200 = {
   data: CalendarItemDto
   status: 200
@@ -726,70 +658,6 @@ export const deleteItem = async (id: string, options?: Parameters<typeof apiRequ
   {
     ...options,
     method: 'DELETE'
-
-
-  }
-);}
-
-
-export type getThinItemsResponse200 = {
-  data: CalendarItemDto[]
-  status: 200
-}
-
-export type getThinItemsResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type getThinItemsResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type getThinItemsResponse403 = {
-  data: ProblemDetails
-  status: 403
-}
-
-export type getThinItemsResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type getThinItemsResponseSuccess = (getThinItemsResponse200) & {
-  headers: Headers;
-};
-export type getThinItemsResponseError = (getThinItemsResponse400 | getThinItemsResponse401 | getThinItemsResponse403 | getThinItemsResponse500) & {
-  headers: Headers;
-};
-
-export type getThinItemsResponse = (getThinItemsResponseSuccess | getThinItemsResponseError)
-
-export const getGetThinItemsUrl = (params?: GetThinItemsParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/items/thin?${stringifiedParams}` : `/api/items/thin`
-}
-
-/**
- * @summary Check-in worklist: items ranked thinnest-first by completeness score (< maxScore, default 1 = any item with gaps). Item-granular (no recurrence expansion); exempt items (system/Birthdays/Availability calendars, cancelled) are excluded. Acknowledge an inapplicable gap field by merging metadata {"completeness":{"na":["booking"]}} so it stops counting.
- */
-export const getThinItems = async (params?: GetThinItemsParams, options?: Parameters<typeof apiRequest>[1]): Promise<getThinItemsResponse> => {
-
-  return apiRequest<getThinItemsResponse>(getGetThinItemsUrl(params),
-  {
-    ...options,
-    method: 'GET'
 
 
   }
@@ -1624,70 +1492,6 @@ export const inviteParticipant = async (id: string,
     method: 'POST'
 
 
-  }
-);}
-
-
-export type setParticipantsResponse200 = {
-  data: SetParticipantsResult
-  status: 200
-}
-
-export type setParticipantsResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type setParticipantsResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type setParticipantsResponse404 = {
-  data: ProblemDetails
-  status: 404
-}
-
-export type setParticipantsResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type setParticipantsResponseSuccess = (setParticipantsResponse200) & {
-  headers: Headers;
-};
-export type setParticipantsResponseError = (setParticipantsResponse400 | setParticipantsResponse401 | setParticipantsResponse404 | setParticipantsResponse500) & {
-  headers: Headers;
-};
-
-export type setParticipantsResponse = (setParticipantsResponseSuccess | setParticipantsResponseError)
-
-export const getSetParticipantsUrl = (id: string,) => {
-
-
-
-
-  return `/api/items/${id}/participants`
-}
-
-/**
- * @summary Add a set of contacts as attendees in one call (add-only). Attended=true also marks them attended (historical backfill). Slim result (additions + already-present count), not the full item.
- */
-export const setParticipants = async (id: string,
-    setParticipantsRequest: SetParticipantsRequest, options?: Parameters<typeof apiRequest>[1]): Promise<setParticipantsResponse> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<setParticipantsResponse>(getSetParticipantsUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(setParticipantsRequest)
   }
 );}
 

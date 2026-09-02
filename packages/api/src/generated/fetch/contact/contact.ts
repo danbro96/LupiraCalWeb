@@ -13,31 +13,24 @@ import type {
   ContactDto,
   ContactGetChangesParams,
   ContactGroupDto,
-  ContactNameMatch,
   ContactOwnerGrantDto,
   ContactRelationEntryDto,
   ContactSyncChangesResponse,
   CreateAddressBookRequest,
   CreateContactGroupParams,
   CreateContactRequest,
-  CreateContactsBatchRequest,
   EndContactRelationRequest,
   GetContactCirclesParams,
-  GetThinContactsParams,
   GrantOwnerRequest,
-  JsonNode,
   ListContactRelationsParams,
   MeDto,
-  MergeContactMetadataParams,
   ProblemDetails,
   RemoveContactRelationParams,
   RenameContactGroupParams,
-  ResolveContactsByNameRequest,
   ReviseContactRequest,
   RevokeAddressBookOwnerParams,
   SearchContactsParams,
   SetContactAddressesRequest,
-  SetContactAvatarRequest,
   SetContactChannelsRequest,
   SetContactProfilesRequest,
   SetContactTagsRequest,
@@ -752,196 +745,6 @@ return apiRequest<createContactResponse>(getCreateContactUrl(),
 );}
 
 
-export type getThinContactsResponse200 = {
-  data: ContactDto[]
-  status: 200
-}
-
-export type getThinContactsResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type getThinContactsResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type getThinContactsResponse403 = {
-  data: ProblemDetails
-  status: 403
-}
-
-export type getThinContactsResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type getThinContactsResponseSuccess = (getThinContactsResponse200) & {
-  headers: Headers;
-};
-export type getThinContactsResponseError = (getThinContactsResponse400 | getThinContactsResponse401 | getThinContactsResponse403 | getThinContactsResponse500) & {
-  headers: Headers;
-};
-
-export type getThinContactsResponse = (getThinContactsResponseSuccess | getThinContactsResponseError)
-
-export const getGetThinContactsUrl = (params?: GetThinContactsParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/contact-api/contacts/thin?${stringifiedParams}` : `/contact-api/contacts/thin`
-}
-
-/**
- * @summary Check-in worklist: contacts ranked thinnest-first by completeness score (< maxScore, default 1 = any contact with gaps). Kind-aware (person vs organisation card). Acknowledge an inapplicable gap field by merging metadata {"completeness":{"na":["organisation"]}} so it stops counting.
- */
-export const getThinContacts = async (params?: GetThinContactsParams, options?: Parameters<typeof apiRequest>[1]): Promise<getThinContactsResponse> => {
-
-  return apiRequest<getThinContactsResponse>(getGetThinContactsUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-export type createContactsBatchResponse200 = {
-  data: ContactDto[]
-  status: 200
-}
-
-export type createContactsBatchResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type createContactsBatchResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type createContactsBatchResponse403 = {
-  data: ProblemDetails
-  status: 403
-}
-
-export type createContactsBatchResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type createContactsBatchResponseSuccess = (createContactsBatchResponse200) & {
-  headers: Headers;
-};
-export type createContactsBatchResponseError = (createContactsBatchResponse400 | createContactsBatchResponse401 | createContactsBatchResponse403 | createContactsBatchResponse500) & {
-  headers: Headers;
-};
-
-export type createContactsBatchResponse = (createContactsBatchResponseSuccess | createContactsBatchResponseError)
-
-export const getCreateContactsBatchUrl = () => {
-
-
-
-
-  return `/contact-api/contacts/batch`
-}
-
-/**
- * @summary Create many contacts in one transaction (each carries its AddressBookId); returned index-for-index with the request.
- */
-export const createContactsBatch = async (createContactsBatchRequest: CreateContactsBatchRequest, options?: Parameters<typeof apiRequest>[1]): Promise<createContactsBatchResponse> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<createContactsBatchResponse>(getCreateContactsBatchUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(createContactsBatchRequest)
-  }
-);}
-
-
-export type resolveContactsByNameResponse200 = {
-  data: ContactNameMatch[]
-  status: 200
-}
-
-export type resolveContactsByNameResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type resolveContactsByNameResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type resolveContactsByNameResponse403 = {
-  data: ProblemDetails
-  status: 403
-}
-
-export type resolveContactsByNameResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type resolveContactsByNameResponseSuccess = (resolveContactsByNameResponse200) & {
-  headers: Headers;
-};
-export type resolveContactsByNameResponseError = (resolveContactsByNameResponse400 | resolveContactsByNameResponse401 | resolveContactsByNameResponse403 | resolveContactsByNameResponse500) & {
-  headers: Headers;
-};
-
-export type resolveContactsByNameResponse = (resolveContactsByNameResponseSuccess | resolveContactsByNameResponseError)
-
-export const getResolveContactsByNameUrl = () => {
-
-
-
-
-  return `/contact-api/contacts/resolve-names`
-}
-
-/**
- * @summary Batch-match a list of names to contacts for imports: per name Matched (→contactId) / Ambiguous / NotFound, with candidate refs. Substring + normalized-name match, not phonetic.
- */
-export const resolveContactsByName = async (resolveContactsByNameRequest: ResolveContactsByNameRequest, options?: Parameters<typeof apiRequest>[1]): Promise<resolveContactsByNameResponse> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<resolveContactsByNameResponse>(getResolveContactsByNameUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(resolveContactsByNameRequest)
-  }
-);}
-
-
 export type getContactResponse200 = {
   data: ContactDto
   status: 200
@@ -1106,74 +909,6 @@ export const deleteContact = async (id: string, options?: Parameters<typeof apiR
     method: 'DELETE'
 
 
-  }
-);}
-
-
-export type mergeContactMetadataResponse200 = {
-  data: ContactDto
-  status: 200
-}
-
-export type mergeContactMetadataResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type mergeContactMetadataResponse404 = {
-  data: ProblemDetails
-  status: 404
-}
-
-export type mergeContactMetadataResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type mergeContactMetadataResponseSuccess = (mergeContactMetadataResponse200) & {
-  headers: Headers;
-};
-export type mergeContactMetadataResponseError = (mergeContactMetadataResponse401 | mergeContactMetadataResponse404 | mergeContactMetadataResponse500) & {
-  headers: Headers;
-};
-
-export type mergeContactMetadataResponse = (mergeContactMetadataResponseSuccess | mergeContactMetadataResponseError)
-
-export const getMergeContactMetadataUrl = (id: string,
-    params?: MergeContactMetadataParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/contact-api/contacts/${id}/metadata?${stringifiedParams}` : `/contact-api/contacts/${id}/metadata`
-}
-
-/**
- * @summary Merge arbitrary JSON metadata into a contact (top-level keys overwrite). Also the channel for completeness N/A acknowledgments: {"completeness":{"na":["organisation"]}}.
- */
-export const mergeContactMetadata = async (id: string,
-    jsonNode: JsonNode,
-    params?: MergeContactMetadataParams, options?: Parameters<typeof apiRequest>[1]): Promise<mergeContactMetadataResponse> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<mergeContactMetadataResponse>(getMergeContactMetadataUrl(id,params),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(jsonNode)
   }
 );}
 
@@ -1442,70 +1177,6 @@ return apiRequest<setContactProfilesResponse>(getSetContactProfilesUrl(id),
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
     body: JSON.stringify(setContactProfilesRequest)
-  }
-);}
-
-
-export type setContactAvatarResponse200 = {
-  data: ContactDto
-  status: 200
-}
-
-export type setContactAvatarResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type setContactAvatarResponse403 = {
-  data: ProblemDetails
-  status: 403
-}
-
-export type setContactAvatarResponse404 = {
-  data: ProblemDetails
-  status: 404
-}
-
-export type setContactAvatarResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type setContactAvatarResponseSuccess = (setContactAvatarResponse200) & {
-  headers: Headers;
-};
-export type setContactAvatarResponseError = (setContactAvatarResponse401 | setContactAvatarResponse403 | setContactAvatarResponse404 | setContactAvatarResponse500) & {
-  headers: Headers;
-};
-
-export type setContactAvatarResponse = (setContactAvatarResponseSuccess | setContactAvatarResponseError)
-
-export const getSetContactAvatarUrl = (id: string,) => {
-
-
-
-
-  return `/contact-api/contacts/${id}/avatar`
-}
-
-/**
- * @summary Set (or clear, with an empty value) the contact's avatar — a URL/media id, never image bytes.
- */
-export const setContactAvatar = async (id: string,
-    setContactAvatarRequest: SetContactAvatarRequest, options?: Parameters<typeof apiRequest>[1]): Promise<setContactAvatarResponse> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<setContactAvatarResponse>(getSetContactAvatarUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(setContactAvatarRequest)
   }
 );}
 

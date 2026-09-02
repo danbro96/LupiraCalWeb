@@ -31,16 +31,13 @@ import type {
   ClearItemPromptParams,
   ContainerDto,
   CreateCalendarItemRequest,
-  CreateCalendarItemsBatchRequest,
   CreateCalendarRequest,
   CreateRelationRequest,
   FileItemToCalendarParams,
   GetChangesParams,
   GetParticipationSummaryParams,
-  GetThinItemsParams,
   GrantOwnerRequest,
   InviteParticipantParams,
-  ItemBatchResult,
   JsonNode,
   ListRelationEdgesParams,
   MergeItemMetadataParams,
@@ -54,8 +51,6 @@ import type {
   SearchItemsParams,
   SetItemActionRequest,
   SetItemPromptRequest,
-  SetParticipantsRequest,
-  SetParticipantsResult,
   SyncChangesResponse,
   UpdateCalendarItemRequest
 } from '../../models';
@@ -778,82 +773,6 @@ export const useCreateItem = <TError = ProblemDetails,
       > => {
       return useMutation(getCreateItemMutationOptions(options), queryClient);
     }
-    export const getCreateItemsBatchUrl = () => {
-
-
-
-
-  return `/api/items/batch`
-}
-
-/**
- * @summary Create many items in one call (idempotent per item on SourceKey; children reference parents by ParentSourceKey in any order). Returns a per-item result (created|existed|invalid) in input order.
- */
-export const createItemsBatch = async (createCalendarItemsBatchRequest: CreateCalendarItemsBatchRequest, options?: Parameters<typeof apiRequest>[1]): Promise<ItemBatchResult[]> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<ItemBatchResult[]>(getCreateItemsBatchUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(createCalendarItemsBatchRequest)
-  }
-);}
-
-
-
-
-
-export const getCreateItemsBatchMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext> => {
-
-const mutationKey = ['createItemsBatch'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createItemsBatch>>, {data: CreateCalendarItemsBatchRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  createItemsBatch(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateItemsBatchMutationResult = NonNullable<Awaited<ReturnType<typeof createItemsBatch>>>
-    export type CreateItemsBatchMutationBody = CreateCalendarItemsBatchRequest
-    export type CreateItemsBatchMutationError = ProblemDetails
-
-    /**
- * @summary Create many items in one call (idempotent per item on SourceKey; children reference parents by ParentSourceKey in any order). Returns a per-item result (created|existed|invalid) in input order.
- */
-export const useCreateItemsBatch = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createItemsBatch>>, TError,{data: CreateCalendarItemsBatchRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createItemsBatch>>,
-        TError,
-        {data: CreateCalendarItemsBatchRequest},
-        TContext
-      > => {
-      return useMutation(getCreateItemsBatchMutationOptions(options), queryClient);
-    }
     export const getGetItemUrl = (id: string,) => {
 
 
@@ -1101,114 +1020,7 @@ export const useDeleteItem = <TError = ProblemDetails,
       > => {
       return useMutation(getDeleteItemMutationOptions(options), queryClient);
     }
-    export const getGetThinItemsUrl = (params?: GetThinItemsParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/items/thin?${stringifiedParams}` : `/api/items/thin`
-}
-
-/**
- * @summary Check-in worklist: items ranked thinnest-first by completeness score (< maxScore, default 1 = any item with gaps). Item-granular (no recurrence expansion); exempt items (system/Birthdays/Availability calendars, cancelled) are excluded. Acknowledge an inapplicable gap field by merging metadata {"completeness":{"na":["booking"]}} so it stops counting.
- */
-export const getThinItems = async (params?: GetThinItemsParams, options?: Parameters<typeof apiRequest>[1]): Promise<CalendarItemDto[]> => {
-
-  return apiRequest<CalendarItemDto[]>(getGetThinItemsUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetThinItemsQueryKey = (params?: GetThinItemsParams,) => {
-    return [
-    `/api/items/thin`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-
-export const getGetThinItemsQueryOptions = <TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetThinItemsQueryKey(params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getThinItems>>> = ({ signal }) => getThinItems(params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetThinItemsQueryResult = NonNullable<Awaited<ReturnType<typeof getThinItems>>>
-export type GetThinItemsQueryError = ProblemDetails
-
-
-export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(
- params: undefined |  GetThinItemsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getThinItems>>,
-          TError,
-          Awaited<ReturnType<typeof getThinItems>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(
- params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getThinItems>>,
-          TError,
-          Awaited<ReturnType<typeof getThinItems>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(
- params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Check-in worklist: items ranked thinnest-first by completeness score (< maxScore, default 1 = any item with gaps). Item-granular (no recurrence expansion); exempt items (system/Birthdays/Availability calendars, cancelled) are excluded. Acknowledge an inapplicable gap field by merging metadata {"completeness":{"na":["booking"]}} so it stops counting.
- */
-
-export function useGetThinItems<TData = Awaited<ReturnType<typeof getThinItems>>, TError = ProblemDetails>(
- params?: GetThinItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getThinItems>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetThinItemsQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export const getGetItemsByPlaceUrl = (placeId: string,) => {
+    export const getGetItemsByPlaceUrl = (placeId: string,) => {
 
 
 
@@ -2411,83 +2223,6 @@ export const useInviteParticipant = <TError = ProblemDetails,
         TContext
       > => {
       return useMutation(getInviteParticipantMutationOptions(options), queryClient);
-    }
-    export const getSetParticipantsUrl = (id: string,) => {
-
-
-
-
-  return `/api/items/${id}/participants`
-}
-
-/**
- * @summary Add a set of contacts as attendees in one call (add-only). Attended=true also marks them attended (historical backfill). Slim result (additions + already-present count), not the full item.
- */
-export const setParticipants = async (id: string,
-    setParticipantsRequest: SetParticipantsRequest, options?: Parameters<typeof apiRequest>[1]): Promise<SetParticipantsResult> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<SetParticipantsResult>(getSetParticipantsUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(setParticipantsRequest)
-  }
-);}
-
-
-
-
-
-export const getSetParticipantsMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext> => {
-
-const mutationKey = ['setParticipants'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setParticipants>>, {id: string;data: SetParticipantsRequest}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  setParticipants(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SetParticipantsMutationResult = NonNullable<Awaited<ReturnType<typeof setParticipants>>>
-    export type SetParticipantsMutationBody = SetParticipantsRequest
-    export type SetParticipantsMutationError = ProblemDetails
-
-    /**
- * @summary Add a set of contacts as attendees in one call (add-only). Attended=true also marks them attended (historical backfill). Slim result (additions + already-present count), not the full item.
- */
-export const useSetParticipants = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setParticipants>>, TError,{id: string;data: SetParticipantsRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof setParticipants>>,
-        TError,
-        {id: string;data: SetParticipantsRequest},
-        TContext
-      > => {
-      return useMutation(getSetParticipantsMutationOptions(options), queryClient);
     }
     export const getRespondToInvitationUrl = (id: string,
     participationId: string,
