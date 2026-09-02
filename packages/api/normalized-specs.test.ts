@@ -2,6 +2,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+// TODO(kiota): this file goes with the normalizer once kiota#6776's fix ships (merged
+// 2026-08-19, unreleased as of 1.34.1). https://github.com/microsoft/kiota/pull/8064
 // `upstream-normalized/` is what the C# client generator reads: the same specs with
 // `oneOf: [{type:"null"}, {$ref}]` collapsed to a bare `$ref`, written by
 // `dotnet run --project src/LupiraCalBff -- --normalize-specs`.

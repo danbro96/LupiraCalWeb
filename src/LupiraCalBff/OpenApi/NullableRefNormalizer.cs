@@ -15,6 +15,10 @@ namespace LupiraCalBff.OpenApi;
 /// <c>status?: null | ItemStatus</c>, so collapsing there would silently drop the null from the
 /// TypeScript types.
 /// </remarks>
+/// TODO(kiota): drop this and generate from the unmodified specs once a kiota release carries the
+/// oneOf-null fix (merged 2026-08-19, unreleased as of 1.34.1). The specs are correct — OpenAPI 3.1
+/// has no other way to express a nullable reference.
+/// https://github.com/microsoft/kiota/issues/6776 · https://github.com/microsoft/kiota/pull/8064
 public static class NullableRefNormalizer
 {
     /// <summary>Returns the rewritten document and how many sites were collapsed.</summary>

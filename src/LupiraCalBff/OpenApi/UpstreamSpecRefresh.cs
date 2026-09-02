@@ -23,6 +23,7 @@ public static class UpstreamSpecRefresh
         {
             var document = JsonNode.Parse(File.ReadAllText(file))?.AsObject()
                 ?? throw new InvalidOperationException($"{file} is not a JSON object.");
+            // TODO(kiota): see NullableRefNormalizer — this whole pass goes when the generator is fixed.
             var (normalized, collapsed) = NullableRefNormalizer.Normalize(document);
             var destination = Path.Combine(target, Path.GetFileName(file));
             File.WriteAllText(destination, normalized.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
