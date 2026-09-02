@@ -32,13 +32,15 @@ describe('generated client', () => {
     expect(endingIn('/me')).toEqual(['/contact-api/me']);
   });
 
-  it('routes every key through a BFF prefix', () => {
+  // Anything not under a cluster prefix is an endpoint the BFF declares itself, which is how one
+  // migrates off the proxy.
+  it('routes every proxied key through a cluster prefix', () => {
     const prefixes = ['/api/', '/contact-api/', '/geo-api/', '/tasks-api/', '/location-api/', '/photo-api/', '/comms-api/'];
-    expect(keys.filter((k) => !prefixes.some((p) => k.startsWith(p)))).toEqual([]);
+    expect(keys.filter((k) => !prefixes.some((p) => k.startsWith(p)))).toEqual(['/auth/user']);
   });
 
   it('generates both flavours over one set of models', () => {
-    const tags = ['cal', 'comms', 'contact', 'geo', 'location', 'photo', 'tasks'];
+    const tags = ['cal', 'comms', 'contact', 'geo', 'location', 'lupira-cal-bff', 'photo', 'tasks'];
     for (const dir of ['query', 'fetch']) {
       expect(readdirSync(join(root, dir)).sort()).toEqual(tags);
     }

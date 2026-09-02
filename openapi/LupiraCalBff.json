@@ -5,6 +5,26 @@
     "version": "v1"
   },
   "paths": {
+    "/auth/user": {
+      "get": {
+        "tags": [
+          "LupiraCalBff"
+        ],
+        "operationId": "GetSession",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/me/bootstrap": {
       "post": {
         "tags": [
@@ -13521,6 +13541,34 @@
           }
         },
         "description": "Curate a place: rename, recategorize, verify, or correct its location. Omitted members are left unchanged.\n            `Latitude`+`Longitude` (both required together) move the point — for fixing a wrong geocode by hand;\n            `WithinAreaId` re-anchors containment to match."
+      },
+      "UserInfo": {
+        "required": [
+          "email",
+          "groups",
+          "isAdmin"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isAdmin": {
+            "type": "boolean"
+          }
+        }
       }
     }
   },

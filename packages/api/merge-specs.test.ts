@@ -12,6 +12,9 @@ const contact = read('../../src/LupiraCalBff/upstream/LupiraContactApi.json');
 
 const schemas = merged.components.schemas as Record<string, unknown>;
 const paths = Object.keys(merged.paths) as string[];
+
+const CLUSTER_PREFIXES = ['/api/', '/contact-api/', '/geo-api/', '/tasks-api/', '/location-api/', '/photo-api/', '/comms-api/'];
+const isProxied = (path: string) => CLUSTER_PREFIXES.some((p) => path.startsWith(p));
 const exposed = read('../../src/LupiraCalBff/exposed.json').operations as Record<string, string[]>;
 const routes = read('../../src/LupiraCalBff/appsettings.json').ReverseProxy.Routes as Record<
   string,
@@ -29,11 +32,13 @@ describe('the exposed allowlist', () => {
         }),
       ),
     );
-    const actual = Object.entries(merged.paths).flatMap(([path, item]) =>
-      Object.keys(item as object)
-        .filter((verb) => verb !== 'parameters')
-        .map((verb) => `${verb.toUpperCase()} ${path}`),
-    );
+    const actual = Object.entries(merged.paths)
+      .filter(([path]) => isProxied(path))
+      .flatMap(([path, item]) =>
+        Object.keys(item as object)
+          .filter((verb) => verb !== 'parameters')
+          .map((verb) => `${verb.toUpperCase()} ${path}`),
+      );
     expect(actual.filter((op) => !allowed.has(op))).toEqual([]);
     expect(actual).toHaveLength(allowed.size);
   });
@@ -64,11 +69,13 @@ describe('the BFF route table', () => {
         .filter((r) => !isStatic(r.Match.Path) && !offSpec.has(r.Match.Path))
         .flatMap((r) => r.Match.Methods.map((m) => `${m} ${r.Match.Path}`)),
     );
-    const declared = Object.entries(merged.paths).flatMap(([path, item]) =>
-      Object.keys(item as object)
-        .filter((verb) => verb !== 'parameters')
-        .map((verb) => `${verb.toUpperCase()} ${path}`),
-    );
+    const declared = Object.entries(merged.paths)
+      .filter(([path]) => isProxied(path))
+      .flatMap(([path, item]) =>
+        Object.keys(item as object)
+          .filter((verb) => verb !== 'parameters')
+          .map((verb) => `${verb.toUpperCase()} ${path}`),
+      );
     expect(declared.filter((op) => !routed.has(op))).toEqual([]);
     expect(routed.size).toBe(declared.length);
   });
@@ -105,9 +112,10 @@ describe('the BFF route table', () => {
 });
 
 describe('merged BFF spec', () => {
-  it('mounts every path under a BFF route prefix', () => {
-    const prefixes = ['/api/', '/contact-api/', '/geo-api/', '/tasks-api/', '/location-api/', '/photo-api/', '/comms-api/'];
-    expect(paths.filter((p) => !prefixes.some((x) => p.startsWith(x)))).toEqual([]);
+  // Everything is either proxied under a cluster prefix or declared by the BFF itself. The second
+  // kind is how an endpoint migrates off the proxy, so it must not be mistaken for a stray path.
+  it('mounts every path under a cluster prefix, bar the ones the BFF declares itself', () => {
+    expect(paths.filter((p) => !isProxied(p))).toEqual(['/auth/user']);
   });
 
   // /items and /sync/* existed in 2 specs each and generated the same query key; prefixing makes

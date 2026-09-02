@@ -506,4 +506,5 @@ export * from './updateMemberRoleRequest';
 export * from './updatePlaceRequest';
 export * from './updatePlaceRequest';
 export * from './updateSavedPlaceRequest';
+export * from './userInfo';
 export * from './visitedPlaceDto';
