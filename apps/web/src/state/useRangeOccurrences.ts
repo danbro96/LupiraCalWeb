@@ -1,5 +1,5 @@
-import { useQueries } from '@tanstack/react-query';
-import { getSearchItemsQueryOptions } from '@lupira/cal-api/query/cal';
+import { useMemo } from 'react';
+import { useSearchItems } from '@lupira/cal-api/query/cal';
 import type { CalendarItemOccurrenceDto, ContainerDto } from '@lupira/cal-api/models';
 
 export interface CalendarOccurrences {
@@ -8,8 +8,9 @@ export interface CalendarOccurrences {
 }
 
 /**
- * Occurrences per calendar for a window. The occurrence DTO carries no calendarId, so the grid
- * needs one (cached) query per visible calendar to color/filter by source calendar.
+ * Occurrences per calendar for a window, from one query grouped by `calendarIds` — the DTO carries
+ * the accepted memberships, so a query per visible calendar was one request per calendar (eight, on
+ * this estate) for data a single call already returns. Toggling a calendar on is now free.
  */
 export function useRangeOccurrences(
   calendars: ContainerDto[],
@@ -17,13 +18,18 @@ export function useRangeOccurrences(
   to: string,
   filters?: { query?: string; tag?: string },
 ): { byCalendar: CalendarOccurrences[]; isLoading: boolean } {
-  const results = useQueries({
-    queries: calendars.map((c) =>
-      getSearchItemsQueryOptions({ calendarId: c.id, from, to, query: filters?.query, tag: filters?.tag }),
-    ),
-  });
-  return {
-    byCalendar: calendars.map((calendar, i) => ({ calendar, occurrences: results[i].data ?? [] })),
-    isLoading: results.some((r) => r.isLoading),
-  };
+  const { data, isLoading } = useSearchItems(
+    { from, to, query: filters?.query, tag: filters?.tag },
+    { query: { enabled: calendars.length > 0 } },
+  );
+
+  const byCalendar = useMemo(
+    () => calendars.map((calendar) => ({
+      calendar,
+      occurrences: (data ?? []).filter((o) => o.calendarIds.includes(calendar.id)),
+    })),
+    [calendars, data],
+  );
+
+  return { byCalendar, isLoading: calendars.length > 0 && isLoading };
 }
