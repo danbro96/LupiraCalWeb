@@ -2,9 +2,8 @@
 
 import { ymd } from './time';
 
-/** A topic stops accruing messages once it closes; the closer then releases it to the assistant, so
- *  "finished" means either status and the browse asks for both. */
-export const SETTLED_TOPIC_STATUSES = ['Closed', 'Released'] as const;
+/** comms releases a topic once it goes idle; until then it is still accruing messages. */
+export const SETTLED_TOPIC_STATUSES = ['Released'] as const;
 
 export interface TopicLike {
   label: string;
