@@ -7,7 +7,6 @@
 import type {
   AddAliasRequest,
   AddExternalIdRequest,
-  AdminAreaDto,
   CreatePlaceFromGeocodeRequest,
   CreatePlaceRequest,
   CreateSavedPlaceRequest,
@@ -15,11 +14,9 @@ import type {
   ExternalScheme,
   ForwardGeocodeParams,
   GeocodeResultDto,
-  ListAdminAreasParams,
   LookupPlacesRequest,
   MergePlaceRequest,
   OrphanCandidateDto,
-  PingDto,
   PlaceDto,
   PlaceLookupItemDto,
   PlaceSuggestionDto,
@@ -39,53 +36,6 @@ import type {
 } from '../../models';
 
 import { apiRequest } from '../../../transport';
-
-export type geoPingResponse200 = {
-  data: PingDto
-  status: 200
-}
-
-export type geoPingResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type geoPingResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type geoPingResponseSuccess = (geoPingResponse200) & {
-  headers: Headers;
-};
-export type geoPingResponseError = (geoPingResponse401 | geoPingResponse500) & {
-  headers: Headers;
-};
-
-export type geoPingResponse = (geoPingResponseSuccess | geoPingResponseError)
-
-export const getGeoPingUrl = () => {
-
-
-
-
-  return `/geo-api/pingz`
-}
-
-/**
- * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
- */
-export const geoPing = async ( options?: Parameters<typeof apiRequest>[1]): Promise<geoPingResponse> => {
-
-  return apiRequest<geoPingResponse>(getGeoPingUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
 
 export type searchPlacesResponse200 = {
   data: PlaceDto[]
@@ -1389,112 +1339,6 @@ export const getForwardGeocodeUrl = (params: ForwardGeocodeParams,) => {
 export const forwardGeocode = async (params: ForwardGeocodeParams, options?: Parameters<typeof apiRequest>[1]): Promise<forwardGeocodeResponse> => {
 
   return apiRequest<forwardGeocodeResponse>(getForwardGeocodeUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-export type listAdminAreasResponse200 = {
-  data: AdminAreaDto[]
-  status: 200
-}
-
-export type listAdminAreasResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type listAdminAreasResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type listAdminAreasResponseSuccess = (listAdminAreasResponse200) & {
-  headers: Headers;
-};
-export type listAdminAreasResponseError = (listAdminAreasResponse401 | listAdminAreasResponse500) & {
-  headers: Headers;
-};
-
-export type listAdminAreasResponse = (listAdminAreasResponseSuccess | listAdminAreasResponseError)
-
-export const getListAdminAreasUrl = (params?: ListAdminAreasParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/geo-api/admin-areas?${stringifiedParams}` : `/geo-api/admin-areas`
-}
-
-/**
- * @summary Browse the administrative containment tree: filter by level (Country/Region/Locality), parent (withinAreaId), or name (q).
- */
-export const listAdminAreas = async (params?: ListAdminAreasParams, options?: Parameters<typeof apiRequest>[1]): Promise<listAdminAreasResponse> => {
-
-  return apiRequest<listAdminAreasResponse>(getListAdminAreasUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-export type getAdminAreaResponse200 = {
-  data: AdminAreaDto
-  status: 200
-}
-
-export type getAdminAreaResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type getAdminAreaResponse404 = {
-  data: ProblemDetails
-  status: 404
-}
-
-export type getAdminAreaResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type getAdminAreaResponseSuccess = (getAdminAreaResponse200) & {
-  headers: Headers;
-};
-export type getAdminAreaResponseError = (getAdminAreaResponse401 | getAdminAreaResponse404 | getAdminAreaResponse500) & {
-  headers: Headers;
-};
-
-export type getAdminAreaResponse = (getAdminAreaResponseSuccess | getAdminAreaResponseError)
-
-export const getGetAdminAreaUrl = (id: string,) => {
-
-
-
-
-  return `/geo-api/admin-areas/${id}`
-}
-
-/**
- * @summary A single administrative area.
- */
-export const getAdminArea = async (id: string, options?: Parameters<typeof apiRequest>[1]): Promise<getAdminAreaResponse> => {
-
-  return apiRequest<getAdminAreaResponse>(getGetAdminAreaUrl(id),
   {
     ...options,
     method: 'GET'

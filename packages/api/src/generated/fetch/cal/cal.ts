@@ -16,7 +16,6 @@ import type {
   CreateCalendarRequest,
   CreateRelationRequest,
   FileItemToCalendarParams,
-  FindRelatedItemsParams,
   GetChangesParams,
   GetParticipationSummaryParams,
   GetThinItemsParams,
@@ -28,7 +27,6 @@ import type {
   MergeItemMetadataParams,
   OwnerGrantDto,
   ParticipationSummaryEntry,
-  PingDto,
   ProblemDetails,
   RelationDto,
   RemoveItemFromCalendarParams,
@@ -44,53 +42,6 @@ import type {
 } from '../../models';
 
 import { apiRequest } from '../../../transport';
-
-export type pingResponse200 = {
-  data: PingDto
-  status: 200
-}
-
-export type pingResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type pingResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type pingResponseSuccess = (pingResponse200) & {
-  headers: Headers;
-};
-export type pingResponseError = (pingResponse401 | pingResponse500) & {
-  headers: Headers;
-};
-
-export type pingResponse = (pingResponseSuccess | pingResponseError)
-
-export const getPingUrl = () => {
-
-
-
-
-  return `/api/pingz`
-}
-
-/**
- * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
- */
-export const ping = async ( options?: Parameters<typeof apiRequest>[1]): Promise<pingResponse> => {
-
-  return apiRequest<pingResponse>(getPingUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
 
 export type bootstrapMeResponse200 = {
   data: ContainerDto[]
@@ -1366,60 +1317,6 @@ export const getListRelationEdgesUrl = (params: ListRelationEdgesParams,) => {
 export const listRelationEdges = async (params: ListRelationEdgesParams, options?: Parameters<typeof apiRequest>[1]): Promise<listRelationEdgesResponse> => {
 
   return apiRequest<listRelationEdgesResponse>(getListRelationEdgesUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-export type findRelatedItemsResponse200 = {
-  data: CalendarItemDto[]
-  status: 200
-}
-
-export type findRelatedItemsResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type findRelatedItemsResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type findRelatedItemsResponseSuccess = (findRelatedItemsResponse200) & {
-  headers: Headers;
-};
-export type findRelatedItemsResponseError = (findRelatedItemsResponse401 | findRelatedItemsResponse500) & {
-  headers: Headers;
-};
-
-export type findRelatedItemsResponse = (findRelatedItemsResponseSuccess | findRelatedItemsResponseError)
-
-export const getFindRelatedItemsUrl = (params: FindRelatedItemsParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/relations?${stringifiedParams}` : `/api/relations`
-}
-
-/**
- * @summary Reverse lookup: calendar items linked to a given external reference.
- */
-export const findRelatedItems = async (params: FindRelatedItemsParams, options?: Parameters<typeof apiRequest>[1]): Promise<findRelatedItemsResponse> => {
-
-  return apiRequest<findRelatedItemsResponse>(getFindRelatedItemsUrl(params),
   {
     ...options,
     method: 'GET'

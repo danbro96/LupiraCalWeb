@@ -29,7 +29,6 @@ import type {
   ListContactRelationsParams,
   MeDto,
   MergeContactMetadataParams,
-  PingDto,
   ProblemDetails,
   RemoveContactRelationParams,
   RenameContactGroupParams,
@@ -50,53 +49,6 @@ import type {
 } from '../../models';
 
 import { apiRequest } from '../../../transport';
-
-export type contactPingResponse200 = {
-  data: PingDto
-  status: 200
-}
-
-export type contactPingResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type contactPingResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type contactPingResponseSuccess = (contactPingResponse200) & {
-  headers: Headers;
-};
-export type contactPingResponseError = (contactPingResponse401 | contactPingResponse500) & {
-  headers: Headers;
-};
-
-export type contactPingResponse = (contactPingResponseSuccess | contactPingResponseError)
-
-export const getContactPingUrl = () => {
-
-
-
-
-  return `/contact-api/pingz`
-}
-
-/**
- * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
- */
-export const contactPing = async ( options?: Parameters<typeof apiRequest>[1]): Promise<contactPingResponse> => {
-
-  return apiRequest<contactPingResponse>(getContactPingUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
 
 export type getMeResponse200 = {
   data: MeDto

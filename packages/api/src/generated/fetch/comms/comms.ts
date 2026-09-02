@@ -5,26 +5,19 @@
  * OpenAPI spec version: v1
  */
 import type {
-  ArcDetailDto,
-  ArcSummaryDto,
   ArchiveSearchHitDto,
   BindParticipantContactParams,
   BindParticipantRequest,
   ConnectorStatusDto,
   ConversationMessagesResponse,
   ConversationsResponse,
-  GetArcParams,
   GetTopicParams,
-  IngestAcceptedResponse,
-  IngestMessageRequest,
-  ListArcsParams,
   ListConnectorsParams,
   ListConversationsParams,
   ListMessagesParams,
   ListParticipantsParams,
   ListTopicsParams,
   ParticipantSummaryDto,
-  PingDto,
   ProblemDetails,
   SearchParams,
   TopicDetailDto,
@@ -32,111 +25,6 @@ import type {
 } from '../../models';
 
 import { apiRequest } from '../../../transport';
-
-export type commsPingResponse200 = {
-  data: PingDto
-  status: 200
-}
-
-export type commsPingResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type commsPingResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type commsPingResponseSuccess = (commsPingResponse200) & {
-  headers: Headers;
-};
-export type commsPingResponseError = (commsPingResponse401 | commsPingResponse500) & {
-  headers: Headers;
-};
-
-export type commsPingResponse = (commsPingResponseSuccess | commsPingResponseError)
-
-export const getCommsPingUrl = () => {
-
-
-
-
-  return `/comms-api/pingz`
-}
-
-/**
- * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
- */
-export const commsPing = async ( options?: Parameters<typeof apiRequest>[1]): Promise<commsPingResponse> => {
-
-  return apiRequest<commsPingResponse>(getCommsPingUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-export type ingestMessagesResponse202 = {
-  data: IngestAcceptedResponse
-  status: 202
-}
-
-export type ingestMessagesResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type ingestMessagesResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type ingestMessagesResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type ingestMessagesResponseSuccess = (ingestMessagesResponse202) & {
-  headers: Headers;
-};
-export type ingestMessagesResponseError = (ingestMessagesResponse400 | ingestMessagesResponse401 | ingestMessagesResponse500) & {
-  headers: Headers;
-};
-
-export type ingestMessagesResponse = (ingestMessagesResponseSuccess | ingestMessagesResponseError)
-
-export const getIngestMessagesUrl = () => {
-
-
-
-
-  return `/comms-api/ingest`
-}
-
-/**
- * @summary Accept a captured message from a connector sidecar (accept-then-own).
- */
-export const ingestMessages = async (ingestMessageRequest: IngestMessageRequest, options?: Parameters<typeof apiRequest>[1]): Promise<ingestMessagesResponse> => {
-
-    const getHeaders = (h?: HeadersInit | Headers): Record<string, string> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Array.isArray(h)) return Object.fromEntries(h);
-    return h;
-  };
-return apiRequest<ingestMessagesResponse>(getIngestMessagesUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(ingestMessageRequest)
-  }
-);}
-
 
 export type searchResponse200 = {
   data: ArchiveSearchHitDto[]
@@ -385,131 +273,6 @@ export const getTopic = async (id: string,
     params?: GetTopicParams, options?: Parameters<typeof apiRequest>[1]): Promise<getTopicResponse> => {
 
   return apiRequest<getTopicResponse>(getGetTopicUrl(id,params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-export type listArcsResponse200 = {
-  data: ArcSummaryDto[]
-  status: 200
-}
-
-export type listArcsResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type listArcsResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type listArcsResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type listArcsResponseSuccess = (listArcsResponse200) & {
-  headers: Headers;
-};
-export type listArcsResponseError = (listArcsResponse400 | listArcsResponse401 | listArcsResponse500) & {
-  headers: Headers;
-};
-
-export type listArcsResponse = (listArcsResponseSuccess | listArcsResponseError)
-
-export const getListArcsUrl = (params?: ListArcsParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/comms-api/arcs?${stringifiedParams}` : `/comms-api/arcs`
-}
-
-/**
- * @summary List arcs — cross-conversation groupings of topics — newest link first.
- */
-export const listArcs = async (params?: ListArcsParams, options?: Parameters<typeof apiRequest>[1]): Promise<listArcsResponse> => {
-
-  return apiRequest<listArcsResponse>(getListArcsUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-export type getArcResponse200 = {
-  data: ArcDetailDto
-  status: 200
-}
-
-export type getArcResponse400 = {
-  data: ProblemDetails
-  status: 400
-}
-
-export type getArcResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type getArcResponse404 = {
-  data: ProblemDetails
-  status: 404
-}
-
-export type getArcResponse500 = {
-  data: ProblemDetails
-  status: 500
-}
-
-export type getArcResponseSuccess = (getArcResponse200) & {
-  headers: Headers;
-};
-export type getArcResponseError = (getArcResponse400 | getArcResponse401 | getArcResponse404 | getArcResponse500) & {
-  headers: Headers;
-};
-
-export type getArcResponse = (getArcResponseSuccess | getArcResponseError)
-
-export const getGetArcUrl = (id: string,
-    params?: GetArcParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/comms-api/arcs/${id}?${stringifiedParams}` : `/comms-api/arcs/${id}`
-}
-
-/**
- * @summary Get an arc with its member topics.
- */
-export const getArc = async (id: string,
-    params?: GetArcParams, options?: Parameters<typeof apiRequest>[1]): Promise<getArcResponse> => {
-
-  return apiRequest<getArcResponse>(getGetArcUrl(id,params),
   {
     ...options,
     method: 'GET'

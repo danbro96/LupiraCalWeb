@@ -27,7 +27,7 @@ describe('generated client', () => {
 
   it('keeps the formerly-colliding routes apart', () => {
     const endingIn = (tail: string) => keys.filter((k) => k.endsWith(tail)).sort();
-    expect(endingIn('/pingz').length).toBeGreaterThan(1);
+    expect(endingIn('/pingz')).toEqual([]); // stripped outright, not disambiguated
     expect(endingIn('/sync/changes')).toEqual(['/api/sync/changes', '/contact-api/sync/changes']);
     expect(endingIn('/me')).toEqual(['/contact-api/me']);
   });

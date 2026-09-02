@@ -35,7 +35,6 @@ import type {
   CreateCalendarRequest,
   CreateRelationRequest,
   FileItemToCalendarParams,
-  FindRelatedItemsParams,
   GetChangesParams,
   GetParticipationSummaryParams,
   GetThinItemsParams,
@@ -47,7 +46,6 @@ import type {
   MergeItemMetadataParams,
   OwnerGrantDto,
   ParticipationSummaryEntry,
-  PingDto,
   ProblemDetails,
   RelationDto,
   RemoveItemFromCalendarParams,
@@ -87,106 +85,6 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
-
-export const getPingUrl = () => {
-
-
-
-
-  return `/api/pingz`
-}
-
-/**
- * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
- */
-export const ping = async ( options?: Parameters<typeof apiRequest>[1]): Promise<PingDto> => {
-
-  return apiRequest<PingDto>(getPingUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getPingQueryKey = () => {
-    return [
-    `/api/pingz`
-    ] as const;
-    }
-
-
-export const getPingQueryOptions = <TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getPingQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof ping>>> = ({ signal }) => ping({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type PingQueryResult = NonNullable<Awaited<ReturnType<typeof ping>>>
-export type PingQueryError = ProblemDetails
-
-
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof ping>>,
-          TError,
-          Awaited<ReturnType<typeof ping>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof ping>>,
-          TError,
-          Awaited<ReturnType<typeof ping>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
- */
-
-export function usePing<TData = Awaited<ReturnType<typeof ping>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ping>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getPingQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
 
 export const getBootstrapMeUrl = () => {
 
@@ -2081,113 +1979,6 @@ export function useListRelationEdges<TData = Awaited<ReturnType<typeof listRelat
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListRelationEdgesQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export const getFindRelatedItemsUrl = (params: FindRelatedItemsParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/relations?${stringifiedParams}` : `/api/relations`
-}
-
-/**
- * @summary Reverse lookup: calendar items linked to a given external reference.
- */
-export const findRelatedItems = async (params: FindRelatedItemsParams, options?: Parameters<typeof apiRequest>[1]): Promise<CalendarItemDto[]> => {
-
-  return apiRequest<CalendarItemDto[]>(getFindRelatedItemsUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getFindRelatedItemsQueryKey = (params?: FindRelatedItemsParams,) => {
-    return [
-    `/api/relations`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-
-export const getFindRelatedItemsQueryOptions = <TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getFindRelatedItemsQueryKey(params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof findRelatedItems>>> = ({ signal }) => findRelatedItems(params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type FindRelatedItemsQueryResult = NonNullable<Awaited<ReturnType<typeof findRelatedItems>>>
-export type FindRelatedItemsQueryError = ProblemDetails
-
-
-export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(
- params: FindRelatedItemsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof findRelatedItems>>,
-          TError,
-          Awaited<ReturnType<typeof findRelatedItems>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(
- params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof findRelatedItems>>,
-          TError,
-          Awaited<ReturnType<typeof findRelatedItems>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(
- params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Reverse lookup: calendar items linked to a given external reference.
- */
-
-export function useFindRelatedItems<TData = Awaited<ReturnType<typeof findRelatedItems>>, TError = ProblemDetails>(
- params: FindRelatedItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof findRelatedItems>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getFindRelatedItemsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

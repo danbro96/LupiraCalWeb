@@ -503,174 +503,6 @@
         ]
       }
     },
-    "/arcs": {
-      "get": {
-        "tags": [
-          "Arcs"
-        ],
-        "summary": "List arcs — cross-conversation groupings of topics — newest link first.",
-        "operationId": "ListArcs",
-        "parameters": [
-          {
-            "name": "contactId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "principalId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArcSummaryDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
-      }
-    },
-    "/arcs/{id}": {
-      "get": {
-        "tags": [
-          "Arcs"
-        ],
-        "summary": "Get an arc with its member topics.",
-        "operationId": "GetArc",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "principalId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ArcDetailDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
-      }
-    },
     "/participants": {
       "get": {
         "tags": [
@@ -1062,46 +894,6 @@
   },
   "components": {
     "schemas": {
-      "ArcDetailDto": {
-        "required": [
-          "id",
-          "label",
-          "openedAt",
-          "lastLinkedAt",
-          "topics"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "label": {
-            "type": "string"
-          },
-          "summary": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "openedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastLinkedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "topics": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TopicSummaryDto"
-            }
-          }
-        },
-        "description": "An arc with its member topics (`GET /arcs/{id}`)."
-      },
       "ArchiveSearchHitDto": {
         "required": [
           "messageId",
@@ -1152,44 +944,6 @@
           }
         },
         "description": "One corpus message returned by research search (`archive_search`), ordered by the\n            reranker's relevance. Read-only projection over the `comms` corpus — never a whole topic."
-      },
-      "ArcSummaryDto": {
-        "required": [
-          "id",
-          "label",
-          "topicCount",
-          "conversationCount",
-          "lastLinkedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "label": {
-            "type": "string"
-          },
-          "summary": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "topicCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "conversationCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "lastLinkedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "description": "An arc in a list response (`GET /arcs`) — a cross-conversation grouping of topics."
       },
       "BindParticipantRequest": {
         "type": "object",
@@ -1581,6 +1335,7 @@
           "titled",
           "status",
           "lastActivity",
+          "conversationCount",
           "messages"
         ],
         "type": "object",
@@ -1598,6 +1353,13 @@
               "string"
             ]
           },
+          "purpose": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Curator-written: what the topic is for (the plan, errand, question or outcome)."
+          },
           "titled": {
             "type": "boolean",
             "description": "False while string TopicDetailDto.Label is still the provisional first-few-words placeholder."
@@ -1609,13 +1371,10 @@
             "type": "string",
             "format": "date-time"
           },
-          "arcId": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "The cross-conversation arc this topic belongs to, if any.",
-            "format": "uuid"
+          "conversationCount": {
+            "type": "integer",
+            "description": "Above 1 the topic spans conversations (a cross-linked matter).",
+            "format": "int32"
           },
           "messages": {
             "type": "array",
@@ -1665,11 +1424,9 @@
       "TopicStatus": {
         "enum": [
           "Open",
-          "Closed",
-          "Released",
-          "Superseded"
+          "Released"
         ],
-        "description": "The Topic lifecycle. `Open` accrues messages; the closer moves an idle topic to\n`Closed` then `Released` (handed to the assistant). A high-similarity hit on a\nrecently-released topic may reopen it (back to `Open`) rather than start a new one.\n`Superseded` is terminal: the janitor split/merged the topic away — its stream is archived\nand its doc removed, so the status is only ever seen replaying the archived stream."
+        "description": "Stored as string; part of the REST/MCP wire contract."
       },
       "TopicSummaryDto": {
         "required": [
@@ -1678,7 +1435,8 @@
           "titled",
           "status",
           "lastActivity",
-          "messageCount"
+          "messageCount",
+          "conversationCount"
         ],
         "type": "object",
         "properties": {
@@ -1708,6 +1466,11 @@
           },
           "messageCount": {
             "type": "integer",
+            "format": "int32"
+          },
+          "conversationCount": {
+            "type": "integer",
+            "description": "Above 1 the topic spans conversations (a cross-linked matter).",
             "format": "int32"
           },
           "releasedAt": {
@@ -1742,9 +1505,6 @@
     },
     {
       "name": "Topics"
-    },
-    {
-      "name": "Arcs"
     },
     {
       "name": "Participants"

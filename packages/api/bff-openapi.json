@@ -5,52 +5,6 @@
     "version": "v1"
   },
   "paths": {
-    "/api/pingz": {
-      "get": {
-        "tags": [
-          "cal"
-        ],
-        "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "Ping",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PingDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/api/me/bootstrap": {
       "post": {
         "tags": [
@@ -1793,73 +1747,6 @@
         ]
       }
     },
-    "/api/relations": {
-      "get": {
-        "tags": [
-          "cal"
-        ],
-        "summary": "Reverse lookup: calendar items linked to a given external reference.",
-        "operationId": "FindRelatedItems",
-        "parameters": [
-          {
-            "name": "toKind",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "toRef",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CalendarItemDto"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/api/calendars/{calendarId}/proposed": {
       "get": {
         "tags": [
@@ -2789,52 +2676,6 @@
                   "items": {
                     "$ref": "#/components/schemas/ContainerDto"
                   }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/contact-api/pingz": {
-      "get": {
-        "tags": [
-          "contact"
-        ],
-        "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "ContactPing",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PingDto"
                 }
               }
             }
@@ -6111,52 +5952,6 @@
         ]
       }
     },
-    "/geo-api/pingz": {
-      "get": {
-        "tags": [
-          "geo"
-        ],
-        "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "GeoPing",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PingDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/geo-api/places": {
       "get": {
         "tags": [
@@ -7897,154 +7692,6 @@
         ]
       }
     },
-    "/geo-api/admin-areas": {
-      "get": {
-        "tags": [
-          "geo"
-        ],
-        "summary": "Browse the administrative containment tree: filter by level (Country/Region/Locality), parent (withinAreaId), or name (q).",
-        "operationId": "ListAdminAreas",
-        "parameters": [
-          {
-            "name": "level",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/AdminLevel"
-            }
-          },
-          {
-            "name": "withinAreaId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AdminAreaDto"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/geo-api/admin-areas/{id}": {
-      "get": {
-        "tags": [
-          "geo"
-        ],
-        "summary": "A single administrative area.",
-        "operationId": "GetAdminArea",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AdminAreaDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/geo-api/me/places": {
       "get": {
         "tags": [
@@ -8303,52 +7950,6 @@
         ]
       }
     },
-    "/tasks-api/pingz": {
-      "get": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "TasksPing",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PingDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/tasks-api/lists/{listId}/sync": {
       "get": {
         "tags": [
@@ -8399,150 +8000,6 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/tasks-api/shares/redeem": {
-      "post": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "Redeem a share link as the authenticated caller (join the list).",
-        "description": "Body `{ token }`. Adds the caller to the linked list — `ReadWrite` → Editor, `Read` → Viewer — and returns `{ listId, role }`. Idempotent: an existing member keeps their current role. Used by the web client to cash in a share link after SSO.",
-        "operationId": "RedeemShare",
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Client-generated GUIDv7 command id. A redelivery with the same key is a no-op that returns the prior result (offline-safe retry).",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RedeemShareRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RedeemShareResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/tasks-api/users/directory": {
-      "get": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "People seen across the caller's shared lists (for adding members).",
-        "description": "`?q=` filters the distinct member emails (case-insensitive substring).",
-        "operationId": "GetUserDirectory",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DirectoryResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -11280,726 +10737,6 @@
         ]
       }
     },
-    "/tasks-api/shared/{token}": {
-      "get": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "View a shared list by token (no account needed).",
-        "description": "Returns the list + items, trimmed of all emails. `access` indicates read vs read/write.",
-        "operationId": "GetSharedList",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "description": "Opaque share-link token (validated by the ShareToken auth scheme).",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SharedListResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/tasks-api/shared/{token}/items": {
-      "post": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "Add an item via a read/write share link.",
-        "operationId": "CreateSharedItem",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "description": "Opaque share-link token (validated by the ShareToken auth scheme).",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Client-generated GUIDv7 command id. A redelivery with the same key is a no-op that returns the prior result (offline-safe retry).",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateItemRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SharedItemDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/tasks-api/shared/{token}/items/{itemId}": {
-      "patch": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "Edit an item via a read/write share link.",
-        "operationId": "UpdateSharedItem",
-        "parameters": [
-          {
-            "name": "itemId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "token",
-            "in": "path",
-            "description": "Opaque share-link token (validated by the ShareToken auth scheme).",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Client-generated GUIDv7 command id. A redelivery with the same key is a no-op that returns the prior result (offline-safe retry).",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateItemRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SharedItemDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "Delete an item via a read/write share link.",
-        "operationId": "DeleteSharedItem",
-        "parameters": [
-          {
-            "name": "itemId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "occurredAt",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "token",
-            "in": "path",
-            "description": "Opaque share-link token (validated by the ShareToken auth scheme).",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Client-generated GUIDv7 command id. A redelivery with the same key is a no-op that returns the prior result (offline-safe retry).",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/tasks-api/shared/{token}/items/{itemId}/complete": {
-      "post": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "Mark an item complete via a read/write share link.",
-        "operationId": "CompleteSharedItem",
-        "parameters": [
-          {
-            "name": "itemId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "token",
-            "in": "path",
-            "description": "Opaque share-link token (validated by the ShareToken auth scheme).",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Client-generated GUIDv7 command id. A redelivery with the same key is a no-op that returns the prior result (offline-safe retry).",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "oneOf": [
-                  {
-                    "type": "null"
-                  },
-                  {
-                    "$ref": "#/components/schemas/ItemTimestampRequest"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SharedItemDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/tasks-api/shared/{token}/items/{itemId}/reopen": {
-      "post": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "Reopen a completed item via a read/write share link.",
-        "operationId": "ReopenSharedItem",
-        "parameters": [
-          {
-            "name": "itemId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "token",
-            "in": "path",
-            "description": "Opaque share-link token (validated by the ShareToken auth scheme).",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Client-generated GUIDv7 command id. A redelivery with the same key is a no-op that returns the prior result (offline-safe retry).",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "oneOf": [
-                  {
-                    "type": "null"
-                  },
-                  {
-                    "$ref": "#/components/schemas/ItemTimestampRequest"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SharedItemDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/tasks-api/shared/{token}/items/{itemId}/move": {
-      "post": {
-        "tags": [
-          "tasks"
-        ],
-        "summary": "Reparent / reorder an item via a read/write share link.",
-        "operationId": "MoveSharedItem",
-        "parameters": [
-          {
-            "name": "itemId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "token",
-            "in": "path",
-            "description": "Opaque share-link token (validated by the ShareToken auth scheme).",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Client-generated GUIDv7 command id. A redelivery with the same key is a no-op that returns the prior result (offline-safe retry).",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MoveItemRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SharedItemDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/location-api/devices": {
       "get": {
         "tags": [
@@ -12252,154 +10989,6 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/location-api/ingest/location": {
-      "post": {
-        "tags": [
-          "location"
-        ],
-        "summary": "Ingest a batch of GPS fixes (NDJSON, one fix per line).",
-        "operationId": "IngestLocation",
-        "requestBody": {
-          "content": {
-            "application/x-ndjson": {
-              "schema": {
-                "type": "string"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "202": {
-            "description": "Accepted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LocationIngestReceipt"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/location-api/ingest/location/cursor": {
-      "get": {
-        "tags": [
-          "location"
-        ],
-        "summary": "The device's resume cursor (last accepted seq + ts).",
-        "operationId": "GetIngestCursor",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LocationCursor"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/location-api/ingest/location/state": {
-      "get": {
-        "tags": [
-          "location"
-        ],
-        "summary": "Whether tracking is paused for this device (the uploader should stop collecting if so).",
-        "operationId": "GetIngestState",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrackingStateDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -13920,118 +12509,6 @@
         ]
       }
     },
-    "/comms-api/pingz": {
-      "get": {
-        "tags": [
-          "comms"
-        ],
-        "summary": "Authenticated claims echo for dependency probes; resolves nothing, writes nothing.",
-        "operationId": "CommsPing",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PingDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/comms-api/ingest": {
-      "post": {
-        "tags": [
-          "comms"
-        ],
-        "summary": "Accept a captured message from a connector sidecar (accept-then-own).",
-        "operationId": "IngestMessages",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IngestMessageRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "202": {
-            "description": "Accepted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IngestAcceptedResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/comms-api/search": {
       "get": {
         "tags": [
@@ -14365,174 +12842,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TopicDetailDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/comms-api/arcs": {
-      "get": {
-        "tags": [
-          "comms"
-        ],
-        "summary": "List arcs — cross-conversation groupings of topics — newest link first.",
-        "operationId": "ListArcs",
-        "parameters": [
-          {
-            "name": "contactId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "principalId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArcSummaryDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/comms-api/arcs/{id}": {
-      "get": {
-        "tags": [
-          "comms"
-        ],
-        "summary": "Get an arc with its member topics.",
-        "operationId": "GetArc",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "principalId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ArcDetailDto"
                 }
               }
             }
@@ -14976,74 +13285,6 @@
   },
   "components": {
     "schemas": {
-      "PingDto": {
-        "required": [
-          "subject",
-          "audiences"
-        ],
-        "type": "object",
-        "properties": {
-          "subject": {
-            "type": "string"
-          },
-          "audiences": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "email": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        },
-        "description": "The claims a caller's token resolved to, echoed for cross-service auth-seam probes.\n            Returning the audiences (not a bare 200) lets a failing consumer see which half of the seam\n            is misconfigured."
-      },
-      "ProblemDetails": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "status": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int32"
-          },
-          "detail": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "instance": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "traceId": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        },
-        "description": "RFC 9457 problem details."
-      },
       "ContainerDto": {
         "required": [
           "id",
@@ -15136,6 +13377,49 @@
           "Read"
         ],
         "description": "A principal's permission on a collection. `Owner` adds member-management + delete rights over `ReadWrite`."
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "traceId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "RFC 9457 problem details."
       },
       "ParticipationSummaryEntry": {
         "required": [
@@ -19949,73 +18233,6 @@
         ],
         "description": "An item's lifecycle position — one state machine, not two flags. ItemStatus.Open, ItemStatus.InProgress,\nItemStatus.Blocked, and ItemStatus.Waiting are open; ItemStatus.Done and ItemStatus.Cancelled are\nclosed. `Completed` is derived (`Status == Done`). The value is LWW-guarded by one\n(OccurredAt, CommandId) guard shared by every lifecycle event, so done-ness and the open sub-state can never\ndisagree. Lets the assistant answer \"what's blocked / waiting on me?\"."
       },
-      "RedeemShareRequest": {
-        "required": [
-          "token"
-        ],
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string"
-          }
-        },
-        "description": "Redeem a share link as the authenticated caller (the token, not in the URL path here)."
-      },
-      "RedeemShareResponse": {
-        "required": [
-          "listId",
-          "role"
-        ],
-        "type": "object",
-        "properties": {
-          "listId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "role": {
-            "$ref": "#/components/schemas/ListRole"
-          }
-        },
-        "description": "The list the caller joined and the role they now hold on it."
-      },
-      "DirectoryResponse": {
-        "required": [
-          "people"
-        ],
-        "type": "object",
-        "properties": {
-          "people": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DirectoryPerson"
-            }
-          }
-        },
-        "description": "The distinct people across the caller's lists, for member-add autocomplete."
-      },
-      "DirectoryPerson": {
-        "required": [
-          "principalId",
-          "email"
-        ],
-        "type": "object",
-        "properties": {
-          "principalId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "email": {
-            "type": "string"
-          },
-          "displayName": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        },
-        "description": "A person the caller has seen across their shared lists (for adding members)."
-      },
       "CreateListRequest": {
         "required": [
           "id",
@@ -20462,149 +18679,6 @@
         },
         "description": "A share link as the owner sees it, including the opaque string ShareDto.Token and ready-to-copy string ShareDto.Url."
       },
-      "SharedListResponse": {
-        "required": [
-          "name",
-          "kind",
-          "simplePriority",
-          "access",
-          "tags",
-          "items"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "kind": {
-            "$ref": "#/components/schemas/ListKind"
-          },
-          "color": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "simplePriority": {
-            "type": "boolean"
-          },
-          "access": {
-            "$ref": "#/components/schemas/ShareAccess"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SharedTagDto"
-            }
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SharedItemDto"
-            }
-          }
-        },
-        "description": "The public, account-less view of a shared list. Deliberately TRIMMED: it carries no member\nlist, no owner email, and items carry no assignee/creator/completer emails — a public link must\nnot leak family emails. ShareAccess SharedListResponse.Access tells the client whether to show edit controls."
-      },
-      "SharedTagDto": {
-        "required": [
-          "id",
-          "label",
-          "color"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "label": {
-            "type": "string"
-          },
-          "color": {
-            "type": "string"
-          }
-        },
-        "description": "A tag definition as shown on a shared list (no sensitive data)."
-      },
-      "SharedItemDto": {
-        "required": [
-          "id",
-          "title",
-          "completed",
-          "priority",
-          "tags",
-          "sortOrder"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "parentItemId": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string"
-          },
-          "notes": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "completed": {
-            "type": "boolean"
-          },
-          "completedAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "dueAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "quantity": {
-            "type": [
-              "null",
-              "number"
-            ],
-            "format": "double"
-          },
-          "unit": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "priority": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          "sortOrder": {
-            "type": "string"
-          }
-        },
-        "description": "An item as shown to a share-link recipient. Mirrors the fields a viewer/editor needs but\nOMITS every email field (`assignedTo`, `completedBy`, `createdBy`) so a public\nlink never leaks family emails."
-      },
       "DeviceDto": {
         "required": [
           "id",
@@ -20707,127 +18781,6 @@
           }
         },
         "description": "Rename a device."
-      },
-      "LocationIngestReceipt": {
-        "required": [
-          "submitted",
-          "inserted",
-          "duplicates",
-          "rejected",
-          "rejects"
-        ],
-        "type": "object",
-        "properties": {
-          "submitted": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "inserted": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "duplicates": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "rejected": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "highWaterSeq": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int64"
-          },
-          "rejects": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/IngestReject"
-            }
-          },
-          "paused": {
-            "type": "boolean"
-          }
-        },
-        "description": "The outcome of a location ingest batch. Idempotent re-uploads show up as int LocationIngestReceipt.Duplicates; the\n            uploader advances past long? LocationIngestReceipt.HighWaterSeq. When tracking is paused the body is discarded and\n            bool LocationIngestReceipt.Paused is true."
-      },
-      "IngestReject": {
-        "required": [
-          "reason"
-        ],
-        "type": "object",
-        "properties": {
-          "seq": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int64"
-          },
-          "reason": {
-            "type": "string"
-          }
-        },
-        "description": "A per-row rejection within an otherwise-accepted batch (permanent — the uploader should drop + log it)."
-      },
-      "LocationCursor": {
-        "required": [
-          "deviceId"
-        ],
-        "type": "object",
-        "properties": {
-          "deviceId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "lastSeq": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int64"
-          },
-          "lastTs": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          }
-        },
-        "description": "The resume cursor for a device: the highest accepted seq + its timestamp (from the latest-snapshot table)."
-      },
-      "TrackingStateDto": {
-        "required": [
-          "deviceId",
-          "paused"
-        ],
-        "type": "object",
-        "properties": {
-          "deviceId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "paused": {
-            "type": "boolean"
-          },
-          "pausedAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "reason": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        },
-        "description": "Per-device tracking kill-switch state."
       },
       "CurrentFixDto": {
         "required": [
@@ -21247,6 +19200,36 @@
           }
         },
         "description": "Pause tracking for a device (optional human-readable reason)."
+      },
+      "TrackingStateDto": {
+        "required": [
+          "deviceId",
+          "paused"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paused": {
+            "type": "boolean"
+          },
+          "pausedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "Per-device tracking kill-switch state."
       },
       "DeclarePhotoRequest": {
         "required": [
@@ -21779,88 +19762,6 @@
           }
         }
       },
-      "IngestMessageRequest": {
-        "required": [
-          "principalId",
-          "source",
-          "sourceRef",
-          "text",
-          "timestamp",
-          "conversationRef"
-        ],
-        "type": "object",
-        "properties": {
-          "principalId": {
-            "type": "string",
-            "description": "The owner this message belongs to — relayed by the service caller, never inferred."
-          },
-          "source": {
-            "$ref": "#/components/schemas/MessageSource"
-          },
-          "sourceRef": {
-            "type": "string",
-            "description": "The platform message id (dedup identity within MessageSource IngestMessageRequest.Source)."
-          },
-          "text": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string",
-            "description": "When the message was sent on the platform.",
-            "format": "date-time"
-          },
-          "conversationRef": {
-            "type": "string",
-            "description": "The platform thread/chat id this message belongs to."
-          },
-          "conversationTitle": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "Optional thread title (set when the conversation is first seen)."
-          },
-          "replyToSourceRef": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "The replied-to message's string IngestMessageRequest.SourceRef, when the platform carries one —\n            the topic engine attaches a reply to its parent's topic unconditionally."
-          },
-          "senderRef": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "Optional platform sender id; resolves/creates a `Participant` when present."
-          },
-          "senderName": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "fromPrincipal": {
-            "type": "boolean",
-            "description": "True when the owner sent this message (the connector's direction bit). Defaults false, so\n            older/importer callers that don't set it are treated as received."
-          },
-          "importBatch": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "Set by the historical importer to tag the import run; null for live ingest."
-          },
-          "attachmentPath": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "Export-root-relative path of the message's media file, if any — the media import\n            phase uploads it and stamps the row's object key. Null for live ingest (sidecars skip media)."
-          }
-        },
-        "description": "A normalised message from a connector sidecar (or the historical importer). The connector\nguarantees string IngestMessageRequest.SourceRef is unique within MessageSource IngestMessageRequest.Source for the principal — it\nis the dedup key. string IngestMessageRequest.ConversationRef groups messages into a thread; the sender fields\nresolve a `Participant`."
-      },
       "MessageSource": {
         "enum": [
           "Telegram",
@@ -21868,24 +19769,6 @@
           "Email"
         ],
         "description": "The connector/platform a message was captured from. Stored as a string (via\n`JsonStringEnumConverter` on the wire, `text` in the corpus) so the value is stable\nacross reordering. Extends as connectors land (email, etc.)."
-      },
-      "IngestAcceptedResponse": {
-        "required": [
-          "messageId",
-          "duplicate"
-        ],
-        "type": "object",
-        "properties": {
-          "messageId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "duplicate": {
-            "type": "boolean",
-            "description": "True when the message was already recorded (deduped on `source:sourceRef`)."
-          }
-        },
-        "description": "The accept-then-own receipt: the corpus message id, and whether this was a redelivery."
       },
       "ArchiveSearchHitDto": {
         "required": [
@@ -21978,7 +19861,8 @@
           "titled",
           "status",
           "lastActivity",
-          "messageCount"
+          "messageCount",
+          "conversationCount"
         ],
         "type": "object",
         "properties": {
@@ -22010,6 +19894,11 @@
             "type": "integer",
             "format": "int32"
           },
+          "conversationCount": {
+            "type": "integer",
+            "description": "Above 1 the topic spans conversations (a cross-linked matter).",
+            "format": "int32"
+          },
           "releasedAt": {
             "type": [
               "null",
@@ -22023,11 +19912,9 @@
       "TopicStatus": {
         "enum": [
           "Open",
-          "Closed",
-          "Released",
-          "Superseded"
+          "Released"
         ],
-        "description": "The Topic lifecycle. `Open` accrues messages; the closer moves an idle topic to\n`Closed` then `Released` (handed to the assistant). A high-similarity hit on a\nrecently-released topic may reopen it (back to `Open`) rather than start a new one.\n`Superseded` is terminal: the janitor split/merged the topic away — its stream is archived\nand its doc removed, so the status is only ever seen replaying the archived stream."
+        "description": "Stored as string; part of the REST/MCP wire contract."
       },
       "TopicDetailDto": {
         "required": [
@@ -22036,6 +19923,7 @@
           "titled",
           "status",
           "lastActivity",
+          "conversationCount",
           "messages"
         ],
         "type": "object",
@@ -22053,6 +19941,13 @@
               "string"
             ]
           },
+          "purpose": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Curator-written: what the topic is for (the plan, errand, question or outcome)."
+          },
           "titled": {
             "type": "boolean",
             "description": "False while string TopicDetailDto.Label is still the provisional first-few-words placeholder."
@@ -22064,13 +19959,10 @@
             "type": "string",
             "format": "date-time"
           },
-          "arcId": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "The cross-conversation arc this topic belongs to, if any.",
-            "format": "uuid"
+          "conversationCount": {
+            "type": "integer",
+            "description": "Above 1 the topic spans conversations (a cross-linked matter).",
+            "format": "int32"
           },
           "messages": {
             "type": "array",
@@ -22116,84 +20008,6 @@
           }
         },
         "description": "One message in a released topic window (ordered chronologically)."
-      },
-      "ArcSummaryDto": {
-        "required": [
-          "id",
-          "label",
-          "topicCount",
-          "conversationCount",
-          "lastLinkedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "label": {
-            "type": "string"
-          },
-          "summary": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "topicCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "conversationCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "lastLinkedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "description": "An arc in a list response (`GET /arcs`) — a cross-conversation grouping of topics."
-      },
-      "ArcDetailDto": {
-        "required": [
-          "id",
-          "label",
-          "openedAt",
-          "lastLinkedAt",
-          "topics"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "label": {
-            "type": "string"
-          },
-          "summary": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "openedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastLinkedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "topics": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TopicSummaryDto"
-            }
-          }
-        },
-        "description": "An arc with its member topics (`GET /arcs/{id}`)."
       },
       "ParticipantSummaryDto": {
         "required": [

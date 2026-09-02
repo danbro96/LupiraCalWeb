@@ -6,18 +6,12 @@
  */
 
 /**
- * The Topic lifecycle. `Open` accrues messages; the closer moves an idle topic to
- * `Closed` then `Released` (handed to the assistant). A high-similarity hit on a
- * recently-released topic may reopen it (back to `Open`) rather than start a new one.
- * `Superseded` is terminal: the janitor split/merged the topic away — its stream is archived
- * and its doc removed, so the status is only ever seen replaying the archived stream.
+ * Stored as string; part of the REST/MCP wire contract.
  */
 export type TopicStatus = typeof TopicStatus[keyof typeof TopicStatus];
 
 
 export const TopicStatus = {
   Open: 'Open',
-  Closed: 'Closed',
   Released: 'Released',
-  Superseded: 'Superseded',
 } as const;

@@ -15,14 +15,16 @@ export interface TopicDetailDto {
   label: string;
   /** @nullable */
   summary?: string | null;
+  /**
+     * Curator-written: what the topic is for (the plan, errand, question or outcome).
+     * @nullable
+     */
+  purpose?: string | null;
   /** False while string TopicDetailDto.Label is still the provisional first-few-words placeholder. */
   titled: boolean;
   status: TopicStatus;
   lastActivity: string;
-  /**
-     * The cross-conversation arc this topic belongs to, if any.
-     * @nullable
-     */
-  arcId?: string | null;
+  /** Above 1 the topic spans conversations (a cross-linked matter). */
+  conversationCount: number;
   messages: TopicMessageDto[];
 }

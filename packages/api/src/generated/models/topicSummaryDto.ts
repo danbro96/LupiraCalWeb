@@ -19,6 +19,8 @@ export interface TopicSummaryDto {
   status: TopicStatus;
   lastActivity: string;
   messageCount: number;
+  /** Above 1 the topic spans conversations (a cross-linked matter). */
+  conversationCount: number;
   /** @nullable */
   releasedAt?: string | null;
 }

@@ -25,25 +25,8 @@ const SPEC_BY_CLUSTER = {
   'comms-api': 'LupiraCommsApi.json',
 };
 
-/**
- * Paths dropped from the merged surface, per cluster.
- *
- * `/me` is an identity echo the BFF already owns at /auth/user, and cal/geo/location/photo's copies
- * have zero call sites in either client. contact's is KEPT: it uniquely carries `contactId` (which
- * contact record is me), which ContactsTree uses. Dropping the other four also removes four of the
- * five MeDto schemas — each is referenced only by its own /me response — so the worst schema
- * conflict resolves itself rather than needing a namespace.
- */
-const DROP_PATHS = {
-  'cal-api': ['/me'],
-  'geo-api': ['/me'],
-  'location-api': ['/me'],
-  'photo-api': ['/me'],
-  'tasks-api': ['/me'],
-};
-
-/** Operations under these tags never reach the SPA. `LupiraCalApi` holds the .well-known DAV redirects. */
-const DROP_TAGS = { 'cal-api': ['LupiraCalApi'] };
+// `VERB /path` per cluster. routes.mjs generates the YARP routes from the same file.
+const EXPOSED = JSON.parse(readFileSync(join(here, 'exposed.json'), 'utf8')).operations;
 
 /** Reads the BFF's route table for the prefix each cluster is mounted under. */
 function prefixesFromBff() {
@@ -59,21 +42,35 @@ function prefixesFromBff() {
 const stable = (v) => JSON.stringify(v);
 const pascal = (s) => s.replace(/-api$/, '').replace(/^./, (c) => c.toUpperCase());
 
-/** Strips the paths this cluster does not expose through the BFF, and tags the rest with its name. */
+/** Keeps only the allowlisted operations, and reports upstream ones nobody has reviewed. */
 function prunePaths(doc, cluster, tag) {
-  const drop = new Set(DROP_PATHS[cluster] ?? []);
-  const dropTags = new Set(DROP_TAGS[cluster] ?? []);
+  const allowed = new Set(EXPOSED[cluster] ?? []);
   const kept = {};
+  const unlisted = [];
   let dropped = 0;
   for (const [path, item] of Object.entries(doc.paths ?? {})) {
-    if (drop.has(path)) { dropped++; continue; }
-    const ops = Object.entries(item).filter(([, op]) => op && typeof op === 'object' && 'responses' in op);
-    if (ops.length && ops.every(([, op]) => (op.tags ?? []).some((t) => dropTags.has(t)))) { dropped++; continue; }
-    // One tag per operation so orval's tags-split lands each upstream in its own folder.
-    for (const [, op] of ops) op.tags = [tag];
-    kept[path] = item;
+    const keptOps = {};
+    for (const [verb, op] of Object.entries(item)) {
+      if (!op || typeof op !== 'object' || !('responses' in op)) {
+        keptOps[verb] = op; // path-level `parameters` and friends
+        continue;
+      }
+      const key = `${verb.toUpperCase()} ${path}`;
+      if (!allowed.has(key)) {
+        dropped++;
+        if (op.operationId) unlisted.push(key);
+        continue;
+      }
+      allowed.delete(key);
+      // One tag per operation so orval's tags-split lands each upstream in its own folder.
+      op.tags = [tag];
+      keptOps[verb] = op;
+    }
+    if (Object.values(keptOps).some((v) => v && typeof v === 'object' && 'responses' in v)) {
+      kept[path] = keptOps;
+    }
   }
-  return { kept, dropped };
+  return { kept, dropped, unlisted, stale: [...allowed] };
 }
 
 /** Schemas a pruned document still reaches, so dropping /me also drops its now-orphaned MeDto. */
@@ -112,6 +109,8 @@ function main() {
   const claimedOps = new Map(); // operationId -> cluster
   const report = [];
   const conflicts = [];
+  const skipped = [];
+  const missing = [];
 
   for (const [cluster, file] of Object.entries(SPEC_BY_CLUSTER)) {
     const prefix = prefixes[cluster];
@@ -119,7 +118,9 @@ function main() {
     const doc = JSON.parse(readFileSync(join(specsDir, file), 'utf8'));
     const tag = cluster.replace(/-api$/, '');
 
-    const { kept, dropped } = prunePaths(doc, cluster, tag);
+    const { kept, dropped, unlisted, stale } = prunePaths(doc, cluster, tag);
+    if (unlisted.length) skipped.push(...unlisted.map((k) => `  ${cluster}  ${k}`));
+    if (stale.length) missing.push(...stale.map((k) => `  ${cluster}  ${k}`));
     const schemas = doc.components?.schemas ?? {};
     const live = reachableSchemas(kept, schemas);
 
@@ -169,6 +170,9 @@ function main() {
   writeFileSync(join(here, 'bff-openapi.json'), `${JSON.stringify(merged, null, 2)}\n`);
   console.log(report.join('\n'));
   if (conflicts.length) console.log(`\nnamespaced ${conflicts.length} conflict(s):\n${conflicts.join('\n')}`);
+  if (skipped.length) console.log(`\nnot exposed — add to exposed.json to publish (${skipped.length}):\n${skipped.join('\n')}`);
+  // An allowlisted operation the upstream no longer has: the spec moved and exposed.json did not.
+  if (missing.length) throw new Error(`exposed.json lists operations no upstream declares:\n${missing.join('\n')}`);
   console.log(`\nmerged: ${Object.keys(merged.paths).length} paths, ${Object.keys(merged.components.schemas).length} schemas`);
 }
 

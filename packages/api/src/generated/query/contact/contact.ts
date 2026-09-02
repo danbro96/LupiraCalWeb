@@ -48,7 +48,6 @@ import type {
   ListContactRelationsParams,
   MeDto,
   MergeContactMetadataParams,
-  PingDto,
   ProblemDetails,
   RemoveContactRelationParams,
   RenameContactGroupParams,
@@ -93,106 +92,6 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
-
-export const getContactPingUrl = () => {
-
-
-
-
-  return `/contact-api/pingz`
-}
-
-/**
- * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
- */
-export const contactPing = async ( options?: Parameters<typeof apiRequest>[1]): Promise<PingDto> => {
-
-  return apiRequest<PingDto>(getContactPingUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getContactPingQueryKey = () => {
-    return [
-    `/contact-api/pingz`
-    ] as const;
-    }
-
-
-export const getContactPingQueryOptions = <TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getContactPingQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof contactPing>>> = ({ signal }) => contactPing({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ContactPingQueryResult = NonNullable<Awaited<ReturnType<typeof contactPing>>>
-export type ContactPingQueryError = ProblemDetails
-
-
-export function useContactPing<TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof contactPing>>,
-          TError,
-          Awaited<ReturnType<typeof contactPing>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useContactPing<TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof contactPing>>,
-          TError,
-          Awaited<ReturnType<typeof contactPing>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useContactPing<TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Authenticated claims echo for dependency probes; resolves nothing, writes nothing.
- */
-
-export function useContactPing<TData = Awaited<ReturnType<typeof contactPing>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof contactPing>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getContactPingQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
 
 export const getGetMeUrl = () => {
 
