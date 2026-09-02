@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 env:
-  SOLUTION: LupiraCalWeb.slnx
+  SOLUTION: LupiraCalBff.slnx
 
 jobs:
   unit:

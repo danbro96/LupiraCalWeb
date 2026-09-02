@@ -17,7 +17,7 @@ bin/
 obj/
 
 # Generated SPA output (client build → BFF wwwroot)
-src/LupiraCalWeb/wwwroot/
+src/LupiraCalBff/wwwroot/
 
 # Expo (apps/mobile): CNG native projects + local state — EAS/prebuild regenerate them
 .expo/
