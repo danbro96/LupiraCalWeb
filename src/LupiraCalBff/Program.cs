@@ -4,8 +4,10 @@ using Duende.AccessTokenManagement;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using LupiraCalBff.Auth;
 using LupiraCalBff.Endpoints;
+using LupiraCalBff.OpenApi;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
+using Scalar.AspNetCore;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -28,6 +30,10 @@ if (!string.IsNullOrWhiteSpace(keyPath))
         .PersistKeysToFileSystem(new DirectoryInfo(keyPath));
 
 builder.Services.AddAppHealthChecks();
+
+// MSBuild runs this same pipeline on build and writes openapi/LupiraCalBff.json — the file the
+// TypeScript client generates from.
+builder.Services.AddOpenApi(options => options.AddDocumentTransformer<BffDocumentTransformer>());
 
 // Reverse proxy to the upstream APIs (REST at the upstream root, so the prefix is stripped). The member
 // routes (default policy) carry the signed-in user's access token. A caller-presented bearer (the mobile
@@ -138,6 +144,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints(app.Environment);
+
+// Authenticated: the document is the whole internal API map, and the client reads the committed
+// file rather than this endpoint.
+app.MapOpenApi("/openapi/{documentName}.json").RequireAuthorization();
+app.MapScalarApiReference("/scalar").RequireAuthorization();
+
 app.MapReverseProxy();
 
 // A proxied prefix that matched no route is a 404, not the SPA shell. Without this the fallback

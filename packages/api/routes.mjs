@@ -21,7 +21,7 @@ const PREFIX = {
   'comms-api': '/comms-api',
 };
 
-const exposed = JSON.parse(readFileSync(join(here, 'exposed.json'), 'utf8'));
+const exposed = JSON.parse(readFileSync(join(here, '..', '..', 'src/LupiraCalBff/exposed.json'), 'utf8'));
 const settings = JSON.parse(readFileSync(settingsPath, 'utf8'));
 
 const routes = {};

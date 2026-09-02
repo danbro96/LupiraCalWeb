@@ -5,14 +5,14 @@ import { describe, expect, it } from 'vitest';
 const here = new URL('.', import.meta.url).pathname;
 const read = (p: string) => JSON.parse(readFileSync(join(here, p), 'utf8'));
 
-const merged = read('bff-openapi.json');
-const cal = read('specs/LupiraCalApi.json');
-const tasks = read('specs/LupiraTasksApi.json');
-const contact = read('specs/LupiraContactApi.json');
+const merged = read('../../openapi/LupiraCalBff.json');
+const cal = read('../../src/LupiraCalBff/upstream/LupiraCalApi.json');
+const tasks = read('../../src/LupiraCalBff/upstream/LupiraTasksApi.json');
+const contact = read('../../src/LupiraCalBff/upstream/LupiraContactApi.json');
 
 const schemas = merged.components.schemas as Record<string, unknown>;
 const paths = Object.keys(merged.paths) as string[];
-const exposed = read('exposed.json').operations as Record<string, string[]>;
+const exposed = read('../../src/LupiraCalBff/exposed.json').operations as Record<string, string[]>;
 const routes = read('../../src/LupiraCalBff/appsettings.json').ReverseProxy.Routes as Record<
   string,
   { ClusterId: string; AuthorizationPolicy: string; Match: { Path: string; Methods: string[] } }
@@ -52,7 +52,7 @@ describe('the BFF route table', () => {
   const isStatic = (path: string) => path.includes('**');
   // The static subtrees and device ingest are routed but deliberately absent from the spec.
   const offSpec = new Set(
-    Object.values({ ...read('exposed.json').static, ...read('exposed.json').device })
+    Object.values({ ...read('../../src/LupiraCalBff/exposed.json').static, ...read('../../src/LupiraCalBff/exposed.json').device })
       .flat()
       .map((entry) => (entry as string).split(' ')[1]),
   );
@@ -119,11 +119,17 @@ describe('merged BFF spec', () => {
     }
   });
 
-  // Same name, different enum values — a merge that picked one would still typecheck.
+  // Same name, different enum values — a merge that picked one would still typecheck. Compared
+  // without the JSON-null member: Microsoft.OpenApi's reader drops it, and it carries nothing —
+  // nullability is on the property (`oneOf: [{type: null}, {$ref}]`), so the client is unchanged.
+  const members = (schema: unknown) =>
+    ((schema as { enum: (string | null)[] }).enum ?? []).filter((v) => v !== null);
+
   it('keeps cal and tasks ItemStatus apart, each matching its source', () => {
-    expect(schemas.ItemStatus).toEqual(cal.components.schemas.ItemStatus);
-    expect(schemas.TasksItemStatus).toEqual(tasks.components.schemas.ItemStatus);
-    expect(cal.components.schemas.ItemStatus).not.toEqual(tasks.components.schemas.ItemStatus);
+    expect(members(schemas.ItemStatus)).toEqual(members(cal.components.schemas.ItemStatus));
+    expect(members(schemas.TasksItemStatus)).toEqual(members(tasks.components.schemas.ItemStatus));
+    expect(members(cal.components.schemas.ItemStatus))
+      .not.toEqual(members(tasks.components.schemas.ItemStatus));
   });
 
   it('namespaces the cal/contact conflicts against their source', () => {

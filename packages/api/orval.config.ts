@@ -9,7 +9,7 @@ import { defineConfig } from 'orval';
 // so there is a single set of types. `clean` is deliberately off — it would let whichever target
 // runs second delete the other's output.
 
-const input = { target: './bff-openapi.json' } as const;
+const input = { target: '../../openapi/LupiraCalBff.json' } as const;
 const mutator = { path: './src/transport.ts', name: 'apiRequest' } as const;
 
 export default defineConfig({
