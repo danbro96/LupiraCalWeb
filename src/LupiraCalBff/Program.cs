@@ -44,6 +44,12 @@ builder.Services.AddReverseProxy()
         if (incoming.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
             return;   // native caller — its own token flows through untouched
 
+        // Device ingest: only location-api can validate a device key, so it must reach the upstream
+        // intact. Overwriting it with the session token (or X-Dev-User) is what used to force the
+        // phone to bypass the BFF entirely.
+        if (incoming.StartsWith(DeviceKeyHeader.Scheme, StringComparison.Ordinal))
+            return;
+
         if (isDev)
         {
             transform.ProxyRequest.Headers.TryAddWithoutValidation("X-Dev-User", devUser);
@@ -111,6 +117,23 @@ if (app.Environment.IsProduction())
 app.MapAppHealthChecks();
 
 app.UseStaticFiles();
+
+// The ingest routes are Anonymous because the device key is only checkable by location-api, which
+// holds the keys. Reject a missing or malformed header here so the route is not a blank relay, and
+// answer 401 rather than letting the cookie handler challenge a device with an OIDC redirect.
+app.UseWhen(
+    ctx => ctx.Request.Path.StartsWithSegments("/ingest", StringComparison.OrdinalIgnoreCase),
+    branch => branch.Use(async (ctx, next) =>
+    {
+        if (!DeviceKeyHeader.IsWellFormed(ctx.Request.Headers.Authorization))
+        {
+            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return;
+        }
+
+        await next();
+    }));
+
 app.UseAuthentication();
 app.UseAuthorization();
 

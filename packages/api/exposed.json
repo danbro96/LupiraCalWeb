@@ -184,5 +184,12 @@
     "geo-api": [
       "GET /basemap/{**path}"
     ]
+  },
+  "device": {
+    "location-api": [
+      "POST /ingest/location",
+      "GET /ingest/location/cursor",
+      "GET /ingest/location/state"
+    ]
   }
 }

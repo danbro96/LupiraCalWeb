@@ -15,7 +15,7 @@ const paths = Object.keys(merged.paths) as string[];
 const exposed = read('exposed.json').operations as Record<string, string[]>;
 const routes = read('../../src/LupiraCalBff/appsettings.json').ReverseProxy.Routes as Record<
   string,
-  { ClusterId: string; Match: { Path: string; Methods: string[] } }
+  { ClusterId: string; AuthorizationPolicy: string; Match: { Path: string; Methods: string[] } }
 >;
 
 describe('the exposed allowlist', () => {
@@ -50,12 +50,18 @@ describe('the exposed allowlist', () => {
 
 describe('the BFF route table', () => {
   const isStatic = (path: string) => path.includes('**');
+  // The static subtrees and device ingest are routed but deliberately absent from the spec.
+  const offSpec = new Set(
+    Object.values({ ...read('exposed.json').static, ...read('exposed.json').device })
+      .flat()
+      .map((entry) => (entry as string).split(' ')[1]),
+  );
 
   // routes.mjs generates these from exposed.json, so a mismatch means someone hand-edited one side.
   it('routes exactly the operations the spec declares', () => {
     const routed = new Set(
       Object.values(routes)
-        .filter((r) => !isStatic(r.Match.Path))
+        .filter((r) => !isStatic(r.Match.Path) && !offSpec.has(r.Match.Path))
         .flatMap((r) => r.Match.Methods.map((m) => `${m} ${r.Match.Path}`)),
     );
     const declared = Object.entries(merged.paths).flatMap(([path, item]) =>
@@ -65,6 +71,25 @@ describe('the BFF route table', () => {
     );
     expect(declared.filter((op) => !routed.has(op))).toEqual([]);
     expect(routed.size).toBe(declared.length);
+  });
+
+  // Device ingest carries a per-device key, not the family session, so it is Anonymous at the BFF and
+  // authenticated by location-api. It must stay out of the merged spec: the generated client can only
+  // express Bearer, and the uploader is hand-written for exactly that reason.
+  it('routes device ingest anonymously and keeps it out of the client', () => {
+    const ingest = Object.entries(routes).filter(([, r]) => r.Match.Path.startsWith('/ingest'));
+    expect(ingest.map(([, r]) => r.Match.Path).sort()).toEqual([
+      '/ingest/location',
+      '/ingest/location/cursor',
+      '/ingest/location/state',
+    ]);
+    for (const [name, route] of ingest) {
+      expect(route.AuthorizationPolicy, name).toBe('Anonymous');
+      expect(route.ClusterId, name).toBe('location-api');
+      // No transform: the BFF path is the upstream path, and rewriting would break the device call.
+      expect((route as { Transforms?: unknown }).Transforms, name).toBeUndefined();
+    }
+    expect(paths.filter((p) => p.includes('/ingest'))).toEqual([]);
   });
 
   // A catch-all forwards whatever the upstream adds under that resource, unreviewed. The static

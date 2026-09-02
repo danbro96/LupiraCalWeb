@@ -67,6 +67,22 @@ for (const [cluster, entries] of Object.entries(exposed.static ?? {})) {
   }
 }
 
+// Device ingest. Mounted at the upstream's own path (no prefix, so no transform) and Anonymous,
+// because the credential is a per-device key the BFF cannot validate — location-api holds the keys
+// and does the authenticating. The BFF only rejects malformed headers, so this stays no weaker than
+// the direct exposure it replaces, and the clients keep a single origin.
+for (const [cluster, entries] of Object.entries(exposed.device ?? {})) {
+  for (const entry of entries) {
+    const [verb, path] = entry.split(' ');
+    const key = `${cluster}${path}`.replace(/[^a-zA-Z0-9]+/g, '-').replace(/-+$/, '');
+    routes[key] = {
+      ClusterId: cluster,
+      AuthorizationPolicy: 'Anonymous',
+      Match: { Path: path, Methods: [verb] },
+    };
+  }
+}
+
 settings.ReverseProxy.Routes = routes;
 writeFileSync(settingsPath, `${JSON.stringify(settings, null, 2)}\n`);
 

@@ -17,11 +17,9 @@ export const API_PRESETS: ApiPreset[] = [
   { key: 'emulator', label: 'Emulator dev', urls: { api: 'http://10.0.2.2:5181' }, authMode: 'dev' },
 ];
 
-/** GPS ingest is the one call that does NOT go through the BFF: it authenticates with a per-device
- *  key, which the BFF's OIDC-only policy rejects. location-api is tunneled in its own right, so the
- *  uploader posts straight to this origin. Everything else still speaks to one origin with a prefix. */
-export const LOCATION_INGEST_URL =
-  process.env.EXPO_PUBLIC_LOCATION_INGEST_URL ?? 'https://location-api.lupira.com';
+/** Where the chosen backend origin is persisted. Shared so headless code can resolve it without
+ *  importing the auth store (see data/api/apiUrl). */
+export const API_URL_STORAGE_KEY = 'lupira.calendar.apiUrl';
 
 // Build-time default; the settings screen persists a runtime override on top.
 export const DEFAULT_API_URL = process.env.EXPO_PUBLIC_API_URL ?? API_PRESETS[0].urls.api;

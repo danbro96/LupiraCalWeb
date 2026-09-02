@@ -1,11 +1,11 @@
 import type { LocationFix } from '../domain/locationFix';
 import { toNdjsonLine } from '../domain/locationFix';
 
-/** The ingest call, hand-written on purpose. Two reasons the generated client can't do this:
- *  it authenticates with `Authorization: DeviceKey {keyId}.{secret}` (the OpenAPI document declares
- *  only a Bearer scheme — an artifact of the doc transformer), and DeviceKey cannot traverse the cal
- *  BFF, whose Default policy demands an OIDC principal. So this posts DIRECTLY to location-api's own
- *  origin, which is tunneled for exactly this purpose. */
+/** The ingest call, hand-written on purpose: it authenticates with
+ *  `Authorization: DeviceKey {keyId}.{secret}`, and the OpenAPI document declares only a Bearer
+ *  scheme, so the generated client cannot express it. It still goes through the BFF like everything
+ *  else — the BFF has Anonymous ingest routes that check the header shape and forward it untouched,
+ *  because only location-api holds the keys. */
 
 /** The server stops reading after this many lines and rejects the remainder as `batch_too_large`. */
 export const MAX_BATCH_LINES = 10_000;

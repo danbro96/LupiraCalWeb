@@ -1,4 +1,4 @@
-import { LOCATION_INGEST_URL } from '../config';
+import { resolveApiUrl } from '../data/api/apiUrl';
 import { getDb } from '../data/db/expoDb';
 import type { Db } from '../data/db/types';
 import { clearDeviceCredentials, loadDevice } from '../data/locationDevice';
@@ -58,7 +58,7 @@ async function drainOnce(dbOverride?: Db): Promise<void> {
       const batch = await db.exclusive((tx) => pendingFixes(tx, nowIso, Math.min(BATCH_SIZE, MAX_BATCH_LINES)));
       if (batch.length === 0) break;
 
-      const receipt = await postFixes(LOCATION_INGEST_URL, device.apiKey, batch);
+      const receipt = await postFixes(await resolveApiUrl(), device.apiKey, batch);
       const outcome = classifyReceipt(batch, receipt, Date.now());
 
       if (outcome.kind === 'paused') {
@@ -147,7 +147,7 @@ export async function reconcileCursor(dbOverride?: Db): Promise<void> {
   if (!device) return;
   const db = dbOverride ?? (await getDb());
   try {
-    const cursor = await fetchCursor(LOCATION_INGEST_URL, device.apiKey);
+    const cursor = await fetchCursor(await resolveApiUrl(), device.apiKey);
     if (cursor.lastSeq == null) return;
     await db.exclusive(async (tx) => {
       await deleteFixesUpTo(tx, cursor.lastSeq!);

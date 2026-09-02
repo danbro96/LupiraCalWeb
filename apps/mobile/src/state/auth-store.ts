@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
 import { API_PRESETS, DEFAULT_API_URL, DEFAULT_AUTH_MODE, type AuthMode } from '../config';
 import { setAuthPort } from '../data/api/authProvider';
+import { API_URL_STORAGE_KEY } from '../config';
 import { RefreshError, decodeJwt, refreshTokens, type TokenResponse } from '../data/auth/oidc';
 import { logDebug } from '../debug/log';
 
@@ -32,7 +33,7 @@ type AuthActions = {
 };
 
 const K = {
-  apiUrl: 'lupira.calendar.apiUrl',
+  apiUrl: API_URL_STORAGE_KEY,
   authMode: 'lupira.calendar.authMode',
   token: 'lupira.calendar.token',
   refreshToken: 'lupira.calendar.refreshToken',
