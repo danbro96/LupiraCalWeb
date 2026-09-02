@@ -40,7 +40,7 @@ describe('generated client', () => {
   });
 
   it('generates both flavours over one set of models', () => {
-    const tags = ['cal', 'comms', 'contact', 'geo', 'location', 'lupira-cal-bff', 'photo', 'tasks'];
+    const tags = ['bff-contacts', 'cal', 'comms', 'contact', 'geo', 'location', 'lupira-cal-bff', 'photo', 'tasks'];
     for (const dir of ['query', 'fetch']) {
       expect(readdirSync(join(root, dir)).sort()).toEqual(tags);
     }

@@ -26,7 +26,11 @@ export function useInvalidateContacts() {
     queryClient.invalidateQueries({
       predicate: (q) => {
         const key = String(q.queryKey[0] ?? '');
-        return key.startsWith('/contact-api/contacts') || key.includes('/groups');
+        // `/api/contacts/...` is the BFF's own contact surface — a group add/remove changes what it
+        // returns, and it does not share the upstream prefix.
+        return key.startsWith('/contact-api/contacts')
+          || key.startsWith('/api/contacts')
+          || key.includes('/groups');
       },
     });
 }

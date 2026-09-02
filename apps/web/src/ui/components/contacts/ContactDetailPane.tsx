@@ -15,11 +15,10 @@ import {
   useAddContactGroupMember,
   useDeleteContact,
   useGetContact,
-  useListContactGroups,
   useRemoveContactGroupMember,
-  useSearchContacts,
   useSetMyContact,
 } from '@lupira/cal-api/query/contact';
+import { useGetContactContext } from '@lupira/cal-api/query/bff-contacts';
 import { PINNED_TAG } from '@lupira/cal-domain/contactTiers';
 import { fmtResidencyPeriod, residencyStatus, type FuzzyDate } from '@lupira/cal-domain/fuzzyDate';
 
@@ -52,8 +51,9 @@ export function ContactDetailPane() {
   const { contactId } = useParams();
   const navigate = useNavigate();
   const { data: contact, isLoading } = useGetContact(contactId ?? '', { query: { enabled: !!contactId } });
-  const { data: groups } = useListContactGroups(contact?.addressBookId ?? '', { query: { enabled: !!contact } });
-  const { data: bookContacts } = useSearchContacts({ addressBookId: contact?.addressBookId ?? '' }, { query: { enabled: !!contact } });
+  // One BFF call, fired alongside the contact rather than after it: it resolves the address book id
+  // server-side, so the groups and the emergency-contact names no longer wait a round trip.
+  const { data: context } = useGetContactContext(contactId ?? '', { query: { enabled: !!contactId } });
   const invalidate = useInvalidateContacts();
   const showSnack = useSnackbar();
   const onError = (e: unknown) => showSnack(errText(e) ?? 'Request failed.');
@@ -68,11 +68,11 @@ export function ContactDetailPane() {
   if (isLoading) return <DetailPane><Typography variant="caption" sx={{ color: 'text.secondary' }} component="p">Loading…</Typography></DetailPane>;
   if (!contact) return <DetailPane><Typography component="p" sx={{ textAlign: 'center', color: 'text.subtle', mt: 6 }}>Contact not found.</Typography></DetailPane>;
 
-  const memberOf = (groups ?? []).filter((g) => g.members.some((m) => m.contactId === contact.id));
-  const joinable = (groups ?? []).filter((g) => !g.members.some((m) => m.contactId === contact.id));
+  const memberOf = context?.memberOf ?? [];
+  const joinable = context?.joinable ?? [];
   const groupSearch = `?book=${contact.addressBookId}`;
   const link = (id: string) => ({ pathname: `/contacts/${id}`, search: groupSearch });
-  const nameOf = (cid: string) => bookContacts?.find((c) => c.id === cid)?.displayName ?? cid.slice(0, 8);
+  const nameOf = (cid: string) => context?.emergencyContacts.find((c) => c.id === cid)?.name ?? cid.slice(0, 8);
 
   return (
     <DetailPane>

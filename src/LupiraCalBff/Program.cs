@@ -5,6 +5,7 @@ using Duende.AccessTokenManagement.OpenIdConnect;
 using LupiraCalBff.Auth;
 using LupiraCalBff.Endpoints;
 using LupiraCalBff.OpenApi;
+using LupiraCalBff.Upstream;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
@@ -39,6 +40,7 @@ if (!string.IsNullOrWhiteSpace(keyPath))
         .PersistKeysToFileSystem(new DirectoryInfo(keyPath));
 
 builder.Services.AddAppHealthChecks();
+builder.Services.AddUpstreamClients(builder.Configuration);
 
 // MSBuild runs this same pipeline on build and writes openapi/LupiraCalBff.json — the file the
 // TypeScript client generates from.
@@ -67,6 +69,10 @@ builder.Services.AddReverseProxy()
 
         if (isDev)
         {
+            // Replace, never append: StringValues joins duplicates with a comma and the upstream's dev
+            // handler derives its principal from the value, so a caller-supplied header would other-
+            // wise change who the request runs as.
+            transform.ProxyRequest.Headers.Remove("X-Dev-User");
             transform.ProxyRequest.Headers.TryAddWithoutValidation("X-Dev-User", devUser);
         }
         else if (transform.HttpContext.User.Identity?.IsAuthenticated == true)
@@ -153,6 +159,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints(app.Environment);
+app.MapContactEndpoints();
 
 // Authenticated: the document is the whole internal API map, and the client reads the committed
 // file rather than this endpoint.

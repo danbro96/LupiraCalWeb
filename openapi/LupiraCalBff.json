@@ -5,6 +5,40 @@
     "version": "v1"
   },
   "paths": {
+    "/api/contacts/{id}/context": {
+      "get": {
+        "tags": [
+          "bff-contacts"
+        ],
+        "operationId": "GetContactContext",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactContextDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/auth/user": {
       "get": {
         "tags": [
@@ -8699,6 +8733,34 @@
         },
         "description": "Computed social circles around a focus contact. Always contains every CircleKind, possibly empty;\n            a contact may appear in several circles."
       },
+      "ContactContextDto": {
+        "required": [
+          "memberOf",
+          "joinable",
+          "emergencyContacts"
+        ],
+        "type": "object",
+        "properties": {
+          "memberOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactGroupRefDto"
+            }
+          },
+          "joinable": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactGroupRefDto"
+            }
+          },
+          "emergencyContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactRefDto"
+            }
+          }
+        }
+      },
       "ContactDto": {
         "required": [
           "id",
@@ -8951,6 +9013,26 @@
         ],
         "description": "A personal grouping (Friends/Family/Colleagues) vs a company/institution. An employer is membership in an `Organization`-kind group."
       },
+      "ContactGroupRefDto": {
+        "required": [
+          "id",
+          "name",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          }
+        }
+      },
       "ContactKind": {
         "enum": [
           "Individual",
@@ -9052,6 +9134,22 @@
           }
         },
         "description": "A way to reach a contact — an email address or phone number — with an open string? ContactReachChannel.Type token\n            (well-known: home/work/cell/fax/pager/other) and a per-medium bool ContactReachChannel.Preferred flag. A record so event\n            payloads stay immutable."
+      },
+      "ContactRefDto": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
       },
       "ContactRelationDirection": {
         "enum": [
@@ -13573,6 +13671,9 @@
     }
   },
   "tags": [
+    {
+      "name": "bff-contacts"
+    },
     {
       "name": "LupiraCalBff"
     }

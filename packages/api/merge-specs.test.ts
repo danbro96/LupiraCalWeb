@@ -13,8 +13,12 @@ const contact = read('../../src/LupiraCalBff/upstream/LupiraContactApi.json');
 const schemas = merged.components.schemas as Record<string, unknown>;
 const paths = Object.keys(merged.paths) as string[];
 
-const CLUSTER_PREFIXES = ['/api/', '/contact-api/', '/geo-api/', '/tasks-api/', '/location-api/', '/photo-api/', '/comms-api/'];
-const isProxied = (path: string) => CLUSTER_PREFIXES.some((p) => path.startsWith(p));
+// A path is proxied iff its operations carry an upstream's tag, which the merge sets per cluster.
+// The prefix cannot tell them apart any more: a BFF-declared endpoint also lives under /api/.
+const UPSTREAM_TAGS = new Set(['cal', 'contact', 'geo', 'tasks', 'location', 'photo', 'comms']);
+const isProxied = (path: string) =>
+  Object.values(merged.paths[path] as Record<string, { tags?: string[] }>)
+    .some((op) => (op?.tags ?? []).some((t) => UPSTREAM_TAGS.has(t)));
 const exposed = read('../../src/LupiraCalBff/exposed.json').operations as Record<string, string[]>;
 const routes = read('../../src/LupiraCalBff/appsettings.json').ReverseProxy.Routes as Record<
   string,
@@ -114,8 +118,14 @@ describe('the BFF route table', () => {
 describe('merged BFF spec', () => {
   // Everything is either proxied under a cluster prefix or declared by the BFF itself. The second
   // kind is how an endpoint migrates off the proxy, so it must not be mistaken for a stray path.
-  it('mounts every path under a cluster prefix, bar the ones the BFF declares itself', () => {
-    expect(paths.filter((p) => !isProxied(p))).toEqual(['/auth/user']);
+  it('separates the paths the BFF declares itself from the proxied ones', () => {
+    expect(paths.filter((p) => !isProxied(p)).sort()).toEqual([
+      '/api/contacts/{id}/context',
+      '/auth/user',
+    ]);
+    // Every proxied path still sits under its cluster's mount.
+    const prefixes = ['/api/', '/contact-api/', '/geo-api/', '/tasks-api/', '/location-api/', '/photo-api/', '/comms-api/'];
+    expect(paths.filter(isProxied).filter((p) => !prefixes.some((x) => p.startsWith(x)))).toEqual([]);
   });
 
   // /items and /sync/* existed in 2 specs each and generated the same query key; prefixing makes

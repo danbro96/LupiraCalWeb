@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getListItemsQueryKey } from '@lupira/cal-api/query/tasks';
 import { getSearchItemsQueryKey, getListContainersQueryKey } from '@lupira/cal-api/query/cal';
 import { getSearchContactsQueryKey, getListAddressBooksQueryKey } from '@lupira/cal-api/query/contact';
+import { getGetContactContextQueryKey } from '@lupira/cal-api/query/bff-contacts';
 import { getSearchPlacesQueryKey } from '@lupira/cal-api/query/geo';
 
 // The predicates in useInvalidate match generated keys by prefix, and those keys are the BFF's
@@ -11,7 +12,8 @@ import { getSearchPlacesQueryKey } from '@lupira/cal-api/query/geo';
 const first = (k: readonly unknown[]) => String(k[0]);
 
 const items = (key: string) => key.startsWith('/api/items') || key.includes('/proposed');
-const contacts = (key: string) => key.startsWith('/contact-api/contacts') || key.includes('/groups');
+const contacts = (key: string) =>
+  key.startsWith('/contact-api/contacts') || key.startsWith('/api/contacts') || key.includes('/groups');
 const containers = (key: string) => key.startsWith('/api/calendars');
 const addressBooks = (key: string) => key.startsWith('/contact-api/address-books');
 const places = (key: string) =>
@@ -27,6 +29,12 @@ describe('invalidation predicates match the generated keys', () => {
   it('items does NOT match task deadlines', () => {
     expect(items(first(getListItemsQueryKey()))).toBe(false);
     expect(first(getListItemsQueryKey())).toMatch(/^\/tasks-api\//);
+  });
+
+  // The BFF's own contact surface does not share the upstream prefix, so a group mutation would
+  // leave the detail pane stale without this.
+  it('contacts also matches the BFF-owned contact context', () => {
+    expect(contacts(first(getGetContactContextQueryKey('abc')))).toBe(true);
   });
 
   it('contacts, containers and address books match their own APIs', () => {
