@@ -98,7 +98,11 @@ public static class UpstreamSpecMerger
             }
 
             foreach (var (path, item) in kept)
-                mergedPaths[prefix + path] = item?.DeepClone();
+            {
+                var copy = item?.DeepClone();
+                if (copy is JsonObject pathItem) RewriteSecurity(pathItem);
+                mergedPaths[prefix + path] = copy;
+            }
 
             foreach (var name in live)
             {
@@ -115,7 +119,11 @@ public static class UpstreamSpecMerger
             ["openapi"] = versions[0],
             ["info"] = new JsonObject { ["title"] = "LupiraCalWeb BFF", ["version"] = "v1" },
             ["paths"] = mergedPaths,
-            ["components"] = new JsonObject { ["schemas"] = mergedSchemas },
+            ["components"] = new JsonObject
+            {
+                ["schemas"] = mergedSchemas,
+                ["securitySchemes"] = SecuritySchemes(),
+            },
         };
 
         if (missing.Count > 0)
@@ -123,6 +131,44 @@ public static class UpstreamSpecMerger
                 $"exposed.json lists operations no upstream declares:{Environment.NewLine}  {string.Join($"{Environment.NewLine}  ", missing)}");
 
         return new MergeResult(document, notExposed, renames);
+    }
+
+    /// <summary>
+    /// The credential presented to the BFF, not the upstream's own. Uncarried, the requirements dangle
+    /// and Microsoft.OpenApi writes them as <c>[{}]</c> — which reads as "no authentication required".
+    /// </summary>
+    private static JsonObject SecuritySchemes() => new()
+    {
+        ["Cookie"] = new JsonObject
+        {
+            ["type"] = "apiKey",
+            ["in"] = "cookie",
+            ["name"] = "__Host-lupira-cal",
+            ["description"] = "Session cookie minted by the BFF's OIDC login.",
+        },
+        ["Bearer"] = new JsonObject
+        {
+            ["type"] = "http",
+            ["scheme"] = "bearer",
+            ["bearerFormat"] = "JWT",
+            ["description"] = "Authentik access token from a native client; audience must include lupira-cal.",
+        },
+    };
+
+    /// <summary>DefaultPolicy accepts either scheme, so both are alternatives rather than both required.</summary>
+    private static void RewriteSecurity(JsonObject pathItem)
+    {
+        foreach (var (_, node) in pathItem)
+        {
+            if (node is JsonObject operation && operation.ContainsKey("responses"))
+            {
+                operation["security"] = new JsonArray
+                {
+                    new JsonObject { ["Cookie"] = new JsonArray() },
+                    new JsonObject { ["Bearer"] = new JsonArray() },
+                };
+            }
+        }
     }
 
     /// <summary>Drops every operation the allowlist does not name, and removes what it consumed from it.</summary>
