@@ -8716,7 +8716,8 @@
       "CalendarClass": {
         "enum": [
           "Agenda",
-          "System"
+          "System",
+          null
         ]
       },
       "CalendarEntryStatus": {
@@ -9091,7 +9092,8 @@
           "UserCheckIn",
           "DevOps",
           "FoodPlan",
-          "Generic"
+          "Generic",
+          null
         ]
       },
       "CalendarMembershipDto": {
@@ -10581,7 +10583,8 @@
           "Day",
           "Month",
           "Year",
-          "Approximate"
+          "Approximate",
+          null
         ]
       },
       "DeclaredPhotoResponse": {
@@ -11046,7 +11049,8 @@
           "Stay",
           "Activity",
           "Focus",
-          "Chore"
+          "Chore",
+          null
         ]
       },
       "ItemDetails": {
@@ -11327,7 +11331,8 @@
         "enum": [
           "Tentative",
           "Confirmed",
-          "Cancelled"
+          "Cancelled",
+          null
         ]
       },
       "JsonNode": { },
@@ -11439,7 +11444,8 @@
           "Gps",
           "Network",
           "Fused",
-          "Passive"
+          "Passive",
+          null
         ]
       },
       "LocationTripDto": {
@@ -11677,7 +11683,8 @@
         "enum": [
           "Small",
           "Medium",
-          "Large"
+          "Large",
+          null
         ]
       },
       "MotionActivity": {
@@ -11687,7 +11694,8 @@
           "Walk",
           "Run",
           "Cycle",
-          "Vehicle"
+          "Vehicle",
+          null
         ]
       },
       "MoveItemRequest": {
@@ -12280,7 +12288,8 @@
       "PhotoSort": {
         "enum": [
           "TakenAtDesc",
-          "TakenAtAsc"
+          "TakenAtAsc",
+          null
         ]
       },
       "PhotoStats": {
