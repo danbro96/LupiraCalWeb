@@ -4,13 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "gen": "npm run spec && npm run routes && orval && npm run postgen",
+    "gen": "npm run spec && orval",
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "postgen": "node postgen.mjs",
-    "routes": "node routes.mjs",
     "spec": "dotnet build ../../src/LupiraCalBff/LupiraCalBff.csproj -v q --nologo"
   },
   "exports": {
