@@ -35,3 +35,6 @@ apps/mobile/ios/
 *.sln
 *.sw?
 apps/mobile/modules/*/android/build/
+
+# TypeScript incremental build state
+*.tsbuildinfo
